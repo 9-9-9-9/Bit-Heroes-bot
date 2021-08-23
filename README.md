@@ -1,11 +1,14 @@
 ## This is bot for Bit Heroes
-have inspiration from https://github.com/tiemonl/Bit-Heroes-Fishing-Bot
-___
+##### on Linux / Windows / ~~MacOS~~
 [![Github All Releases](https://img.shields.io/github/downloads/9-9-9-9/Bit-Heroes-bot/total?style=social)](https://github.com/9-9-9-9/Bit-Heroes-bot/releases)
+
+have inspiration from https://github.com/tiemonl/Bit-Heroes-Fishing-Bot
 ___
 This readme file is for developers
 
 Normal users please [read at this page](https://github.com/9-9-9-9/Bit-Heroes-bot/blob/master/README.release.md)
+
+_There're some additional information for MacOS users, please read at bottom of this page_
 ___
 Only support game resolution 800x520
 
@@ -15,8 +18,8 @@ Therefore:
 - __Not sure__ about Android emulators (like Nox, Blue Stacks,..) because not tested
 
 ### Contains the following functions:
-1. Re-Run: detect and click ReRun button while in Dungeons and Raid
-2. Fishing: auto fishing
+1. Detect and click **ReRun** button while in Dungeons and Raid
+2. Auto fishing
 3. Launch game in mini client using Google Chrome
 
 And some extra functions support developers on developing this bot:
@@ -27,9 +30,9 @@ And some extra functions support developers on developing this bot:
 Also supports pushing messages to Telegram for notification purpose
 
 ### Minimum requirement:
-- JDK 8 installed
-- Maven installed
-- Google Chrome installed (if you wish to use the mini client)
+- JDK 8 (not tested on version 9 and above but probably it works)
+- Maven
+- Google Chrome (if you wish to use the mini client)
 
 ### Installation:
 1. `git clone https://github.com/9-9-9-9/Bit-Heroes-bot` or download ZIP file extract
@@ -39,6 +42,29 @@ Also supports pushing messages to Telegram for notification purpose
     - MacOS: run the following command `bash build.sh` on terminal
 
 #### How to use:
+### Configuration
+Have to configure the `config.properties` (or `user-config.properties`) file first
+
+Watch out the following keys:
+- `offset.screen.x`
+- `offset.screen.y`
+
+They are the coordinate where your game screen starts. How to fill it correctly?
+1. Open game at https://www.kongregate.com/games/Juppiomenz/bit-heroes on Google Chrome web browser, move the window to the top left of your screen
+2. Press the `Print Screen` button
+3. Paste it into Paint or something similar
+4. Point at the top left of your GAME SCREEN to see its current coordinate
+5. Fill the number into `config.properties` file (or `user-config.properties`). For example if current coordinate is `0,57`, fill it like this:
+    - offset.screen.x=0
+    - offset.screen.y=57
+    - On Ubuntu 18.04, usually `x=0` and `y=57` when using mini client of Google Chrome
+    - On Windows 10, usually `x=8` and `y=31` when using mini client of Google Chrome
+    - On MacOS 10.14, usually `x=0` and `y=45` when using mini client of Google Chrome
+        
+To enable Telegram notification (require technical skill)
+- Set the bot private key to `telegram.token`
+- Set the channel id to `telegram.channel-id`
+
 ### ReRun
 For: everyone
 
@@ -79,11 +105,11 @@ Steps:
 6. Copy the output into `user-config.properties` file, make sure to override the correct properties
 7. Generate mini client using:
 - Windows: run file `.\client.bat`
-- Other OS: run file `./client.sh`
+- Linux/Mac: run file `./client.sh`
 
 Enjoy it
 - Windows: run file `.\mini-game-on-chrome.bat`
-- Other OS: run file `./mini` or `./mini-game-on-chrome.sh`
+- Linux/Mac: run file `./mini` or `./mini-game-on-chrome.sh`
 
 ### SamePix
 For: developers only
@@ -123,21 +149,17 @@ Those output pictures can be used to scan buttons on screen with minimal fault a
 - `--img` save screenshot into `./out/images/<app>` directory, only use for debugging purpose
 - `--mute` do not push notification to Telegram
 
-#### This project originally developed on Ubuntu 18.04, will test on Windows environment soon
-Currently only developers can use this tool (or if you have enough experience to investigate things like this).
-Have to configure the config.properties file first
+#### Tested environments:
+| OS | Result |
+| --- | --- |
+| Ubuntu 18.04 (development environment) | Work perfectly |
+| Windows 10 x64 | Work perfectly |
+| MacOS 10.14 High Sierra | Bot functions not work, only mini-client works |
 
-Watch out the following keys:
-- `offset.screen.x` and `offset.screen.y` keys, they are the coordinate where your game screen starts. How to fill it correctly?
-    1. Open game at https://www.kongregate.com/games/Juppiomenz/bit-heroes on Google Chrome web browser, move the window to the top left of your screen
-    2. Press the `Print Screen` button
-    3. Paste it into Paint or something similar
-    4. Point at the top left of your GAME SCREEN to see its current coordinate
-    5. Fill the number into `config.properties` file (or `user-config.properties`). For example if current coordinate is `0,57`, fill it like this:
-        - offset.screen.x=0
-        - offset.screen.y=57
-        - On Windows, usually x=8 and y=31 when using mini client of Google Chrome
-        
-To enable Telegram notification (require technical skill)
-- Set the bot private key to `telegram.token`
-- Set the channel id to `telegram.channel-id`
+### MacOS users
+1. From MacOS 10.13+, java.awt.Robot class of Java can not do mouse and keyboard interaction, thus none of bot functions will work
+2. With a bit of luck, you can try to add Java to [System Preferences > Security & Privacy > Accessibility] and see if it works (because MacOS prevent apps from controlling your mac by default).
+If it doesn't work, install a higher version of Java, add Accessibility and try again. If it still doesn't work, just give up
+3. Thus this whole project only has the mini-client function will work on MacOS
+
+So this project does not officially supported MacOS, any developer can resolve the above issue, please make a pull request 
