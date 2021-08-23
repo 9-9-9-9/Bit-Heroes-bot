@@ -5,6 +5,7 @@ bh-client/
 chrome-user-dir/
 tmp/
 release/
+BitHeroes-v*/
 *.iml
 *.jar
 *.log

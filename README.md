@@ -18,7 +18,7 @@ Only support game resolution 800x520
 
 Therefore:
 - Can only use this bot to control game on web version at [kongregate.com](https://www.kongregate.com/games/Juppiomenz/bit-heroes)
-- __Can not__ use for Steam version which does not have Window size 800x520 option
+- [__Can not__ use for Steam version which does not have Window size 800x520 option](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Does-this-bot-supports-Steam-version-of-Bit-Heroes%3F)
 - __Not sure__ about Android emulators (like Nox, Blue Stacks,..) because not tested
 
 ### Contains the following functions:
@@ -34,9 +34,9 @@ And some extra functions support developers on developing this bot:
 [Also supports pushing messages to Telegram for notification purpose](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
 
 ### Minimum requirement:
-- JDK 8 (not tested on version 9 and above but probably it works)
-- Maven
-- Google Chrome (if you wish to use the mini client)
+- [JDK 8 (not tested on version 9 and above but probably it works)](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html)
+- [Apache Maven](https://maven.apache.org/install.html)
+- [Google Chrome (if you wish to use the mini client)](https://www.google.com/chrome)
 
 ### Installation:
 1. `git clone https://github.com/9-9-9-9/Bit-Heroes-bot` or download ZIP file extract
@@ -117,7 +117,7 @@ For: developers only
 
 This command will load 2 images from argument, scan them, find the same pixels from both images and save it to another image localed at `./out/same-pix-images` directory
 
-Those output image can be used to scan buttons on screen with minimal fault and work gracefully across OS and devices because it maybe not have to facing with "Gamma correction" issue
+[Those output image can be used to scan buttons on screen with minimal fault and work gracefully across OS and devices because it maybe not have to facing with "Gamma correction" issue](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/How-can-this-bot-works-cross-platform%3F)
 
 Check the `rerun.bmp`, `rerun-hl.bmp` and `rerun-sp.bmp` in resources folder, you will see:
 - `rerun.bmp` is the ReRun in game button when was not highlighted
@@ -131,7 +131,7 @@ For: developers only
 
 Read image, keep only pixels which has color (eg. FF0000 is red) as the same as input. Used to produce picture for BwMatrixMeta objects
 
-Those output pictures can be used to scan buttons on screen with minimal fault and work gracefully across OS and devices because it maybe not have to facing with "Gamma correction" issue
+[Those output image can be used to scan buttons on screen with minimal fault and work gracefully across OS and devices because it maybe not have to facing with "Gamma correction" issue](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/How-can-this-bot-works-cross-platform%3F)
 
 ### KeepPix
 For: developers only
@@ -140,7 +140,7 @@ For: developers only
 
 Read 2 images: source and input, filter pixels from the input image, only keep pixels which exists in source image
 
-Those output pictures can be used to scan buttons on screen with minimal fault and work gracefully across OS and devices because it maybe not have to facing with "Gamma correction" issue
+[Those output image can be used to scan buttons on screen with minimal fault and work gracefully across OS and devices because it maybe not have to facing with "Gamma correction" issue](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/How-can-this-bot-works-cross-platform%3F)
 
 #### Project-wide flags
 - `--help` show help for specific application, for example: `./rerun.sh --help`

@@ -13,7 +13,7 @@ Only support game resolution 800x520
 
 Therefore:
 - Can only use this bot to control game on web version at [kongregate.com](https://www.kongregate.com/games/Juppiomenz/bit-heroes)
-- __Can not__ use for Steam version which does not have Window size 800x520 option
+- [__Can not__ use for Steam version which does not have Window size 800x520 option](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Does-this-bot-supports-Steam-version-of-Bit-Heroes%3F)
 - __Not sure__ about Android emulators (like Nox, Blue Stacks,..) because not tested
 
 *It is recommended to play game using mini client
@@ -26,8 +26,8 @@ Therefore:
 [Also supports pushing messages to Telegram for notification purpose](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
 
 ### Minimum requirement:
-- Java 8 (not tested on version 9 and above but probably it works)
-- Google Chrome installed (if you wish to use the mini client)
+- [Java 8 (not tested on version 9+ but probably it works)](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html)
+- [Google Chrome installed (if you wish to use the mini client)](https://www.google.com/chrome)
 
 ### Configure:
 Have to configure the user-config.properties file

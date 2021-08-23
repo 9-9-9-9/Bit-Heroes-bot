@@ -76,6 +76,10 @@ rm -f ./release/bh-client/*.html
 # Compress output
 FILE=Bit-Heroes-bot-Release-v$VERSION.zip
 rm -f $FILE
-zip -r $FILE ./release/
+
+DIR=./BitHeroes-v$VERSION
+rm -rf $DIR
+mv ./release $DIR
+zip -r $FILE $DIR
 
 echo 'Done '$FILE
