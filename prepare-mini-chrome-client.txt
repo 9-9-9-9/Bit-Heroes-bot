@@ -1,0 +1,20 @@
+// Paste the following script into Console tab of Chrome Dev Tools (F12)
+//  and copy the output into user-config.properties file
+
+// To play Bit Heroes using mini client, you must do the following things:
+// Steps:
+// 1. Make sure you can play game via web browser at https://www.kongregate.com/games/Juppiomenz/bit-heroes
+// 2. Press F12 to open Dev Tools
+// 3. Go to Console tab of Dev Tools
+// 4. Open file `prepare-mini-chrome-client.txt`
+// 5. Paste the content into the Console tab
+
+console.log('# Game tokens');
+console.log('game.kong.user.id=' + active_user.getAttributes().id);
+console.log('game.kong.user.name=' + active_user.getAttributes().username);
+console.log('game.auth.token=' + active_user.getGameAttributes().game_auth_token);
+
+// 6. Copy the output into `user-config.properties` file, make sure to override the correct properties
+// 7. Generate mini client using:
+//  - On Windows: run file `./client.bat`
+//  - On other OS: run file `./client.sh`

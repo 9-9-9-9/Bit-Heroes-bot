@@ -1,0 +1,81 @@
+<!-- saved from url=(0054)https://www.kongregate.com/games/Juppiomenz/bit-heroes -->
+<html lang="en" xml:lang="en">
+<head>
+  <title>Bit Heroes</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=Edge">
+  <script src="./sitewide_javascripts.js"></script>
+  <script>
+    // *BEGIN* MODIFY HERE
+    const kongUserId = %game.kong.user.id%;
+    const kongUserName = "%game.kong.user.name%";
+    const gameAuthToken = "%game.auth.token%";
+    // *END* OF MODIFICATION
+
+    const gameId = 266462;
+    var active_user = new ActiveUser({
+      "kong_user_data": {
+        "id": kongUserId,
+        "username": kongUserName,
+        "current_locale": "en-US"
+      }
+    });
+    active_user.setGame(gameId, null, {
+      "game_auth_token": gameAuthToken
+    });
+    var channel_id = uuid.v4();
+  </script>
+  <script src="./holodeck_javascripts.js"></script>
+  <script>
+    (function () {
+      window.imaVideoBumper = new IMAVideoBumper({
+        targetingParams: null,
+        baseUrl: null,
+        metricTracker: null
+      });
+      window.imaVideoBumper.loadGame(true);
+    }).runWhenDomLoaded();
+  </script>
+</head>
+
+<body id="play" style="background-color: #000;">
+  <div id="game">
+    <iframe id="gameiframe" name="gameiframe" style="width: 800px; height: 520px; position: absolute; top: 0px; left: 0px;" width="800" height="520">
+    </iframe>
+    <script>
+      gameLoader = new Kongregate.GameLoader(
+        function (urlOptions) {
+          new GameIframe(
+            {
+              "iframe_url": "https://web.bitheroesgame.com/kongregatewebgl/",
+              "game_width": 800,
+              "game_height": 520,
+              "max_game_width": 800,
+              "max_game_height": 520,
+              "game_left": 0,
+              "game_top": 0,
+              "host": "https://www.kongregate.com",
+              "game_id": gameId,
+              "game_version": 1610392853,
+              "flash_var_prefix": "kv_",
+              "game_type": "iframe"
+            },
+            urlOptions,
+            channel_id
+          ).createGameIframeElement();
+        },
+        false,
+        false
+      );
+
+      function activateGame(urlOptions) {
+        if (activateGame._alreadyActivated)
+          return;
+        activateGame._alreadyActivated = true;
+        gameLoader.loadGame(urlOptions || '');
+        document.fire('game:activated');
+      };
+    </script>
+  </div>
+</body>
+</html>
