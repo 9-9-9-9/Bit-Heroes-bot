@@ -64,6 +64,10 @@ public class GenMiniClient extends AbstractApplication {
                 chromeArgs.add("-a");
                 chromeArgs.add("\"Google Chrome\"");
                 chromeArgs.add("--args");
+                // chromeArgs.add(String.format("\"--user-data-dir=%s\"", chromeUserDir.getAbsolutePath()));
+                chromeArgs.add("--window-size=805,545");
+                chromeArgs.add("--window-position=0,0");
+                chromeArgs.add(String.format("\"--app=file://%s\"", pathIndex.toAbsolutePath().toString()));
             } else if (Configuration.OS.isWin) {
                 app = "\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"";
 				chromeArgs.add(String.format("\"--user-data-dir=%s\"", chromeUserDir.getAbsolutePath()));
@@ -72,15 +76,35 @@ public class GenMiniClient extends AbstractApplication {
 				chromeArgs.add(String.format("\"--app=file://%s\"", pathIndex.toAbsolutePath().toString()));
             } else {
                 app = "google-chrome";
-				chromeArgs.add(String.format("--user-data-dir=%s", chromeUserDir.getAbsolutePath()));
+				chromeArgs.add(String.format("'--user-data-dir=%s'", chromeUserDir.getAbsolutePath()));
 				chromeArgs.add("--window-size=800,520");
 				chromeArgs.add("--window-position=0,0");
-				chromeArgs.add(String.format("--app=file://%s", pathIndex.toAbsolutePath().toString()));
+				chromeArgs.add(String.format("'--app=file://%s'", pathIndex.toAbsolutePath().toString()));
             }
 
             StringBuffer sb = new StringBuffer();
             if (Configuration.OS.isMac) {
                 sb.append("#!/usr/bin/env bash");
+                sb.append('\n');
+                sb.append("read -p \"Launching this mini client will force close all current Google Chrome processes! Are you sure? (Y/N) \" -n 1 -r");
+                sb.append('\n');
+                sb.append("echo");
+                sb.append('\n');
+                sb.append("if [[ ! $REPLY =~ ^[Yy]$ ]]");
+                sb.append('\n');
+                sb.append("then");
+                sb.append('\n');
+                sb.append("  echo \"You didn't accept so mini client can not be launched\"");
+                sb.append('\n');
+                sb.append("  exit 1");
+                sb.append('\n');
+                sb.append("fi");
+                sb.append('\n');
+                sb.append('\n');
+                sb.append("pkill -a -i \"Google Chrome\"");
+                sb.append('\n');
+                sb.append("sleep 2s");
+                sb.append('\n');
             } else if (Configuration.OS.isUnix) {
                 sb.append("#!/bin/bash");
             }

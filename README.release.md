@@ -1,7 +1,10 @@
 ## Bit Heroes bot
+##### on Linux / Windows / ~~MacOS~~
 This readme file is for normal users
 
 Developers please read [at my github](https://github.com/9-9-9-9/Bit-Heroes-bot)
+
+_There're some additional information for MacOS users, please read at bottom of this page_
 ___
 Only support game resolution 800x520
 
@@ -10,17 +13,17 @@ Therefore:
 - __Can not__ use for Steam version which does not have Window size 800x520 option
 - __Not sure__ about Android emulators (like Nox, Blue Stacks,..) because not tested
 
-*It is recommended to play game using mini client (read bellow)*
+*It is recommended to play game using mini client
 
 ### Contains the following functions:
-1. Fishing: auto fishing
-2. Re-Run: detect and click ReRun button while in Dungeons and Raid
+1. Detect and click **ReRun** button while in Dungeons and Raid
+2. Auto fishing
 3. Launch game in mini client using Google Chrome
 
 Also supports pushing messages to Telegram for notification purpose
 
 ### Minimum requirement:
-- Java 8
+- Java 8 (not tested on version 9 and above but probably it works)
 - Google Chrome installed (if you wish to use the mini client)
 
 ### Configure:
@@ -38,7 +41,9 @@ They are the coordinate where your game screen starts. How to fill it correctly?
 5. Fill the number into `user-config.properties` file. For example if current position is `0,57`, fill it like this:
     - `offset.screen.x=0`
     - `offset.screen.y=57`
-    - On Windows, usually x=8 and y=31 when using mini client of Google Chrome
+    - On Ubuntu 18.04, usually `x=0` and `y=57` when using mini client of Google Chrome
+    - On Windows 10, usually `x=8` and `y=31` when using mini client of Google Chrome
+    - On MacOS 10.14, usually `x=0` and `y=45` when using mini client of Google Chrome
 
 To enable Telegram notification (require technical skill)
 - Set the bot private key to `telegram.token`
@@ -47,7 +52,7 @@ To enable Telegram notification (require technical skill)
 #### How to use:
 ### ReRun
 - Windows: run file `.\rerun.bat`
-- Other OS: run file `./rerun.sh`
+- Linux/Mac: run file `./rerun.sh`
 
 Supported flags:
 - `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./rerun.sh 100 --exit=3600` means will stop ReRun after clicked ReRun buttons 100 times or after 3600 seconds (1 hours), depends which condition completed first
@@ -61,7 +66,7 @@ Notes:
 
 ### Fishing
 - Windows: run file `.\fishing.bat`
-- Other OS: run file `./fishing.sh`
+- Linux/Mac: run file `./fishing.sh`
 
 Supported flags:
 - `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./fishing.sh 20 --exit=1800` means will stop fishing after fishing 20 times or after 1800 seconds (30m), depends which condition completed first
@@ -77,13 +82,28 @@ Steps:
 6. Copy the output into `user-config.properties` file, make sure to override the correct properties
 7. Generate mini client using:
 - Windows: run file `.\client.bat`
-- Other OS: run file `./client.sh`
+- Linux/Mac: run file `./client.sh`
 
 Enjoy it
 - Windows: run file `.\mini-game-on-chrome.bat`
-- Other OS: run file `./mini` or `./mini-game-on-chrome.sh`
+- Linux/Mac: run file `./mini` or `./mini-game-on-chrome.sh`
 
 #### Project-wide flags
 - `--help` show help for specific application, for example: `./rerun.sh --help`
 - `--mute` do not push notification to Telegram
 - `--img` save screenshot into `./out/images/<app>` directory, only use for debugging purpose
+
+#### Tested environments:
+| OS | Result |
+| --- | --- |
+| Ubuntu 18.04 (development environment) | Work perfectly |
+| Windows 10 x64 | Work perfectly |
+| MacOS 10.14 High Sierra | Bot functions not work, only mini-client works |
+
+### MacOS users
+1. From MacOS 10.13+, java.awt.Robot class of Java can not do mouse and keyboard interaction, thus none of bot functions will work
+2. With a bit of luck, you can try to add Java to [System Preferences > Security & Privacy > Accessibility] and see if it works (because MacOS prevent apps from controlling your mac by default).
+If it doesn't work, install a higher version of Java, add Accessibility and try again. If it still doesn't work, just give up
+3. Thus this whole project only has the mini-client function will work on MacOS
+
+So this project does not officially supported MacOS, any developer can resolve the above issue, please make a pull request
