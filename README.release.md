@@ -1,5 +1,8 @@
 ## Bit Heroes bot
 ##### on Linux / Windows / ~~MacOS~~
+
+[Wiki version](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
+
 This readme file is for normal users
 
 Developers please read [at my github](https://github.com/9-9-9-9/Bit-Heroes-bot)
@@ -20,7 +23,7 @@ Therefore:
 2. Auto fishing
 3. Launch game in mini client using Google Chrome
 
-Also supports pushing messages to Telegram for notification purpose
+[Also supports pushing messages to Telegram for notification purpose](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
 
 ### Minimum requirement:
 - Java 8 (not tested on version 9 and above but probably it works)
@@ -33,19 +36,10 @@ Watch out the following keys:
 - `offset.screen.x`
 - `offset.screen.y`
 
-They are the coordinate where your game screen starts. How to fill it correctly?
-1. Open game at https://www.kongregate.com/games/Juppiomenz/bit-heroes on Google Chrome web browser, move the window to the top left of your screen
-2. Press the `Print Screen` button
-3. Paste it into Paint or something similar
-4. Point at the top left of your GAME SCREEN to see its current coordinate
-5. Fill the number into `user-config.properties` file. For example if current position is `0,57`, fill it like this:
-    - `offset.screen.x=0`
-    - `offset.screen.y=57`
-    - On Ubuntu 18.04, usually `x=0` and `y=57` when using mini client of Google Chrome
-    - On Windows 10, usually `x=8` and `y=31` when using mini client of Google Chrome
-    - On MacOS 10.14, usually `x=0` and `y=45` when using mini client of Google Chrome
+They are the coordinate where your game screen starts. 
+How to fill it correctly? [Read me](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Basic-setup)
 
-To enable Telegram notification (require technical skill)
+To enable Telegram notification, [follow me](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
 - Set the bot private key to `telegram.token`
 - Set the channel id to `telegram.channel-id`
 

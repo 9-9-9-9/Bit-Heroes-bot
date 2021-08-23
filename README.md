@@ -4,7 +4,10 @@
 [![Github All Releases](https://img.shields.io/github/downloads/9-9-9-9/Bit-Heroes-bot/total.svg)](https://github.com/9-9-9-9/Bit-Heroes-bot/releases)
 
 have inspiration from https://github.com/tiemonl/Bit-Heroes-Fishing-Bot
+
 ___
+[Wiki version](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
+
 This readme file is for developers
 
 Normal users please [read at this page](https://github.com/9-9-9-9/Bit-Heroes-bot/blob/master/README.release.md)
@@ -28,7 +31,7 @@ And some extra functions support developers on developing this bot:
 - Matrix: read an image, keep only pixels which has color (eg. FF0000 is red) as the same as input. Used to produce picture for BwMatrixMeta objects
 - KeepPix: read 2 images are source and input, filter pixels from the input image, only keep pixels which exists in source image
 
-Also supports pushing messages to Telegram for notification purpose
+[Also supports pushing messages to Telegram for notification purpose](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
 
 ### Minimum requirement:
 - JDK 8 (not tested on version 9 and above but probably it works)
@@ -50,18 +53,9 @@ Watch out the following keys:
 - `offset.screen.x`
 - `offset.screen.y`
 
-They are the coordinate where your game screen starts. How to fill it correctly?
-1. Open game at https://www.kongregate.com/games/Juppiomenz/bit-heroes on Google Chrome web browser, move the window to the top left of your screen
-2. Press the `Print Screen` button
-3. Paste it into Paint or something similar
-4. Point at the top left of your GAME SCREEN to see its current coordinate
-5. Fill the number into `config.properties` file (or `user-config.properties`). For example if current coordinate is `0,57`, fill it like this:
-    - offset.screen.x=0
-    - offset.screen.y=57
-    - On Ubuntu 18.04, usually `x=0` and `y=57` when using mini client of Google Chrome
-    - On Windows 10, usually `x=8` and `y=31` when using mini client of Google Chrome
-    - On MacOS 10.14, usually `x=0` and `y=45` when using mini client of Google Chrome
-        
+They are the coordinate where your game screen starts. 
+How to fill it correctly? [Read me](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Basic-setup)
+
 To enable Telegram notification (require technical skill)
 - Set the bot private key to `telegram.token`
 - Set the channel id to `telegram.channel-id`
@@ -70,6 +64,8 @@ To enable Telegram notification (require technical skill)
 For: everyone
 
 `./rerun.sh <how many times to click rerun>`
+
+or click and run `.\rerun.bat` on Windows
 
 for example: `./rerun.sh 10` means will try to click ReRun 10 times before exit
 
@@ -87,6 +83,8 @@ Notes:
 For: everyone
 
 `./fishing.sh <how many times to hook>`
+
+or click and run `.\fishing.bat` on Windows
 
 for example: `./fishing.sh 10` means will try to hook 10 times before exit
 
