@@ -4,7 +4,7 @@ CALL mvn clean package
 
 if not exist out mkdir out
 del BitHeroes.jar >nul 2>&1
-echo F|xcopy target\ReRun-*-jar-with-dependencies.jar BitHeroes.jar /Y
+echo F|xcopy target\BitHeroes-*-jar-with-dependencies.jar BitHeroes.jar /Y
 if not exist user-config.properties echo. 2>user-config.properties
 
 rem Generating mini client

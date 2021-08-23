@@ -11,6 +11,7 @@ import java.util.List;
 
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
+import static bh.bot.common.utils.StringUtil.isBlank;
 
 public class GenMiniClient extends AbstractApplication {
     private static final File chromeUserDir = new File("chrome-user-dir");
@@ -23,8 +24,8 @@ public class GenMiniClient extends AbstractApplication {
         String scriptFileName = String.format("mini-game-on-chrome.%s", Configuration.OS.isWin ? "bat" : "sh");
         if (errMsg != null)
         {
-            err("Unable to generate %s with error:", scriptFileName);
-            err("  %s", errMsg);
+            err("ERROR: Unable to generate mini-client!!!");
+            err("Error message: %s", errMsg);
             info("To be able to use mini game client (using Google Chrome), the following conditions must be met:");
             info(" 1. Google Chrome must be installed");
             info(" 2. You can play Bit Heroes game at https://www.kongregate.com/games/Juppiomenz/bit-heroes");
@@ -69,7 +70,38 @@ public class GenMiniClient extends AbstractApplication {
                 chromeArgs.add("--window-position=0,0");
                 chromeArgs.add(String.format("\"--app=file://%s\"", pathIndex.toAbsolutePath().toString()));
             } else if (Configuration.OS.isWin) {
-                app = "\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"";
+				final String keyChromePath = "external.application.chrome.path";
+				final String defaultChromePath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
+				String chromePath = Configuration.read(keyChromePath);
+				if (isBlank(chromePath)) {
+					info("Missing configuration of Google Chrome path (key %s), going to set to use default path: %s", keyChromePath, defaultChromePath);
+					chromePath = defaultChromePath;
+				}
+				
+				if (!(new File(chromePath)).exists()) {
+					err("ERROR: Chrome not found");
+					info("Can not find Google Chrome at provided path %s", chromePath);
+					info("Please provide a correct path to chrome.exe into key '%s' on user-config.properties file", keyChromePath);
+					info("To get it, you can do this:");
+					info("1. Right click on Google Chrome shortcut");
+					info("2. Select Properties");
+					info("3. Copy value of Target line");
+					info("4. Transfrom the value to a correct format. For example:");
+					info("  - Input value is:");
+					info("    \"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"");
+					info("    (with the double quotes)");
+					info("  - Should be translated into:");
+					info("    C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe");
+					info("    (remove the double quotes and double the back slashes)");
+					info("5. Fill the translated path into key '%s' of the user-config.properties file", keyChromePath);
+					info("    Example:");
+					info("%s=C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe", keyChromePath);
+					info("6. Save the file user-config.properties after modified");
+					info("7. Run script '.\\client.bat' to generate mini-client");
+					System.exit(1);
+				}
+				
+                app = String.format("\"%s\"", chromePath);
 				chromeArgs.add(String.format("\"--user-data-dir=%s\"", chromeUserDir.getAbsolutePath()));
 				chromeArgs.add("--window-size=820,565");
 				chromeArgs.add("--window-position=0,0");
