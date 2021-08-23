@@ -49,7 +49,7 @@ tolerant.position=50
 tolerant.color=0
 
 # Google Chrome path, for Windows only
-external.application.chrome.path=C:\Program Files (x86)\Google\Chrome\Application\chrome.exe
+external.application.chrome.path=C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe
 EOF
 
 # Copy files for mini client
