@@ -1,5 +1,6 @@
 package bh.bot.common;
 
+import bh.bot.common.types.ScreenResolutionProfile;
 import com.sun.media.sound.InvalidDataException;
 import bh.bot.app.AbstractApplication;
 
@@ -14,6 +15,14 @@ import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.StringUtil.isNotBlank;
 
 public class Configuration {
+    public static class Sizing {
+        public static class Fishing {
+            public static class Scan {
+                public static Size castingFishSize;
+            }
+        }
+    }
+
     public static class Offsets {
         public static Offset gameScreenOffset;
 
@@ -40,6 +49,11 @@ public class Configuration {
             public static class Labels {
                 public static Offset fishing;
             }
+
+            public static class Scan {
+                public static Offset detectColor100PercentCatchingFish;
+                public static Offset beginScanCastingFish;
+            }
         }
     }
 
@@ -64,7 +78,7 @@ public class Configuration {
 
     private static Properties properties = new Properties();
 
-    public static void load() throws IOException {
+    public static void load(ScreenResolutionProfile screenResolutionProfile) throws IOException {
         properties.load(Configuration.class.getResourceAsStream("/config.properties"));
 
         File cfgOverride = new File("user-config.properties");
@@ -78,13 +92,17 @@ public class Configuration {
         }
 
         Offsets.gameScreenOffset = Offset.fromKeyPrefix("offset.screen");
-        Offsets.Dungeons.Buttons.reRun = Offset.fromKeyPrefix("offset.dungeons.buttons.rerun-kp");
-        Offsets.Globally.Buttons.talkRightArrow = Offset.fromKeyPrefix("offset.globally.buttons.talkRightArrow");
-        Offsets.Globally.Buttons.reconnectSp = Offset.fromKeyPrefix("offset.globally.buttons.reconnect-sp");
-        Offsets.Fishing.Buttons.start = Offset.fromKeyPrefix("offset.fishing.buttons.start-sp");
-        Offsets.Fishing.Buttons.cast = Offset.fromKeyPrefix("offset.fishing.buttons.cast-sp");
-        Offsets.Fishing.Buttons.catch_ = Offset.fromKeyPrefix("offset.fishing.buttons.catch-sp");
-        Offsets.Fishing.Labels.fishing = Offset.fromKeyPrefix("offset.fishing.labels.fishing-mx");
+        Offsets.Dungeons.Buttons.reRun = screenResolutionProfile.getOffsetButtonDungeonReRun();
+        Offsets.Globally.Buttons.talkRightArrow = screenResolutionProfile.getOffsetButtonTalkRightArrow();
+        Offsets.Globally.Buttons.reconnectSp = screenResolutionProfile.getOffsetButtonReconnect();
+        Offsets.Fishing.Buttons.start = screenResolutionProfile.getOffsetButtonFishingStart();
+        Offsets.Fishing.Buttons.cast = screenResolutionProfile.getOffsetButtonFishingCast();
+        Offsets.Fishing.Buttons.catch_ = screenResolutionProfile.getOffsetButtonFishingCatch();
+        Offsets.Fishing.Labels.fishing = screenResolutionProfile.getOffsetLabelFishing();
+        Offsets.Fishing.Scan.detectColor100PercentCatchingFish = screenResolutionProfile.getOffsetDetect100PcCatchingFish();
+        Offsets.Fishing.Scan.beginScanCastingFish = screenResolutionProfile.getOffsetScanCastingFish();
+
+        Sizing.Fishing.Scan.castingFishSize = screenResolutionProfile.getScanSizeCastingFish();
 
         Tolerant.position = Math.max(5, readInt("tolerant.position"));
         Tolerant.color = Math.max(0, readInt("tolerant.color"));
@@ -144,10 +162,10 @@ public class Configuration {
     }
 
     public static class Offset {
-        public int X;
-        public int Y;
+        public final int X;
+        public final int Y;
 
-        private Offset(int x, int y) {
+        public Offset(int x, int y) {
             this.X = x;
             this.Y = y;
         }
@@ -160,6 +178,16 @@ public class Configuration {
             if (y < 0)
                 throw new IllegalArgumentException(String.format("Value of offset %s.y can not be a negative number: %d", keyPrefix, y));
             return new Offset(x, y);
+        }
+    }
+
+    public static class Size {
+        public final int W;
+        public final int H;
+
+        public Size(int w, int h) {
+            this.W = w;
+            this.H = h;
         }
     }
 }

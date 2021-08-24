@@ -148,7 +148,10 @@ public class FishingApp extends AbstractApplication {
             if (curScreen == screenCatch) {
                 // debug("On screen CATCH");
 
-                Color color = getPixelColor(anchorPoint.x + 697, anchorPoint.y + 389);
+                Color color = getPixelColor(
+                        anchorPoint.x + Configuration.Offsets.Fishing.Scan.detectColor100PercentCatchingFish.X,
+                        anchorPoint.y + Configuration.Offsets.Fishing.Scan.detectColor100PercentCatchingFish.Y
+                );
                 if (color.getGreen() < 230)
                     continue;
                 if (color.getRed() > 100)
@@ -171,7 +174,12 @@ public class FishingApp extends AbstractApplication {
             } else if (curScreen == screenCast) {
                 // debug("On screen CAST");
 
-                BufferedImage sc = captureScreen(anchorPoint.x + 583, anchorPoint.y + 356, 48, 72);
+                BufferedImage sc = captureScreen(
+                        anchorPoint.x + Configuration.Offsets.Fishing.Scan.beginScanCastingFish.X,
+                        anchorPoint.y + Configuration.Offsets.Fishing.Scan.beginScanCastingFish.Y,
+                        Configuration.Sizing.Fishing.Scan.castingFishSize.W,
+                        Configuration.Sizing.Fishing.Scan.castingFishSize.H
+                );
                 final int black = 0x000000;
                 try {
                     for (int x = 0; x < sc.getWidth(); x++) {
