@@ -5,6 +5,7 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.win32.StdCallLibrary;
 
 import static bh.bot.common.Log.err;
@@ -25,17 +26,19 @@ public class TestApp extends AbstractApplication {
         String startOfWindowName = "Bit Heroes";
         Pointer hWnd = JnaUtil.getWinHwnd(startOfWindowName);
         if (hWnd == null || startOfWindowName.isEmpty()) {
-            String message = String.format(
-                    "Window named \"%s\" was not found", startOfWindowName);
+            String message = String.format("Window named \"%s\" was not found", startOfWindowName);
             err(message);
             return;
         }
-        int x = 0;
-        int y = 0;
-        int w = 800;
-        int h = 520;
 
-        JnaUtil.moveWindow(hWnd, x, y, w, h);
+        int[] rect = {0, 0, 0, 0};
+        result = User32.INSTANCE.GetWindowRect(hWnd, rect);
+        if (result == 0) {
+            err("result == 0");
+            return;
+        }
+
+        JnaUtil.moveWindow(hWnd, 0, 0, rect[2], rect[3] + 40);
     }
 
     static class JnaUtil {
@@ -83,6 +86,8 @@ public class TestApp extends AbstractApplication {
                            boolean bRepaint);
 
         int GetWindowTextA(Pointer hWnd, byte[] lpString, int nMaxCount);
+
+        int GetWindowRect(Pointer handle, int[] rect);
 
     }
 
