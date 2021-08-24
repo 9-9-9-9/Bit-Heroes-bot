@@ -1,5 +1,9 @@
 package bh.bot.app;
 
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.Platform;
+
 import java.awt.*;
 
 import static bh.bot.common.Log.err;
@@ -8,13 +12,13 @@ import static bh.bot.common.Log.info;
 public class TestApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
-        Point point = detectLabelFishing();
-        if (point == null) {
-            err("Not found");
-            return;
-        }
+        CMath lib = Native.load(Platform.isWindows()?"msvcrt":"c", CMath.class);
+        double result = lib.cosh(0);
+        info(result);
+    }
 
-        info("%d, %d", point.x, point.y);
+    public interface CMath extends Library {
+        double cosh(double value);
     }
 
     @Override

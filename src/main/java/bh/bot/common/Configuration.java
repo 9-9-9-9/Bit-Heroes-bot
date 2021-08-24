@@ -79,6 +79,13 @@ public class Configuration {
     private static Properties properties = new Properties();
 
     public static void load(ScreenResolutionProfile screenResolutionProfile) throws IOException {
+        info(
+                "Using '%s' profile which supports %dx%d game resolution",
+                screenResolutionProfile.getName(),
+                screenResolutionProfile.getSupportedGameResolutionWidth(),
+                screenResolutionProfile.getSupportedGameResolutionHeight()
+        );
+
         properties.load(Configuration.class.getResourceAsStream("/config.properties"));
 
         File cfgOverride = new File("user-config.properties");
