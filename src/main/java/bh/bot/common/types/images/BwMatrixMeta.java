@@ -128,14 +128,14 @@ public class BwMatrixMeta {
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/cast-mx.bmp"
                 ), //
-                Configuration.Offsets.Fishing.Buttons.start,
+                Configuration.Offsets.Fishing.Buttons.cast,
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.catch_ = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/catch-mx.bmp"
                 ), //
-                Configuration.Offsets.Fishing.Buttons.start,
+                Configuration.Offsets.Fishing.Buttons.catch_,
                 0xFFFFFF
         );
     }
