@@ -3,7 +3,7 @@ package bh.bot.common.types;
 import bh.bot.common.Configuration.Offset;
 import bh.bot.common.Configuration.Size;
 import bh.bot.common.exceptions.NotSupportedException;
-import bh.bot.common.types.tuples.Tuple3;
+import bh.bot.common.types.tuples.Tuple4;
 
 public abstract class ScreenResolutionProfile {
     public abstract String getName();
@@ -19,7 +19,8 @@ public abstract class ScreenResolutionProfile {
     public abstract Offset getOffsetDetect100PcCatchingFish();
     public abstract Offset getOffsetScanCastingFish();
     public abstract Size getScanSizeCastingFish();
-    public abstract Tuple3<Integer, Integer, Integer> getBackwardScanRightEvents();
+    public abstract Tuple4<Integer, Integer, Integer, Integer> getBackwardScanRightEvents(); // min x, max y, step backward, max x
+    public abstract Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftEvents(); // min x, min y, step forward, max x
 
     public static class WebProfile extends ScreenResolutionProfile {
 
@@ -89,8 +90,13 @@ public abstract class ScreenResolutionProfile {
         }
 
         @Override
-        public Tuple3<Integer, Integer, Integer> getBackwardScanRightEvents() {
-            return new Tuple3<>(725, 433, 72);
+        public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanRightEvents() {
+            return new Tuple4<>(730, 433, 72, 789);
+        }
+
+        @Override
+        public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftEvents() {
+            return new Tuple4<>(14, 96, 72, 59);
         }
     }
 
@@ -162,7 +168,12 @@ public abstract class ScreenResolutionProfile {
         }
 
         @Override
-        public Tuple3<Integer, Integer, Integer> getBackwardScanRightEvents() {
+        public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanRightEvents() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftEvents() {
             throw NotSupportedException.steam();
         }
     }

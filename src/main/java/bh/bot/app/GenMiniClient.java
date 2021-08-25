@@ -19,7 +19,7 @@ public class GenMiniClient extends AbstractApplication {
 
     @Override
     protected void internalRun(String[] args) {
-        throwNotSupportedFlagExit(exitAfterXSecs);
+        throwNotSupportedFlagExit(launchInfo.exitAfterXSecs);
 
         String errMsg = Configuration.loadGameCfg();
         String scriptFileName = String.format("mini-game-on-chrome.%s", Configuration.OS.isWin ? "bat" : "sh");

@@ -35,27 +35,27 @@ import static bh.bot.common.utils.InteractionUtil.Screen.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
 
 public abstract class AbstractApplication {
+    private static List<String> flags;
     public static LaunchInfo parse(String[] args) {
         String appCode = args[0];
 
-        List<String> listArg = Arrays
+        flags = Arrays
                 .stream(args)
                 .map(x -> x.toLowerCase().trim())
+                .filter(x -> x.startsWith("--"))
                 .collect(Collectors.toList());
 
-        boolean enableSavingDebugImages = false;
-        if (listArg.contains("--img"))
-            enableSavingDebugImages = true;
-        if (listArg.contains("--debug"))
+        if (hasFlag("--debug"))
             Log.enableDebug();
-        if (listArg.contains("--mute"))
+        if (hasFlag("--mute"))
             Telegram.disable();
         else if (Telegram.isDisabled())
             Log.info("Telegram was disabled due to missing or invalid configuration");
 
-        if (listArg.contains("--exit"))
-            Log.err("Invalid usage of flag 'exit', should be '--exit=X' where X is the number of seconds to await before force exit, for example: '--exit=3600' means exit after 1 hours");
-        List<String> exitCmd = listArg.stream().filter(x -> x.startsWith("--exit=") && x.length() > 7).collect(Collectors.toList());
+        if (hasFlag("--exit"))
+            err("Invalid usage of flag 'exit', should be '--exit=X' where X is the number of seconds to await before force exit, for example: '--exit=3600' means exit after 1 hours");
+
+        List<String> exitCmd = flags.stream().filter(x -> x.startsWith("--exit=") && x.length() > 7).collect(Collectors.toList());
         int exitAfter = 0;
         if (exitCmd.size() > 0) {
             String sExitAfter = exitCmd.get(0).substring(7);
@@ -64,14 +64,12 @@ public abstract class AbstractApplication {
                 if (exitAfter > 3600) {
                     int h = exitAfter / 3600;
                     int m = (exitAfter - h * 3600) / 60;
-                    Log.info("Application will exit after %d hours and %d minutes", h, m);
+                    info("Application will exit after %d hours and %d minutes", h, m);
                 }
             } catch (NumberFormatException e) {
-                Log.err("Can not parse command: --exit=%s", sExitAfter);
+                err("Can not parse command: --exit=%s", sExitAfter);
             }
         }
-
-        boolean displayHelp = listArg.contains("--help");
 
         args = Arrays
                 .stream(args)
@@ -85,9 +83,19 @@ public abstract class AbstractApplication {
 
         LaunchInfo li = new LaunchInfo(instance, args);
         li.exitAfterXSecs = exitAfter;
-        li.displayHelp = displayHelp;
-        li.enableSavingDebugImages = enableSavingDebugImages;
+        li.displayHelp = hasFlag("--help");
+        li.enableSavingDebugImages = hasFlag("--img");
+        li.eInvasion = hasFlag("--invasion");
+        li.eTrials = hasFlag("--trials") || hasFlag("--trial");
+        li.ePvp = hasFlag("--pvp");
+        li.eWorldBoss = hasFlag("--boss") || hasFlag("--worldboss") || hasFlag("--world-boss");
+        li.eRaid = hasFlag("--raid");
+        flags.clear();
         return li;
+    }
+
+    private static boolean hasFlag(String flag) {
+        return flags.contains(flag);
     }
 
     public static class LaunchInfo {
@@ -96,6 +104,11 @@ public abstract class AbstractApplication {
         public int exitAfterXSecs;
         public boolean displayHelp;
         public boolean enableSavingDebugImages;
+        public boolean eInvasion;
+        public boolean eTrials;
+        public boolean ePvp;
+        public boolean eWorldBoss;
+        public boolean eRaid;
 
         public LaunchInfo(AbstractApplication instance, String[] args) {
             this.instance = instance;
@@ -103,10 +116,9 @@ public abstract class AbstractApplication {
         }
     }
 
-    protected int exitAfterXSecs = 0;
-    protected boolean enableSavingDebugImages = false;
-
+    protected LaunchInfo launchInfo;
     public void run(LaunchInfo launchInfo) throws Exception {
+        this.launchInfo = launchInfo;
         if (Configuration.screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile && !isSupportSteamScreenResolution())
         {
             err("'%s' does not support steam resolution");
@@ -114,9 +126,7 @@ public abstract class AbstractApplication {
             return;
         }
 
-        this.exitAfterXSecs = launchInfo.exitAfterXSecs;
-        this.enableSavingDebugImages = launchInfo.enableSavingDebugImages;
-        if (this.enableSavingDebugImages)
+        if (this.launchInfo.enableSavingDebugImages)
             Log.info("Enabled saving debug images");
         initOutputDirectories();
         // ImgMeta.load(); // Deprecated class
@@ -143,7 +153,7 @@ public abstract class AbstractApplication {
     }
 
     protected void saveDebugImage(BufferedImage img, String prefix) {
-        if (!enableSavingDebugImages) {
+        if (!this.launchInfo.enableSavingDebugImages) {
             return;
         }
         File file = Paths.get("out", "images", getAppCode(), "dbg_" + prefix + "_" + System.currentTimeMillis() + ".bmp").toFile();

@@ -16,7 +16,7 @@ public class KeepPixApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
         try {
-            throwNotSupportedFlagExit(exitAfterXSecs);
+            throwNotSupportedFlagExit(launchInfo.exitAfterXSecs);
 
             if (args.length != 0 && args.length != 2) {
                 Log.info("Invalid number of arguments");

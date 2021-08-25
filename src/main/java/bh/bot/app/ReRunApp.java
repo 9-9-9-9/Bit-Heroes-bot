@@ -39,7 +39,7 @@ public class ReRunApp extends AbstractApplication {
                 () -> doLoopClickImage(loop, masterSwitch),
                 () -> doClickTalk(masterSwitch::get),
                 () -> detectDisconnected(masterSwitch),
-                () -> autoExit(exitAfterXSecs, masterSwitch)
+                () -> autoExit(launchInfo.exitAfterXSecs, masterSwitch)
         );
         Telegram.sendMessage("Stopped", false);
     }
