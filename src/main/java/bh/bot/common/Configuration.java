@@ -12,9 +12,12 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import static bh.bot.common.Log.info;
+import static bh.bot.common.utils.StringUtil.isBlank;
 import static bh.bot.common.utils.StringUtil.isNotBlank;
 
 public class Configuration {
+    public static String profileName = null;
+
     public static class Sizing {
         public static class Globally {
             public static Size gameResolution;
@@ -90,6 +93,10 @@ public class Configuration {
                 screenResolutionProfile.getSupportedGameResolutionWidth(),
                 screenResolutionProfile.getSupportedGameResolutionHeight()
         );
+
+        profileName = screenResolutionProfile.getName().trim();
+        if (isBlank(profileName))
+            throw new InvalidDataException("profileName");
 
         properties.load(Configuration.class.getResourceAsStream("/config.properties"));
 

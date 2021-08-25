@@ -5,6 +5,12 @@ import bh.bot.common.Configuration;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.utils.InteractionUtil;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static bh.bot.common.Log.*;
+
 public class Main {
     public static void main(String[] args) throws Exception {
         ScreenResolutionProfile screenResolutionProfile = getScreenResolutionProfile(args);
@@ -34,8 +40,6 @@ public class Main {
     }
 
     private static ScreenResolutionProfile getScreenResolutionProfile(String[] args) {
-        return new ScreenResolutionProfile.WebProfile();
-        /*
         List<String> l = Arrays.asList(args).stream().map(String::toLowerCase).collect(Collectors.toList());
         boolean isWeb = l.contains("--web");
         boolean isSteam = l.contains("--steam");
@@ -56,6 +60,5 @@ public class Main {
         return isSteam
                 ? steamProfile
                 : webProfile;
-         */
     }
 }

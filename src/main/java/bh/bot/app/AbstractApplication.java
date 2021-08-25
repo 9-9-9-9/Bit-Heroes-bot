@@ -110,7 +110,7 @@ public abstract class AbstractApplication {
         if (this.enableSavingDebugImages)
             Log.info("Enabled saving debug images");
         initOutputDirectories();
-        ImgMeta.load();
+        // ImgMeta.load(); // Deprecated class
         BwMatrixMeta.load();
         Telegram.setAppName(getAppName());
         internalRun(launchInfo.arguments);
@@ -237,10 +237,12 @@ public abstract class AbstractApplication {
         throw new NotImplementedException();
     }
 
+    @Deprecated
     protected boolean clickImage(ImgMeta im) {
         return clickImageExact(im) || clickImageScanBW(im);
     }
 
+    @Deprecated
     protected boolean clickImageExact(ImgMeta im) {
         int[] lastMatch = im.getLastMatchPoint();
         if (lastMatch[0] < 0 || lastMatch[1] < 0) {
