@@ -1,5 +1,7 @@
 Upgrade notes:
-- Move the `chrome-user-dir` in the previous bot version's directory into the new bot version's directory. That folder was created by chrome to do temp cache and also save your game's setting
+- Move the follow files and directory from previous bot version's directory
+  - `chrome-user-dir` directory, that folder was created by chrome to do temp cache and also save your game's setting
+  - `user-config.properties` file, it contains your configurations
 ___
 ## Bit Heroes bot
 ##### on Linux / Windows / ~~MacOS~~
@@ -12,12 +14,9 @@ Developers please read [at my github](https://github.com/9-9-9-9/Bit-Heroes-bot)
 
 _There're some additional information for MacOS users, please read at bottom of this page_
 ___
-Only support game resolution 800x520
+Officially support game resolution 800x520 ([web](https://www.kongregate.com/games/Juppiomenz/bit-heroes) + mini-client)
 
-Therefore:
-- Can only use this bot to control game on web version at [kongregate.com](https://www.kongregate.com/games/Juppiomenz/bit-heroes)
-- [__Can not__ use for Steam version which does not have Window size 800x520 option](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Does-this-bot-supports-Steam-version-of-Bit-Heroes%3F)
-- __Not sure__ about Android emulators (like Nox, Blue Stacks,..) because not tested
+Also [partially support Steam version with resolution 800x480](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Does-this-bot-supports-Steam-version-of-Bit-Heroes%3F)
 
 *It is recommended to play game using mini client
 
@@ -48,8 +47,15 @@ To enable Telegram notification, [follow me](https://github.com/9-9-9-9/Bit-Hero
 
 #### How to use:
 ### ReRun
-- Windows: run file `.\rerun.bat`
-- Linux/Mac: run file `./rerun.sh`
+
+*This function only supports clicking the ReRun button, that means you have to enter Dungeon/Raid manually, turn on the Auto and when the ReRun button appears, it will be automatically clicked*
+
+- Mini-client:
+  - Windows: click and run `rerun.bat`
+  - Linux/Mac: run `./rerun.sh` from terminal
+- Steam:
+  - Click and run: `steam.rerun.bat`
+  - Run from commandline: `java -jar BitHeroes.jar rerun <loop_count> --steam`
 
 Supported flags:
 - `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./rerun.sh 100 --exit=3600` means will stop ReRun after clicked ReRun buttons 100 times or after 3600 seconds (1 hours), depends which condition completed first
@@ -62,8 +68,15 @@ Notes:
 - Push notification to Telegram when detect Reconnect button (critical), not see ReRun within 15m (critical), exit (normal). But only works if you correctly configured Telegram
 
 ### Fishing
-- Windows: run file `.\fishing.bat`
-- Linux/Mac: run file `./fishing.sh`
+
+*To use this function, you the to be ready on fishing state, and the Start button is visible clearly on the screen*
+
+- Mini-client:
+  - Windows: click and run `fishing.bat`
+  - Linux/Mac: run `./fishing.sh` from terminal
+- Steam:
+  - Click and run: `steam.fishing.bat`
+  - Run from commandline: `java -jar BitHeroes.jar fishing <hook_count> --steam`
 
 Supported flags:
 - `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./fishing.sh 20 --exit=1800` means will stop fishing after fishing 20 times or after 1800 seconds (30m), depends which condition completed first
@@ -78,15 +91,16 @@ Steps:
 5. Paste the content into the Console tab
 6. Copy the output into `user-config.properties` file, make sure to override the correct properties
 7. Generate mini client using:
-- Windows: run file `.\client.bat`
-- Linux/Mac: run file `./client.sh`
+- Windows: run file `client.bat`
+- Linux/Mac: run file `./client.sh` from terminal
 
 Enjoy it
-- Windows: run file `.\mini-game-on-chrome.bat`
-- Linux/Mac: run file `./mini` or `./mini-game-on-chrome.sh`
+- Windows: click and run file `mini-game-on-chrome.bat`
+- Linux/Mac: run file `./mini` or `./mini-game-on-chrome.sh` from terminal
 
 #### Project-wide flags
 - `--help` show help for specific application, for example: `./rerun.sh --help`
+- `--steam` *(Windows only)* for Bit Heroes on Steam with resolution 800x480
 - `--mute` do not push notification to Telegram
 - `--img` save screenshot into `./out/images/<app>` directory, only use for debugging purpose
 
@@ -96,7 +110,21 @@ Enjoy it
 | Ubuntu 18.04 (development environment) | Work perfectly |
 | Windows 10 x64 | Work perfectly |
 | Windows 7 x64 (on Virtual Box) | Work perfectly |
+| Steam on Windows 7 x64 (Virtual Box) | Work good (basically, not stable) |
 | MacOS 10.14 High Sierra | Bot functions not work, only mini-client works |
+
+### Windows users
+If you want to pass parameters/flags to program, you have to edit the `*.bat` files manually
+
+For example if you want to use the feature `--exit=X` on the ReRun function, you have to edit the `rerun.bat` file, modify content
+- from `java -jar BitHeroes rerun`
+- to `java -jar BitHeroes rerun --exit=1800` if you want to stop after 1800 seconds
+- or to `java -jar BitHeroes rerun 30 --exit=1800` if you want to stop after 30 times ReRun or 1800 seconds, depends on what condition completed first
+
+and then save the file
+
+Otherwise you can run app directly from commandline
+> java -jar BitHeroes.jar "function_name" "param1" ["param2"] [--flags]
 
 ### MacOS users
 1. From MacOS 10.13+, java.awt.Robot class of Java can not do mouse and keyboard interaction, thus none of bot functions will work

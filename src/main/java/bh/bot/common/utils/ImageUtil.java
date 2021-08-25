@@ -1,5 +1,7 @@
 package bh.bot.common.utils;
 
+import bh.bot.common.Configuration;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -9,7 +11,7 @@ public class ImageUtil {
     public static BufferedImage loadImageFileFromResource(String path) throws IOException {
         if (!path.toLowerCase().endsWith(".bmp"))
             throw new IllegalArgumentException("Only accept bmp pictures");
-        BufferedImage bi = ImageIO.read(ImageUtil.class.getResource("/game-images/" + path));
+        BufferedImage bi = ImageIO.read(ImageUtil.class.getResource(String.format("/game-images/%s/%s", Configuration.profileName, path)));
         final int acceptedType = BufferedImage.TYPE_3BYTE_BGR;
         if (bi.getType() != acceptedType)
             throw new IllegalArgumentException(String.format("Only accept bmp pictures with type = BufferedImage.TYPE_3BYTE_BGR (int value = %d)", acceptedType));

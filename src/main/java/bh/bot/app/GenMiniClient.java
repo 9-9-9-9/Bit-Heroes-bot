@@ -199,6 +199,11 @@ public class GenMiniClient extends AbstractApplication {
         return null;
     }
 
+    @Override
+    protected String getLimitationExplain() {
+        return null;
+    }
+
     private String readFromInputStream(InputStream inputStream)
             throws IOException {
         StringBuilder resultStringBuilder = new StringBuilder();

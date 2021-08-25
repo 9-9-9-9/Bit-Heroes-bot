@@ -123,4 +123,9 @@ public class SamePixApp extends AbstractApplication {
     protected String getFlags() {
         return null;
     }
+
+    @Override
+    protected String getLimitationExplain() {
+        return null;
+    }
 }

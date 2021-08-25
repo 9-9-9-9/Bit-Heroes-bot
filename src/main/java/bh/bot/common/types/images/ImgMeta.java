@@ -3,17 +3,15 @@ package bh.bot.common.types.images;
 import bh.bot.common.Configuration;
 import bh.bot.common.utils.ImageUtil;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 
+@Deprecated
 public class ImgMeta {
     private final ArrayList<Pixel> a2;
     private final int w;
     private final int h;
     private final int firstRgb;
-    private final Color firstColor;
     private final Configuration.Offset coordinateOffset;
     private int[] lastMatch = new int[]{-1, -1};
 
@@ -25,7 +23,6 @@ public class ImgMeta {
             h = img.getHeight();
             int prevRgb = 0;
             firstRgb = img.getRGB(0, 0) & 0xFFFFFF;
-            firstColor = new Color(firstRgb);
             this.coordinateOffset = coordinateOffset;
             for (int y = 0; y < h; y++) {
                 for (int x = 0; x < w; x++) {
@@ -73,6 +70,6 @@ public class ImgMeta {
         return coordinateOffset;
     }
 
-    public static void load() throws IOException {
+    public static void load() {
     }
 }

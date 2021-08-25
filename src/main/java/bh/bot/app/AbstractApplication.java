@@ -6,9 +6,9 @@ import bh.bot.common.Telegram;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.images.ImgMeta;
 import bh.bot.common.types.images.Pixel;
+import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.utils.ThreadUtil;
-import bh.bot.common.types.tuples.Tuple3;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.imageio.ImageIO;
@@ -49,7 +49,7 @@ public abstract class AbstractApplication {
         if (listArg.contains("--mute"))
             Telegram.disable();
         else if (Telegram.isDisabled())
-            Log.info("Telegram is disabled due to missing or invalid configuration");
+            Log.info("Telegram was disabled due to missing or invalid configuration");
 
         if (listArg.contains("--exit"))
             Log.err("Invalid usage of flag 'exit', should be '--exit=X' where X is the number of seconds to await before force exit, for example: '--exit=3600' means exit after 1 hours");
@@ -110,9 +110,10 @@ public abstract class AbstractApplication {
         if (this.enableSavingDebugImages)
             Log.info("Enabled saving debug images");
         initOutputDirectories();
-        ImgMeta.load();
+        // ImgMeta.load(); // Deprecated class
         BwMatrixMeta.load();
         Telegram.setAppName(getAppName());
+        warn(getLimitationExplain());
         internalRun(launchInfo.arguments);
     }
 
@@ -191,7 +192,10 @@ public abstract class AbstractApplication {
         sb.append("\n  Description: ");
         sb.append(getDescription());
         sb.append("\nUsage:\n");
-        sb.append(getScriptName());
+        if (Configuration.OS.isWin)
+            sb.append("java -jar BitHeroes.jar");
+        else
+            sb.append(getScriptName());
         String usage = getUsage();
         if (usage != null) {
             sb.append(' ');
@@ -209,6 +213,8 @@ public abstract class AbstractApplication {
         sb.append("\n  --img : save screen captured pictures to disk (developers only)");
         return sb.toString();
     }
+
+    protected abstract String getLimitationExplain();
 
     protected void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
         moveCursor(new Point(950, 100));
@@ -237,10 +243,12 @@ public abstract class AbstractApplication {
         throw new NotImplementedException();
     }
 
+    @Deprecated
     protected boolean clickImage(ImgMeta im) {
         return clickImageExact(im) || clickImageScanBW(im);
     }
 
+    @Deprecated
     protected boolean clickImageExact(ImgMeta im) {
         int[] lastMatch = im.getLastMatchPoint();
         if (lastMatch[0] < 0 || lastMatch[1] < 0) {
