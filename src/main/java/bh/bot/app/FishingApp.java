@@ -67,6 +67,7 @@ public class FishingApp extends AbstractApplication {
 
         info("Anchor point: %d,%d", anchorPoint.x, anchorPoint.y);
 
+        /*
         AtomicBoolean masterSwitch = new AtomicBoolean(false);
         AtomicInteger screen = new AtomicInteger(screenNone);
         AtomicBoolean unsure = new AtomicBoolean(true);
@@ -80,6 +81,7 @@ public class FishingApp extends AbstractApplication {
                 () -> autoExit(exitAfterXSecs, masterSwitch)
         );
         Telegram.sendMessage("Stopped", false);
+         */
     }
 
     @Override
