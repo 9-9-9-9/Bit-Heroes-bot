@@ -183,19 +183,30 @@ public class FishingApp extends AbstractApplication {
                 );
                 final int black = 0x000000;
                 try {
+                    final int offset1 = 0;
+                    final int offset2 = Configuration.Sizing.Fishing.Scan.castingFishSize.H - 1;
+                    final int offsetSize = Configuration.Sizing.Fishing.Scan.castingFishSize.H / 4 - 2;
+                    final int offset3 = offset1 + offsetSize;
+                    final int offset4 = offset2 - offsetSize;
                     for (int x = 0; x < sc.getWidth(); x++) {
-                        if ((sc.getRGB(x, 16) & 0xFFFFFF) != black) {
+                        if ((sc.getRGB(x, offset3) & 0xFFFFFF) != black) {
+                            debug("Fail check CAST step p1: %d at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset3) & 0xFFFFFF)), x, offset3);
                             continue;
                         }
-                        if ((sc.getRGB(x, 55) & 0xFFFFFF) != black) {
+                        if ((sc.getRGB(x, offset4) & 0xFFFFFF) != black) {
+                            debug("Fail check CAST step p2: %d at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset4) & 0xFFFFFF)), x, offset4);
                             continue;
                         }
-                        if ((sc.getRGB(x, 0) & 0xFFFFFF) != black) {
+                        if ((sc.getRGB(x, offset1) & 0xFFFFFF) != black) {
+                            debug("Fail check CAST step p3: %d at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset1) & 0xFFFFFF)), x, offset1);
                             continue;
                         }
-                        if ((sc.getRGB(x, 71) & 0xFFFFFF) != black) {
+                        if ((sc.getRGB(x, offset2) & 0xFFFFFF) != black) {
+                            debug("Fail check CAST step p4: %d at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset2) & 0xFFFFFF)), x, offset2);
                             continue;
                         }
+
+                        debug("Good, casting now");
 
                         sendSpaceKey();
                         unsure.set(true);
@@ -298,6 +309,9 @@ public class FishingApp extends AbstractApplication {
                     blackPixelRgb, //
                     sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF, //
                     colorTolerant)) {
+                if (debug) {
+                    debug("Fail (2) at %3d, %3d (offset=%3d, %3d, coor=%3d, %3d) with color: %d vs %d", offsetX + px[0], offsetY + px[1], offsetX, offsetY, px[0], px[1], blackPixelRgb, sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF);
+                }
                 return false;
             }
         }
