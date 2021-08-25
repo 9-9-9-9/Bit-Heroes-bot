@@ -104,37 +104,37 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Configuration.Offset getOffsetButtonDungeonReRun() {
-            return new Configuration.Offset(311, 433); //
+            return new Configuration.Offset(312, 435); //
         }
 
         @Override
         public Configuration.Offset getOffsetButtonTalkRightArrow() {
-            return new Configuration.Offset(700, 268); //
+            return new Configuration.Offset(697, 265); //
         }
 
         @Override
         public Configuration.Offset getOffsetButtonReconnect() {
-            return new Configuration.Offset(346, 326); //
+            return new Configuration.Offset(346, 326); 
         }
 
         @Override
         public Configuration.Offset getOffsetLabelFishing() {
-            return new Configuration.Offset(358, 12); //
+            return new Configuration.Offset(358, 12);  //
         }
 
         @Override
         public Configuration.Offset getOffsetButtonFishingStart() {
-            return new Configuration.Offset(362, 426);
+            return new Configuration.Offset(364, 427); //
         }
 
         @Override
         public Configuration.Offset getOffsetButtonFishingCast() {
-            return new Configuration.Offset(370, 426);
+            return new Configuration.Offset(372, 427); //
         }
 
         @Override
         public Configuration.Offset getOffsetButtonFishingCatch() {
-            return new Configuration.Offset(362, 426);
+            return new Configuration.Offset(364, 427); //
         }
 
         @Override
@@ -144,7 +144,7 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Configuration.Offset getOffsetScanCastingFish() {
-            return new Configuration.Offset(572, 326); //
+            return new Configuration.Offset(572, 326);  //
         }
 
         @Override
