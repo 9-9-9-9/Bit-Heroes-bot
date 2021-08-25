@@ -65,6 +65,9 @@ cp ./fishing.bat ./release/
 cp ./rerun.bat ./release/
 cp ./client.bat ./release/
 
+# Copy steam scripts
+cp ./steam.*.bat ./release/
+
 # Include README.md
 echo '[![Github Release](https://img.shields.io/github/downloads/9-9-9-9/Bit-Heroes-bot/release-'$VERSION'/total?style=social)](https://github.com/9-9-9-9/Bit-Heroes-bot/releases/tag/release-'$VERSION')' > ./release/README.md 
 echo >> ./release/README.md
