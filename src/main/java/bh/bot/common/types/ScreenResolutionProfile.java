@@ -1,21 +1,25 @@
 package bh.bot.common.types;
 
-import bh.bot.common.Configuration;
+import bh.bot.common.Configuration.Offset;
+import bh.bot.common.Configuration.Size;
+import bh.bot.common.exceptions.NotSupportedException;
+import bh.bot.common.types.tuples.Tuple3;
 
 public abstract class ScreenResolutionProfile {
     public abstract String getName();
     public abstract int getSupportedGameResolutionWidth();
     public abstract int getSupportedGameResolutionHeight();
-    public abstract Configuration.Offset getOffsetButtonDungeonReRun();
-    public abstract Configuration.Offset getOffsetButtonTalkRightArrow();
-    public abstract Configuration.Offset getOffsetButtonReconnect();
-    public abstract Configuration.Offset getOffsetLabelFishing();
-    public abstract Configuration.Offset getOffsetButtonFishingStart();
-    public abstract Configuration.Offset getOffsetButtonFishingCast();
-    public abstract Configuration.Offset getOffsetButtonFishingCatch();
-    public abstract Configuration.Offset getOffsetDetect100PcCatchingFish();
-    public abstract Configuration.Offset getOffsetScanCastingFish();
-    public abstract Configuration.Size getScanSizeCastingFish();
+    public abstract Offset getOffsetButtonDungeonReRun();
+    public abstract Offset getOffsetButtonTalkRightArrow();
+    public abstract Offset getOffsetButtonReconnect();
+    public abstract Offset getOffsetLabelFishing();
+    public abstract Offset getOffsetButtonFishingStart();
+    public abstract Offset getOffsetButtonFishingCast();
+    public abstract Offset getOffsetButtonFishingCatch();
+    public abstract Offset getOffsetDetect100PcCatchingFish();
+    public abstract Offset getOffsetScanCastingFish();
+    public abstract Size getScanSizeCastingFish();
+    public abstract Tuple3<Integer, Integer, Integer> getBackwardScanRightEvents();
 
     public static class WebProfile extends ScreenResolutionProfile {
 
@@ -35,53 +39,58 @@ public abstract class ScreenResolutionProfile {
         }
 
         @Override
-        public Configuration.Offset getOffsetButtonDungeonReRun() {
-            return new Configuration.Offset(309, 468);
+        public Offset getOffsetButtonDungeonReRun() {
+            return new Offset(309, 468);
         }
 
         @Override
-        public Configuration.Offset getOffsetButtonTalkRightArrow() {
-            return new Configuration.Offset(718, 287);
+        public Offset getOffsetButtonTalkRightArrow() {
+            return new Offset(718, 287);
         }
 
         @Override
-        public Configuration.Offset getOffsetButtonReconnect() {
-            return new Configuration.Offset(344, 353);
+        public Offset getOffsetButtonReconnect() {
+            return new Offset(344, 353);
         }
 
         @Override
-        public Configuration.Offset getOffsetLabelFishing() {
-            return new Configuration.Offset(355, 13);
+        public Offset getOffsetLabelFishing() {
+            return new Offset(355, 13);
         }
 
         @Override
-        public Configuration.Offset getOffsetButtonFishingStart() {
-            return new Configuration.Offset(362, 464);
+        public Offset getOffsetButtonFishingStart() {
+            return new Offset(362, 464);
         }
 
         @Override
-        public Configuration.Offset getOffsetButtonFishingCast() {
-            return new Configuration.Offset(370, 464);
+        public Offset getOffsetButtonFishingCast() {
+            return new Offset(370, 464);
         }
 
         @Override
-        public Configuration.Offset getOffsetButtonFishingCatch() {
-            return new Configuration.Offset(362, 464);
+        public Offset getOffsetButtonFishingCatch() {
+            return new Offset(362, 464);
         }
 
         @Override
-        public Configuration.Offset getOffsetDetect100PcCatchingFish() {
-            return new Configuration.Offset(697, 389);
+        public Offset getOffsetDetect100PcCatchingFish() {
+            return new Offset(697, 389);
         }
 
         @Override
-        public Configuration.Offset getOffsetScanCastingFish() {
-            return new Configuration.Offset(583, 356);
+        public Offset getOffsetScanCastingFish() {
+            return new Offset(583, 356);
         }
 
         @Override
-        public Configuration.Size getScanSizeCastingFish() {
-            return new Configuration.Size(48, 72);
+        public Size getScanSizeCastingFish() {
+            return new Size(48, 72);
+        }
+
+        @Override
+        public Tuple3<Integer, Integer, Integer> getBackwardScanRightEvents() {
+            return new Tuple3<>(725, 433, 72);
         }
     }
 
@@ -103,53 +112,58 @@ public abstract class ScreenResolutionProfile {
         }
 
         @Override
-        public Configuration.Offset getOffsetButtonDungeonReRun() {
-            return new Configuration.Offset(312, 435); //
+        public Offset getOffsetButtonDungeonReRun() {
+            return new Offset(312, 435); //
         }
 
         @Override
-        public Configuration.Offset getOffsetButtonTalkRightArrow() {
-            return new Configuration.Offset(697, 265); //
+        public Offset getOffsetButtonTalkRightArrow() {
+            return new Offset(697, 265); //
         }
 
         @Override
-        public Configuration.Offset getOffsetButtonReconnect() {
-            return new Configuration.Offset(348, 327); //
+        public Offset getOffsetButtonReconnect() {
+            return new Offset(348, 327); //
         }
 
         @Override
-        public Configuration.Offset getOffsetLabelFishing() {
-            return new Configuration.Offset(358, 12);  //
+        public Offset getOffsetLabelFishing() {
+            return new Offset(358, 12);  //
         }
 
         @Override
-        public Configuration.Offset getOffsetButtonFishingStart() {
-            return new Configuration.Offset(364, 427); //
+        public Offset getOffsetButtonFishingStart() {
+            return new Offset(364, 427); //
         }
 
         @Override
-        public Configuration.Offset getOffsetButtonFishingCast() {
-            return new Configuration.Offset(372, 427); //
+        public Offset getOffsetButtonFishingCast() {
+            return new Offset(372, 427); //
         }
 
         @Override
-        public Configuration.Offset getOffsetButtonFishingCatch() {
-            return new Configuration.Offset(364, 427); //
+        public Offset getOffsetButtonFishingCatch() {
+            return new Offset(364, 427); //
         }
 
         @Override
-        public Configuration.Offset getOffsetDetect100PcCatchingFish() {
-            return new Configuration.Offset(685, 357); //
+        public Offset getOffsetDetect100PcCatchingFish() {
+            return new Offset(685, 357); //
         }
 
         @Override
-        public Configuration.Offset getOffsetScanCastingFish() {
-            return new Configuration.Offset(572, 326);  //
+        public Offset getOffsetScanCastingFish() {
+            return new Offset(572, 326);  //
         }
 
         @Override
-        public Configuration.Size getScanSizeCastingFish() {
-            return new Configuration.Size(45, 68); //
+        public Size getScanSizeCastingFish() {
+            return new Size(45, 68); //
+        }
+
+        @Override
+        public Tuple3<Integer, Integer, Integer> getBackwardScanRightEvents() {
+            throw NotSupportedException.steam();
         }
     }
 }
