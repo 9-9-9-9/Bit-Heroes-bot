@@ -103,7 +103,10 @@ public class Configuration {
                 err("Steam profile only available on Windows");
                 System.exit(4);
             }
+            info("****** IMPORTANT ****** IMPORTANT ******");
             warn("You must move the Bit Heroes game's window to top left corner of your screen or provide exactly screen offset into the 'offset.screen.x & y' keys");
+            warn("Your Bit Heroes game window must be 800x480. You can check it by open Settings, see the Windowed option");
+            info("****************************************");
         }
 
         properties.load(Configuration.class.getResourceAsStream("/config.properties"));
