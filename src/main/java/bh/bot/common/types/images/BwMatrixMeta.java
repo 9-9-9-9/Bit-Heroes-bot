@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static bh.bot.common.Log.debug;
+
 public class BwMatrixMeta {
     private final ArrayList<int[]> blackPixels;
     private final ArrayList<int[]> nonBlackPixels;
@@ -117,6 +119,7 @@ public class BwMatrixMeta {
                 Configuration.Offsets.Fishing.Labels.fishing,
                 0xFFFFFF
         );
+        debug("BwMatrixMeta label Fishing: Black pixel count = %d, Non black pixel count = %d", BwMatrixMeta.Metas.Fishing.Labels.fishing.getBlackPixels().size(), BwMatrixMeta.Metas.Fishing.Labels.fishing.getNonBlackPixels().size());
         Metas.Fishing.Buttons.start = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/start-mx.bmp"
