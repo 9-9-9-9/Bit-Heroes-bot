@@ -128,6 +128,7 @@ Read image, keep only pixels which has color (eg. FF0000 is red) as the same as 
 
 #### Project-wide flags
 - `--help` show help for specific application, for example: `./rerun.sh --help`
+- `--steam` *(Windows only)* for Bit Heroes on Steam with resolution 800x480
 - `--debug` print debug messages, for developers only
 - `--img` save screenshot into `./out/images/<app>` directory, only use for debugging purpose
 - `--mute` do not push notification to Telegram
@@ -152,7 +153,7 @@ For example if you want to use the feature `--exit=X` on the ReRun function, you
 and then save the file
 
 Otherwise you can run app directly from commandline
-> java -jar BitHeroes.jar <function_name> <param1> [<param2> [--flags]]
+> java -jar BitHeroes.jar "function_name" "param1" ["param2"] [--flags]
 
 ### MacOS users
 1. From MacOS 10.13+, java.awt.Robot class of Java can not do mouse and keyboard interaction, thus none of bot functions will work
