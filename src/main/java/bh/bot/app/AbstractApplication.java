@@ -85,11 +85,13 @@ public abstract class AbstractApplication {
         li.exitAfterXSecs = exitAfter;
         li.displayHelp = hasFlag("--help");
         li.enableSavingDebugImages = hasFlag("--img");
+        // events
         li.eInvasion = hasFlag("--invasion");
         li.eTrials = hasFlag("--trials") || hasFlag("--trial");
         li.ePvp = hasFlag("--pvp");
         li.eWorldBoss = hasFlag("--boss") || hasFlag("--worldboss") || hasFlag("--world-boss");
-        li.eRaid = hasFlag("--raid");
+        li.eRaid = hasFlag("--raid") || hasFlag("--raids");
+        // end events
         flags.clear();
         return li;
     }

@@ -22,6 +22,7 @@ public class Main {
         Configuration.registerApplicationInstances(
                 new ReRunApp(),
                 new FishingApp(),
+                new AfkApp(),
                 new GenMiniClient(),
                 //
                 new KeepPixApp(),

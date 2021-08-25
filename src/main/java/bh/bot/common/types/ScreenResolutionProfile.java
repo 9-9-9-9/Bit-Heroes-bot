@@ -91,7 +91,7 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanRightEvents() {
-            return new Tuple4<>(730, 433, 72, 789);
+            return new Tuple4<>(730, 433, -72, 789);
         }
 
         @Override
