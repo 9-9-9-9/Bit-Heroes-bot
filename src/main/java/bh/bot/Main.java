@@ -70,4 +70,5 @@ public class Main {
     // 20 to 40 for fishing
     public static final int EXIT_CODE_UNABLE_DETECTING_ANCHOR = 20;
     // end fishing
+    public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }

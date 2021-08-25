@@ -599,39 +599,34 @@ public abstract class AbstractApplication {
             throw new IllegalArgumentException(String.format("Flag --exit does not supported by this application"));
     }
 
-    protected <T> T readInput(String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform) {
-        return readInput(ask, desc, transform, false);
+    protected <T> T readInput(BufferedReader br, String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform) {
+        return readInput(br, ask, desc, transform, false);
     }
 
-    protected <T> T readInput(String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform, boolean allowBlankAndIfBlankThenReturnNull) {
+    protected <T> T readInput(BufferedReader br, String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform, boolean allowBlankAndIfBlankThenReturnNull) {
         try {
-            try (
-                    InputStreamReader isr = new InputStreamReader(System.in);
-                    BufferedReader br = new BufferedReader(isr);
-            ) {
-                String input;
-                while (true) {
-                    Log.info(ask);
-                    if (desc != null)
-                        Log.info("(%s)", desc);
-                    input = br.readLine();
+            String input;
+            while (true) {
+                Log.info(ask);
+                if (desc != null)
+                    Log.info("(%s)", desc);
+                input = br.readLine();
 
-                    if (isBlank(input)) {
-                        if (allowBlankAndIfBlankThenReturnNull)
-                            return null;
-                        Log.info("You inputted nothing, please try again!");
-                        continue;
-                    }
-
-                    Tuple3<Boolean, String, T> tuple = transform.apply(input);
-                    if (!tuple._1) {
-                        info(tuple._2);
-                        Log.info("Please try again!");
-                        continue;
-                    }
-
-                    return tuple._3;
+                if (isBlank(input)) {
+                    if (allowBlankAndIfBlankThenReturnNull)
+                        return null;
+                    Log.info("You inputted nothing, please try again!");
+                    continue;
                 }
+
+                Tuple3<Boolean, String, T> tuple = transform.apply(input);
+                if (!tuple._1) {
+                    info(tuple._2);
+                    Log.info("Please try again!");
+                    continue;
+                }
+
+                return tuple._3;
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -5,12 +5,12 @@ import bh.bot.common.Log;
 import bh.bot.common.types.tuples.Tuple3;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
+
+import static bh.bot.common.Log.info;
 
 public class KeepPixApp extends AbstractApplication {
     @Override
@@ -19,32 +19,42 @@ public class KeepPixApp extends AbstractApplication {
             throwNotSupportedFlagExit(launchInfo.exitAfterXSecs);
 
             if (args.length != 0 && args.length != 2) {
-                Log.info("Invalid number of arguments");
-                Log.info(getHelp());
+                info("Invalid number of arguments");
+                info(getHelp());
                 System.exit(Main.EXIT_CODE_INVALID_NUMBER_OF_ARGUMENTS);
                 return;
             }
 
             String templateImg, inputImg;
-            try {
-                templateImg = args[0];
-                inputImg = args[1];
-                if (!new File(templateImg).exists() || !new File(inputImg).exists())
-                    throw new FileNotFoundException();
-            } catch (ArrayIndexOutOfBoundsException | FileNotFoundException ex) {
-                Log.info(getHelp());
-                Function<String, Tuple3<Boolean, String, String>> transform = s -> {
-                    try{
-                        File file = new File(s);
-                        if (!file.exists())
-                            return new Tuple3<>(false, "File does not exists", null);
-                        return new Tuple3<>(true, null, s);
-                    } catch (Exception ex2) {
-                        return new Tuple3<>(false, "Invalid file path", null);
-                    }
-                };
-                templateImg = readInput("File path of the template picture you want to get source pixels:", null, transform);
-                inputImg = readInput("File path of the picture you want to process:", null, transform);
+
+            try (
+                    InputStreamReader isr = new InputStreamReader(System.in);
+                    BufferedReader br = new BufferedReader(isr);
+            ) {
+                try {
+                    templateImg = args[0];
+                    inputImg = args[1];
+                    if (!new File(templateImg).exists() || !new File(inputImg).exists())
+                        throw new FileNotFoundException();
+                } catch (ArrayIndexOutOfBoundsException | FileNotFoundException ex) {
+                    info(getHelp());
+                    Function<String, Tuple3<Boolean, String, String>> transform = s -> {
+                        try {
+                            File file = new File(s);
+                            if (!file.exists())
+                                return new Tuple3<>(false, "File does not exists", null);
+                            return new Tuple3<>(true, null, s);
+                        } catch (Exception ex2) {
+                            return new Tuple3<>(false, "Invalid file path", null);
+                        }
+                    };
+                    templateImg = readInput(br, "File path of the template picture you want to get source pixels:", null, transform);
+                    inputImg = readInput(br, "File path of the picture you want to process:", null, transform);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
+                throw e;
             }
 
             BufferedImage biTemplate = loadImageFromFile(templateImg);
@@ -78,12 +88,12 @@ public class KeepPixApp extends AbstractApplication {
                 }
 
             saveImage(biOutput, "filtered");
-            Log.info("Saved filtered image");
+            info("Saved filtered image");
             
             int w = maxX - minX + 1;
             int h = maxY - minY + 1;
 
-            Log.info("Cropped size: %dx%d from original %d, %d", w, h, biOutput.getWidth(), biOutput.getHeight());
+            info("Cropped size: %dx%d from original %d, %d", w, h, biOutput.getWidth(), biOutput.getHeight());
 
             BufferedImage bic = new BufferedImage(w, h, biInput.getType());
             for (int y = 0; y < h; y++) {
@@ -98,7 +108,7 @@ public class KeepPixApp extends AbstractApplication {
             }
 
             saveImage(bic, "result");
-            Log.info("Saved cropped image as result");
+            info("Saved cropped image as result");
 
         } catch (IOException e) {
             e.printStackTrace();

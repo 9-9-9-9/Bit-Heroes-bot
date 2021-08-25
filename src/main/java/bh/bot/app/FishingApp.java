@@ -9,6 +9,9 @@ import bh.bot.common.utils.ImageUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -26,21 +29,31 @@ public class FishingApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
         int arg;
-        try {
-            arg = Integer.parseInt(args[0]);
-        } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
-            info(getHelp());
-            arg = readInput("How many times do you want to hook?", "Numeric only", s -> {
-                try {
-                    int num = Integer.parseInt(s);
-                    if (num < 1) {
-                        return new Tuple3<>(false, "Must greater than 0", 0);
+
+        try (
+                InputStreamReader isr = new InputStreamReader(System.in);
+                BufferedReader br = new BufferedReader(isr);
+        ) {
+            try {
+                arg = Integer.parseInt(args[0]);
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
+                info(getHelp());
+                arg = readInput(br, "How many times do you want to hook?", "Numeric only", s -> {
+                    try {
+                        int num = Integer.parseInt(s);
+                        if (num < 1) {
+                            return new Tuple3<>(false, "Must greater than 0", 0);
+                        }
+                        return new Tuple3<>(true, null, num);
+                    } catch (NumberFormatException ex1) {
+                        return new Tuple3<>(false, "The value you inputted is not a number", 0);
                     }
-                    return new Tuple3<>(true, null, num);
-                } catch (NumberFormatException ex1) {
-                    return new Tuple3<>(false, "The value you inputted is not a number", 0);
-                }
-            });
+                });
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
+            throw new RuntimeException(e);
         }
 
         final int loop = arg;

@@ -9,7 +9,9 @@ import bh.bot.common.utils.ImageUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,27 +37,35 @@ public class AfkApp extends AbstractApplication {
             info("Select events you want to do:");
             for (Event event : allEvents)
                 info("  %2d. %s", event.id, event.name);
-            while (true) {
-                Event event = readInput("Input event code", "To select an event, press the number then press Enter. To finish input, just enter without supply a number", new Function<String, Tuple3<Boolean, String, Event>>() {
-                    @Override
-                    public Tuple3<Boolean, String, Event> apply(String s) {
-                        try {
-                            int result = Integer.parseInt(s);
-                            Optional<Event> first = allEvents.stream().filter(x -> x.id == result).findFirst();
-                            if (!first.isPresent())
-                                return new Tuple3<>(false, "ID does not exists", null);
-                            return new Tuple3<>(true, null, first.get());
-                        } catch (Exception ex2) {
-                            return new Tuple3<>(false, "Unable to parse your input, error: " + ex2.getMessage(), null);
+            try (
+                    InputStreamReader isr = new InputStreamReader(System.in);
+                    BufferedReader br = new BufferedReader(isr);
+            ) {
+                while (true) {
+                    Event event = readInput(br, "Input event code", "To select an event, press the number then press Enter. To finish input, just enter without supply a number", new Function<String, Tuple3<Boolean, String, Event>>() {
+                        @Override
+                        public Tuple3<Boolean, String, Event> apply(String s) {
+                            try {
+                                int result = Integer.parseInt(s);
+                                Optional<Event> first = allEvents.stream().filter(x -> x.id == result).findFirst();
+                                if (!first.isPresent())
+                                    return new Tuple3<>(false, "ID does not exists", null);
+                                return new Tuple3<>(true, null, first.get());
+                            } catch (Exception ex2) {
+                                return new Tuple3<>(false, "Unable to parse your input, error: " + ex2.getMessage(), null);
+                            }
                         }
-                    }
-                }, true);
+                    }, true);
 
-                if (event == null)
-                    break;
+                    if (event == null)
+                        break;
 
-                eventList.add(event);
-                info("Selected event %s", event.name);
+                    eventList.add(event);
+                    info("Selected event %s", event.name);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
             }
 
             eventList = new ArrayList<>(eventList.stream().distinct().collect(Collectors.toList()));
