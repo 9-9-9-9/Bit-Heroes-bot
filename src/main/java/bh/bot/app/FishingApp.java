@@ -259,7 +259,10 @@ public class FishingApp extends AbstractApplication {
                 unsure.set(true);
                 unsureFrom.set(System.currentTimeMillis());
                 seeBtnStartFrom.set(Long.MAX_VALUE);
-            } finally {
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                sleep(2000);
+            }finally {
                 debug("detectScreen process time: %d ms", System.currentTimeMillis() - timeStart);
                 sc.flush();
             }

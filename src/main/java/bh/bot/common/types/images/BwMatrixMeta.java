@@ -3,7 +3,6 @@ package bh.bot.common.types.images;
 import bh.bot.common.Configuration;
 import bh.bot.common.utils.ImageUtil;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ public class BwMatrixMeta {
     private final int h;
     private final int blackPixelRgb;
     private final ImageUtil.DynamicRgb blackPixelDRgb;
-    private final Color colorBlackPixel;
     private final Configuration.Offset coordinateOffset;
     private int[] lastMatch = new int[]{-1, -1};
 
@@ -25,7 +23,6 @@ public class BwMatrixMeta {
             this.coordinateOffset = coordinateOffset;
             this.blackPixelRgb = blackPixelRgb & 0xFFFFFF;
             this.blackPixelDRgb = new ImageUtil.DynamicRgb(this.blackPixelRgb, Configuration.Tolerant.colorBw);
-            this.colorBlackPixel = new Color(this.blackPixelRgb);
             blackPixels = new ArrayList<>();
             nonBlackPixels = new ArrayList<>();
             w = img.getWidth();
@@ -117,6 +114,27 @@ public class BwMatrixMeta {
                         "labels/fishing-mx2.bmp"
                 ), //
                 Configuration.Offsets.Fishing.Labels.fishing,
+                0x000000
+        );
+        Metas.Fishing.Buttons.start = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/start-mx.bmp"
+                ), //
+                Configuration.Offsets.Fishing.Buttons.start,
+                0x000000
+        );
+        Metas.Fishing.Buttons.cast = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/cast-mx.bmp"
+                ), //
+                Configuration.Offsets.Fishing.Buttons.start,
+                0x000000
+        );
+        Metas.Fishing.Buttons.catch_ = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/catch-mx.bmp"
+                ), //
+                Configuration.Offsets.Fishing.Buttons.start,
                 0x000000
         );
     }
