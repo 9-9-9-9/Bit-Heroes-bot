@@ -6,9 +6,9 @@ import bh.bot.common.Telegram;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.images.ImgMeta;
 import bh.bot.common.types.images.Pixel;
+import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.utils.ThreadUtil;
-import bh.bot.common.types.tuples.Tuple3;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.imageio.ImageIO;
@@ -31,6 +31,7 @@ import static bh.bot.common.utils.InteractionUtil.Mouse.mouseMoveAndClickAndHide
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.InteractionUtil.Screen.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
+import static bh.bot.common.utils.StringUtil.isNotBlank;
 
 public abstract class AbstractApplication {
     public static LaunchInfo parse(String[] args) {
@@ -113,6 +114,7 @@ public abstract class AbstractApplication {
         // ImgMeta.load(); // Deprecated class
         BwMatrixMeta.load();
         Telegram.setAppName(getAppName());
+        warn(getLimitationExplain());
         internalRun(launchInfo.arguments);
     }
 
@@ -212,6 +214,8 @@ public abstract class AbstractApplication {
         sb.append("\n  --img : save screen captured pictures to disk (developers only)");
         return sb.toString();
     }
+
+    protected abstract String getLimitationExplain();
 
     protected void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
         moveCursor(new Point(950, 100));

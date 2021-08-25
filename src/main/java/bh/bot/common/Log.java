@@ -1,5 +1,7 @@
 package bh.bot.common;
 
+import bh.bot.common.utils.StringUtil;
+
 public class Log {
     private static boolean isOnDebugMode;
 
@@ -14,7 +16,7 @@ public class Log {
         println(obj);
     }
 
-    public static void debug(String format, Object...objs) {
+    public static void debug(String format, Object... objs) {
         if (!isOnDebugMode)
             return;
         println(String.format(format, objs));
@@ -24,8 +26,15 @@ public class Log {
         println(obj);
     }
 
-    public static void info(String format, Object...objs) {
+    public static void info(String format, Object... objs) {
         println(String.format(format, objs));
+    }
+
+    public static void warn(String format, Object... objs) {
+        String text = String.format(format, objs);
+        if (StringUtil.isBlank(text))
+            return;
+        println(String.format("** WARNING ** %s", text));
     }
 
     public static void err(Object obj) {
@@ -36,7 +45,7 @@ public class Log {
         System.err.println(obj);
     }
 
-    public static void err(String format, Object...objs) {
+    public static void err(String format, Object... objs) {
         System.err.println(String.format(format, objs));
     }
 

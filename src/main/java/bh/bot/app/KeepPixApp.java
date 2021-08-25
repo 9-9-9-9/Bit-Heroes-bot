@@ -11,9 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.info;
-
 public class KeepPixApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
@@ -134,6 +131,11 @@ public class KeepPixApp extends AbstractApplication {
 
     @Override
     protected String getFlags() {
+        return null;
+    }
+
+    @Override
+    protected String getLimitationExplain() {
         return null;
     }
 }

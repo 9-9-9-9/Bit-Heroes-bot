@@ -350,4 +350,9 @@ public class FishingApp extends AbstractApplication {
                 "--exit=X : exit after X seconds if turns not all consumed"
         );
     }
+
+    @Override
+    protected String getLimitationExplain() {
+        return "To start using this function, you the to be ready in fishing state, and the Start button is clearly visible on the screen";
+    }
 }

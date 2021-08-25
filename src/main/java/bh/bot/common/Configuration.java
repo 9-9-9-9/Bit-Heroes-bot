@@ -11,8 +11,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
 import static bh.bot.common.utils.StringUtil.isNotBlank;
 
@@ -99,9 +98,12 @@ public class Configuration {
         if (isBlank(profileName))
             throw new InvalidDataException("profileName");
 
-        if (screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile && !OS.isWin) {
-            err("Steam profile only available on Windows");
-            System.exit(4);
+        if (screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile) {
+            if (!OS.isWin) {
+                err("Steam profile only available on Windows");
+                System.exit(4);
+            }
+            warn("You must move the Bit Heroes game's window to top left corner of your screen or provide exactly screen offset into the 'offset.screen.x & y' keys");
         }
 
         properties.load(Configuration.class.getResourceAsStream("/config.properties"));
