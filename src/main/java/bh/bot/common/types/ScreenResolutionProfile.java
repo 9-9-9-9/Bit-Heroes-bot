@@ -51,7 +51,7 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Configuration.Offset getOffsetLabelFishing() {
-            return new Configuration.Offset(356, 13);
+            return new Configuration.Offset(355, 13);
         }
 
         @Override
