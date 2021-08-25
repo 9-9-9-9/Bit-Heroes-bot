@@ -102,7 +102,7 @@ public class BwMatrixMeta {
         );
         BwMatrixMeta.Metas.Fishing.Labels.fishing = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
-                        "labels/fishing-mx.bmp"
+                        "labels/fishing-mx2.bmp"
                 ), //
                 Configuration.Offsets.Fishing.Labels.fishing,
                 0x000000

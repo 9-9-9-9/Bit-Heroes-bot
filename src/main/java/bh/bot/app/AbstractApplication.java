@@ -452,13 +452,14 @@ public abstract class AbstractApplication {
                 for (int x = 0; x < sc.getWidth() - im.getWidth() && go; x++) {
                     for (int mainColor : mainColors) {
                         int c = mainColor & 0xFFFFFF;
+                        final ImageUtil.DynamicRgb cDRgb = new ImageUtil.DynamicRgb(c, 60);
 
                         boolean allGood = true;
 
                         for (int[] px : im.getBlackPixels()) {
                             int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
                             if (!ImageUtil.areColorsSimilar(//
-                                    c, //
+                                    cDRgb, //
                                     srcRgb, //
                                     Configuration.Tolerant.color)) {
                                 allGood = false;
