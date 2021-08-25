@@ -191,7 +191,10 @@ public abstract class AbstractApplication {
         sb.append("\n  Description: ");
         sb.append(getDescription());
         sb.append("\nUsage:\n");
-        sb.append(getScriptName());
+        if (Configuration.OS.isWin)
+            sb.append("java -jar BitHeroes.jar");
+        else
+            sb.append(getScriptName());
         String usage = getUsage();
         if (usage != null) {
             sb.append(' ');
