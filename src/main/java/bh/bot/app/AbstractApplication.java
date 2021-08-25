@@ -31,7 +31,6 @@ import static bh.bot.common.utils.InteractionUtil.Mouse.mouseMoveAndClickAndHide
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.InteractionUtil.Screen.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
-import static bh.bot.common.utils.StringUtil.isNotBlank;
 
 public abstract class AbstractApplication {
     public static LaunchInfo parse(String[] args) {
