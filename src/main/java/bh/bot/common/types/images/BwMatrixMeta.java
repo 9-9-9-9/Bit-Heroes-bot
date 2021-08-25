@@ -114,28 +114,28 @@ public class BwMatrixMeta {
                         "labels/fishing-mx2.bmp"
                 ), //
                 Configuration.Offsets.Fishing.Labels.fishing,
-                0x000000
+                0xFFFFFF
         );
         Metas.Fishing.Buttons.start = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/start-mx.bmp"
                 ), //
                 Configuration.Offsets.Fishing.Buttons.start,
-                0x000000
+                0xFFFFFF
         );
         Metas.Fishing.Buttons.cast = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/cast-mx.bmp"
                 ), //
                 Configuration.Offsets.Fishing.Buttons.start,
-                0x000000
+                0xFFFFFF
         );
         Metas.Fishing.Buttons.catch_ = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/catch-mx.bmp"
                 ), //
                 Configuration.Offsets.Fishing.Buttons.start,
-                0x000000
+                0xFFFFFF
         );
     }
 }

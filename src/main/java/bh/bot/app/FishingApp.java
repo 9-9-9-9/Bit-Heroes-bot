@@ -271,6 +271,10 @@ public class FishingApp extends AbstractApplication {
     }
 
     private boolean isContains(BufferedImage sc, BwMatrixMeta im) {
+        return isContains(sc, im, false);
+    }
+
+    private boolean isContains(BufferedImage sc, BwMatrixMeta im, boolean debug) {
         final int offsetX = im.getCoordinateOffset().X;
         final int offsetY = im.getCoordinateOffset().Y;
         final int colorTolerant = Configuration.Tolerant.color;
@@ -282,6 +286,9 @@ public class FishingApp extends AbstractApplication {
                     blackPixelDRgb, //
                     sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF, //
                     colorTolerant)) {
+                if (debug) {
+                    debug("Fail (1) at %3d, %3d (offset=%3d, %3d, coor=%3d, %3d) with color: %d vs %d", offsetX + px[0], offsetY + px[1], offsetX, offsetY, px[0], px[1], blackPixelRgb, sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF);
+                }
                 return false;
             }
         }
