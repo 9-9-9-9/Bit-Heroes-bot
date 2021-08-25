@@ -50,6 +50,9 @@ To enable Telegram notification, [follow me](https://github.com/9-9-9-9/Bit-Hero
 
 #### How to use:
 ### ReRun
+
+*This function only supports clicking the ReRun button, that means you have to enter Dungeon/Raid manually, turn on the Auto and when the ReRun button appears, it will be automatically clicked*
+
 - Windows: run file `.\rerun.bat`
 - Linux/Mac: run file `./rerun.sh`
 
@@ -64,6 +67,9 @@ Notes:
 - Push notification to Telegram when detect Reconnect button (critical), not see ReRun within 15m (critical), exit (normal). But only works if you correctly configured Telegram
 
 ### Fishing
+
+*To use this function, you the to be ready on fishing state, and the Start button is visible clearly on the screen*
+
 - Windows: run file `.\fishing.bat`
 - Linux/Mac: run file `./fishing.sh`
 
@@ -99,6 +105,16 @@ Enjoy it
 | Windows 10 x64 | Work perfectly |
 | Windows 7 x64 (on Virtual Box) | Work perfectly |
 | MacOS 10.14 High Sierra | Bot functions not work, only mini-client works |
+
+### Windows users
+If you want to pass parameters/flags to program, you have to edit the `*.bat` files manually
+
+For example if you want to use the feature `--exit=X` on the ReRun function, you have to edit the `rerun.bat` file, modify content
+- from `java -jar BitHeroes rerun`
+- to `java -jar BitHeroes rerun --exit=1800` if you want to stop after 1800 seconds
+- or to `java -jar BitHeroes rerun 30 --exit=1800` if you want to stop after 30 times ReRun or 1800 seconds, depends on what condition completed first
+
+and then save the file
 
 ### MacOS users
 1. From MacOS 10.13+, java.awt.Robot class of Java can not do mouse and keyboard interaction, thus none of bot functions will work
