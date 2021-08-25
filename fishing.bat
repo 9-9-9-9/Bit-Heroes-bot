@@ -1,1 +1,1 @@
-java -jar BitHeroes.jar fishing --debug
+java -jar BitHeroes.jar fishing 1 --debug
