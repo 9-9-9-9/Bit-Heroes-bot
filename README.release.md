@@ -12,7 +12,7 @@ This readme file is for normal users
 
 Developers please read [at my github](https://github.com/9-9-9-9/Bit-Heroes-bot)
 
-_There're some additional information for MacOS users, please read at bottom of this page_
+[_There're some notes for MacOS users, please read here_](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Notes-for-MacOS-users)
 ___
 Officially support game resolution 800x520 ([web](https://www.kongregate.com/games/Juppiomenz/bit-heroes) + mini-client)
 
@@ -50,7 +50,7 @@ To enable Telegram notification, [follow me](https://github.com/9-9-9-9/Bit-Hero
 
 *This function only supports clicking the ReRun button, that means you have to enter Dungeon/Raid manually, turn on the Auto and when the ReRun button appears, it will be automatically clicked*
 
-- Mini-client:
+- Mini-client or Web:
   - Windows: click and run `rerun.bat`
   - Linux/Mac: run `./rerun.sh` from terminal
 - Steam:
@@ -59,7 +59,7 @@ To enable Telegram notification, [follow me](https://github.com/9-9-9-9/Bit-Hero
 
 Supported flags:
 - `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./rerun.sh 100 --exit=3600` means will stop ReRun after clicked ReRun buttons 100 times or after 3600 seconds (1 hours), depends which condition completed first
-- and global flags (read at the end of this page)
+- [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
 
 Notes:
 - Automatically exit if can not detect the ReRun button within 15 minutes
@@ -71,7 +71,7 @@ Notes:
 
 *To use this function, you the to be ready on fishing state, and the Start button is visible clearly on the screen*
 
-- Mini-client:
+- Mini-client or Web:
   - Windows: click and run `fishing.bat`
   - Linux/Mac: run `./fishing.sh` from terminal
 - Steam:
@@ -80,7 +80,7 @@ Notes:
 
 Supported flags:
 - `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./fishing.sh 20 --exit=1800` means will stop fishing after fishing 20 times or after 1800 seconds (30m), depends which condition completed first
-- and global flags (read at the end of this page)
+- [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
 
 ### Mini client using Google Chrome
 Steps:
@@ -101,7 +101,7 @@ Enjoy it
 #### Project-wide flags
 - `--help` show help for specific application, for example: `./rerun.sh --help`
 - `--steam` *(Windows only)* for Bit Heroes on Steam with resolution 800x480
-- `--web` *(default)* for Bit Heroes on Web or Mini-client with resolution 800x520
+- `--web` *(default, optional)* for Bit Heroes on Web or Mini-client with resolution 800x520
 - `--mute` do not push notification to Telegram
 - `--img` save screenshot into `./out/images/<app>` directory, only use for debugging purpose
 
