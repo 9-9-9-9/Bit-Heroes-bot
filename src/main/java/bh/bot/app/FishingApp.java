@@ -190,19 +190,19 @@ public class FishingApp extends AbstractApplication {
                     final int offset4 = offset2 - offsetSize;
                     for (int x = 0; x < sc.getWidth(); x++) {
                         if ((sc.getRGB(x, offset3) & 0xFFFFFF) != black) {
-                            debug("Fail check CAST step p1: %d at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset3) & 0xFFFFFF)), x, offset3);
+                            debug("Fail check CAST step p1: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset3) & 0xFFFFFF)), x, offset3);
                             continue;
                         }
                         if ((sc.getRGB(x, offset4) & 0xFFFFFF) != black) {
-                            debug("Fail check CAST step p2: %d at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset4) & 0xFFFFFF)), x, offset4);
+                            debug("Fail check CAST step p2: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset4) & 0xFFFFFF)), x, offset4);
                             continue;
                         }
                         if ((sc.getRGB(x, offset1) & 0xFFFFFF) != black) {
-                            debug("Fail check CAST step p3: %d at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset1) & 0xFFFFFF)), x, offset1);
+                            debug("Fail check CAST step p3: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset1) & 0xFFFFFF)), x, offset1);
                             continue;
                         }
                         if ((sc.getRGB(x, offset2) & 0xFFFFFF) != black) {
-                            debug("Fail check CAST step p4: %d at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset2) & 0xFFFFFF)), x, offset2);
+                            debug("Fail check CAST step p4: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset2) & 0xFFFFFF)), x, offset2);
                             continue;
                         }
 
