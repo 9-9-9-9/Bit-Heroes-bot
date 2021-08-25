@@ -114,7 +114,7 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Configuration.Offset getOffsetButtonReconnect() {
-            return new Configuration.Offset(346, 326); 
+            return new Configuration.Offset(348, 327); //
         }
 
         @Override
