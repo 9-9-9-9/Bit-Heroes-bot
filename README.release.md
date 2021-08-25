@@ -1,5 +1,7 @@
 Upgrade notes:
-- Move the `chrome-user-dir` in the previous bot version's directory into the new bot version's directory. That folder was created by chrome to do temp cache and also save your game's setting
+- Move the follow files and directory from previous bot version's directory
+  - `chrome-user-dir` directory, that folder was created by chrome to do temp cache and also save your game's setting
+  - `user-config.properties` file, it contains your configurations
 ___
 ## Bit Heroes bot
 ##### on Linux / Windows / ~~MacOS~~
