@@ -1,6 +1,8 @@
 package bh.bot.app;
 
+import bh.bot.common.Configuration;
 import bh.bot.common.types.tuples.Tuple3;
+import bh.bot.common.utils.ImageUtil;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -17,7 +19,7 @@ public class ExtractMatrixApp extends AbstractApplication {
         try {
             throwNotSupportedFlagExit(exitAfterXSecs);
 
-            if (args.length != 0 && args.length != 2) {
+            if (args.length != 0 && args.length != 3) {
                 info("Invalid number of arguments");
                 info(getHelp());
                 System.exit(2);
@@ -34,15 +36,41 @@ public class ExtractMatrixApp extends AbstractApplication {
                 rgb = readInput("Color to keep:", "6 characters, in hex format, without prefix '0x', for example: FFFFFF is white, or FFC0CB is pink", new Function<String, Tuple3<Boolean, String, Integer>>() {
                     @Override
                     public Tuple3<Boolean, String, Integer> apply(String s) {
+                        final String normalized = s.trim().toUpperCase();
+                        if (normalized.length() != 6)
+                            return new Tuple3<>(false, "Must be 6 characters in length", 0);
+                        for (char c : normalized.toCharArray())
+                            if (c < 48 || (c > 57 && c < 65) || c > 70)
+                                return new Tuple3<>(false, "Contains invalid Hexadecimal character, must be 0-9 A-F", 0);
+                        try {
+                            int result = Integer.parseInt(normalized, 16) & 0xFFFFFF;
+                            return new Tuple3<>(true, null, result);
+                        } catch (Exception ex2) {
+                            return new Tuple3<>(false, "Unable to parse, error: " + ex.getMessage(), 0);
+                        }
+                    }
+                });
+            }
+
+            int tolerant;
+            try {
+                tolerant = Math.abs(Integer.parseInt(args[1]));
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
+                info(getHelp());
+                isDisplayedHelp = true;
+                tolerant = readInput("Tolerant", "Tolerant when color contains same R & G & B value", new Function<String, Tuple3<Boolean, String, Integer>>() {
+                    @Override
+                    public Tuple3<Boolean, String, Integer> apply(String s) {
                         String normalized = s.trim().toUpperCase();
                         if (normalized.length() != 6)
                             return new Tuple3<>(false, "Must be 6 characters in length", 0);
-                        for (char c : normalized.toCharArray()) {
+                        for (char c : normalized.toCharArray())
                             if (c < 48 || (c > 57 && c < 65) || c > 70)
-                                return new Tuple3<>(false, "Contains invalid Heximal character, must be 0-9 A-F", 0);
-                        }
+                                return new Tuple3<>(false, "Contains invalid Hexadecimal character, must be 0-9 A-F", 0);
                         try {
-                            int result = Integer.parseInt(args[0], 16) & 0xFFFFFF;
+                            int result = Integer.parseInt(normalized);
+                            if (result < 0)
+                                return new Tuple3<>(false, "Must be equals or greater than 0", 0);
                             return new Tuple3<>(true, null, result);
                         } catch (Exception ex2) {
                             return new Tuple3<>(false, "Unable to parse, error: " + ex.getMessage(), 0);
@@ -53,7 +81,7 @@ public class ExtractMatrixApp extends AbstractApplication {
 
             String img;
             try {
-                img = args[1];
+                img = args[2];
             } catch (ArrayIndexOutOfBoundsException ex) {
                 if (!isDisplayedHelp)
                     info(getHelp());
@@ -79,12 +107,15 @@ public class ExtractMatrixApp extends AbstractApplication {
             int maxX = Integer.MIN_VALUE;
             int maxY = Integer.MIN_VALUE;
 
+            final ImageUtil.DynamicRgb dRgb = new ImageUtil.DynamicRgb(rgb, tolerant);
+
             List<int[]> pos = new ArrayList<>();
             for (int y = 0; y < bi.getHeight(); y++) {
                 for (int x = 0; x < bi.getWidth(); x++) {
                     int posRgb = bi.getRGB(x, y) & 0xFFFFFF;
-                    if (posRgb != rgb)
+                    if (!ImageUtil.areColorsSimilar(dRgb, posRgb, Configuration.Tolerant.color)) {
                         continue;
+                    }
                     pos.add(new int[]{x, y});
 
                     minX = Math.min(minX, x);

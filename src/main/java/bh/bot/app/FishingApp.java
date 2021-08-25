@@ -1,11 +1,10 @@
 package bh.bot.app;
 
 import bh.bot.common.Configuration;
-import bh.bot.common.types.images.ImgMeta;
-import bh.bot.common.types.images.Pixel;
-import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.Telegram;
+import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
+import bh.bot.common.utils.ImageUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -58,6 +57,8 @@ public class FishingApp extends AbstractApplication {
             info("Exiting");
             System.exit(1);
         }
+
+        debug("labelFishingCord: %3d, %3d", labelFishingCord.x, labelFishingCord.y);
 
         final Point anchorPoint = new Point(
                 labelFishingCord.x - Configuration.Offsets.Fishing.Labels.fishing.X,
@@ -121,8 +122,8 @@ public class FishingApp extends AbstractApplication {
     private void doLoopFishing(int loopCount, final AtomicBoolean masterSwitch, final Point anchorPoint, final AtomicInteger screen, final AtomicBoolean unsure, final AtomicLong unsureFrom) {
         moveCursor(new Point(950, 100));
 
-        final int xButton1 = anchorPoint.x + ImgMeta.Metas.Fishing.Buttons.start.getCoordinateOffset().X - 40;
-        final int yButton1 = anchorPoint.y + ImgMeta.Metas.Fishing.Buttons.start.getCoordinateOffset().Y;
+        final int xButton1 = anchorPoint.x + BwMatrixMeta.Metas.Fishing.Buttons.start.getCoordinateOffset().X - 40;
+        final int yButton1 = anchorPoint.y + BwMatrixMeta.Metas.Fishing.Buttons.start.getCoordinateOffset().Y;
         final Point pButton1 = new Point(xButton1, yButton1);
 
         boolean requestedToExit = false;
@@ -146,9 +147,12 @@ public class FishingApp extends AbstractApplication {
             }
 
             if (curScreen == screenCatch) {
-                // debug("On screen CATCH");
+                debug("On screen CATCH");
 
-                Color color = getPixelColor(anchorPoint.x + 697, anchorPoint.y + 389);
+                Color color = getPixelColor(
+                        anchorPoint.x + Configuration.Offsets.Fishing.Scan.detectColor100PercentCatchingFish.X,
+                        anchorPoint.y + Configuration.Offsets.Fishing.Scan.detectColor100PercentCatchingFish.Y
+                );
                 if (color.getGreen() < 230)
                     continue;
                 if (color.getRed() > 100)
@@ -169,24 +173,40 @@ public class FishingApp extends AbstractApplication {
                 sleep(1500);
 
             } else if (curScreen == screenCast) {
-                // debug("On screen CAST");
+                debug("On screen CAST");
 
-                BufferedImage sc = captureScreen(anchorPoint.x + 583, anchorPoint.y + 356, 48, 72);
+                BufferedImage sc = captureScreen(
+                        anchorPoint.x + Configuration.Offsets.Fishing.Scan.beginScanCastingFish.X,
+                        anchorPoint.y + Configuration.Offsets.Fishing.Scan.beginScanCastingFish.Y,
+                        Configuration.Sizing.Fishing.Scan.castingFishSize.W,
+                        Configuration.Sizing.Fishing.Scan.castingFishSize.H
+                );
                 final int black = 0x000000;
                 try {
+                    final int offset1 = 0;
+                    final int offset2 = Configuration.Sizing.Fishing.Scan.castingFishSize.H - 1;
+                    final int offsetSize = Configuration.Sizing.Fishing.Scan.castingFishSize.H / 4 - 2;
+                    final int offset3 = offset1 + offsetSize;
+                    final int offset4 = offset2 - offsetSize;
                     for (int x = 0; x < sc.getWidth(); x++) {
-                        if ((sc.getRGB(x, 16) & 0xFFFFFF) != black) {
+                        if ((sc.getRGB(x, offset3) & 0xFFFFFF) != black) {
+                            debug("Fail check CAST step p1: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset3) & 0xFFFFFF)), x, offset3);
                             continue;
                         }
-                        if ((sc.getRGB(x, 55) & 0xFFFFFF) != black) {
+                        if ((sc.getRGB(x, offset4) & 0xFFFFFF) != black) {
+                            debug("Fail check CAST step p2: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset4) & 0xFFFFFF)), x, offset4);
                             continue;
                         }
-                        if ((sc.getRGB(x, 0) & 0xFFFFFF) != black) {
+                        if ((sc.getRGB(x, offset1) & 0xFFFFFF) != black) {
+                            debug("Fail check CAST step p3: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset1) & 0xFFFFFF)), x, offset1);
                             continue;
                         }
-                        if ((sc.getRGB(x, 71) & 0xFFFFFF) != black) {
+                        if ((sc.getRGB(x, offset2) & 0xFFFFFF) != black) {
+                            debug("Fail check CAST step p4: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset2) & 0xFFFFFF)), x, offset2);
                             continue;
                         }
+
+                        debug("Good, casting now");
 
                         sendSpaceKey();
                         unsure.set(true);
@@ -198,12 +218,15 @@ public class FishingApp extends AbstractApplication {
                         sleep(1500);
                         break;
                     }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    sleep(500);
                 } finally {
                     sc.flush();
                 }
 
             } else if (curScreen == screenStart) {
-                // debug("On screen START");
+                debug("On screen START");
                 moveCursor(pButton1);
                 mouseClick();
                 sleep(1500);
@@ -223,7 +246,7 @@ public class FishingApp extends AbstractApplication {
             try {
                 saveDebugImage(sc, "detectScreen_fishing");
 
-                if (isContains(sc, ImgMeta.Metas.Fishing.Buttons.catch_)) {
+                if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.catch_)) {
                     screen.set(screenCatch);
                     unsure.set(false);
                     unsureFrom.set(Long.MAX_VALUE);
@@ -231,7 +254,7 @@ public class FishingApp extends AbstractApplication {
                     continue;
                 }
 
-                if (isContains(sc, ImgMeta.Metas.Fishing.Buttons.cast)) {
+                if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.cast)) {
                     screen.set(screenCast);
                     unsure.set(false);
                     unsureFrom.set(Long.MAX_VALUE);
@@ -239,7 +262,7 @@ public class FishingApp extends AbstractApplication {
                     continue;
                 }
 
-                if (isContains(sc, ImgMeta.Metas.Fishing.Buttons.start)) {
+                if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.start)) {
                     screen.set(screenStart);
                     unsure.set(false);
                     unsureFrom.set(Long.MAX_VALUE);
@@ -250,22 +273,51 @@ public class FishingApp extends AbstractApplication {
                 unsure.set(true);
                 unsureFrom.set(System.currentTimeMillis());
                 seeBtnStartFrom.set(Long.MAX_VALUE);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                sleep(2000);
             } finally {
                 debug("detectScreen process time: %d ms", System.currentTimeMillis() - timeStart);
                 sc.flush();
             }
-
         }
     }
 
-    private boolean isContains(BufferedImage sc, ImgMeta im) {
+    private boolean isContains(BufferedImage sc, BwMatrixMeta im) {
+        return isContains(sc, im, false);
+    }
+
+    private boolean isContains(BufferedImage sc, BwMatrixMeta im, boolean debug) {
         final int offsetX = im.getCoordinateOffset().X;
         final int offsetY = im.getCoordinateOffset().Y;
         final int colorTolerant = Configuration.Tolerant.color;
-        for (Pixel px : im.getPixelList()) {
-            if (!ImageUtil.areColorsSimilar(px.rgb, sc.getRGB(offsetX + px.x, offsetY + px.y) & 0xFFFFFF, colorTolerant))
+        final int blackPixelRgb = im.getBlackPixelRgb();
+        final ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
+
+        for (int[] px : im.getBlackPixels()) {
+            if (!ImageUtil.areColorsSimilar(//
+                    blackPixelDRgb, //
+                    sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF, //
+                    colorTolerant)) {
+                if (debug) {
+                    debug("Fail (1) at %3d, %3d (offset=%3d, %3d, coor=%3d, %3d) with color: %d vs %d", offsetX + px[0], offsetY + px[1], offsetX, offsetY, px[0], px[1], blackPixelRgb, sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF);
+                }
                 return false;
+            }
         }
+
+        for (int[] px : im.getNonBlackPixels()) {
+            if (ImageUtil.areColorsSimilar(//
+                    blackPixelRgb, //
+                    sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF, //
+                    colorTolerant)) {
+                if (debug) {
+                    debug("Fail (2) at %3d, %3d (offset=%3d, %3d, coor=%3d, %3d) with color: %d vs %d", offsetX + px[0], offsetY + px[1], offsetX, offsetY, px[0], px[1], blackPixelRgb, sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF);
+                }
+                return false;
+            }
+        }
+
         return true;
     }
 

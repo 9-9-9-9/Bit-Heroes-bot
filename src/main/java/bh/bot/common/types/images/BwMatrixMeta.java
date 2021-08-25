@@ -3,10 +3,11 @@ package bh.bot.common.types.images;
 import bh.bot.common.Configuration;
 import bh.bot.common.utils.ImageUtil;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import static bh.bot.common.Log.debug;
 
 public class BwMatrixMeta {
     private final ArrayList<int[]> blackPixels;
@@ -14,16 +15,17 @@ public class BwMatrixMeta {
     private final int w;
     private final int h;
     private final int blackPixelRgb;
-    private final Color colorBlackPixel;
+    private final ImageUtil.DynamicRgb blackPixelDRgb;
     private final Configuration.Offset coordinateOffset;
     private int[] lastMatch = new int[]{-1, -1};
 
     public BwMatrixMeta(BufferedImage img, Configuration.Offset coordinateOffset, int blackPixelRgb) {
+        final int matrixPointColorPixelRgb = 0x000000;
         final int anyColorPixelRgb = 0xFFFFFF;
         try {
             this.coordinateOffset = coordinateOffset;
             this.blackPixelRgb = blackPixelRgb & 0xFFFFFF;
-            this.colorBlackPixel = new Color(this.blackPixelRgb);
+            this.blackPixelDRgb = new ImageUtil.DynamicRgb(this.blackPixelRgb, Configuration.Tolerant.colorBw);
             blackPixels = new ArrayList<>();
             nonBlackPixels = new ArrayList<>();
             w = img.getWidth();
@@ -31,7 +33,7 @@ public class BwMatrixMeta {
             for (int y = 0; y < img.getHeight(); y++) {
                 for (int x = 0; x < img.getWidth(); x++) {
                     int rgb = img.getRGB(x, y) & 0xFFFFFF;
-                    if (rgb == blackPixelRgb)
+                    if (rgb == matrixPointColorPixelRgb)
                         blackPixels.add(new int[]{x, y});
                     else if (rgb != anyColorPixelRgb)
                         nonBlackPixels.add(new int[]{x, y});
@@ -43,7 +45,7 @@ public class BwMatrixMeta {
     }
 
     public boolean isMatchBlackRgb(int rgb) {
-        return ImageUtil.areColorsSimilar(colorBlackPixel, new Color(rgb), Configuration.Tolerant.color);
+        return ImageUtil.areColorsSimilar(blackPixelDRgb, rgb, Configuration.Tolerant.color);
     }
 
     public int getWidth() {
@@ -56,6 +58,10 @@ public class BwMatrixMeta {
 
     public int getBlackPixelRgb() {
         return blackPixelRgb;
+    }
+
+    public ImageUtil.DynamicRgb getBlackPixelDRgb() {
+        return blackPixelDRgb;
     }
 
     public ArrayList<int[]> getBlackPixels() {
@@ -82,10 +88,24 @@ public class BwMatrixMeta {
         public static class Globally {
             public static class Buttons {
                 public static BwMatrixMeta talkRightArrow;
+                public static BwMatrixMeta rerun;
+                public static BwMatrixMeta reconnect;
+            }
+        }
+
+        public static class Dungeons {
+            public static class Buttons {
+                public static BwMatrixMeta rerun;
             }
         }
 
         public static class Fishing {
+            public static class Buttons {
+                public static BwMatrixMeta start;
+                public static BwMatrixMeta cast;
+                public static BwMatrixMeta catch_;
+            }
+
             public static class Labels {
                 public static BwMatrixMeta fishing;
             }
@@ -93,19 +113,53 @@ public class BwMatrixMeta {
     }
 
     public static void load() throws IOException {
-        BwMatrixMeta.Metas.Globally.Buttons.talkRightArrow = new BwMatrixMeta(//
+        Metas.Globally.Buttons.talkRightArrow = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
-                        "buttons/talkArrow-mx.bmp"
+                        "buttons/globally.talkRightArrow-mx.bmp"
                 ), //
                 Configuration.Offsets.Globally.Buttons.talkRightArrow,
                 0x000000
         );
-        BwMatrixMeta.Metas.Fishing.Labels.fishing = new BwMatrixMeta(//
+        Metas.Globally.Buttons.reconnect = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/globally.reconnect-mx.bmp"
+                ), //
+                Configuration.Offsets.Globally.Buttons.reconnect,
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.rerun = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/dungeons.rerun-mx.bmp"
+                ), //
+                Configuration.Offsets.Dungeons.Buttons.reRun,
+                0xFFFFFF);
+        Metas.Fishing.Labels.fishing = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "labels/fishing-mx.bmp"
                 ), //
                 Configuration.Offsets.Fishing.Labels.fishing,
-                0x000000
+                0xFFFFFF
+        );
+        Metas.Fishing.Buttons.start = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/fishing.start-mx.bmp"
+                ), //
+                Configuration.Offsets.Fishing.Buttons.start,
+                0xFFFFFF
+        );
+        Metas.Fishing.Buttons.cast = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/fishing.cast-mx.bmp"
+                ), //
+                Configuration.Offsets.Fishing.Buttons.cast,
+                0xFFFFFF
+        );
+        Metas.Fishing.Buttons.catch_ = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/fishing.catch-mx.bmp"
+                ), //
+                Configuration.Offsets.Fishing.Buttons.catch_,
+                0xFFFFFF
         );
     }
 }

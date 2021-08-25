@@ -26,8 +26,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.InteractionUtil.Mouse.mouseMoveAndClickAndHide;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.InteractionUtil.Screen.*;
@@ -123,7 +122,7 @@ public abstract class AbstractApplication {
         mkdir("out", "images", getAppCode());
     }
 
-    private void mkdir(String path, String...paths) {
+    private void mkdir(String path, String... paths) {
         File file = Paths.get(path, paths).toFile();
         if (!file.exists())
             file.mkdir();
@@ -343,10 +342,11 @@ public abstract class AbstractApplication {
         BufferedImage sc = captureScreen(lastMatch[0], lastMatch[1], im.getWidth(), im.getHeight());
 
         try {
-            int blackPixelRgb = im.getBlackPixelRgb();
+            final int blackPixelRgb = im.getBlackPixelRgb();
+            final ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
             for (int[] px : im.getBlackPixels()) {
                 if (!ImageUtil.areColorsSimilar(//
-                        blackPixelRgb, //
+                        blackPixelDRgb, //
                         sc.getRGB(px[0], px[1]) & 0xFFFFFF, //
                         Configuration.Tolerant.color)) {
                     return false;
@@ -383,7 +383,8 @@ public abstract class AbstractApplication {
 
             boolean go = true;
             Point p = new Point();
-            int blackPixelRgb = im.getBlackPixelRgb();
+            final int blackPixelRgb = im.getBlackPixelRgb();
+            final ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
             for (int y = 0; y < sc.getHeight() - im.getHeight() && go; y++) {
                 for (int x = 0; x < sc.getWidth() - im.getWidth() && go; x++) {
                     int rgb = sc.getRGB(x, y) & 0xFFFFFF;
@@ -397,8 +398,8 @@ public abstract class AbstractApplication {
                     for (int[] px : im.getBlackPixels()) {
                         int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
                         if (!ImageUtil.areColorsSimilar(//
+                                blackPixelDRgb, //
                                 srcRgb, //
-                                blackPixelRgb, //
                                 Configuration.Tolerant.color)) {
                             allGood = false;
                             // debug(String.format("clickImageScanBW second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
@@ -411,8 +412,8 @@ public abstract class AbstractApplication {
                         for (int[] px : im.getNonBlackPixels()) {
                             int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
                             if (ImageUtil.areColorsSimilar(//
-                                    srcRgb, //
                                     blackPixelRgb, //
+                                    srcRgb, //
                                     Configuration.Tolerant.color)) {
                                 allGood = false;
                                 // debug(String.format("clickImageScanBW third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
@@ -447,18 +448,18 @@ public abstract class AbstractApplication {
         try {
             saveDebugImage(sc, "detectLabel");
 
-            boolean go = true;
-            for (int y = 0; y < sc.getHeight() - im.getHeight() && go; y++) {
-                for (int x = 0; x < sc.getWidth() - im.getWidth() && go; x++) {
+            for (int y = 0; y < sc.getHeight() - im.getHeight(); y++) {
+                for (int x = 0; x < sc.getWidth() - im.getWidth(); x++) {
                     for (int mainColor : mainColors) {
-                        int c = mainColor & 0xFFFFFF;
+                        final int c = mainColor & 0xFFFFFF;
+                        final ImageUtil.DynamicRgb cDRgb = new ImageUtil.DynamicRgb(c, Configuration.Tolerant.colorBw);
 
                         boolean allGood = true;
 
                         for (int[] px : im.getBlackPixels()) {
                             int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
                             if (!ImageUtil.areColorsSimilar(//
-                                    c, //
+                                    cDRgb, //
                                     srcRgb, //
                                     Configuration.Tolerant.color)) {
                                 allGood = false;
@@ -467,18 +468,19 @@ public abstract class AbstractApplication {
                             }
                         }
 
-                        if (allGood) {
-                            Log.debug("detectLabel second match passed");
-                            for (int[] px : im.getNonBlackPixels()) {
-                                int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
-                                if (ImageUtil.areColorsSimilar(//
-                                        c, //
-                                        srcRgb, //
-                                        Configuration.Tolerant.color)) {
-                                    allGood = false;
-                                    // debug(String.format("detectLabel third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
-                                    break;
-                                }
+                        if (!allGood)
+                            continue;
+
+                        debug("detectLabel second match passed");
+                        for (int[] px : im.getNonBlackPixels()) {
+                            int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
+                            if (ImageUtil.areColorsSimilar(//
+                                    c, //
+                                    srcRgb, //
+                                    Configuration.Tolerant.color)) {
+                                allGood = false;
+                                // debug(String.format("detectLabel third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
+                                break;
                             }
                         }
 
@@ -486,6 +488,7 @@ public abstract class AbstractApplication {
                             continue;
 
                         // debug("detectLabel third match passed");
+                        debug("detectLabel captured at %3d,%3d with size %3dx%3d, match at %3d,%3d", screenCapturedResult.x, screenCapturedResult.y, screenCapturedResult.w, screenCapturedResult.h, x, y);
                         Point result = new Point(screenCapturedResult.x + x, screenCapturedResult.y + y);
                         im.setLastMatchPoint(result.x, result.y);
                         return result;
@@ -535,7 +538,7 @@ public abstract class AbstractApplication {
             }
 
             cnt = sleepSecs;
-            if (clickImage(ImgMeta.Metas.Globally.Buttons.reconnect)) {
+            if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.reconnect)) {
                 masterSwitch.set(true);
                 Telegram.sendMessage("Disconnected", true);
             }

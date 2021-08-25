@@ -73,54 +73,6 @@ public class ImgMeta {
         return coordinateOffset;
     }
 
-    public static class Metas {
-
-        public static class Fishing {
-            public static class Buttons {
-                public static ImgMeta start;
-                public static ImgMeta cast;
-                public static ImgMeta catch_;
-            }
-        }
-
-        public static class Dungeons {
-            public static class Buttons {
-                public static ImgMeta rerun;
-            }
-        }
-
-        public static class Globally {
-            public static class Buttons {
-                public static ImgMeta reconnect;
-            }
-        }
-    }
-
     public static void load() throws IOException {
-        Metas.Dungeons.Buttons.rerun = new ImgMeta(//
-                ImageUtil.loadImageFileFromResource( //
-                        "buttons/rerun-kp.bmp"
-                ), //
-                Configuration.Offsets.Dungeons.Buttons.reRun);
-        Metas.Globally.Buttons.reconnect = new ImgMeta(//
-                ImageUtil.loadImageFileFromResource( //
-                        "buttons/reconnect-sp.bmp"
-                ), //
-                Configuration.Offsets.Globally.Buttons.reconnectSp);
-        Metas.Fishing.Buttons.start = new ImgMeta(//
-                ImageUtil.loadImageFileFromResource( //
-                        "buttons/start-sp.bmp"
-                ), //
-                Configuration.Offsets.Fishing.Buttons.start);
-        Metas.Fishing.Buttons.cast = new ImgMeta(//
-                ImageUtil.loadImageFileFromResource( //
-                        "buttons/cast-sp.bmp"
-                ), //
-                Configuration.Offsets.Fishing.Buttons.cast);
-        Metas.Fishing.Buttons.catch_ = new ImgMeta(//
-                ImageUtil.loadImageFileFromResource( //
-                        "buttons/catch-sp.bmp"
-                ), //
-                Configuration.Offsets.Fishing.Buttons.catch_);
     }
 }
