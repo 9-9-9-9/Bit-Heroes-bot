@@ -36,7 +36,7 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Configuration.Offset getOffsetButtonDungeonReRun() {
-            return new Configuration.Offset(307, 467);
+            return new Configuration.Offset(309, 468);
         }
 
         @Override
@@ -46,7 +46,7 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Configuration.Offset getOffsetButtonReconnect() {
-            return new Configuration.Offset(343, 352);
+            return new Configuration.Offset(344, 353);
         }
 
         @Override

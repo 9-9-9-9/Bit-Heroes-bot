@@ -115,7 +115,7 @@ public class BwMatrixMeta {
     public static void load() throws IOException {
         Metas.Globally.Buttons.talkRightArrow = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
-                        "buttons/talkArrow-mx.bmp"
+                        "buttons/globally.talkRightArrow-mx.bmp"
                 ), //
                 Configuration.Offsets.Globally.Buttons.talkRightArrow,
                 0x000000
@@ -135,7 +135,7 @@ public class BwMatrixMeta {
                 0xFFFFFF);
         Metas.Fishing.Labels.fishing = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
-                        "labels/fishing-mx2.bmp"
+                        "labels/fishing-mx.bmp"
                 ), //
                 Configuration.Offsets.Fishing.Labels.fishing,
                 0xFFFFFF
