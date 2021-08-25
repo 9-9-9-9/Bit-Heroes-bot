@@ -1,8 +1,8 @@
 package bh.bot.common;
 
+import bh.bot.app.AbstractApplication;
 import bh.bot.common.types.ScreenResolutionProfile;
 import com.sun.media.sound.InvalidDataException;
-import bh.bot.app.AbstractApplication;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.StringUtil.isBlank;
 import static bh.bot.common.utils.StringUtil.isNotBlank;
@@ -97,6 +98,11 @@ public class Configuration {
         profileName = screenResolutionProfile.getName().trim();
         if (isBlank(profileName))
             throw new InvalidDataException("profileName");
+
+        if (screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile && !OS.isWin) {
+            err("Steam profile only available on Windows");
+            System.exit(4);
+        }
 
         properties.load(Configuration.class.getResourceAsStream("/config.properties"));
 
