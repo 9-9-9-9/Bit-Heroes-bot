@@ -1,12 +1,10 @@
 package bh.bot.app;
 
 import bh.bot.common.Configuration;
-import bh.bot.common.types.images.BwMatrixMeta;
-import bh.bot.common.types.images.ImgMeta;
-import bh.bot.common.types.images.Pixel;
-import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.Telegram;
+import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
+import bh.bot.common.utils.ImageUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -59,6 +57,8 @@ public class FishingApp extends AbstractApplication {
             info("Exiting");
             System.exit(1);
         }
+
+        debug("labelFishingCord: %3d, %3d", labelFishingCord.x, labelFishingCord.y);
 
         final Point anchorPoint = new Point(
                 labelFishingCord.x - Configuration.Offsets.Fishing.Labels.fishing.X,
