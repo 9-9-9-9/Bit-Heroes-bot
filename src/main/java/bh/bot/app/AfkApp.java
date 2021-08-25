@@ -26,7 +26,19 @@ import static bh.bot.common.utils.InteractionUtil.Screen.captureScreen;
 public class AfkApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
+        ArrayList<Event> eventList = getEvents();
+        //
+        debug("Scanning screen");
+        for (Event event : eventList) {
+            Point point = findEvent(event);
+            if (point == null)
+                continue;
+            debug("Found event id %2d at %3d,%3d", event.id, point.x, point.y);
+        }
+        debug("End");
+    }
 
+    private ArrayList<Event> getEvents() {
         ArrayList<Event> eventList = new ArrayList<>();
         //
         if (launchInfo.eInvasion)
@@ -84,15 +96,8 @@ public class AfkApp extends AbstractApplication {
         for (Event event : eventList) {
             info("  <%2d> %s", event.id, event.name);
         }
-        //
-        debug("Scanning screen");
-        for (Event event : new Event[]{Events.invasion}) {
-            Point point = findEvent(event);
-            if (point == null)
-                continue;
-            debug("Found event id %2d at %3d,%3d", event.id, point.x, point.y);
-        }
-        debug("End");
+
+        return eventList;
     }
 
     private final int numberOfEventsPerColumn = 5;
