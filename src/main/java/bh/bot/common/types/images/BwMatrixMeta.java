@@ -122,21 +122,21 @@ public class BwMatrixMeta {
         debug("BwMatrixMeta label Fishing: Black pixel count = %d, Non black pixel count = %d", BwMatrixMeta.Metas.Fishing.Labels.fishing.getBlackPixels().size(), BwMatrixMeta.Metas.Fishing.Labels.fishing.getNonBlackPixels().size());
         Metas.Fishing.Buttons.start = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
-                        "buttons/start-mx.bmp"
+                        "buttons/fishing.start-mx.bmp"
                 ), //
                 Configuration.Offsets.Fishing.Buttons.start,
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.cast = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
-                        "buttons/cast-mx.bmp"
+                        "buttons/fishing.cast-mx.bmp"
                 ), //
                 Configuration.Offsets.Fishing.Buttons.cast,
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.catch_ = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
-                        "buttons/catch-mx.bmp"
+                        "buttons/fishing.catch-mx.bmp"
                 ), //
                 Configuration.Offsets.Fishing.Buttons.catch_,
                 0xFFFFFF
