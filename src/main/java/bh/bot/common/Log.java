@@ -31,9 +31,9 @@ public class Log {
     }
 
     public static void warn(String format, Object... objs) {
-        String text = String.format(format, objs);
-        if (StringUtil.isBlank(text))
+        if (StringUtil.isBlank(format))
             return;
+        String text = String.format(format, objs);
         println(String.format("** WARNING ** %s", text));
     }
 

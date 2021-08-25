@@ -101,6 +101,7 @@ Enjoy it
 #### Project-wide flags
 - `--help` show help for specific application, for example: `./rerun.sh --help`
 - `--steam` *(Windows only)* for Bit Heroes on Steam with resolution 800x480
+- `--web` *(default)* for Bit Heroes on Web or Mini-client with resolution 800x520
 - `--mute` do not push notification to Telegram
 - `--img` save screenshot into `./out/images/<app>` directory, only use for debugging purpose
 

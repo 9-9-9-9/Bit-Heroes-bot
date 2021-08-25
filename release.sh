@@ -82,4 +82,7 @@ rm -rf $DIR
 mv ./release $DIR
 zip -r $FILE $DIR
 
+echo 'clean up'
+rm -rf $DIR
+
 echo 'Done '$FILE

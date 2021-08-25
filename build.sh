@@ -11,8 +11,9 @@ rm -f ./BitHeroes.jar
 cp ./target/BitHeroes-*-jar-with-dependencies.jar ./BitHeroes.jar
 touch user-config.properties
 chmod +x ./rerun.sh
-chmod +x ./samepix.sh
-chmod +x ./keeppix.sh
+chmod +x ./fishing.sh
+#chmod +x ./samepix.sh
+#chmod +x ./keeppix.sh
 chmod +x ./matrix.sh
 
 # Generating mini client
