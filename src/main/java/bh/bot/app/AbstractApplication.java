@@ -49,7 +49,7 @@ public abstract class AbstractApplication {
         if (listArg.contains("--mute"))
             Telegram.disable();
         else if (Telegram.isDisabled())
-            Log.info("Telegram is disabled due to missing or invalid configuration");
+            Log.info("Telegram was disabled due to missing or invalid configuration");
 
         if (listArg.contains("--exit"))
             Log.err("Invalid usage of flag 'exit', should be '--exit=X' where X is the number of seconds to await before force exit, for example: '--exit=3600' means exit after 1 hours");
