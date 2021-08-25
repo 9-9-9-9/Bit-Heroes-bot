@@ -218,6 +218,9 @@ public class FishingApp extends AbstractApplication {
                         sleep(1500);
                         break;
                     }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    sleep(500);
                 } finally {
                     sc.flush();
                 }
@@ -273,7 +276,7 @@ public class FishingApp extends AbstractApplication {
             } catch (Exception ex) {
                 ex.printStackTrace();
                 sleep(2000);
-            }finally {
+            } finally {
                 debug("detectScreen process time: %d ms", System.currentTimeMillis() - timeStart);
                 sc.flush();
             }

@@ -66,7 +66,7 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Configuration.Offset getOffsetButtonFishingCatch() {
-            return new Configuration.Offset(366, 488);
+            return new Configuration.Offset(362, 464);
         }
 
         @Override
