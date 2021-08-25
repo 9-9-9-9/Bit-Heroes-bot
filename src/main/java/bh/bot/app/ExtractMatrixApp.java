@@ -1,5 +1,6 @@
 package bh.bot.app;
 
+import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
@@ -22,7 +23,7 @@ public class ExtractMatrixApp extends AbstractApplication {
             if (args.length != 0 && args.length != 3) {
                 info("Invalid number of arguments");
                 info(getHelp());
-                System.exit(2);
+                System.exit(Main.EXIT_CODE_INVALID_NUMBER_OF_ARGUMENTS);
                 return;
             }
 

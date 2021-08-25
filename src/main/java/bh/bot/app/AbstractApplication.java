@@ -1,8 +1,10 @@
 package bh.bot.app;
 
+import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
+import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.images.ImgMeta;
 import bh.bot.common.types.images.Pixel;
@@ -105,6 +107,13 @@ public abstract class AbstractApplication {
     protected boolean enableSavingDebugImages = false;
 
     public void run(LaunchInfo launchInfo) throws Exception {
+        if (Configuration.screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile && !isSupportSteamScreenResolution())
+        {
+            err("'%s' does not support steam resolution");
+            System.exit(Main.EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
+            return;
+        }
+
         this.exitAfterXSecs = launchInfo.exitAfterXSecs;
         this.enableSavingDebugImages = launchInfo.enableSavingDebugImages;
         if (this.enableSavingDebugImages)
@@ -215,6 +224,10 @@ public abstract class AbstractApplication {
     }
 
     protected abstract String getLimitationExplain();
+
+    protected boolean isSupportSteamScreenResolution() {
+        return false;
+    }
 
     protected void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
         moveCursor(new Point(950, 100));
@@ -599,7 +612,7 @@ public abstract class AbstractApplication {
             }
         } catch (IOException e) {
             Log.err("Error while reading input, application is going to exit now, please try again later");
-            System.exit(3);
+            System.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
             return null;
         }
     }

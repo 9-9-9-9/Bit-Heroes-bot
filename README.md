@@ -18,6 +18,8 @@ Officially support game resolution 800x520 ([web](https://www.kongregate.com/gam
 
 Also partially [support Steam version with resolution 800x480](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Does-this-bot-supports-Steam-version-of-Bit-Heroes%3F)
 
+Only support English user interface
+
 *It is recommended to play game using mini client
 
 ### Contains the following functions:
@@ -37,7 +39,7 @@ And some extra functions support developers on developing this bot:
 - [Google Chrome (if you wish to use the mini client)](https://www.google.com/chrome)
 
 ### Installation:
-1. `git clone https://github.com/9-9-9-9/Bit-Heroes-bot` or download ZIP file extract
+1. `git clone https://github.com/9-9-9-9/Bit-Heroes-bot` or download ZIP file then extract
 2. Depends on OS:
     - Windows: click and run the file `build.bat`
     - Linux/MacOS: run the following command `./build.sh` on terminal

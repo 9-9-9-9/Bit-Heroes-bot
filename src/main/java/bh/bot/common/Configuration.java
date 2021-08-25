@@ -1,5 +1,6 @@
 package bh.bot.common;
 
+import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.types.ScreenResolutionProfile;
 import com.sun.media.sound.InvalidDataException;
@@ -16,6 +17,7 @@ import static bh.bot.common.utils.StringUtil.isBlank;
 import static bh.bot.common.utils.StringUtil.isNotBlank;
 
 public class Configuration {
+    public static ScreenResolutionProfile screenResolutionProfile = null;
     public static String profileName = null;
 
     public static class Sizing {
@@ -94,14 +96,15 @@ public class Configuration {
                 screenResolutionProfile.getSupportedGameResolutionHeight()
         );
 
-        profileName = screenResolutionProfile.getName().trim();
+        Configuration.screenResolutionProfile = screenResolutionProfile;
+        Configuration.profileName = screenResolutionProfile.getName().trim();
         if (isBlank(profileName))
             throw new InvalidDataException("profileName");
 
         if (screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile) {
             if (!OS.isWin) {
                 err("Steam profile only available on Windows");
-                System.exit(4);
+                System.exit(Main.EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
             }
             info("****** IMPORTANT ****** IMPORTANT ******");
             warn("You must move the Bit Heroes game's window to top left corner of your screen or provide exactly screen offset into the 'offset.screen.x & y' keys");

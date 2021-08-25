@@ -1,5 +1,6 @@
 package bh.bot.app;
 
+import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.images.BwMatrixMeta;
@@ -55,7 +56,7 @@ public class FishingApp extends AbstractApplication {
 
         if (labelFishingCord == null) {
             info("Exiting");
-            System.exit(1);
+            System.exit(Main.EXIT_CODE_UNABLE_DETECTING_ANCHOR);
         }
 
         debug("labelFishingCord: %3d, %3d", labelFishingCord.x, labelFishingCord.y);
@@ -354,5 +355,10 @@ public class FishingApp extends AbstractApplication {
     @Override
     protected String getLimitationExplain() {
         return "To start using this function, you the to be ready in fishing state, and the Start button is clearly visible on the screen";
+    }
+
+    @Override
+    protected boolean isSupportSteamScreenResolution() {
+        return true;
     }
 }

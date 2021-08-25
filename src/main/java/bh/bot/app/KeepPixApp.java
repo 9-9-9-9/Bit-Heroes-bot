@@ -1,5 +1,6 @@
 package bh.bot.app;
 
+import bh.bot.Main;
 import bh.bot.common.Log;
 import bh.bot.common.types.tuples.Tuple3;
 
@@ -20,7 +21,7 @@ public class KeepPixApp extends AbstractApplication {
             if (args.length != 0 && args.length != 2) {
                 Log.info("Invalid number of arguments");
                 Log.info(getHelp());
-                System.exit(2);
+                System.exit(Main.EXIT_CODE_INVALID_NUMBER_OF_ARGUMENTS);
                 return;
             }
 
