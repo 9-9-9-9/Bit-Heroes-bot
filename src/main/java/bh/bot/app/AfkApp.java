@@ -33,6 +33,7 @@ public class AfkApp extends AbstractApplication {
             eventList.add(Events.invasion);
         //
         if (eventList.size() == 0) {
+            final ArrayList<Event> tmpEventList = new ArrayList<>();
             final List<Event> allEvents = Arrays.asList(Events.invasion);
             info("Select events you want to do:");
             for (Event event : allEvents)
@@ -50,7 +51,10 @@ public class AfkApp extends AbstractApplication {
                                 Optional<Event> first = allEvents.stream().filter(x -> x.id == result).findFirst();
                                 if (!first.isPresent())
                                     return new Tuple3<>(false, "ID does not exists", null);
-                                return new Tuple3<>(true, null, first.get());
+                                Event ev = first.get();
+                                if (tmpEventList.stream().anyMatch(x -> x.id == ev.id))
+                                    return new Tuple3<>(false, String.format("%s had been chosen before", ev.name), null);
+                                return new Tuple3<>(true, null, ev);
                             } catch (Exception ex2) {
                                 return new Tuple3<>(false, "Unable to parse your input, error: " + ex2.getMessage(), null);
                             }
@@ -60,7 +64,7 @@ public class AfkApp extends AbstractApplication {
                     if (event == null)
                         break;
 
-                    eventList.add(event);
+                    tmpEventList.add(event);
                     info("Selected event %s", event.name);
                 }
             } catch (IOException e) {
@@ -68,7 +72,7 @@ public class AfkApp extends AbstractApplication {
                 System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
             }
 
-            eventList = new ArrayList<>(eventList.stream().distinct().collect(Collectors.toList()));
+            eventList = new ArrayList<>(tmpEventList.stream().distinct().collect(Collectors.toList()));
 
             if (eventList.size() == 0) {
                 info("No events supplied");
