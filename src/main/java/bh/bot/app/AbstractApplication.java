@@ -471,7 +471,7 @@ public abstract class AbstractApplication {
                         if (!allGood)
                             continue;
 
-                        Log.debug("detectLabel second match passed");
+                        debug("detectLabel second match passed");
                         for (int[] px : im.getNonBlackPixels()) {
                             int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
                             if (ImageUtil.areColorsSimilar(//
