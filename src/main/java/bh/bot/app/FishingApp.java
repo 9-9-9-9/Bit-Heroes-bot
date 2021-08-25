@@ -147,7 +147,7 @@ public class FishingApp extends AbstractApplication {
             }
 
             if (curScreen == screenCatch) {
-                // debug("On screen CATCH");
+                debug("On screen CATCH");
 
                 Color color = getPixelColor(
                         anchorPoint.x + Configuration.Offsets.Fishing.Scan.detectColor100PercentCatchingFish.X,
@@ -173,7 +173,7 @@ public class FishingApp extends AbstractApplication {
                 sleep(1500);
 
             } else if (curScreen == screenCast) {
-                // debug("On screen CAST");
+                debug("On screen CAST");
 
                 BufferedImage sc = captureScreen(
                         anchorPoint.x + Configuration.Offsets.Fishing.Scan.beginScanCastingFish.X,
@@ -223,7 +223,7 @@ public class FishingApp extends AbstractApplication {
                 }
 
             } else if (curScreen == screenStart) {
-                // debug("On screen START");
+                debug("On screen START");
                 moveCursor(pButton1);
                 mouseClick();
                 sleep(1500);
