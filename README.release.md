@@ -92,6 +92,7 @@ Enjoy it
 | --- | --- |
 | Ubuntu 18.04 (development environment) | Work perfectly |
 | Windows 10 x64 | Work perfectly |
+| Windows 7 x64 (on Virtual Box) | Work perfectly |
 | MacOS 10.14 High Sierra | Bot functions not work, only mini-client works |
 
 ### MacOS users

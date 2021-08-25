@@ -27,9 +27,8 @@ Therefore:
 3. Launch game in mini client using Google Chrome
 
 And some extra functions support developers on developing this bot:
-- SamePix: read from 2 images (must be same size) and yield a new picture with only pixels equally from original pictures
 - Matrix: read an image, keep only pixels which has color (eg. FF0000 is red) as the same as input. Used to produce picture for BwMatrixMeta objects
-- KeepPix: read 2 images are source and input, filter pixels from the input image, only keep pixels which exists in source image
+- ...
 
 [Also supports pushing messages to Telegram for notification purpose](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
 
@@ -110,35 +109,12 @@ Enjoy it
 - Windows: run file `.\mini-game-on-chrome.bat`
 - Linux/Mac: run file `./mini` or `./mini-game-on-chrome.sh`
 
-### SamePix
-For: developers only
-
-`./samepix.sh <image1> <image2> [additional flags]`
-
-This command will load 2 images from argument, scan them, find the same pixels from both images and save it to another image localed at `./out/same-pix-images` directory
-
-[Those output image can be used to scan buttons on screen with minimal fault and work gracefully across OS and devices because it maybe not have to facing with "Gamma correction" issue](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/How-can-this-bot-works-cross-platform%3F)
-
-Check the `rerun.bmp`, `rerun-hl.bmp` and `rerun-sp.bmp` in resources folder, you will see:
-- `rerun.bmp` is the ReRun in game button when was not highlighted
-- `rerun-hl.bmp` is when it was highlighted
-- `rerun-sp.bmp` is the output of SamePix where only same pixel from those 2 pictures are kept and it was used to detect ReRun button in game.
-
 ### Matrix
 For: developers only
 
-`./matrix.sh <KeepHexColor> <image> [additional flags]`
+`./matrix.sh <KeepHexColor> <ColorTolerant> <image> [additional flags]`
 
 Read image, keep only pixels which has color (eg. FF0000 is red) as the same as input. Used to produce picture for BwMatrixMeta objects
-
-[Those output image can be used to scan buttons on screen with minimal fault and work gracefully across OS and devices because it maybe not have to facing with "Gamma correction" issue](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/How-can-this-bot-works-cross-platform%3F)
-
-### KeepPix
-For: developers only
-
-`./keepix.sh <source> <input> [additional flags]`
-
-Read 2 images: source and input, filter pixels from the input image, only keep pixels which exists in source image
 
 [Those output image can be used to scan buttons on screen with minimal fault and work gracefully across OS and devices because it maybe not have to facing with "Gamma correction" issue](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/How-can-this-bot-works-cross-platform%3F)
 
@@ -153,6 +129,7 @@ Read 2 images: source and input, filter pixels from the input image, only keep p
 | --- | --- |
 | Ubuntu 18.04 (development environment) | Work perfectly |
 | Windows 10 x64 | Work perfectly |
+| Windows 7 x64 (on Virtual Box) | Work perfectly |
 | MacOS 10.14 High Sierra | Bot functions not work, only mini-client works |
 
 ### MacOS users
