@@ -60,6 +60,7 @@ public class Configuration {
     public static class Tolerant {
         public static int position;
         public static int color;
+        public static int colorBw;
     }
 
     public static class Game {
@@ -113,6 +114,7 @@ public class Configuration {
 
         Tolerant.position = Math.max(5, readInt("tolerant.position"));
         Tolerant.color = Math.max(0, readInt("tolerant.color"));
+        Tolerant.colorBw = Math.max(0, readInt("tolerant.color.bw"));
     }
 
     private static final ArrayList<AbstractApplication> applicationInstances = new ArrayList<>();

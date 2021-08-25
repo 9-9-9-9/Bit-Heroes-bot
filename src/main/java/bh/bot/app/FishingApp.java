@@ -1,6 +1,7 @@
 package bh.bot.app;
 
 import bh.bot.common.Configuration;
+import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.images.ImgMeta;
 import bh.bot.common.types.images.Pixel;
 import bh.bot.common.utils.ImageUtil;
@@ -121,8 +122,8 @@ public class FishingApp extends AbstractApplication {
     private void doLoopFishing(int loopCount, final AtomicBoolean masterSwitch, final Point anchorPoint, final AtomicInteger screen, final AtomicBoolean unsure, final AtomicLong unsureFrom) {
         moveCursor(new Point(950, 100));
 
-        final int xButton1 = anchorPoint.x + ImgMeta.Metas.Fishing.Buttons.start.getCoordinateOffset().X - 40;
-        final int yButton1 = anchorPoint.y + ImgMeta.Metas.Fishing.Buttons.start.getCoordinateOffset().Y;
+        final int xButton1 = anchorPoint.x + BwMatrixMeta.Metas.Fishing.Buttons.start.getCoordinateOffset().X - 40;
+        final int yButton1 = anchorPoint.y + BwMatrixMeta.Metas.Fishing.Buttons.start.getCoordinateOffset().Y;
         final Point pButton1 = new Point(xButton1, yButton1);
 
         boolean requestedToExit = false;
@@ -231,7 +232,7 @@ public class FishingApp extends AbstractApplication {
             try {
                 saveDebugImage(sc, "detectScreen_fishing");
 
-                if (isContains(sc, ImgMeta.Metas.Fishing.Buttons.catch_)) {
+                if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.catch_)) {
                     screen.set(screenCatch);
                     unsure.set(false);
                     unsureFrom.set(Long.MAX_VALUE);
@@ -239,7 +240,7 @@ public class FishingApp extends AbstractApplication {
                     continue;
                 }
 
-                if (isContains(sc, ImgMeta.Metas.Fishing.Buttons.cast)) {
+                if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.cast)) {
                     screen.set(screenCast);
                     unsure.set(false);
                     unsureFrom.set(Long.MAX_VALUE);
@@ -247,7 +248,7 @@ public class FishingApp extends AbstractApplication {
                     continue;
                 }
 
-                if (isContains(sc, ImgMeta.Metas.Fishing.Buttons.start)) {
+                if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.start)) {
                     screen.set(screenStart);
                     unsure.set(false);
                     unsureFrom.set(Long.MAX_VALUE);
@@ -266,14 +267,31 @@ public class FishingApp extends AbstractApplication {
         }
     }
 
-    private boolean isContains(BufferedImage sc, ImgMeta im) {
+    private boolean isContains(BufferedImage sc, BwMatrixMeta im) {
         final int offsetX = im.getCoordinateOffset().X;
         final int offsetY = im.getCoordinateOffset().Y;
         final int colorTolerant = Configuration.Tolerant.color;
-        for (Pixel px : im.getPixelList()) {
-            if (!ImageUtil.areColorsSimilar(px.rgb, sc.getRGB(offsetX + px.x, offsetY + px.y) & 0xFFFFFF, colorTolerant))
+        final int blackPixelRgb = im.getBlackPixelRgb();
+        final ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
+
+        for (int[] px : im.getBlackPixels()) {
+            if (!ImageUtil.areColorsSimilar(//
+                    blackPixelDRgb, //
+                    sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF, //
+                    colorTolerant)) {
                 return false;
+            }
         }
+
+        for (int[] px : im.getNonBlackPixels()) {
+            if (ImageUtil.areColorsSimilar(//
+                    blackPixelRgb, //
+                    sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF, //
+                    colorTolerant)) {
+                return false;
+            }
+        }
+
         return true;
     }
 

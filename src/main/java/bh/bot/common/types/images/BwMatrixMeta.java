@@ -14,6 +14,7 @@ public class BwMatrixMeta {
     private final int w;
     private final int h;
     private final int blackPixelRgb;
+    private final ImageUtil.DynamicRgb blackPixelDRgb;
     private final Color colorBlackPixel;
     private final Configuration.Offset coordinateOffset;
     private int[] lastMatch = new int[]{-1, -1};
@@ -23,6 +24,7 @@ public class BwMatrixMeta {
         try {
             this.coordinateOffset = coordinateOffset;
             this.blackPixelRgb = blackPixelRgb & 0xFFFFFF;
+            this.blackPixelDRgb = new ImageUtil.DynamicRgb(this.blackPixelRgb, Configuration.Tolerant.colorBw);
             this.colorBlackPixel = new Color(this.blackPixelRgb);
             blackPixels = new ArrayList<>();
             nonBlackPixels = new ArrayList<>();
@@ -43,7 +45,7 @@ public class BwMatrixMeta {
     }
 
     public boolean isMatchBlackRgb(int rgb) {
-        return ImageUtil.areColorsSimilar(colorBlackPixel, new Color(rgb), Configuration.Tolerant.color);
+        return ImageUtil.areColorsSimilar(blackPixelDRgb, rgb, Configuration.Tolerant.color);
     }
 
     public int getWidth() {
@@ -56,6 +58,10 @@ public class BwMatrixMeta {
 
     public int getBlackPixelRgb() {
         return blackPixelRgb;
+    }
+
+    public ImageUtil.DynamicRgb getBlackPixelDRgb() {
+        return blackPixelDRgb;
     }
 
     public ArrayList<int[]> getBlackPixels() {
@@ -86,6 +92,12 @@ public class BwMatrixMeta {
         }
 
         public static class Fishing {
+            public static class Buttons {
+                public static BwMatrixMeta start;
+                public static BwMatrixMeta cast;
+                public static BwMatrixMeta catch_;
+            }
+
             public static class Labels {
                 public static BwMatrixMeta fishing;
             }

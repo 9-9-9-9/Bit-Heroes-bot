@@ -344,9 +344,10 @@ public abstract class AbstractApplication {
 
         try {
             int blackPixelRgb = im.getBlackPixelRgb();
+            ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
             for (int[] px : im.getBlackPixels()) {
                 if (!ImageUtil.areColorsSimilar(//
-                        blackPixelRgb, //
+                        blackPixelDRgb, //
                         sc.getRGB(px[0], px[1]) & 0xFFFFFF, //
                         Configuration.Tolerant.color)) {
                     return false;
@@ -384,6 +385,7 @@ public abstract class AbstractApplication {
             boolean go = true;
             Point p = new Point();
             int blackPixelRgb = im.getBlackPixelRgb();
+            ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
             for (int y = 0; y < sc.getHeight() - im.getHeight() && go; y++) {
                 for (int x = 0; x < sc.getWidth() - im.getWidth() && go; x++) {
                     int rgb = sc.getRGB(x, y) & 0xFFFFFF;
@@ -397,8 +399,8 @@ public abstract class AbstractApplication {
                     for (int[] px : im.getBlackPixels()) {
                         int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
                         if (!ImageUtil.areColorsSimilar(//
+                                blackPixelDRgb, //
                                 srcRgb, //
-                                blackPixelRgb, //
                                 Configuration.Tolerant.color)) {
                             allGood = false;
                             // debug(String.format("clickImageScanBW second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
@@ -411,8 +413,8 @@ public abstract class AbstractApplication {
                         for (int[] px : im.getNonBlackPixels()) {
                             int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
                             if (ImageUtil.areColorsSimilar(//
-                                    srcRgb, //
                                     blackPixelRgb, //
+                                    srcRgb, //
                                     Configuration.Tolerant.color)) {
                                 allGood = false;
                                 // debug(String.format("clickImageScanBW third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
@@ -452,7 +454,7 @@ public abstract class AbstractApplication {
                 for (int x = 0; x < sc.getWidth() - im.getWidth() && go; x++) {
                     for (int mainColor : mainColors) {
                         int c = mainColor & 0xFFFFFF;
-                        final ImageUtil.DynamicRgb cDRgb = new ImageUtil.DynamicRgb(c, 60);
+                        final ImageUtil.DynamicRgb cDRgb = new ImageUtil.DynamicRgb(c, Configuration.Tolerant.colorBw);
 
                         boolean allGood = true;
 
