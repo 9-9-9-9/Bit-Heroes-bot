@@ -36,6 +36,7 @@ import static bh.bot.common.utils.StringUtil.isBlank;
 
 public abstract class AbstractApplication {
     private static List<String> flags;
+
     public static LaunchInfo parse(String[] args) {
         String appCode = args[0];
 
@@ -119,10 +120,10 @@ public abstract class AbstractApplication {
     }
 
     protected LaunchInfo launchInfo;
+
     public void run(LaunchInfo launchInfo) throws Exception {
         this.launchInfo = launchInfo;
-        if (Configuration.screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile && !isSupportSteamScreenResolution())
-        {
+        if (Configuration.screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile && !isSupportSteamScreenResolution()) {
             err("'%s' does not support steam resolution");
             System.exit(Main.EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
             return;
@@ -602,9 +603,12 @@ public abstract class AbstractApplication {
         return readInput(ask, desc, transform, false);
     }
 
-    protected <T> T readInput(String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform, boolean allowBlank) {
+    protected <T> T readInput(String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform, boolean allowBlankAndIfBlankThenReturnNull) {
         try {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+            try (
+                    InputStreamReader isr = new InputStreamReader(System.in);
+                    BufferedReader br = new BufferedReader(isr);
+            ) {
                 String input;
                 while (true) {
                     Log.info(ask);
@@ -613,7 +617,7 @@ public abstract class AbstractApplication {
                     input = br.readLine();
 
                     if (isBlank(input)) {
-                        if (allowBlank)
+                        if (allowBlankAndIfBlankThenReturnNull)
                             return null;
                         Log.info("You inputted nothing, please try again!");
                         continue;
