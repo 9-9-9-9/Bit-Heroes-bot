@@ -1,3 +1,6 @@
+Upgrade notes:
+- Move the `chrome-user-dir` in the previous bot version's directory into the new bot version's directory. That folder was created by chrome to do temp cache and also save your game's setting
+___
 ## Bit Heroes bot
 ##### on Linux / Windows / ~~MacOS~~
 

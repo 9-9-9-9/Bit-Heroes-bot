@@ -242,7 +242,10 @@ public class FishingApp extends AbstractApplication {
             sleep(1000);
 
             long timeStart = System.currentTimeMillis();
-            BufferedImage sc = captureScreen(anchorPoint.x, anchorPoint.y, 800, 520);
+            BufferedImage sc = captureScreen(
+                    anchorPoint.x, anchorPoint.y,
+                    Configuration.Sizing.Globally.gameResolution.W, Configuration.Sizing.Globally.gameResolution.H
+            );
             try {
                 saveDebugImage(sc, "detectScreen_fishing");
 

@@ -16,6 +16,10 @@ import static bh.bot.common.utils.StringUtil.isNotBlank;
 
 public class Configuration {
     public static class Sizing {
+        public static class Globally {
+            public static Size gameResolution;
+        }
+
         public static class Fishing {
             public static class Scan {
                 public static Size castingFishSize;
@@ -110,6 +114,10 @@ public class Configuration {
         Offsets.Fishing.Scan.detectColor100PercentCatchingFish = screenResolutionProfile.getOffsetDetect100PcCatchingFish();
         Offsets.Fishing.Scan.beginScanCastingFish = screenResolutionProfile.getOffsetScanCastingFish();
 
+        Sizing.Globally.gameResolution = new Size(
+                screenResolutionProfile.getSupportedGameResolutionWidth(),
+                screenResolutionProfile.getSupportedGameResolutionHeight()
+        );
         Sizing.Fishing.Scan.castingFishSize = screenResolutionProfile.getScanSizeCastingFish();
 
         Tolerant.position = Math.max(5, readInt("tolerant.position"));
