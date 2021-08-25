@@ -1,22 +1,9 @@
 package bh.bot;
 
+import bh.bot.app.*;
 import bh.bot.common.Configuration;
-import bh.bot.app.AbstractApplication;
-import bh.bot.app.TestApp;
-import bh.bot.app.GenMiniClient;
-import bh.bot.app.KeepPixApp;
-import bh.bot.app.ExtractMatrixApp;
-import bh.bot.app.SamePixApp;
-import bh.bot.app.FishingApp;
-import bh.bot.app.ReRunApp;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.utils.InteractionUtil;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static bh.bot.common.Log.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -47,6 +34,8 @@ public class Main {
     }
 
     private static ScreenResolutionProfile getScreenResolutionProfile(String[] args) {
+        return new ScreenResolutionProfile.WebProfile();
+        /*
         List<String> l = Arrays.asList(args).stream().map(String::toLowerCase).collect(Collectors.toList());
         boolean isWeb = l.contains("--web");
         boolean isSteam = l.contains("--steam");
@@ -67,5 +56,6 @@ public class Main {
         return isSteam
                 ? steamProfile
                 : webProfile;
+         */
     }
 }

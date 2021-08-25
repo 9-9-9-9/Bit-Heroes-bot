@@ -280,7 +280,6 @@ public class FishingApp extends AbstractApplication {
                 debug("detectScreen process time: %d ms", System.currentTimeMillis() - timeStart);
                 sc.flush();
             }
-
         }
     }
 

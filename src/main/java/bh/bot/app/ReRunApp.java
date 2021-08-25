@@ -2,6 +2,7 @@ package bh.bot.app;
 
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
+import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.images.ImgMeta;
 import bh.bot.common.utils.ThreadUtil;
 import bh.bot.common.types.tuples.Tuple3;
@@ -71,7 +72,7 @@ public class ReRunApp extends AbstractApplication {
 
     @Override
     protected boolean clickImage() {
-        return clickImage(ImgMeta.Metas.Dungeons.Buttons.rerun);
+        return clickImage(BwMatrixMeta.Metas.Dungeons.Buttons.rerun);
     }
 
     @Override

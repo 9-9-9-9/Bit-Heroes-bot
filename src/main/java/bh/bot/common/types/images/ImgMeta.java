@@ -73,30 +73,6 @@ public class ImgMeta {
         return coordinateOffset;
     }
 
-    public static class Metas {
-        public static class Dungeons {
-            public static class Buttons {
-                public static ImgMeta rerun;
-            }
-        }
-
-        public static class Globally {
-            public static class Buttons {
-                public static ImgMeta reconnect;
-            }
-        }
-    }
-
     public static void load() throws IOException {
-        Metas.Dungeons.Buttons.rerun = new ImgMeta(//
-                ImageUtil.loadImageFileFromResource( //
-                        "buttons/rerun-kp.bmp"
-                ), //
-                Configuration.Offsets.Dungeons.Buttons.reRun);
-        Metas.Globally.Buttons.reconnect = new ImgMeta(//
-                ImageUtil.loadImageFileFromResource( //
-                        "buttons/reconnect-sp.bmp"
-                ), //
-                Configuration.Offsets.Globally.Buttons.reconnectSp);
     }
 }

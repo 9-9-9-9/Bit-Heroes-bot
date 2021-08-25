@@ -342,8 +342,8 @@ public abstract class AbstractApplication {
         BufferedImage sc = captureScreen(lastMatch[0], lastMatch[1], im.getWidth(), im.getHeight());
 
         try {
-            int blackPixelRgb = im.getBlackPixelRgb();
-            ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
+            final int blackPixelRgb = im.getBlackPixelRgb();
+            final ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
             for (int[] px : im.getBlackPixels()) {
                 if (!ImageUtil.areColorsSimilar(//
                         blackPixelDRgb, //
@@ -383,8 +383,8 @@ public abstract class AbstractApplication {
 
             boolean go = true;
             Point p = new Point();
-            int blackPixelRgb = im.getBlackPixelRgb();
-            ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
+            final int blackPixelRgb = im.getBlackPixelRgb();
+            final ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
             for (int y = 0; y < sc.getHeight() - im.getHeight() && go; y++) {
                 for (int x = 0; x < sc.getWidth() - im.getWidth() && go; x++) {
                     int rgb = sc.getRGB(x, y) & 0xFFFFFF;
@@ -538,7 +538,7 @@ public abstract class AbstractApplication {
             }
 
             cnt = sleepSecs;
-            if (clickImage(ImgMeta.Metas.Globally.Buttons.reconnect)) {
+            if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.reconnect)) {
                 masterSwitch.set(true);
                 Telegram.sendMessage("Disconnected", true);
             }

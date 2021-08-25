@@ -28,7 +28,7 @@ public class Configuration {
 
         public static class Globally {
             public static class Buttons {
-                public static Offset reconnectSp;
+                public static Offset reconnect;
                 public static Offset talkRightArrow;
             }
         }
@@ -102,7 +102,7 @@ public class Configuration {
         Offsets.gameScreenOffset = Offset.fromKeyPrefix("offset.screen");
         Offsets.Dungeons.Buttons.reRun = screenResolutionProfile.getOffsetButtonDungeonReRun();
         Offsets.Globally.Buttons.talkRightArrow = screenResolutionProfile.getOffsetButtonTalkRightArrow();
-        Offsets.Globally.Buttons.reconnectSp = screenResolutionProfile.getOffsetButtonReconnect();
+        Offsets.Globally.Buttons.reconnect = screenResolutionProfile.getOffsetButtonReconnect();
         Offsets.Fishing.Buttons.start = screenResolutionProfile.getOffsetButtonFishingStart();
         Offsets.Fishing.Buttons.cast = screenResolutionProfile.getOffsetButtonFishingCast();
         Offsets.Fishing.Buttons.catch_ = screenResolutionProfile.getOffsetButtonFishingCatch();

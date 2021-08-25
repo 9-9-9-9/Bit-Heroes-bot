@@ -85,6 +85,7 @@ public abstract class ScreenResolutionProfile {
         }
     }
 
+    /*
     public static class SteamProfile extends ScreenResolutionProfile {
 
         @Override
@@ -152,4 +153,5 @@ public abstract class ScreenResolutionProfile {
             return new Configuration.Size(45, 68); //
         }
     }
+     */
 }

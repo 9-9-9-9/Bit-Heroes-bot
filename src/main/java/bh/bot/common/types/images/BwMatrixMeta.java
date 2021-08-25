@@ -88,6 +88,14 @@ public class BwMatrixMeta {
         public static class Globally {
             public static class Buttons {
                 public static BwMatrixMeta talkRightArrow;
+                public static BwMatrixMeta rerun;
+                public static BwMatrixMeta reconnect;
+            }
+        }
+
+        public static class Dungeons {
+            public static class Buttons {
+                public static BwMatrixMeta rerun;
             }
         }
 
@@ -105,21 +113,33 @@ public class BwMatrixMeta {
     }
 
     public static void load() throws IOException {
-        BwMatrixMeta.Metas.Globally.Buttons.talkRightArrow = new BwMatrixMeta(//
+        Metas.Globally.Buttons.talkRightArrow = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/talkArrow-mx.bmp"
                 ), //
                 Configuration.Offsets.Globally.Buttons.talkRightArrow,
                 0x000000
         );
-        BwMatrixMeta.Metas.Fishing.Labels.fishing = new BwMatrixMeta(//
+        Metas.Globally.Buttons.reconnect = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/globally.reconnect-mx.bmp"
+                ), //
+                Configuration.Offsets.Globally.Buttons.reconnect,
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.rerun = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/dungeons.rerun-mx.bmp"
+                ), //
+                Configuration.Offsets.Dungeons.Buttons.reRun,
+                0xFFFFFF);
+        Metas.Fishing.Labels.fishing = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "labels/fishing-mx2.bmp"
                 ), //
                 Configuration.Offsets.Fishing.Labels.fishing,
                 0xFFFFFF
         );
-        debug("BwMatrixMeta label Fishing: Black pixel count = %d, Non black pixel count = %d", BwMatrixMeta.Metas.Fishing.Labels.fishing.getBlackPixels().size(), BwMatrixMeta.Metas.Fishing.Labels.fishing.getNonBlackPixels().size());
         Metas.Fishing.Buttons.start = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/fishing.start-mx.bmp"

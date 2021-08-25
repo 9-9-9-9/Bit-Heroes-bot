@@ -1,6 +1,10 @@
 package bh.bot.app;
 
 import bh.bot.common.Configuration;
+
+import static bh.bot.common.Log.err;
+
+/*
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
@@ -8,8 +12,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.win32.StdCallLibrary;
 
-import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
+*/
 
 public class TestApp extends AbstractApplication {
     @Override
@@ -18,6 +22,8 @@ public class TestApp extends AbstractApplication {
             err("For Windows only");
             return;
         }
+
+        /*
 
         CMath lib = Native.load(Platform.isWindows()?"msvcrt":"c", CMath.class);
         double result = lib.cosh(0);
@@ -39,8 +45,10 @@ public class TestApp extends AbstractApplication {
         }
 
         JnaUtil.moveWindow(hWnd, 0, 0, rect[2], rect[3] + 40);
+         */
     }
 
+    /*
     static class JnaUtil {
         private static final User32 user32 = User32.INSTANCE;
         private static Pointer callBackHwnd;
@@ -94,6 +102,7 @@ public class TestApp extends AbstractApplication {
     public interface CMath extends Library {
         double cosh(double value);
     }
+    */
 
     @Override
     public String getAppCode() {
