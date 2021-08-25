@@ -18,6 +18,7 @@ public class BwMatrixMeta {
     private int[] lastMatch = new int[]{-1, -1};
 
     public BwMatrixMeta(BufferedImage img, Configuration.Offset coordinateOffset, int blackPixelRgb) {
+        final int matrixPointColorPixelRgb = 0x000000;
         final int anyColorPixelRgb = 0xFFFFFF;
         try {
             this.coordinateOffset = coordinateOffset;
@@ -30,7 +31,7 @@ public class BwMatrixMeta {
             for (int y = 0; y < img.getHeight(); y++) {
                 for (int x = 0; x < img.getWidth(); x++) {
                     int rgb = img.getRGB(x, y) & 0xFFFFFF;
-                    if (rgb == blackPixelRgb)
+                    if (rgb == matrixPointColorPixelRgb)
                         blackPixels.add(new int[]{x, y});
                     else if (rgb != anyColorPixelRgb)
                         nonBlackPixels.add(new int[]{x, y});
