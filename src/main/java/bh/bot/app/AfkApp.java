@@ -1,20 +1,76 @@
 package bh.bot.app;
 
+import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.types.images.BwMatrixMeta;
+import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.types.tuples.Tuple4;
 import bh.bot.common.utils.ImageUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.InteractionUtil.Screen.captureScreen;
 
 public class AfkApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
+
+        ArrayList<Event> eventList = new ArrayList<>();
+        //
+        if (launchInfo.eInvasion)
+            eventList.add(Events.invasion);
+        //
+        if (eventList.size() == 0) {
+            final List<Event> allEvents = Arrays.asList(Events.invasion);
+            info("Select events you want to do:");
+            for (Event event : allEvents)
+                info("  %2d. %s", event.id, event.name);
+            while (true) {
+                Event event = readInput("Input event code", "To select an event, press the number then press Enter. To finish input, just enter without supply a number", new Function<String, Tuple3<Boolean, String, Event>>() {
+                    @Override
+                    public Tuple3<Boolean, String, Event> apply(String s) {
+                        try {
+                            int result = Integer.parseInt(s);
+                            Optional<Event> first = allEvents.stream().filter(x -> x.id == result).findFirst();
+                            if (!first.isPresent())
+                                return new Tuple3<>(false, "ID does not exists", null);
+                            return new Tuple3<>(true, null, first.get());
+                        } catch (Exception ex2) {
+                            return new Tuple3<>(false, "Unable to parse your input, error: " + ex2.getMessage(), null);
+                        }
+                    }
+                }, true);
+
+                if (event == null)
+                    break;
+
+                eventList.add(event);
+                info("Selected event %s", event.name);
+            }
+
+            eventList = new ArrayList<>(eventList.stream().distinct().collect(Collectors.toList()));
+
+            if (eventList.size() == 0) {
+                info("No events supplied");
+                System.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
+            }
+        }
+
+        info("Selected events:");
+        for (Event event : eventList) {
+            info("  <%2d> %s", event.id, event.name);
+        }
+        //
         debug("Scanning screen");
         for (Event event : new Event[]{Events.invasion}) {
             Point point = findEvent(event);
@@ -127,7 +183,7 @@ public class AfkApp extends AbstractApplication {
 
         static {
             try {
-                invasion = new Event("invasion-mx.bmp", Ids.Invasion, false);
+                invasion = new Event("Invasion", Ids.Invasion, "invasion-mx.bmp", false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -135,17 +191,19 @@ public class AfkApp extends AbstractApplication {
     }
 
     public static class Event {
-        public final BwMatrixMeta img;
+        public final String name;
         public final int id;
+        public final BwMatrixMeta img;
         public final boolean left;
 
-        public Event(String imgName, int id, boolean left) throws IOException {
+        public Event(String name, int id, String imgName, boolean left) throws IOException {
+            this.name = name;
+            this.id = id;
             this.img = new BwMatrixMeta(
                     ImageUtil.loadImageFileFromResource(String.format("labels/events/%s", imgName)),
                     new Configuration.Offset(0, 0),
                     0xFFFFFF
             );
-            this.id = id;
             this.left = left;
         }
     }

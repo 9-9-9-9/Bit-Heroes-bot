@@ -599,6 +599,10 @@ public abstract class AbstractApplication {
     }
 
     protected <T> T readInput(String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform) {
+        return readInput(ask, desc, transform, false);
+    }
+
+    protected <T> T readInput(String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform, boolean allowBlank) {
         try {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
                 String input;
@@ -607,7 +611,10 @@ public abstract class AbstractApplication {
                     if (desc != null)
                         Log.info("(%s)", desc);
                     input = br.readLine();
+
                     if (isBlank(input)) {
+                        if (allowBlank)
+                            return null;
                         Log.info("You inputted nothing, please try again!");
                         continue;
                     }
@@ -623,7 +630,8 @@ public abstract class AbstractApplication {
                 }
             }
         } catch (IOException e) {
-            Log.err("Error while reading input, application is going to exit now, please try again later");
+            e.printStackTrace();
+            err("Error while reading input, application is going to exit now, please try again later");
             System.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
             return null;
         }
