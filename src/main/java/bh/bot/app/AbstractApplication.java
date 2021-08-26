@@ -1,8 +1,10 @@
 package bh.bot.app;
 
+import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
+import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.images.ImgMeta;
 import bh.bot.common.types.images.Pixel;
@@ -17,7 +19,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -33,27 +34,28 @@ import static bh.bot.common.utils.InteractionUtil.Screen.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
 
 public abstract class AbstractApplication {
+    private static List<String> flags;
+
     public static LaunchInfo parse(String[] args) {
         String appCode = args[0];
 
-        List<String> listArg = Arrays
+        flags = Arrays
                 .stream(args)
                 .map(x -> x.toLowerCase().trim())
+                .filter(x -> x.startsWith("--"))
                 .collect(Collectors.toList());
 
-        boolean enableSavingDebugImages = false;
-        if (listArg.contains("--img"))
-            enableSavingDebugImages = true;
-        if (listArg.contains("--debug"))
+        if (hasFlag("--debug"))
             Log.enableDebug();
-        if (listArg.contains("--mute"))
+        if (hasFlag("--mute"))
             Telegram.disable();
         else if (Telegram.isDisabled())
             Log.info("Telegram was disabled due to missing or invalid configuration");
 
-        if (listArg.contains("--exit"))
-            Log.err("Invalid usage of flag 'exit', should be '--exit=X' where X is the number of seconds to await before force exit, for example: '--exit=3600' means exit after 1 hours");
-        List<String> exitCmd = listArg.stream().filter(x -> x.startsWith("--exit=") && x.length() > 7).collect(Collectors.toList());
+        if (hasFlag("--exit"))
+            err("Invalid usage of flag 'exit', should be '--exit=X' where X is the number of seconds to await before force exit, for example: '--exit=3600' means exit after 1 hours");
+
+        List<String> exitCmd = flags.stream().filter(x -> x.startsWith("--exit=") && x.length() > 7).collect(Collectors.toList());
         int exitAfter = 0;
         if (exitCmd.size() > 0) {
             String sExitAfter = exitCmd.get(0).substring(7);
@@ -62,14 +64,12 @@ public abstract class AbstractApplication {
                 if (exitAfter > 3600) {
                     int h = exitAfter / 3600;
                     int m = (exitAfter - h * 3600) / 60;
-                    Log.info("Application will exit after %d hours and %d minutes", h, m);
+                    info("Application will exit after %d hours and %d minutes", h, m);
                 }
             } catch (NumberFormatException e) {
-                Log.err("Can not parse command: --exit=%s", sExitAfter);
+                err("Can not parse command: --exit=%s", sExitAfter);
             }
         }
-
-        boolean displayHelp = listArg.contains("--help");
 
         args = Arrays
                 .stream(args)
@@ -83,9 +83,21 @@ public abstract class AbstractApplication {
 
         LaunchInfo li = new LaunchInfo(instance, args);
         li.exitAfterXSecs = exitAfter;
-        li.displayHelp = displayHelp;
-        li.enableSavingDebugImages = enableSavingDebugImages;
+        li.displayHelp = hasFlag("--help");
+        li.enableSavingDebugImages = hasFlag("--img");
+        // events
+        li.eInvasion = hasFlag("--invasion");
+        li.eTrials = hasFlag("--trials") || hasFlag("--trial");
+        li.ePvp = hasFlag("--pvp");
+        li.eWorldBoss = hasFlag("--boss") || hasFlag("--worldboss") || hasFlag("--world-boss");
+        li.eRaid = hasFlag("--raid") || hasFlag("--raids");
+        // end events
+        flags.clear();
         return li;
+    }
+
+    private static boolean hasFlag(String flag) {
+        return flags.contains(flag);
     }
 
     public static class LaunchInfo {
@@ -94,6 +106,11 @@ public abstract class AbstractApplication {
         public int exitAfterXSecs;
         public boolean displayHelp;
         public boolean enableSavingDebugImages;
+        public boolean eInvasion;
+        public boolean eTrials;
+        public boolean ePvp;
+        public boolean eWorldBoss;
+        public boolean eRaid;
 
         public LaunchInfo(AbstractApplication instance, String[] args) {
             this.instance = instance;
@@ -101,13 +118,17 @@ public abstract class AbstractApplication {
         }
     }
 
-    protected int exitAfterXSecs = 0;
-    protected boolean enableSavingDebugImages = false;
+    protected LaunchInfo launchInfo;
 
     public void run(LaunchInfo launchInfo) throws Exception {
-        this.exitAfterXSecs = launchInfo.exitAfterXSecs;
-        this.enableSavingDebugImages = launchInfo.enableSavingDebugImages;
-        if (this.enableSavingDebugImages)
+        this.launchInfo = launchInfo;
+        if (Configuration.screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile && !isSupportSteamScreenResolution()) {
+            err("'%s' does not support steam resolution");
+            System.exit(Main.EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
+            return;
+        }
+
+        if (this.launchInfo.enableSavingDebugImages)
             Log.info("Enabled saving debug images");
         initOutputDirectories();
         // ImgMeta.load(); // Deprecated class
@@ -133,8 +154,8 @@ public abstract class AbstractApplication {
         return ImageIO.read(new File(path));
     }
 
-    protected void saveDebugImage(BufferedImage img, String prefix) {
-        if (!enableSavingDebugImages) {
+    public void saveDebugImage(BufferedImage img, String prefix) {
+        if (!this.launchInfo.enableSavingDebugImages) {
             return;
         }
         File file = Paths.get("out", "images", getAppCode(), "dbg_" + prefix + "_" + System.currentTimeMillis() + ".bmp").toFile();
@@ -211,10 +232,18 @@ public abstract class AbstractApplication {
         sb.append("\n  --mute : do not send notification messages to Telegram channel");
         sb.append("\n  --debug : print debug messages (developers only)");
         sb.append("\n  --img : save screen captured pictures to disk (developers only)");
+        if (this.isSupportSteamScreenResolution()) {
+            sb.append("\n  --web : use mode resolution 800x520 (default)");
+            sb.append("\n  --steam : use mode resolution 800x480 (Steam client)");
+        }
         return sb.toString();
     }
 
     protected abstract String getLimitationExplain();
+
+    protected boolean isSupportSteamScreenResolution() {
+        return false;
+    }
 
     protected void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
         moveCursor(new Point(950, 100));
@@ -375,7 +404,7 @@ public abstract class AbstractApplication {
             // debug("clickImageExactBW match success 3");
 
             mouseMoveAndClickAndHide(p);
-            Log.debug("Success on last click");
+            // debug("Success on last click");
             return true;
         } finally {
             sc.flush();
@@ -395,12 +424,6 @@ public abstract class AbstractApplication {
             final ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
             for (int y = 0; y < sc.getHeight() - im.getHeight() && go; y++) {
                 for (int x = 0; x < sc.getWidth() - im.getWidth() && go; x++) {
-                    int rgb = sc.getRGB(x, y) & 0xFFFFFF;
-                    if (!im.isMatchBlackRgb(rgb)) {
-                        continue;
-                    }
-
-                    // debug(String.format("clickImageScanBW first match passed for %d,%d", x, y));
                     boolean allGood = true;
 
                     for (int[] px : im.getBlackPixels()) {
@@ -415,32 +438,40 @@ public abstract class AbstractApplication {
                         }
                     }
 
-                    if (allGood) {
-                        // debug("clickImageScanBW second match passed");
-                        for (int[] px : im.getNonBlackPixels()) {
-                            int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
-                            if (ImageUtil.areColorsSimilar(//
-                                    blackPixelRgb, //
-                                    srcRgb, //
-                                    Configuration.Tolerant.color)) {
-                                allGood = false;
-                                // debug(String.format("clickImageScanBW third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
-                                break;
-                            }
+                    if (!allGood)
+                        continue;
+
+                    // debug("clickImageScanBW second match passed");
+                    for (int[] px : im.getNonBlackPixels()) {
+                        int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
+                        if (ImageUtil.areColorsSimilar(//
+                                blackPixelRgb, //
+                                srcRgb, //
+                                Configuration.Tolerant.color)) {
+                            allGood = false;
+                            // debug(String.format("clickImageScanBW third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
+                            break;
                         }
                     }
 
-                    if (allGood) {
-                        // debug("clickImageScanBW third match passed");
-                        go = false;
-                        p = new Point(screenCapturedResult.x + x, screenCapturedResult.y + y);
-                    }
+                    if (!allGood)
+                        continue;
+
+                    // debug("clickImageScanBW third match passed");
+                    go = false;
+                    p = new Point(screenCapturedResult.x + x, screenCapturedResult.y + y);
                 }
             }
 
             if (!go) {
                 mouseMoveAndClickAndHide(p);
                 im.setLastMatchPoint(p.x, p.y);
+                if (im.getCoordinateOffset().X != p.x - Configuration.Offsets.gameScreenOffset.X || im.getCoordinateOffset().Y != p.y - Configuration.Offsets.gameScreenOffset.Y)
+                    debug(
+                            "Un-match offset! Defined %3d,%3d but actual %3d,%3d",
+                            im.getCoordinateOffset().X, im.getCoordinateOffset().Y,
+                            p.x - Configuration.Offsets.gameScreenOffset.X, p.y - Configuration.Offsets.gameScreenOffset.Y
+                    );
                 return true;
             }
 
@@ -573,33 +604,39 @@ public abstract class AbstractApplication {
             throw new IllegalArgumentException(String.format("Flag --exit does not supported by this application"));
     }
 
-    protected <T> T readInput(String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform) {
+    protected <T> T readInput(BufferedReader br, String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform) {
+        return readInput(br, ask, desc, transform, false);
+    }
+
+    protected <T> T readInput(BufferedReader br, String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform, boolean allowBlankAndIfBlankThenReturnNull) {
         try {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
-                String input;
-                while (true) {
-                    Log.info(ask);
-                    if (desc != null)
-                        Log.info("(%s)", desc);
-                    input = br.readLine();
-                    if (isBlank(input)) {
-                        Log.info("You inputted nothing, please try again!");
-                        continue;
-                    }
+            String input;
+            while (true) {
+                Log.info(ask);
+                if (desc != null)
+                    Log.info("(%s)", desc);
+                input = br.readLine();
 
-                    Tuple3<Boolean, String, T> tuple = transform.apply(input);
-                    if (!tuple._1) {
-                        info(tuple._2);
-                        Log.info("Please try again!");
-                        continue;
-                    }
-
-                    return tuple._3;
+                if (isBlank(input)) {
+                    if (allowBlankAndIfBlankThenReturnNull)
+                        return null;
+                    Log.info("You inputted nothing, please try again!");
+                    continue;
                 }
+
+                Tuple3<Boolean, String, T> tuple = transform.apply(input);
+                if (!tuple._1) {
+                    info(tuple._2);
+                    Log.info("Please try again!");
+                    continue;
+                }
+
+                return tuple._3;
             }
         } catch (IOException e) {
-            Log.err("Error while reading input, application is going to exit now, please try again later");
-            System.exit(3);
+            e.printStackTrace();
+            err("Error while reading input, application is going to exit now, please try again later");
+            System.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
             return null;
         }
     }

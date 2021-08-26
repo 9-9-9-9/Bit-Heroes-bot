@@ -1,5 +1,6 @@
 package bh.bot.app;
 
+import bh.bot.Main;
 import bh.bot.common.Configuration;
 
 import java.io.*;
@@ -18,7 +19,7 @@ public class GenMiniClient extends AbstractApplication {
 
     @Override
     protected void internalRun(String[] args) {
-        throwNotSupportedFlagExit(exitAfterXSecs);
+        throwNotSupportedFlagExit(launchInfo.exitAfterXSecs);
 
         String errMsg = Configuration.loadGameCfg();
         String scriptFileName = String.format("mini-game-on-chrome.%s", Configuration.OS.isWin ? "bat" : "sh");
@@ -98,7 +99,7 @@ public class GenMiniClient extends AbstractApplication {
 					info("%s=C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe", keyChromePath);
 					info("6. Save the file user-config.properties after modified");
 					info("7. Run script '.\\client.bat' to generate mini-client");
-					System.exit(1);
+					System.exit(Main.EXIT_CODE_EXTERNAL_REASON);
 				}
 				
                 app = String.format("\"%s\"", chromePath);

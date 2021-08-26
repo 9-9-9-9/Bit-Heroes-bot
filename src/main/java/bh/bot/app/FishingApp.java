@@ -1,5 +1,6 @@
 package bh.bot.app;
 
+import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.images.BwMatrixMeta;
@@ -8,6 +9,9 @@ import bh.bot.common.utils.ImageUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -25,21 +29,31 @@ public class FishingApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
         int arg;
-        try {
-            arg = Integer.parseInt(args[0]);
-        } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
-            info(getHelp());
-            arg = readInput("How many times do you want to hook?", "Numeric only", s -> {
-                try {
-                    int num = Integer.parseInt(s);
-                    if (num < 1) {
-                        return new Tuple3<>(false, "Must greater than 0", 0);
+
+        try (
+                InputStreamReader isr = new InputStreamReader(System.in);
+                BufferedReader br = new BufferedReader(isr);
+        ) {
+            try {
+                arg = Integer.parseInt(args[0]);
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
+                info(getHelp());
+                arg = readInput(br, "How many times do you want to hook?", "Numeric only", s -> {
+                    try {
+                        int num = Integer.parseInt(s);
+                        if (num < 1) {
+                            return new Tuple3<>(false, "Must greater than 0", 0);
+                        }
+                        return new Tuple3<>(true, null, num);
+                    } catch (NumberFormatException ex1) {
+                        return new Tuple3<>(false, "The value you inputted is not a number", 0);
                     }
-                    return new Tuple3<>(true, null, num);
-                } catch (NumberFormatException ex1) {
-                    return new Tuple3<>(false, "The value you inputted is not a number", 0);
-                }
-            });
+                });
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
+            throw new RuntimeException(e);
         }
 
         final int loop = arg;
@@ -55,14 +69,15 @@ public class FishingApp extends AbstractApplication {
 
         if (labelFishingCord == null) {
             info("Exiting");
-            System.exit(1);
+            System.exit(Main.EXIT_CODE_UNABLE_DETECTING_ANCHOR);
         }
 
         debug("labelFishingCord: %3d, %3d", labelFishingCord.x, labelFishingCord.y);
 
+        Configuration.Offset offsetLabelFishing = Configuration.screenResolutionProfile.getOffsetLabelFishing();
         final Point anchorPoint = new Point(
-                labelFishingCord.x - Configuration.Offsets.Fishing.Labels.fishing.X,
-                labelFishingCord.y - Configuration.Offsets.Fishing.Labels.fishing.Y
+                labelFishingCord.x - offsetLabelFishing.X,
+                labelFishingCord.y - offsetLabelFishing.Y
         );
 
         info("Anchor point: %d,%d", anchorPoint.x, anchorPoint.y);
@@ -77,7 +92,7 @@ public class FishingApp extends AbstractApplication {
                 () -> detectLongTimeNoSee(masterSwitch, unsureFrom, seeBtnStartFrom),
                 () -> detectScreen(masterSwitch, anchorPoint, screen, unsure, unsureFrom, seeBtnStartFrom),
                 () -> detectDisconnected(masterSwitch),
-                () -> autoExit(exitAfterXSecs, masterSwitch)
+                () -> autoExit(launchInfo.exitAfterXSecs, masterSwitch)
         );
         Telegram.sendMessage("Stopped", false);
     }
@@ -149,9 +164,10 @@ public class FishingApp extends AbstractApplication {
             if (curScreen == screenCatch) {
                 debug("On screen CATCH");
 
+                Configuration.Offset offsetDetect100PcCatchingFish = Configuration.screenResolutionProfile.getOffsetDetect100PcCatchingFish();
                 Color color = getPixelColor(
-                        anchorPoint.x + Configuration.Offsets.Fishing.Scan.detectColor100PercentCatchingFish.X,
-                        anchorPoint.y + Configuration.Offsets.Fishing.Scan.detectColor100PercentCatchingFish.Y
+                        anchorPoint.x + offsetDetect100PcCatchingFish.X,
+                        anchorPoint.y + offsetDetect100PcCatchingFish.Y
                 );
                 if (color.getGreen() < 230)
                     continue;
@@ -175,17 +191,19 @@ public class FishingApp extends AbstractApplication {
             } else if (curScreen == screenCast) {
                 debug("On screen CAST");
 
+                Configuration.Offset offsetScanCastingFish = Configuration.screenResolutionProfile.getOffsetScanCastingFish();
+                Configuration.Size scanSizeCastingFish = Configuration.screenResolutionProfile.getScanSizeCastingFish();
                 BufferedImage sc = captureScreen(
-                        anchorPoint.x + Configuration.Offsets.Fishing.Scan.beginScanCastingFish.X,
-                        anchorPoint.y + Configuration.Offsets.Fishing.Scan.beginScanCastingFish.Y,
-                        Configuration.Sizing.Fishing.Scan.castingFishSize.W,
-                        Configuration.Sizing.Fishing.Scan.castingFishSize.H
+                        anchorPoint.x + offsetScanCastingFish.X,
+                        anchorPoint.y + offsetScanCastingFish.Y,
+                        scanSizeCastingFish.W,
+                        scanSizeCastingFish.H
                 );
                 final int black = 0x000000;
                 try {
                     final int offset1 = 0;
-                    final int offset2 = Configuration.Sizing.Fishing.Scan.castingFishSize.H - 1;
-                    final int offsetSize = Configuration.Sizing.Fishing.Scan.castingFishSize.H / 4 - 2;
+                    final int offset2 = scanSizeCastingFish.H - 1;
+                    final int offsetSize = scanSizeCastingFish.H / 4 - 2;
                     final int offset3 = offset1 + offsetSize;
                     final int offset4 = offset2 - offsetSize;
                     for (int x = 0; x < sc.getWidth(); x++) {
@@ -243,8 +261,10 @@ public class FishingApp extends AbstractApplication {
 
             long timeStart = System.currentTimeMillis();
             BufferedImage sc = captureScreen(
-                    anchorPoint.x, anchorPoint.y,
-                    Configuration.Sizing.Globally.gameResolution.W, Configuration.Sizing.Globally.gameResolution.H
+                    anchorPoint.x,
+                    anchorPoint.y,
+                    Configuration.screenResolutionProfile.getSupportedGameResolutionWidth(),
+                    Configuration.screenResolutionProfile.getSupportedGameResolutionHeight()
             );
             try {
                 saveDebugImage(sc, "detectScreen_fishing");
@@ -354,5 +374,10 @@ public class FishingApp extends AbstractApplication {
     @Override
     protected String getLimitationExplain() {
         return "To start using this function, you the to be ready in fishing state, and the Start button is clearly visible on the screen";
+    }
+
+    @Override
+    protected boolean isSupportSteamScreenResolution() {
+        return true;
     }
 }

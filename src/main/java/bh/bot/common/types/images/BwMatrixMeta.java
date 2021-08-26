@@ -7,8 +7,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static bh.bot.common.Log.debug;
-
 public class BwMatrixMeta {
     private final ArrayList<int[]> blackPixels;
     private final ArrayList<int[]> nonBlackPixels;
@@ -110,6 +108,22 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta fishing;
             }
         }
+
+        public static class WorldBoss {
+            public static class Buttons {
+                public static BwMatrixMeta summonOnListingPartiesWorldBoss;
+                public static BwMatrixMeta summonOnListingWorldBosses;
+                public static BwMatrixMeta summonOnSelectingWorldBossTierAndAndDifficulty;
+                public static BwMatrixMeta startBoss;
+                public static BwMatrixMeta regroup;
+                public static BwMatrixMeta regroupOnDefeated;
+            }
+
+            public static class Dialogs {
+                public static BwMatrixMeta confirmStartNotFullTeam;
+                public static BwMatrixMeta notEnoughXeals;
+            }
+        }
     }
 
     public static void load() throws IOException {
@@ -117,48 +131,104 @@ public class BwMatrixMeta {
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/globally.talkRightArrow-mx.bmp"
                 ), //
-                Configuration.Offsets.Globally.Buttons.talkRightArrow,
+                Configuration.screenResolutionProfile.getOffsetButtonTalkRightArrow(),
                 0x000000
         );
         Metas.Globally.Buttons.reconnect = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/globally.reconnect-mx.bmp"
                 ), //
-                Configuration.Offsets.Globally.Buttons.reconnect,
+                Configuration.screenResolutionProfile.getOffsetButtonReconnect(),
                 0xFFFFFF
         );
         Metas.Dungeons.Buttons.rerun = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/dungeons.rerun-mx.bmp"
                 ), //
-                Configuration.Offsets.Dungeons.Buttons.reRun,
+                Configuration.screenResolutionProfile.getOffsetButtonDungeonReRun(),
                 0xFFFFFF);
         Metas.Fishing.Labels.fishing = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "labels/fishing-mx.bmp"
                 ), //
-                Configuration.Offsets.Fishing.Labels.fishing,
+                Configuration.screenResolutionProfile.getOffsetLabelFishing(),
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.start = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/fishing.start-mx.bmp"
                 ), //
-                Configuration.Offsets.Fishing.Buttons.start,
+                Configuration.screenResolutionProfile.getOffsetButtonFishingStart(),
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.cast = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/fishing.cast-mx.bmp"
                 ), //
-                Configuration.Offsets.Fishing.Buttons.cast,
+                Configuration.screenResolutionProfile.getOffsetButtonFishingCast(),
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.catch_ = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/fishing.catch-mx.bmp"
                 ), //
-                Configuration.Offsets.Fishing.Buttons.catch_,
+                Configuration.screenResolutionProfile.getOffsetButtonFishingCatch(),
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Buttons.summonOnListingPartiesWorldBoss = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/world-boss.summon-party-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonSummonOnListingPartiesWorldBoss(),
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Buttons.summonOnListingWorldBosses = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/world-boss.summon-boss-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonSummonOnListingWorldBosses(),
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Buttons.summonOnSelectingWorldBossTierAndAndDifficulty = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/world-boss.summon-tier-diff-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonSummonOnSelectingWorldBossTierAndDifficulty(),
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Buttons.startBoss = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/world-boss.start-boss.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonStartWorldBoss(),
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Buttons.regroup = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/world-boss.regroup.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonRegroupWorldBoss(),
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Buttons.regroupOnDefeated = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/world-boss.regroup.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonRegroupAfterDefeatByWorldBoss(),
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Dialogs.confirmStartNotFullTeam = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "dialogs/world-boss.confirm-start-not-full-team.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetDialogStartWorldBossWithoutFullTeam(),
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Dialogs.notEnoughXeals = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "dialogs/world-boss.not-enough-xeals.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughXeals(),
                 0xFFFFFF
         );
     }

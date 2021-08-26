@@ -15,19 +15,22 @@ public class Main {
     public static void main(String[] args) throws Exception {
         ScreenResolutionProfile screenResolutionProfile = getScreenResolutionProfile(args);
         if (screenResolutionProfile == null) {
-            System.exit(3);
+            System.exit(EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
         }
 
         Configuration.load(screenResolutionProfile);
         Configuration.registerApplicationInstances(
                 new ReRunApp(),
                 new FishingApp(),
+                new AfkApp(),
+                new WorldBoss(),
                 new GenMiniClient(),
                 //
                 new KeepPixApp(),
                 new ExtractMatrixApp(),
                 new SamePixApp(),
                 //
+                new ScreenCaptureApp(),
                 new TestApp()
         );
         InteractionUtil.init();
@@ -61,4 +64,13 @@ public class Main {
                 ? steamProfile
                 : webProfile;
     }
+
+    public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;
+    public static final int EXIT_CODE_FAILURE_READING_INPUT = 5;
+    public static final int EXIT_CODE_INVALID_NUMBER_OF_ARGUMENTS = 6;
+    public static final int EXIT_CODE_EXTERNAL_REASON = 7;
+    // 20 to 40 for fishing
+    public static final int EXIT_CODE_UNABLE_DETECTING_ANCHOR = 20;
+    // end fishing
+    public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }

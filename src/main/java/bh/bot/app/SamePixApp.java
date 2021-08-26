@@ -1,10 +1,10 @@
 package bh.bot.app;
 
+import bh.bot.Main;
 import bh.bot.common.types.tuples.Tuple3;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.function.Function;
 
 import static bh.bot.common.Log.err;
@@ -14,28 +14,37 @@ public class SamePixApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
         try {
-            throwNotSupportedFlagExit(exitAfterXSecs);
+            throwNotSupportedFlagExit(launchInfo.exitAfterXSecs);
             String img1, img2;
 
-            try {
-                img1 = args[0];
-                img2 = args[1];
-                if (!new File(img1).exists() || !new File(img2).exists())
-                    throw new FileNotFoundException();
-            } catch (ArrayIndexOutOfBoundsException | FileNotFoundException ex) {
-                info(getHelp());
-                Function<String, Tuple3<Boolean, String, String>> transform = s -> {
-                    try{
-                        File file = new File(s);
-                        if (!file.exists())
-                            return new Tuple3<>(false, "File does not exists", null);
-                        return new Tuple3<>(true, null, s);
-                    } catch (Exception ex2) {
-                        return new Tuple3<>(false, "Invalid file path", null);
-                    }
-                };
-                img1 = readInput("File path of picture 1:", null, transform);
-                img2 = readInput("File path of picture 2:", null, transform);
+            try (
+                    InputStreamReader isr = new InputStreamReader(System.in);
+                    BufferedReader br = new BufferedReader(isr);
+            ) {
+                try {
+                    img1 = args[0];
+                    img2 = args[1];
+                    if (!new File(img1).exists() || !new File(img2).exists())
+                        throw new FileNotFoundException();
+                } catch (ArrayIndexOutOfBoundsException | FileNotFoundException ex) {
+                    info(getHelp());
+                    Function<String, Tuple3<Boolean, String, String>> transform = s -> {
+                        try {
+                            File file = new File(s);
+                            if (!file.exists())
+                                return new Tuple3<>(false, "File does not exists", null);
+                            return new Tuple3<>(true, null, s);
+                        } catch (Exception ex2) {
+                            return new Tuple3<>(false, "Invalid file path", null);
+                        }
+                    };
+                    img1 = readInput(br, "File path of picture 1:", null, transform);
+                    img2 = readInput(br, "File path of picture 2:", null, transform);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
+                throw e;
             }
 
             BufferedImage bi1 = loadImageFromFile(img1);

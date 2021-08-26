@@ -1,5 +1,6 @@
 package bh.bot.common;
 
+import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.types.ScreenResolutionProfile;
 import com.sun.media.sound.InvalidDataException;
@@ -16,52 +17,11 @@ import static bh.bot.common.utils.StringUtil.isBlank;
 import static bh.bot.common.utils.StringUtil.isNotBlank;
 
 public class Configuration {
+    public static ScreenResolutionProfile screenResolutionProfile = null;
     public static String profileName = null;
-
-    public static class Sizing {
-        public static class Globally {
-            public static Size gameResolution;
-        }
-
-        public static class Fishing {
-            public static class Scan {
-                public static Size castingFishSize;
-            }
-        }
-    }
 
     public static class Offsets {
         public static Offset gameScreenOffset;
-
-        public static class Globally {
-            public static class Buttons {
-                public static Offset reconnect;
-                public static Offset talkRightArrow;
-            }
-        }
-
-        public static class Dungeons {
-            public static class Buttons {
-                public static Offset reRun;
-            }
-        }
-
-        public static class Fishing {
-            public static class Buttons {
-                public static Offset start;
-                public static Offset cast;
-                public static Offset catch_;
-            }
-
-            public static class Labels {
-                public static Offset fishing;
-            }
-
-            public static class Scan {
-                public static Offset detectColor100PercentCatchingFish;
-                public static Offset beginScanCastingFish;
-            }
-        }
     }
 
     public static class Tolerant {
@@ -94,14 +54,15 @@ public class Configuration {
                 screenResolutionProfile.getSupportedGameResolutionHeight()
         );
 
-        profileName = screenResolutionProfile.getName().trim();
+        Configuration.screenResolutionProfile = screenResolutionProfile;
+        Configuration.profileName = screenResolutionProfile.getName().trim();
         if (isBlank(profileName))
             throw new InvalidDataException("profileName");
 
         if (screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile) {
             if (!OS.isWin) {
                 err("Steam profile only available on Windows");
-                System.exit(4);
+                System.exit(Main.EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
             }
             info("****** IMPORTANT ****** IMPORTANT ******");
             warn("You must move the Bit Heroes game's window to top left corner of your screen or provide exactly screen offset into the 'offset.screen.x & y' keys");
@@ -122,21 +83,6 @@ public class Configuration {
         }
 
         Offsets.gameScreenOffset = Offset.fromKeyPrefix("offset.screen");
-        Offsets.Dungeons.Buttons.reRun = screenResolutionProfile.getOffsetButtonDungeonReRun();
-        Offsets.Globally.Buttons.talkRightArrow = screenResolutionProfile.getOffsetButtonTalkRightArrow();
-        Offsets.Globally.Buttons.reconnect = screenResolutionProfile.getOffsetButtonReconnect();
-        Offsets.Fishing.Buttons.start = screenResolutionProfile.getOffsetButtonFishingStart();
-        Offsets.Fishing.Buttons.cast = screenResolutionProfile.getOffsetButtonFishingCast();
-        Offsets.Fishing.Buttons.catch_ = screenResolutionProfile.getOffsetButtonFishingCatch();
-        Offsets.Fishing.Labels.fishing = screenResolutionProfile.getOffsetLabelFishing();
-        Offsets.Fishing.Scan.detectColor100PercentCatchingFish = screenResolutionProfile.getOffsetDetect100PcCatchingFish();
-        Offsets.Fishing.Scan.beginScanCastingFish = screenResolutionProfile.getOffsetScanCastingFish();
-
-        Sizing.Globally.gameResolution = new Size(
-                screenResolutionProfile.getSupportedGameResolutionWidth(),
-                screenResolutionProfile.getSupportedGameResolutionHeight()
-        );
-        Sizing.Fishing.Scan.castingFishSize = screenResolutionProfile.getScanSizeCastingFish();
 
         Tolerant.position = Math.max(5, readInt("tolerant.position"));
         Tolerant.color = Math.max(0, readInt("tolerant.color"));
