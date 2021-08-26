@@ -215,11 +215,6 @@ public class ExtractMatrixApp extends AbstractApplication {
     }
 
     @Override
-    protected String getFlags() {
-        return null;
-    }
-
-    @Override
     protected String getLimitationExplain() {
         return null;
     }

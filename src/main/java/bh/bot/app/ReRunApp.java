@@ -85,13 +85,6 @@ public class ReRunApp extends AbstractApplication {
     }
 
     @Override
-    protected String getFlags() {
-        return buildFlags(
-                "--exit=X : exit after X seconds if turns not all consumed, can be used to make sure do not run after boost has expired"
-        );
-    }
-
-    @Override
     protected String getLimitationExplain() {
         return "This function only supports clicking the ReRun button, that means you have to enter Dungeon/Raid manually, turn on the Auto and when the ReRun button appears, it will be automatically clicked";
     }

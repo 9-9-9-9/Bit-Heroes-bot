@@ -137,18 +137,6 @@ public class AfkApp extends AbstractApplication {
     }
 
     @Override
-    protected String getFlags() {
-        return buildFlags(
-                "--invasion : do Invasion",
-                "--trials : do Trials",
-                "--pvp : do PVP",
-                "--boss : do World Boss",
-                "--raid : do Raid",
-                "--exit=X : stop after X seconds"
-        );
-    }
-
-    @Override
     protected String getLimitationExplain() {
         return null;
     }

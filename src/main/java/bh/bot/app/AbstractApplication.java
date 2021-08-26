@@ -7,6 +7,8 @@ import bh.bot.common.Telegram;
 import bh.bot.common.types.LaunchInfo;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.flags.FlagPattern;
+import bh.bot.common.types.flags.Flags;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.images.ImgMeta;
 import bh.bot.common.types.images.Pixel;
@@ -22,9 +24,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.InteractionUtil.Mouse.mouseMoveAndClickAndHide;
@@ -124,8 +130,6 @@ public abstract class AbstractApplication {
         return sb.toString();
     }
 
-    protected abstract String getFlags();
-
     public String getHelp() {
         StringBuilder sb = new StringBuilder(getAppName());
         sb.append("\n  Description: ");
@@ -141,19 +145,27 @@ public abstract class AbstractApplication {
             sb.append(usage);
         }
         sb.append(" [additional flags]");
-        String flags = getFlags();
-        if (flags != null) {
+
+        List<FlagPattern> flagPatterns = Arrays.asList(Flags.allFlags);
+        // Local flags
+        List<FlagPattern> localFlags = flagPatterns.stream()
+                .filter(x -> !x.isGlobalFlag())
+                .filter(x -> x.isSupportedByApp(this))
+                .collect(Collectors.toList());
+        if (localFlags.size() > 0) {
             sb.append("\nFlags:");
-            sb.append(flags);
+            for (FlagPattern localFlag : localFlags)
+                sb.append(String.format("\n  --%s%s : %s%s", localFlag.getName(), localFlag.isAllowParam() ? "=?" : "", localFlag.isDevelopersOnly() ? "(developers only) " : "", localFlag.getDescription()));
         }
+        // Global flags:
+        List<FlagPattern> globalFlags = flagPatterns.stream()
+                .filter(x -> x.isGlobalFlag())
+                .collect(Collectors.toList());
         sb.append("\nGlobal flags:");
-        sb.append("\n  --mute : do not send notification messages to Telegram channel");
-        sb.append("\n  --debug : print debug messages (developers only)");
-        sb.append("\n  --img : save screen captured pictures to disk (developers only)");
-        if (this.isSupportSteamScreenResolution()) {
-            sb.append("\n  --web : use mode resolution 800x520 (default)");
-            sb.append("\n  --steam : use mode resolution 800x480 (Steam client)");
-        }
+        for (FlagPattern globalFlag : globalFlags)
+            sb.append(String.format("\n  --%s%s : %s%s", globalFlag.getName(), globalFlag.isAllowParam() ? "=?" : "", globalFlag.isDevelopersOnly() ? "(developers only) " : "", globalFlag.getDescription()));
+        if (!this.isSupportSteamScreenResolution())
+            sb.append("\n** WARNING ** This app does not supports '--steam' flag");
         return sb.toString();
     }
 

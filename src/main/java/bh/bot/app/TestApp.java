@@ -127,11 +127,6 @@ public class TestApp extends AbstractApplication {
     }
 
     @Override
-    protected String getFlags() {
-        return null;
-    }
-
-    @Override
     protected String getLimitationExplain() {
         return null;
     }

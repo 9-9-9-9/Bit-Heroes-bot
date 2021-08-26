@@ -10,9 +10,9 @@ public class Flags {
             new FlagExitAfterAmountOfSeconds(),
             new FlagMuteNoti(),
             new FlagPrintHelpMessage(),
-            new FlagSaveDebugImages(),
-            new FlagShowDebugMessages(),
             new FlagSteamResolution800x480(),
             new FlagWebResolution800x520(),
+            new FlagSaveDebugImages(),
+            new FlagShowDebugMessages(),
     };
 }

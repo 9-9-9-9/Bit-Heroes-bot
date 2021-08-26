@@ -12,9 +12,6 @@ public abstract class FlagPattern<T> {
 
     public void pushRaw(String raw) {
         rawFlags.add(raw);
-
-        if (rawFlags.size() > 1 && !isAllowMultiple())
-            throw new NotSupportedException(String.format("Flag '--%s' can not be declared multiple"));
     }
 
     public ArrayList<T> parseParams() throws InvalidFlagException {
@@ -64,16 +61,23 @@ public abstract class FlagPattern<T> {
         throw new NotImplementedException();
     }
 
+    private int countMatch = 0;
     public boolean isThisFlag(String raw) throws InvalidFlagException {
         String prefix = String.format("--%s", getName());
         if (raw.equals(prefix)) {
             if (isAllowParam())
                 throw new InvalidFlagException(String.format("Flag '%s' is invalid, must contains parameter", raw));
+            countMatch++;
+            if (countMatch > 1 && !isAllowMultiple())
+                throw new NotSupportedException(String.format("Flag '--%s' can not be declared multiple times", getName()));
             return true;
         }
         if (raw.startsWith(prefix + "=")) {
             if (!isAllowParam())
                 throw new InvalidFlagException(String.format("Flag '--%s' does not contains parameter", getName()));
+            countMatch++;
+            if (countMatch > 1 && !isAllowMultiple())
+                throw new NotSupportedException(String.format("Flag '--%s' can not be declared multiple times", getName()));
             return true;
         }
         return false;

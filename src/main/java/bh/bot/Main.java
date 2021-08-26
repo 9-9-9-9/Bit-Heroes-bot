@@ -2,6 +2,8 @@ package bh.bot;
 
 import bh.bot.app.*;
 import bh.bot.common.Configuration;
+import bh.bot.common.Log;
+import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.types.LaunchInfo;
@@ -44,8 +46,14 @@ public class Main {
                 System.out.println(launchInfo.instance.getHelp());
                 return;
             }
+            if (launchInfo.enableDebugMessages)
+                Log.enableDebug();
+            if (launchInfo.disableTelegramNoti)
+                Telegram.disable();
+
             Configuration.load(launchInfo.screenResolutionProfile);
             InteractionUtil.init();
+
             launchInfo.instance.run(launchInfo);
         } catch (InvalidFlagException ex) {
             err(ex.getMessage());
