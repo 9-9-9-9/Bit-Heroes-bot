@@ -44,6 +44,7 @@ public class Main {
             LaunchInfo launchInfo = parse(args);
             if (launchInfo.displayHelp) {
                 System.out.println(launchInfo.instance.getHelp());
+                info("With flag '--help' provided, application will exit immediately");
                 return;
             }
             if (launchInfo.enableDebugMessages)
