@@ -118,6 +118,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
 
             debug("None");
             continuousNotFound++;
+            moveCursor(coordinateHideMouse);
 
             if (continuousNotFound >= 12) {
                 debug("Finding %s icon", getAppShortName());
@@ -131,6 +132,8 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 continuousNotFound = 0;
             }
         }
+
+        masterSwitch.set(true);
     }
 
     @Override

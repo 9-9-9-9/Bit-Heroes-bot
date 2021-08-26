@@ -36,11 +36,17 @@ public class Log {
         int offsetX = actualCoordinate.x - Configuration.Offsets.gameScreenOffset.X;
         if (imCoordinateOffset.X == offsetX && imCoordinateOffset.Y == actualCoordinate.y - Configuration.Offsets.gameScreenOffset.Y)
             return;
-        info(
-                "** WARNING ** Un-match offset! Defined %3d,%3d but actual %3d,%3d",
-                imCoordinateOffset.X, imCoordinateOffset.Y,
-                offsetX, actualCoordinate.y - Configuration.Offsets.gameScreenOffset.Y
-        );
+        try {
+            throw new Exception("Un-match offset (for debugging purpose)");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            info(
+                    "** WARNING ** Un-match offset! Defined %3d,%3d but actual %3d,%3d",
+                    imCoordinateOffset.X, imCoordinateOffset.Y,
+                    offsetX, actualCoordinate.y - Configuration.Offsets.gameScreenOffset.Y
+            );
+        }
     }
 
     public static void info(Object obj) {
