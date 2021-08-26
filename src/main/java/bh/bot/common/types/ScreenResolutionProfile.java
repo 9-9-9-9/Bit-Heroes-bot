@@ -22,6 +22,12 @@ public abstract class ScreenResolutionProfile {
     public abstract Tuple4<Integer, Integer, Integer, Integer> getBackwardScanRightSideAttendablePlaces(); // min x, max y, step backward, max x
     public abstract Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftSideAttendablePlaces(); // min x, min y, step forward, max x
     public abstract Offset getOffsetButtonSummonOnListingPartiesWorldBoss();
+    public abstract Offset getOffsetButtonSummonOnListingWorldBosses();
+    public abstract Offset getOffsetButtonSummonOnSelectingWorldBossTierAndDifficulty();
+    public abstract Offset getOffsetButtonStartWorldBoss();
+    public abstract Offset getOffsetDialogStartWorldBossWithoutFullTeam();
+    public abstract Offset getOffsetButtonRegroupWorldBoss();
+
 
     public static class WebProfile extends ScreenResolutionProfile {
 
@@ -104,6 +110,31 @@ public abstract class ScreenResolutionProfile {
         public Offset getOffsetButtonSummonOnListingPartiesWorldBoss() {
             return new Offset(452, 451);
         }
+
+        @Override
+        public Offset getOffsetButtonSummonOnListingWorldBosses() {
+            return new Offset(495, 368);
+        }
+
+        @Override
+        public Offset getOffsetButtonSummonOnSelectingWorldBossTierAndDifficulty() {
+            return new Offset(432, 394);
+        }
+
+        @Override
+        public Offset getOffsetButtonStartWorldBoss() {
+            return new Offset(343, 460);
+        }
+
+        @Override
+        public Offset getOffsetDialogStartWorldBossWithoutFullTeam() {
+            return new Offset(279, 221);
+        }
+
+        @Override
+        public Offset getOffsetButtonRegroupWorldBoss() {
+            return new Offset(368, 468);
+        }
     }
 
     public static class SteamProfile extends ScreenResolutionProfile {
@@ -185,6 +216,31 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonSummonOnListingPartiesWorldBoss() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonSummonOnListingWorldBosses() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonSummonOnSelectingWorldBossTierAndDifficulty() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonStartWorldBoss() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetDialogStartWorldBossWithoutFullTeam() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonRegroupWorldBoss() {
             throw NotSupportedException.steam();
         }
     }

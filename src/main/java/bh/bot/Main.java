@@ -23,6 +23,7 @@ public class Main {
                 new ReRunApp(),
                 new FishingApp(),
                 new AfkApp(),
+                new WorldBoss(),
                 new GenMiniClient(),
                 //
                 new KeepPixApp(),

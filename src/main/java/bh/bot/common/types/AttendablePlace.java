@@ -11,8 +11,13 @@ public class AttendablePlace {
     public final int id;
     public final BwMatrixMeta img;
     public final boolean left;
+    public final short procedureTicketMinutes;
 
     public AttendablePlace(String name, int id, String imgName, boolean left) throws IOException {
+        this(name, id, imgName, left, (short) 0);
+    }
+
+    public AttendablePlace(String name, int id, String imgName, boolean left, short procedureTicketMinutes) throws IOException {
         this.name = name;
         this.id = id;
         this.img = new BwMatrixMeta(
@@ -21,6 +26,7 @@ public class AttendablePlace {
                 0xFFFFFF
         );
         this.left = left;
+        this.procedureTicketMinutes = procedureTicketMinutes;
     }
 
     public int getId() {
