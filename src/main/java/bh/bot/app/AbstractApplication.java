@@ -374,7 +374,7 @@ public abstract class AbstractApplication {
         if (!im.isMatchBlackRgb(c.getRGB())) {
             return false;
         }
-        debug("clickImageExactBW match success 1");
+        // debug("clickImageExactBW match success 1");
 
         BufferedImage sc = captureScreen(lastMatch[0], lastMatch[1], im.getWidth(), im.getHeight());
 
@@ -390,7 +390,7 @@ public abstract class AbstractApplication {
                 }
             }
 
-            debug("clickImageExactBW match success 2");
+            // debug("clickImageExactBW match success 2");
 
             for (int[] px : im.getNonBlackPixels()) {
                 if (ImageUtil.areColorsSimilar(//
@@ -401,10 +401,10 @@ public abstract class AbstractApplication {
                 }
             }
 
-            debug("clickImageExactBW match success 3");
+            // debug("clickImageExactBW match success 3");
 
             mouseMoveAndClickAndHide(p);
-            debug("Success on last click");
+            // debug("Success on last click");
             return true;
         } finally {
             sc.flush();
@@ -433,7 +433,7 @@ public abstract class AbstractApplication {
                                 srcRgb, //
                                 Configuration.Tolerant.color)) {
                             allGood = false;
-                            debug(String.format("clickImageScanBW second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
+                            // debug(String.format("clickImageScanBW second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
                             break;
                         }
                     }
@@ -441,7 +441,7 @@ public abstract class AbstractApplication {
                     if (!allGood)
                         continue;
 
-                    debug("clickImageScanBW second match passed");
+                    // debug("clickImageScanBW second match passed");
                     for (int[] px : im.getNonBlackPixels()) {
                         int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
                         if (ImageUtil.areColorsSimilar(//
@@ -449,7 +449,7 @@ public abstract class AbstractApplication {
                                 srcRgb, //
                                 Configuration.Tolerant.color)) {
                             allGood = false;
-                            debug(String.format("clickImageScanBW third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
+                            // debug(String.format("clickImageScanBW third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
                             break;
                         }
                     }
@@ -457,7 +457,7 @@ public abstract class AbstractApplication {
                     if (!allGood)
                         continue;
 
-                    debug("clickImageScanBW third match passed");
+                    // debug("clickImageScanBW third match passed");
                     go = false;
                     p = new Point(screenCapturedResult.x + x, screenCapturedResult.y + y);
                 }
@@ -466,6 +466,12 @@ public abstract class AbstractApplication {
             if (!go) {
                 mouseMoveAndClickAndHide(p);
                 im.setLastMatchPoint(p.x, p.y);
+                if (im.getCoordinateOffset().X != p.x - Configuration.Offsets.gameScreenOffset.X || im.getCoordinateOffset().Y != p.y - Configuration.Offsets.gameScreenOffset.Y)
+                    debug(
+                            "Un-match offset! Defined %3d,%3d but actual %3d,%3d",
+                            im.getCoordinateOffset().X, im.getCoordinateOffset().Y,
+                            p.x - Configuration.Offsets.gameScreenOffset.X, p.y - Configuration.Offsets.gameScreenOffset.Y
+                    );
                 return true;
             }
 

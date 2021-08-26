@@ -116,10 +116,12 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta summonOnSelectingWorldBossTierAndAndDifficulty;
                 public static BwMatrixMeta startBoss;
                 public static BwMatrixMeta regroup;
+                public static BwMatrixMeta regroupOnDefeated;
             }
 
             public static class Dialogs {
                 public static BwMatrixMeta confirmStartNotFullTeam;
+                public static BwMatrixMeta notEnoughXeals;
             }
         }
     }
@@ -208,11 +210,25 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetButtonRegroupWorldBoss(),
                 0xFFFFFF
         );
+        Metas.WorldBoss.Buttons.regroupOnDefeated = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/world-boss.regroup.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonRegroupAfterDefeatByWorldBoss(),
+                0xFFFFFF
+        );
         Metas.WorldBoss.Dialogs.confirmStartNotFullTeam = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "dialogs/world-boss.confirm-start-not-full-team.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetDialogStartWorldBossWithoutFullTeam(),
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Dialogs.notEnoughXeals = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "dialogs/world-boss.not-enough-xeals.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughXeals(),
                 0xFFFFFF
         );
     }

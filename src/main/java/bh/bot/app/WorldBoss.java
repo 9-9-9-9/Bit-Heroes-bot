@@ -1,15 +1,22 @@
 package bh.bot.app;
 
+import bh.bot.Main;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.images.BwMatrixMeta;
+import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.ThreadUtil;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
-import static bh.bot.common.Log.*;
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public class WorldBoss extends AbstractApplication {
@@ -17,10 +24,38 @@ public class WorldBoss extends AbstractApplication {
 
     @Override
     protected void internalRun(String[] args) {
+        int loopCount;
+        try (
+                InputStreamReader isr = new InputStreamReader(System.in);
+                BufferedReader br = new BufferedReader(isr);
+        ) {
+            try {
+                loopCount = Integer.parseInt(args[0]);
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
+                info(getHelp());
+                loopCount = readInput(br, "Loop count:", "How many time do you want to hunt World Boss", new Function<String, Tuple3<Boolean, String, Integer>>() {
+                    @Override
+                    public Tuple3<Boolean, String, Integer> apply(String s) {
+                        try {
+                            int result = Integer.parseInt(s, 16) & 0xFFFFFF;
+                            return new Tuple3<>(true, null, result);
+                        } catch (Exception ex2) {
+                            return new Tuple3<>(false, "Unable to parse, error: " + ex.getMessage(), 0);
+                        }
+                    }
+                });
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
+            throw new RuntimeException(ex);
+        }
+
+        final int cnt = loopCount;
 
         AtomicBoolean masterSwitch = new AtomicBoolean(false);
         ThreadUtil.waitDone(
-                () -> loop(masterSwitch),
+                () -> loop(cnt, masterSwitch),
                 () -> doClickTalk(masterSwitch::get),
                 () -> detectDisconnected(masterSwitch),
                 () -> autoExit(launchInfo.exitAfterXSecs, masterSwitch)
@@ -28,8 +63,8 @@ public class WorldBoss extends AbstractApplication {
         Telegram.sendMessage("Stopped", false);
     }
 
-    private void loop(AtomicBoolean masterSwitch) {
-        while (!masterSwitch.get()) {
+    private void loop(int loopCount, AtomicBoolean masterSwitch) {
+        while (!masterSwitch.get() && loopCount > 0) {
             sleep(5_000);
 
             if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingPartiesWorldBoss)) {
@@ -54,12 +89,28 @@ public class WorldBoss extends AbstractApplication {
 
             if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.regroup)) {
                 debug("regroup");
+                loopCount--;
+                info("%d loop left", loopCount);
                 continue;
             }
 
-            debug("confirmStartNotFullTeam");
             if (clickImage(BwMatrixMeta.Metas.WorldBoss.Dialogs.confirmStartNotFullTeam)) {
+                debug("confirmStartNotFullTeam");
                 InteractionUtil.Keyboard.sendSpaceKey();
+                continue;
+            }
+
+            if (clickImage(BwMatrixMeta.Metas.WorldBoss.Dialogs.notEnoughXeals)) {
+                debug("notEnoughXeals");
+                InteractionUtil.Keyboard.sendEscape();
+                masterSwitch.set(true);
+                continue;
+            }
+
+            if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.regroupOnDefeated)) {
+                debug("regroupOnDefeated");
+                loopCount--;
+                info("%d loop left", loopCount);
                 continue;
             }
 
@@ -84,12 +135,12 @@ public class WorldBoss extends AbstractApplication {
 
     @Override
     protected String getUsage() {
-        return "";
+        return "<count>";
     }
 
     @Override
     protected String getDescription() {
-        return null;
+        return "Farm World Boss";
     }
 
     @Override

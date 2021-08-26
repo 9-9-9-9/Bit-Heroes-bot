@@ -31,6 +31,10 @@ public class InteractionUtil {
         public static void sendSpaceKey() {
             sendKey(KeyEvent.VK_SPACE);
         }
+
+        public static void sendEscape() {
+            sendKey(KeyEvent.VK_ESCAPE);
+        }
     }
 
     public static class Mouse {

@@ -27,6 +27,8 @@ public abstract class ScreenResolutionProfile {
     public abstract Offset getOffsetButtonStartWorldBoss();
     public abstract Offset getOffsetDialogStartWorldBossWithoutFullTeam();
     public abstract Offset getOffsetButtonRegroupWorldBoss();
+    public abstract Offset getOffsetButtonRegroupAfterDefeatByWorldBoss();
+    public abstract Offset getOffsetDialogNotEnoughXeals();
 
 
     public static class WebProfile extends ScreenResolutionProfile {
@@ -123,7 +125,7 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonStartWorldBoss() {
-            return new Offset(343, 460);
+            return new Offset(342, 460);
         }
 
         @Override
@@ -134,6 +136,16 @@ public abstract class ScreenResolutionProfile {
         @Override
         public Offset getOffsetButtonRegroupWorldBoss() {
             return new Offset(368, 468);
+        }
+
+        @Override
+        public Offset getOffsetButtonRegroupAfterDefeatByWorldBoss() {
+            return new Offset(293, 467);
+        }
+
+        @Override
+        public Offset getOffsetDialogNotEnoughXeals() {
+            return new Offset(285, 231);
         }
     }
 
@@ -241,6 +253,16 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonRegroupWorldBoss() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonRegroupAfterDefeatByWorldBoss() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetDialogNotEnoughXeals() {
             throw NotSupportedException.steam();
         }
     }
