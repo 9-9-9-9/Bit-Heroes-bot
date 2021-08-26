@@ -153,6 +153,18 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta notEnoughBadges;
             }
         }
+
+        public static class Trials {
+            public static class Buttons {
+                public static BwMatrixMeta play;
+                public static BwMatrixMeta accept;
+                public static BwMatrixMeta town;
+            }
+
+            public static class Dialogs {
+                public static BwMatrixMeta notEnoughTokens;
+            }
+        }
     }
 
     public static void load() throws IOException {
@@ -336,6 +348,37 @@ public class BwMatrixMeta {
                         "dialogs/invasion.not-enough-badges.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughInvasionBadges(),
+                0xFFFFFF
+        );
+
+        // Trials
+        Metas.Trials.Buttons.play = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/trials.play.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonPlayTrials(),
+                0xFFFFFF
+        );
+        Metas.Trials.Buttons.accept = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/trials.accept.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptTrials(),
+                0xFFFFFF
+        );
+        Metas.Trials.Buttons.town = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/trials.town.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedTrials(),
+                0xFFFFFF
+        );
+
+        Metas.Trials.Dialogs.notEnoughTokens = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "dialogs/trials.not-enough-tokens.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughTrialsTokens(),
                 0xFFFFFF
         );
     }

@@ -18,6 +18,8 @@ import java.util.function.Function;
 
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
+import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
+import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public abstract class AbstractDoFarmingApp extends AbstractApplication {
@@ -72,6 +74,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
 
     protected void loop(int loopCount, AtomicBoolean masterSwitch) {
         int continuousNotFound = 0;
+        final Point coordinateHideMouse = new Point(0, 0);
         while (!masterSwitch.get() && loopCount > 0) {
             sleep(5_000);
 
@@ -87,6 +90,8 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                     info("%d loop left", loopCount);
                 }
 
+                moveCursor(coordinateHideMouse);
+
                 continue;
             }
 
@@ -94,6 +99,9 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 debug("confirmStartNotFullTeam");
                 InteractionUtil.Keyboard.sendSpaceKey();
                 continuousNotFound = 0;
+
+                moveCursor(coordinateHideMouse);
+
                 continue;
             }
 
@@ -102,6 +110,9 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 InteractionUtil.Keyboard.sendEscape();
                 masterSwitch.set(true);
                 continuousNotFound = 0;
+
+                moveCursor(coordinateHideMouse);
+
                 continue;
             }
 
@@ -112,8 +123,10 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 debug("Finding %s icon", getAppShortName());
                 Point point = this.gameScreenInteractor.findAttendablePlace(ap);
                 if (point != null) {
-                    InteractionUtil.Mouse.moveCursor(point);
-                    InteractionUtil.Mouse.mouseClick();
+                    moveCursor(point);
+                    mouseClick();
+                    sleep(100);
+                    moveCursor(coordinateHideMouse);
                 }
                 continuousNotFound = 0;
             }

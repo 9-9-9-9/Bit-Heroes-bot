@@ -1,9 +1,11 @@
 package bh.bot.app;
 
-import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
+import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
+
+import static bh.bot.common.Log.debug;
 
 public class TrialsApp extends AbstractDoFarmingApp {
     @Override
@@ -18,12 +20,27 @@ public class TrialsApp extends AbstractDoFarmingApp {
 
     @Override
     protected Tuple2<Boolean, Boolean> isClickedSomething() {
-        throw new NotImplementedException();
+        if (clickImage(BwMatrixMeta.Metas.Trials.Buttons.play)) {
+            debug("play");
+            return new Tuple2<>(true, false);
+        }
+
+        if (clickImage(BwMatrixMeta.Metas.Trials.Buttons.accept)) {
+            debug("accept");
+            return new Tuple2<>(true, false);
+        }
+
+        if (clickImage(BwMatrixMeta.Metas.Trials.Buttons.town)) {
+            debug("town");
+            return new Tuple2<>(true, true);
+        }
+
+        return new Tuple2<>(false, false);
     }
 
     @Override
     protected boolean isOutOfTicket() {
-        throw new NotImplementedException();
+        return clickImage(BwMatrixMeta.Metas.Trials.Dialogs.notEnoughTokens);
     }
 
     @Override
