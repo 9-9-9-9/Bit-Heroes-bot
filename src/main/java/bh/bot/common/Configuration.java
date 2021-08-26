@@ -2,13 +2,18 @@ package bh.bot.common;
 
 import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
+import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.types.ScreenResolutionProfile;
+import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.utils.StringUtil;
 import com.sun.media.sound.InvalidDataException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -90,19 +95,31 @@ public class Configuration {
         Tolerant.colorBw = Math.max(0, readInt("tolerant.color.bw"));
     }
 
-    private static final ArrayList<AbstractApplication> applicationInstances = new ArrayList<>();
+    private static final ArrayList<Class<? extends AbstractApplication>> applicationClasses = new ArrayList<>();
 
-    public static void registerApplicationInstances(AbstractApplication... instances) {
-        for (AbstractApplication instance : instances) {
-            applicationInstances.add(instance);
+    public static void registerApplicationInstances(Class<? extends AbstractApplication>... classes) {
+        for (Class<? extends AbstractApplication> class_ : classes) {
+            applicationClasses.add(class_);
         }
     }
 
-    public static AbstractApplication getInstanceFromAppCode(String code) {
+    public static AbstractApplication getInstanceFromAppCode(String code) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         code = code.toLowerCase().trim();
-        for (AbstractApplication applicationInstance : applicationInstances)
-            if (code.equals(applicationInstance.getAppCode().toLowerCase().trim()))
-                return applicationInstance;
+        for (Class<? extends AbstractApplication> applicationClass : applicationClasses) {
+            AppCode annotation = applicationClass.getAnnotation(AppCode.class);
+            if (annotation == null)
+                throw new NotImplementedException(String.format("'%s' missing %s annotation", applicationClass.getSimpleName(), AppCode.class.getSimpleName()));
+            String appCode = annotation.code();
+            if (StringUtil.isBlank(appCode))
+                throw new NotImplementedException(String.format("'%s' missing %s annotation", applicationClass.getSimpleName(), AppCode.class.getSimpleName()));
+            if (!appCode.equals(appCode.trim().toLowerCase()))
+                throw new RuntimeException(String.format("Value of '%s' need to be normalized", applicationClass.getSimpleName()));
+            if (!appCode.equals(code))
+                continue;
+            Constructor<?> cons = applicationClass.getConstructors()[0];
+            return (AbstractApplication) cons.newInstance();
+        }
+        err("Not match any app code");
         return null;
     }
 

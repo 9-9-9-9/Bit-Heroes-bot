@@ -3,6 +3,7 @@ package bh.bot.app;
 import bh.bot.Main;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
+import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
 
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
 
+@AppCode(code = "afk")
 public class AfkApp extends AbstractApplication {
     private InteractionUtil.Screen.Game gameScreenInteractor;
 
@@ -112,11 +114,6 @@ public class AfkApp extends AbstractApplication {
         }
 
         return eventList;
-    }
-
-    @Override
-    public String getAppCode() {
-        return "afk";
     }
 
     @Override

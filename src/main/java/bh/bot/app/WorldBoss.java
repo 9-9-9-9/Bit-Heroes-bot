@@ -2,11 +2,13 @@ package bh.bot.app;
 
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
+import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
 
 import static bh.bot.common.Log.debug;
 
+@AppCode(code = "world-boss")
 public class WorldBoss extends AbstractDoFarmingApp {
     @Override
     protected String getAppShortName() {
@@ -56,11 +58,6 @@ public class WorldBoss extends AbstractDoFarmingApp {
     @Override
     protected boolean isOutOfTicket() {
         return clickImage(BwMatrixMeta.Metas.WorldBoss.Dialogs.notEnoughXeals);
-    }
-
-    @Override
-    public String getAppCode() {
-        return "world-boss";
     }
 
     @Override

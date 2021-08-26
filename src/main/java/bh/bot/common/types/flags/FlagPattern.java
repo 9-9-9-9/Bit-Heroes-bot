@@ -5,7 +5,26 @@ import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.exceptions.NotSupportedException;
 
+import java.util.ArrayList;
+
 public abstract class FlagPattern<T> {
+    private final ArrayList<String> rawFlags = new ArrayList<>();
+
+    public void pushRaw(String raw) {
+        rawFlags.add(raw);
+
+        if (rawFlags.size() > 1 && !isAllowMultiple())
+            throw new NotSupportedException(String.format("Flag '--%s' can not be declared multiple"));
+    }
+
+    public ArrayList<T> parseParams() throws InvalidFlagException {
+        ArrayList<T> result = new ArrayList<>();
+        for (String rawFlag : rawFlags) {
+            result.add(parseParam(rawFlag));
+        }
+        return result;
+    }
+
     public T parseParam(String raw) throws InvalidFlagException {
         if (!isAllowParam())
             throw new NotSupportedException(String.format("Flag '--%s' does not support parameter", getName()));
@@ -45,16 +64,26 @@ public abstract class FlagPattern<T> {
         throw new NotImplementedException();
     }
 
-    public boolean isThisFlag(String raw) {
+    public boolean isThisFlag(String raw) throws InvalidFlagException {
         String prefix = String.format("--%s", getName());
-        return raw.equals(prefix) || raw.startsWith(prefix + "=");
+        if (raw.equals(prefix)) {
+            if (isAllowParam())
+                throw new InvalidFlagException(String.format("Flag '%s' is invalid, must contains parameter", raw));
+            return true;
+        }
+        if (raw.startsWith(prefix + "=")) {
+            if (!isAllowParam())
+                throw new InvalidFlagException(String.format("Flag '--%s' does not contains parameter", getName()));
+            return true;
+        }
+        return false;
     }
 
     public boolean isAllowParam() {
         return false;
     }
 
-    public boolean isAllowMultiple() {
+    protected boolean isAllowMultiple() {
         return false;
     }
 

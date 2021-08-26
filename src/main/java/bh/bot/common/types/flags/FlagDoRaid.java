@@ -3,15 +3,15 @@ package bh.bot.common.types.flags;
 import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
 
-public class FlagDoTrials extends FlagPattern.NonParamFlag {
+public class FlagDoRaid extends FlagPattern.NonParamFlag {
     @Override
     public String getName() {
-        return "trials";
+        return "raid";
     }
 
     @Override
     public String getDescription() {
-        return "Auto doing Trials";
+        return "Auto doing Raid";
     }
 
     @Override

@@ -1,5 +1,6 @@
 package bh.bot.common.types.flags;
 
+import bh.bot.app.*;
 import bh.bot.common.exceptions.InvalidFlagException;
 
 public class FlagExitAfterAmountOfSeconds extends FlagPattern<Integer> {
@@ -26,5 +27,17 @@ public class FlagExitAfterAmountOfSeconds extends FlagPattern<Integer> {
     @Override
     public String getDescription() {
         return "Exit after amount of seconds, no matter if task hasn't been completed";
+    }
+
+    @Override
+    public boolean isGlobalFlag() {
+        return false;
+    }
+
+    @Override
+    public <TApp extends AbstractApplication> boolean internalCheckIsSupportedByApp(TApp instance) {
+        return instance instanceof ReRunApp
+                || instance instanceof FishingApp
+                || instance instanceof AbstractDoFarmingApp;
     }
 }

@@ -2,6 +2,7 @@ package bh.bot.app;
 
 import bh.bot.Main;
 import bh.bot.common.Configuration;
+import bh.bot.common.types.annotations.AppCode;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -14,6 +15,7 @@ import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.StringUtil.isBlank;
 
+@AppCode(code = "client")
 public class GenMiniClient extends AbstractApplication {
     private static final File chromeUserDir = new File("chrome-user-dir");
 
@@ -168,11 +170,6 @@ public class GenMiniClient extends AbstractApplication {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public String getAppCode() {
-        return "client";
     }
 
     @Override
