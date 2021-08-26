@@ -3,6 +3,7 @@ package bh.bot.app;
 import bh.bot.Main;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
+import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
 
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
 
+@AppCode(code = "afk")
 public class AfkApp extends AbstractApplication {
     private InteractionUtil.Screen.Game gameScreenInteractor;
 
@@ -115,11 +117,6 @@ public class AfkApp extends AbstractApplication {
     }
 
     @Override
-    public String getAppCode() {
-        return "afk";
-    }
-
-    @Override
     protected String getAppName() {
         return "BH-AFK";
     }
@@ -137,18 +134,6 @@ public class AfkApp extends AbstractApplication {
     @Override
     protected String getDescription() {
         return "Burns your turns while you are AFK";
-    }
-
-    @Override
-    protected String getFlags() {
-        return buildFlags(
-                "--invasion : do Invasion",
-                "--trials : do Trials",
-                "--pvp : do PVP",
-                "--boss : do World Boss",
-                "--raid : do Raid",
-                "--exit=X : stop after X seconds"
-        );
     }
 
     @Override

@@ -2,11 +2,13 @@ package bh.bot.app;
 
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
+import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
 
 import static bh.bot.common.Log.debug;
 
+@AppCode(code = "trials")
 public class TrialsApp extends AbstractDoFarmingApp {
     @Override
     protected String getAppShortName() {
@@ -41,11 +43,6 @@ public class TrialsApp extends AbstractDoFarmingApp {
     @Override
     protected boolean isOutOfTicket() {
         return clickImage(BwMatrixMeta.Metas.Trials.Dialogs.notEnoughTokens);
-    }
-
-    @Override
-    public String getAppCode() {
-        return "trials";
     }
 
     @Override

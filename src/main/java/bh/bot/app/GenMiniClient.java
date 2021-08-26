@@ -2,6 +2,7 @@ package bh.bot.app;
 
 import bh.bot.Main;
 import bh.bot.common.Configuration;
+import bh.bot.common.types.annotations.AppCode;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -14,6 +15,7 @@ import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.StringUtil.isBlank;
 
+@AppCode(code = "client")
 public class GenMiniClient extends AbstractApplication {
     private static final File chromeUserDir = new File("chrome-user-dir");
 
@@ -171,11 +173,6 @@ public class GenMiniClient extends AbstractApplication {
     }
 
     @Override
-    public String getAppCode() {
-        return "client";
-    }
-
-    @Override
     protected String getAppName() {
         return "Bit Heroes on Chrome client";
     }
@@ -193,11 +190,6 @@ public class GenMiniClient extends AbstractApplication {
     @Override
     protected String getDescription() {
         return "Generate mini client based on configuration, allow you to play in special Google Chrome window";
-    }
-
-    @Override
-    protected String getFlags() {
-        return null;
     }
 
     @Override

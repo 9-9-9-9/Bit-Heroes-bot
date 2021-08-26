@@ -2,6 +2,7 @@ package bh.bot.app;
 
 import bh.bot.Main;
 import bh.bot.common.Log;
+import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple3;
 
 import java.awt.image.BufferedImage;
@@ -12,6 +13,7 @@ import java.util.function.Function;
 
 import static bh.bot.common.Log.info;
 
+@AppCode(code = "keeppix")
 public class KeepPixApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
@@ -116,11 +118,6 @@ public class KeepPixApp extends AbstractApplication {
     }
 
     @Override
-    public String getAppCode() {
-        return "keeppix";
-    }
-
-    @Override
     protected String getAppName() {
         return "BH-KeepPix";
     }
@@ -138,11 +135,6 @@ public class KeepPixApp extends AbstractApplication {
     @Override
     protected String getDescription() {
         return "(developers only) Read 2 images: source and input, filter pixels from the input image, only keep pixels which exists in source image";
-    }
-
-    @Override
-    protected String getFlags() {
-        return null;
     }
 
     @Override

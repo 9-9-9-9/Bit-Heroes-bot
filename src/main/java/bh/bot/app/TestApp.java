@@ -1,6 +1,7 @@
 package bh.bot.app;
 
 import bh.bot.common.Configuration;
+import bh.bot.common.types.annotations.AppCode;
 
 import static bh.bot.common.Log.err;
 
@@ -15,6 +16,7 @@ import com.sun.jna.win32.StdCallLibrary;
 import static bh.bot.common.Log.info;
 */
 
+@AppCode(code = "test")
 public class TestApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
@@ -105,11 +107,6 @@ public class TestApp extends AbstractApplication {
     */
 
     @Override
-    public String getAppCode() {
-        return "test";
-    }
-
-    @Override
     protected String getAppName() {
         return "BH-Test code";
     }
@@ -127,11 +124,6 @@ public class TestApp extends AbstractApplication {
     @Override
     protected String getDescription() {
         return "(developers only) run test code";
-    }
-
-    @Override
-    protected String getFlags() {
-        return null;
     }
 
     @Override

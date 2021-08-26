@@ -4,7 +4,11 @@ import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
+import bh.bot.common.types.LaunchInfo;
 import bh.bot.common.types.ScreenResolutionProfile;
+import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.flags.FlagPattern;
+import bh.bot.common.types.flags.Flags;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.images.ImgMeta;
 import bh.bot.common.types.images.Pixel;
@@ -20,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,91 +39,8 @@ import static bh.bot.common.utils.InteractionUtil.Screen.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
 
 public abstract class AbstractApplication {
-    private static List<String> flags;
-
-    public static LaunchInfo parse(String[] args) {
-        String appCode = args[0];
-
-        flags = Arrays
-                .stream(args)
-                .map(x -> x.toLowerCase().trim())
-                .filter(x -> x.startsWith("--"))
-                .collect(Collectors.toList());
-
-        if (hasFlag("--debug"))
-            Log.enableDebug();
-        if (hasFlag("--mute"))
-            Telegram.disable();
-        else if (Telegram.isDisabled())
-            Log.info("Telegram was disabled due to missing or invalid configuration");
-
-        if (hasFlag("--exit"))
-            err("Invalid usage of flag 'exit', should be '--exit=X' where X is the number of seconds to await before force exit, for example: '--exit=3600' means exit after 1 hours");
-
-        List<String> exitCmd = flags.stream().filter(x -> x.startsWith("--exit=") && x.length() > 7).collect(Collectors.toList());
-        int exitAfter = 0;
-        if (exitCmd.size() > 0) {
-            String sExitAfter = exitCmd.get(0).substring(7);
-            try {
-                exitAfter = Math.max(0, Integer.parseInt(sExitAfter));
-                if (exitAfter > 3600) {
-                    int h = exitAfter / 3600;
-                    int m = (exitAfter - h * 3600) / 60;
-                    info("Application will exit after %d hours and %d minutes", h, m);
-                }
-            } catch (NumberFormatException e) {
-                err("Can not parse command: --exit=%s", sExitAfter);
-            }
-        }
-
-        args = Arrays
-                .stream(args)
-                .skip(1)
-                .filter(x -> !x.startsWith("--"))
-                .toArray(String[]::new);
-        AbstractApplication instance = Configuration.getInstanceFromAppCode(appCode);
-
-        if (instance == null)
-            throw new IllegalArgumentException("First argument must be a valid app name");
-
-        LaunchInfo li = new LaunchInfo(instance, args);
-        li.exitAfterXSecs = exitAfter;
-        li.displayHelp = hasFlag("--help");
-        li.enableSavingDebugImages = hasFlag("--img");
-        // events
-        li.eInvasion = hasFlag("--invasion");
-        li.eTrials = hasFlag("--trials") || hasFlag("--trial");
-        li.ePvp = hasFlag("--pvp");
-        li.eWorldBoss = hasFlag("--boss") || hasFlag("--worldboss") || hasFlag("--world-boss");
-        li.eRaid = hasFlag("--raid") || hasFlag("--raids");
-        // end events
-        flags.clear();
-        return li;
-    }
-
-    private static boolean hasFlag(String flag) {
-        return flags.contains(flag);
-    }
-
-    public static class LaunchInfo {
-        public AbstractApplication instance;
-        public String[] arguments;
-        public int exitAfterXSecs;
-        public boolean displayHelp;
-        public boolean enableSavingDebugImages;
-        public boolean eInvasion;
-        public boolean eTrials;
-        public boolean ePvp;
-        public boolean eWorldBoss;
-        public boolean eRaid;
-
-        public LaunchInfo(AbstractApplication instance, String[] args) {
-            this.instance = instance;
-            this.arguments = args;
-        }
-    }
-
     protected LaunchInfo launchInfo;
+    private final String appCode = this.getClass().getAnnotation(AppCode.class).code();
 
     public void run(LaunchInfo launchInfo) throws Exception {
         this.launchInfo = launchInfo;
@@ -179,7 +101,9 @@ public abstract class AbstractApplication {
 
     protected abstract void internalRun(String[] args);
 
-    public abstract String getAppCode();
+    public final String getAppCode() {
+        return this.appCode;
+    }
 
     protected abstract String getAppName();
 
@@ -206,8 +130,6 @@ public abstract class AbstractApplication {
         return sb.toString();
     }
 
-    protected abstract String getFlags();
-
     public String getHelp() {
         StringBuilder sb = new StringBuilder(getAppName());
         sb.append("\n  Description: ");
@@ -223,19 +145,27 @@ public abstract class AbstractApplication {
             sb.append(usage);
         }
         sb.append(" [additional flags]");
-        String flags = getFlags();
-        if (flags != null) {
+
+        List<FlagPattern> flagPatterns = Arrays.asList(Flags.allFlags);
+        // Local flags
+        List<FlagPattern> localFlags = flagPatterns.stream()
+                .filter(x -> !x.isGlobalFlag())
+                .filter(x -> x.isSupportedByApp(this))
+                .collect(Collectors.toList());
+        if (localFlags.size() > 0) {
             sb.append("\nFlags:");
-            sb.append(flags);
+            for (FlagPattern localFlag : localFlags)
+                sb.append(String.format("\n  --%s%s : %s%s", localFlag.getName(), localFlag.isAllowParam() ? "=?" : "", localFlag.isDevelopersOnly() ? "(developers only) " : "", localFlag.getDescription()));
         }
+        // Global flags:
+        List<FlagPattern> globalFlags = flagPatterns.stream()
+                .filter(x -> x.isGlobalFlag())
+                .collect(Collectors.toList());
         sb.append("\nGlobal flags:");
-        sb.append("\n  --mute : do not send notification messages to Telegram channel");
-        sb.append("\n  --debug : print debug messages (developers only)");
-        sb.append("\n  --img : save screen captured pictures to disk (developers only)");
-        if (this.isSupportSteamScreenResolution()) {
-            sb.append("\n  --web : use mode resolution 800x520 (default)");
-            sb.append("\n  --steam : use mode resolution 800x480 (Steam client)");
-        }
+        for (FlagPattern globalFlag : globalFlags)
+            sb.append(String.format("\n  --%s%s : %s%s", globalFlag.getName(), globalFlag.isAllowParam() ? "=?" : "", globalFlag.isDevelopersOnly() ? "(developers only) " : "", globalFlag.getDescription()));
+        if (!this.isSupportSteamScreenResolution())
+            sb.append("\n** WARNING ** This app does not supports '--steam' flag");
         return sb.toString();
     }
 

@@ -155,11 +155,4 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
     protected String getDescription() {
         return "Do " + getAppShortName();
     }
-
-    @Override
-    protected String getFlags() {
-        return buildFlags(
-                "--exit=X : exit after X seconds if turns not all consumed, can be used to make sure do not run after boost has expired"
-        );
-    }
 }

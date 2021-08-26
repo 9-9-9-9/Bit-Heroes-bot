@@ -2,10 +2,12 @@ package bh.bot.app;
 
 import bh.bot.common.Configuration;
 import bh.bot.common.types.ScreenResolutionProfile;
+import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.utils.InteractionUtil;
 
 import java.awt.image.BufferedImage;
 
+@AppCode(code = "sc")
 public class ScreenCaptureApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
@@ -22,11 +24,6 @@ public class ScreenCaptureApp extends AbstractApplication {
         } finally {
             sc.flush();
         }
-    }
-
-    @Override
-    public String getAppCode() {
-        return "sc";
     }
 
     @Override
@@ -47,11 +44,6 @@ public class ScreenCaptureApp extends AbstractApplication {
     @Override
     protected String getDescription() {
         return "Screenshot at specific rectangle based on `offset.screen.x & y` flags, size based on profile --web 800x520 or --steam 800x480";
-    }
-
-    @Override
-    protected String getFlags() {
-        return null;
     }
 
     @Override

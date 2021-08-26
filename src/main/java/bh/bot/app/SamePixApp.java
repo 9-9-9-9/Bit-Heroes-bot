@@ -1,6 +1,7 @@
 package bh.bot.app;
 
 import bh.bot.Main;
+import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple3;
 
 import java.awt.image.BufferedImage;
@@ -10,6 +11,7 @@ import java.util.function.Function;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 
+@AppCode(code = "samepix")
 public class SamePixApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
@@ -104,11 +106,6 @@ public class SamePixApp extends AbstractApplication {
     }
 
     @Override
-    public String getAppCode() {
-        return "samepix";
-    }
-
-    @Override
     protected String getAppName() {
         return "BH-SamePix";
     }
@@ -126,11 +123,6 @@ public class SamePixApp extends AbstractApplication {
     @Override
     protected String getDescription() {
         return "(developers only) Read from 2 images (must be same size) and yield a new picture with only pixels equally from original pictures";
-    }
-
-    @Override
-    protected String getFlags() {
-        return null;
     }
 
     @Override

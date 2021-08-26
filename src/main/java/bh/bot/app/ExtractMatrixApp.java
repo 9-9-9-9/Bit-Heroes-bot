@@ -2,6 +2,7 @@ package bh.bot.app;
 
 import bh.bot.Main;
 import bh.bot.common.Configuration;
+import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
 
@@ -16,6 +17,7 @@ import java.util.function.Function;
 
 import static bh.bot.common.Log.info;
 
+@AppCode(code = "matrix")
 public class ExtractMatrixApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
@@ -193,11 +195,6 @@ public class ExtractMatrixApp extends AbstractApplication {
     }
 
     @Override
-    public String getAppCode() {
-        return "matrix";
-    }
-
-    @Override
     protected String getAppName() {
         return "BH-Extract Matrix";
     }
@@ -215,11 +212,6 @@ public class ExtractMatrixApp extends AbstractApplication {
     @Override
     protected String getDescription() {
         return "(developers only) Read image, keep only pixels which has color (eg. FF0000 is red) as the same as input. Used to produce picture for BwMatrixMeta objects";
-    }
-
-    @Override
-    protected String getFlags() {
-        return null;
     }
 
     @Override

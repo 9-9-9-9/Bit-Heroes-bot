@@ -3,6 +3,7 @@ package bh.bot.app;
 import bh.bot.Main;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
+import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ThreadUtil;
@@ -14,6 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static bh.bot.common.Log.info;
 
+@AppCode(code = "rerun")
 public class ReRunApp extends AbstractApplication {
 
     @Override
@@ -58,11 +60,6 @@ public class ReRunApp extends AbstractApplication {
     }
 
     @Override
-    public String getAppCode() {
-        return "rerun";
-    }
-
-    @Override
     protected String getAppName() {
         return "BH-ReRun";
     }
@@ -85,13 +82,6 @@ public class ReRunApp extends AbstractApplication {
     @Override
     protected boolean clickImage() {
         return clickImage(BwMatrixMeta.Metas.Dungeons.Buttons.rerun);
-    }
-
-    @Override
-    protected String getFlags() {
-        return buildFlags(
-                "--exit=X : exit after X seconds if turns not all consumed, can be used to make sure do not run after boost has expired"
-        );
     }
 
     @Override
