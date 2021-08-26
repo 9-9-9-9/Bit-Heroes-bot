@@ -25,8 +25,11 @@ Only support English user interface
 ### Contains the following functions:
 1. Detect and click **ReRun** button while in Dungeons and Raid
 2. Auto fishing
-3. World Boss
-4. Launch game in mini client using Google Chrome
+3. Farm World Boss
+4. Farm PVP
+5. Farm Invasion
+6. Farm Trials
+7. Launch game in mini client using Google Chrome
 
 And some extra functions support developers on developing this bot:
 - Matrix: read an image, keep only pixels which has color (eg. FF0000 is red) as the same as input. Used to produce picture for BwMatrixMeta objects
@@ -117,6 +120,16 @@ For: everyone
 For: everyone
 
 [Read at Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22pvp%22)
+
+### Invasion
+For: everyone
+
+[Read at Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22invasion%22)
+
+### Trials
+For: everyone
+
+[Read at Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22trials%22)
 
 ### Mini client using Google Chrome
 For: everyone

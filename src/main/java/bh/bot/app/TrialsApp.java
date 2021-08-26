@@ -7,41 +7,31 @@ import bh.bot.common.types.tuples.Tuple2;
 
 import static bh.bot.common.Log.debug;
 
-public class PvpApp extends AbstractDoFarmingApp {
+public class TrialsApp extends AbstractDoFarmingApp {
     @Override
     protected String getAppShortName() {
-        return "PVP";
+        return "Trials";
     }
 
     @Override
     protected AttendablePlace getAttendablePlace() {
-        return AttendablePlaces.pvp;
+        return AttendablePlaces.trials;
     }
 
     @Override
     protected Tuple2<Boolean, Boolean> isClickedSomething() {
-        if (clickImage(BwMatrixMeta.Metas.PvpArena.Buttons.play)) {
+        if (clickImage(BwMatrixMeta.Metas.Trials.Buttons.play)) {
             debug("play");
             return new Tuple2<>(true, false);
         }
 
-        if (clickImage(BwMatrixMeta.Metas.PvpArena.Buttons.fight1)) {
-            debug("fight1");
-            return new Tuple2<>(true, false);
-        }
-
-        if (clickImage(BwMatrixMeta.Metas.PvpArena.Buttons.accept)) {
+        if (clickImage(BwMatrixMeta.Metas.Trials.Buttons.accept)) {
             debug("accept");
             return new Tuple2<>(true, false);
         }
 
-        if (clickImage(BwMatrixMeta.Metas.PvpArena.Buttons.townOnWin)) {
-            debug("townOnWin");
-            return new Tuple2<>(true, true);
-        }
-
-        if (clickImage(BwMatrixMeta.Metas.PvpArena.Buttons.townOnLose)) {
-            debug("townOnLose");
+        if (clickImage(BwMatrixMeta.Metas.Trials.Buttons.town)) {
+            debug("town");
             return new Tuple2<>(true, true);
         }
 
@@ -50,16 +40,16 @@ public class PvpApp extends AbstractDoFarmingApp {
 
     @Override
     protected boolean isOutOfTicket() {
-        return clickImage(BwMatrixMeta.Metas.PvpArena.Dialogs.notEnoughTicket);
+        return clickImage(BwMatrixMeta.Metas.Trials.Dialogs.notEnoughTokens);
     }
 
     @Override
     public String getAppCode() {
-        return "pvp";
+        return "trials";
     }
 
     @Override
     protected String getLimitationExplain() {
-        return "This function only hit first opponent and does not support select PVP ticket cost, so choose it before turn this on";
+        return "This function does not support select difficulty and token cost, so choose it before turn this on";
     }
 }

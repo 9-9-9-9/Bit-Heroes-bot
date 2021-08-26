@@ -7,34 +7,78 @@ import bh.bot.common.types.tuples.Tuple4;
 
 public abstract class ScreenResolutionProfile {
     public abstract String getName();
+
     public abstract int getSupportedGameResolutionWidth();
+
     public abstract int getSupportedGameResolutionHeight();
+
     public abstract Offset getOffsetButtonDungeonReRun();
+
     public abstract Offset getOffsetButtonTalkRightArrow();
+
     public abstract Offset getOffsetButtonReconnect();
+
     public abstract Offset getOffsetLabelFishing();
+
     public abstract Offset getOffsetButtonFishingStart();
+
     public abstract Offset getOffsetButtonFishingCast();
+
     public abstract Offset getOffsetButtonFishingCatch();
+
     public abstract Offset getOffsetDetect100PcCatchingFish();
+
     public abstract Offset getOffsetScanCastingFish();
+
     public abstract Size getScanSizeCastingFish();
+
     public abstract Tuple4<Integer, Integer, Integer, Integer> getBackwardScanRightSideAttendablePlaces(); // min x, max y, step backward, max x
+
     public abstract Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftSideAttendablePlaces(); // min x, min y, step forward, max x
+
     public abstract Offset getOffsetButtonSummonOnListingPartiesWorldBoss();
+
     public abstract Offset getOffsetButtonSummonOnListingWorldBosses();
+
     public abstract Offset getOffsetButtonSummonOnSelectingWorldBossTierAndDifficulty();
+
     public abstract Offset getOffsetButtonStartWorldBoss();
+
     public abstract Offset getOffsetDialogStartWithoutFullTeam();
+
     public abstract Offset getOffsetButtonRegroupWorldBoss();
+
     public abstract Offset getOffsetButtonRegroupAfterDefeatByWorldBoss();
+
     public abstract Offset getOffsetDialogNotEnoughXeals();
+
     public abstract Offset getOffsetButtonPlayPvpArena();
+
     public abstract Offset getOffsetButtonFight1PvpArena();
+
     public abstract Offset getOffsetButtonAcceptPvpArena();
+
     public abstract Offset getOffsetButtonBackToTownFromPvpArenaOnWin();
+
     public abstract Offset getOffsetButtonBackToTownFromPvpArenaOnLose();
+
     public abstract Offset getOffsetDialogNotEnoughPvpTicket();
+
+    public abstract Offset getOffsetButtonPlayInvasion();
+
+    public abstract Offset getOffsetButtonAcceptInvasion();
+
+    public abstract Offset getOffsetButtonTownAfterCompetedInvasion();
+
+    public abstract Offset getOffsetDialogNotEnoughInvasionBadges();
+
+    public abstract Offset getOffsetButtonPlayTrials();
+
+    public abstract Offset getOffsetButtonAcceptTrials();
+
+    public abstract Offset getOffsetButtonTownAfterCompetedTrials();
+
+    public abstract Offset getOffsetDialogNotEnoughTrialsTokens();
 
 
     public static class WebProfile extends ScreenResolutionProfile {
@@ -183,6 +227,46 @@ public abstract class ScreenResolutionProfile {
         public Offset getOffsetDialogNotEnoughPvpTicket() {
             return new Offset(276, 231);
         }
+
+        @Override
+        public Offset getOffsetButtonPlayInvasion() {
+            return new Offset(520, 270);
+        }
+
+        @Override
+        public Offset getOffsetButtonAcceptInvasion() {
+            return new Offset(474, 457);
+        }
+
+        @Override
+        public Offset getOffsetButtonTownAfterCompetedInvasion() {
+            return new Offset(387, 468);
+        }
+
+        @Override
+        public Offset getOffsetDialogNotEnoughInvasionBadges() {
+            return new Offset(279, 231);
+        }
+
+        @Override
+        public Offset getOffsetButtonPlayTrials() {
+            return new Offset(517, 271);
+        }
+
+        @Override
+        public Offset getOffsetButtonAcceptTrials() {
+            return new Offset(474, 457);
+        }
+
+        @Override
+        public Offset getOffsetButtonTownAfterCompetedTrials() {
+            return new Offset(387, 468);
+        }
+
+        @Override
+        public Offset getOffsetDialogNotEnoughTrialsTokens() {
+            return new Offset(279, 231);
+        }
     }
 
     public static class SteamProfile extends ScreenResolutionProfile {
@@ -329,6 +413,46 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetDialogNotEnoughPvpTicket() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonPlayInvasion() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonAcceptInvasion() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonTownAfterCompetedInvasion() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetDialogNotEnoughInvasionBadges() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonPlayTrials() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonAcceptTrials() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonTownAfterCompetedTrials() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetDialogNotEnoughTrialsTokens() {
             throw NotSupportedException.steam();
         }
     }

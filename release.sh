@@ -61,6 +61,8 @@ cp ./rerun.sh ./release/
 cp ./client.sh ./release/
 cp ./world-boss.sh ./release/
 cp ./pvp.sh ./release/
+cp ./invasion.sh ./release/
+cp ./trials.sh ./release/
 
 # Copy launch scripts for Windows
 cp ./fishing.bat ./release/
@@ -68,6 +70,8 @@ cp ./rerun.bat ./release/
 cp ./client.bat ./release/
 cp ./world-boss.bat ./release/
 cp ./pvp.bat ./release/
+cp ./invasion.bat ./release/
+cp ./trials.bat ./release/
 
 # Copy steam scripts
 cp ./steam.*.bat ./release/
@@ -89,6 +93,7 @@ rm -rf $DIR
 mv ./release $DIR
 zip -r $FILE $DIR
 
+rm -f ./latest.README.md
 cp $DIR/README.md ./latest.README.md
 
 echo 'clean up'

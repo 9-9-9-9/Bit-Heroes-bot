@@ -25,6 +25,8 @@ public class Main {
                 new AfkApp(),
                 new WorldBoss(),
                 new PvpApp(),
+                new InvasionApp(),
+                new TrialsApp(),
                 new GenMiniClient(),
                 //
                 new KeepPixApp(),
