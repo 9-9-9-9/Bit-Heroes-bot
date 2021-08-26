@@ -27,7 +27,7 @@ public class AttendablePlaces {
 
             pvp = new AttendablePlace("PVP", AttendablePlaces.Ids.Pvp, "pvp-mx.bmp", true);
             worldBoss = new AttendablePlace("World Boss", AttendablePlaces.Ids.WorldBoss, "world-boss-mx.bmp", true);
-            raid = new AttendablePlace("Raid", AttendablePlaces.Ids.Raid, "raid-mx.bmp", true);
+            raid = new AttendablePlace("Raid", AttendablePlaces.Ids.Raid, "raid-mx.bmp", true, 120);
         } catch (IOException e) {
             e.printStackTrace();
         }

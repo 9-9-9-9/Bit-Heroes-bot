@@ -59,11 +59,15 @@ cp ./prepare-mini-chrome-client.txt ./release/
 cp ./fishing.sh ./release/
 cp ./rerun.sh ./release/
 cp ./client.sh ./release/
+cp ./world-boss.sh ./release/
+cp ./pvp.sh ./release/
 
 # Copy launch scripts for Windows
 cp ./fishing.bat ./release/
 cp ./rerun.bat ./release/
 cp ./client.bat ./release/
+cp ./world-boss.bat ./release/
+cp ./pvp.bat ./release/
 
 # Copy steam scripts
 cp ./steam.*.bat ./release/
@@ -84,6 +88,8 @@ DIR=./BitHeroes-v$VERSION
 rm -rf $DIR
 mv ./release $DIR
 zip -r $FILE $DIR
+
+cp $DIR/README.md ./latest.README.md
 
 echo 'clean up'
 rm -rf $DIR
