@@ -93,6 +93,7 @@ rm -rf $DIR
 mv ./release $DIR
 zip -r $FILE $DIR
 
+rm -f ./latest.README.md
 cp $DIR/README.md ./latest.README.md
 
 echo 'clean up'
