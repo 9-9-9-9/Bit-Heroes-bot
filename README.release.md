@@ -25,7 +25,8 @@ Only support English user interface
 ### Contains the following functions:
 1. Detect and click **ReRun** button while in Dungeons and Raid
 2. Auto fishing
-3. Launch game in mini client using Google Chrome
+3. World Boss
+4. Launch game in mini client using Google Chrome
 
 [Also supports pushing messages to Telegram for notification purpose](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
 
@@ -84,6 +85,23 @@ Supported flags:
 - `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./fishing.sh 20 --exit=1800` means will stop fishing after fishing 20 times or after 1800 seconds (30m), depends which condition completed first
 - [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
 
+### World-boss
+
+*This function is solo only and does not support select level or type of World Boss, only select by default So which boss do you want to hit? Choose it before turn this on*
+
+- Mini-client or Web:
+  - Windows: click and run `world-boss.bat`
+  - Linux/Mac: run `./world-boss.sh` from terminal
+  
+Not yet supported screen resolution 800x480 (Steam)
+  
+Arguments:
+> accept first argument as `loop count` is how many times to hunt boss before exit
+
+Supported flags:
+- `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./world-boss.sh 10 --exit=1200` means will stop farming boss after farmed 10 times or after 1200 seconds (20m), depends which condition completed first
+- [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
+
 ### Mini client using Google Chrome
 Steps:
 1. Make sure you can play game on Google Chrome web browser at https://www.kongregate.com/games/Juppiomenz/bit-heroes
@@ -100,7 +118,7 @@ Enjoy it
 - Windows: click and run file `mini-game-on-chrome.bat`
 - Linux/Mac: run file `./mini` or `./mini-game-on-chrome.sh` from terminal
 
-#### Project-wide flags
+#### Global flags
 - `--help` show help for specific application, for example: `./rerun.sh --help`
 - `--steam` *(Windows only)* for Bit Heroes on Steam with resolution 800x480
 - `--web` *(default, optional)* for Bit Heroes on Web or Mini-client with resolution 800x520

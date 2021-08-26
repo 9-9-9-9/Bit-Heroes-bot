@@ -25,7 +25,8 @@ Only support English user interface
 ### Contains the following functions:
 1. Detect and click **ReRun** button while in Dungeons and Raid
 2. Auto fishing
-3. Launch game in mini client using Google Chrome
+3. World Boss
+4. Launch game in mini client using Google Chrome
 
 And some extra functions support developers on developing this bot:
 - Matrix: read an image, keep only pixels which has color (eg. FF0000 is red) as the same as input. Used to produce picture for BwMatrixMeta objects
@@ -103,6 +104,24 @@ Supported flags:
 - `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./fishing.sh 20 --exit=1800` means will stop fishing after fishing 20 times or after 1800 seconds (30m), depends which condition completed first
 - [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
 
+### World-boss
+For: everyone
+
+*This function is solo only and does not support select level or type of World Boss, only select by default So which boss do you want to hit? Choose it before turn this on*
+
+- Mini-client or Web:
+  - Windows: click and run `world-boss.bat`
+  - Linux/Mac: run `./world-boss.sh` from terminal
+  
+Not yet supported screen resolution 800x480 (Steam)
+  
+Arguments:
+> accept first argument as `loop count` is how many times to hunt boss before exit
+
+Supported flags:
+- `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./world-boss.sh 10 --exit=1200` means will stop farming boss after farmed 10 times or after 1200 seconds (20m), depends which condition completed first
+- [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
+
 ### Mini client using Google Chrome
 For: everyone
 
@@ -130,7 +149,7 @@ Read image, keep only pixels which has color (eg. FF0000 is red) as the same as 
 
 [Those output image can be used to scan buttons on screen with minimal fault and work gracefully across OS and devices because it maybe not have to facing with "Gamma correction" issue](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/How-can-this-bot-works-cross-platform%3F)
 
-#### Project-wide flags
+#### Global flags
 - `--help` show help for specific application, for example: `./rerun.sh --help`
 - `--steam` *(Windows only)* for Bit Heroes on Steam with resolution 800x480
 - `--web` *(default, optional)* for Bit Heroes on Web or Mini-client with resolution 800x520
