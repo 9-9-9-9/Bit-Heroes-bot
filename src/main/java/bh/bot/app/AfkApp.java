@@ -2,6 +2,8 @@ package bh.bot.app;
 
 import bh.bot.Main;
 import bh.bot.common.Configuration;
+import bh.bot.common.types.AttendablePlace;
+import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.types.tuples.Tuple4;
@@ -24,11 +26,11 @@ import static bh.bot.common.utils.InteractionUtil.Screen.captureScreen;
 public class AfkApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
-        ArrayList<Event> eventList = getEvents();
+        ArrayList<AttendablePlace> eventList = getAttendablePlaces();
         //
         debug("Scanning screen");
-        for (Event event : eventList) {
-            Point point = findEvent(event);
+        for (AttendablePlace event : eventList) {
+            Point point = findAttendablePlace(event);
             if (point == null)
                 continue;
             debug("Found event id %2d at %3d,%3d", event.id, point.x, point.y);
@@ -36,49 +38,49 @@ public class AfkApp extends AbstractApplication {
         debug("End");
     }
 
-    private ArrayList<Event> getEvents() {
-        ArrayList<Event> eventList = new ArrayList<>();
+    private ArrayList<AttendablePlace> getAttendablePlaces() {
+        ArrayList<AttendablePlace> eventList = new ArrayList<>();
         //
         if (launchInfo.eInvasion)
-            eventList.add(Events.invasion);
+            eventList.add(AttendablePlaces.invasion);
         if (launchInfo.eTrials)
-            eventList.add(Events.trials);
+            eventList.add(AttendablePlaces.trials);
 
         if (launchInfo.ePvp)
-            eventList.add(Events.pvp);
+            eventList.add(AttendablePlaces.pvp);
         if (launchInfo.eWorldBoss)
-            eventList.add(Events.worldBoss);
+            eventList.add(AttendablePlaces.worldBoss);
         if (launchInfo.eRaid)
-            eventList.add(Events.raid);
+            eventList.add(AttendablePlaces.raid);
         //
         if (eventList.size() == 0) {
-            final ArrayList<Event> tmpEventList = new ArrayList<>();
-            final List<Event> allEvents = Arrays.asList(
-                    Events.invasion,
-                    Events.trials,
+            final ArrayList<AttendablePlace> tmpAttendablePlaceList = new ArrayList<>();
+            final List<AttendablePlace> allAttendablePlaces = Arrays.asList(
+                    AttendablePlaces.invasion,
+                    AttendablePlaces.trials,
 
-                    Events.pvp,
-                    Events.worldBoss,
-                    Events.raid
+                    AttendablePlaces.pvp,
+                    AttendablePlaces.worldBoss,
+                    AttendablePlaces.raid
             );
             info("Select events you want to do:");
-            for (Event event : allEvents.stream().sorted(Comparator.comparingInt(Event::getId)).collect(Collectors.toList()))
+            for (AttendablePlace event : allAttendablePlaces.stream().sorted(Comparator.comparingInt(AttendablePlace::getId)).collect(Collectors.toList()))
                 info("  %2d. %s", event.id, event.name);
             try (
                     InputStreamReader isr = new InputStreamReader(System.in);
                     BufferedReader br = new BufferedReader(isr);
             ) {
                 while (true) {
-                    Event event = readInput(br, "Input event code", "To select an event, press the number then press Enter. To finish input, just enter without supply a number", new Function<String, Tuple3<Boolean, String, Event>>() {
+                    AttendablePlace event = readInput(br, "Input event code", "To select an event, press the number then press Enter. To finish input, just enter without supply a number", new Function<String, Tuple3<Boolean, String, AttendablePlace>>() {
                         @Override
-                        public Tuple3<Boolean, String, Event> apply(String s) {
+                        public Tuple3<Boolean, String, AttendablePlace> apply(String s) {
                             try {
                                 int result = Integer.parseInt(s);
-                                Optional<Event> first = allEvents.stream().filter(x -> x.id == result).findFirst();
+                                Optional<AttendablePlace> first = allAttendablePlaces.stream().filter(x -> x.id == result).findFirst();
                                 if (!first.isPresent())
                                     return new Tuple3<>(false, "ID does not exists", null);
-                                Event ev = first.get();
-                                if (tmpEventList.stream().anyMatch(x -> x.id == ev.id))
+                                AttendablePlace ev = first.get();
+                                if (tmpAttendablePlaceList.stream().anyMatch(x -> x.id == ev.id))
                                     return new Tuple3<>(false, String.format("%s had been chosen before", ev.name), null);
                                 return new Tuple3<>(true, null, ev);
                             } catch (Exception ex2) {
@@ -90,7 +92,7 @@ public class AfkApp extends AbstractApplication {
                     if (event == null)
                         break;
 
-                    tmpEventList.add(event);
+                    tmpAttendablePlaceList.add(event);
                     info("Selected event %s", event.name);
                 }
             } catch (IOException e) {
@@ -98,7 +100,7 @@ public class AfkApp extends AbstractApplication {
                 System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
             }
 
-            eventList = new ArrayList<>(tmpEventList.stream().distinct().collect(Collectors.toList()));
+            eventList = new ArrayList<>(tmpAttendablePlaceList.stream().distinct().collect(Collectors.toList()));
 
             if (eventList.size() == 0) {
                 info("No events supplied");
@@ -107,38 +109,38 @@ public class AfkApp extends AbstractApplication {
         }
 
         info("Selected events:");
-        for (Event event : eventList) {
+        for (AttendablePlace event : eventList) {
             info("  <%2d> %s", event.id, event.name);
         }
 
         return eventList;
     }
 
-    private final int numberOfEventsPerColumn = 5;
-    private Point findEvent(Event event) {
+    private final int numberOfAttendablePlacesPerColumn = 5;
+    private Point findAttendablePlace(AttendablePlace event) {
         int minX, maxX, stepY, firstY;
         if (event.left) {
-            Tuple4<Integer, Integer, Integer, Integer> backwardScanLeftEvents = Configuration.screenResolutionProfile.getBackwardScanLeftEvents();
-            minX = backwardScanLeftEvents._1;
-            firstY = backwardScanLeftEvents._2;
-            stepY = backwardScanLeftEvents._3;
-            maxX = backwardScanLeftEvents._4;
+            Tuple4<Integer, Integer, Integer, Integer> backwardScanLeftAttendablePlaces = Configuration.screenResolutionProfile.getBackwardScanLeftSideAttendablePlaces();
+            minX = backwardScanLeftAttendablePlaces._1;
+            firstY = backwardScanLeftAttendablePlaces._2;
+            stepY = backwardScanLeftAttendablePlaces._3;
+            maxX = backwardScanLeftAttendablePlaces._4;
         } else { // right
-            Tuple4<Integer, Integer, Integer, Integer> backwardScanRightEvents = Configuration.screenResolutionProfile.getBackwardScanRightEvents();
-            minX = backwardScanRightEvents._1;
-            firstY = backwardScanRightEvents._2;
-            stepY = backwardScanRightEvents._3;
-            maxX = backwardScanRightEvents._4;
+            Tuple4<Integer, Integer, Integer, Integer> backwardScanRightAttendablePlaces = Configuration.screenResolutionProfile.getBackwardScanRightSideAttendablePlaces();
+            minX = backwardScanRightAttendablePlaces._1;
+            firstY = backwardScanRightAttendablePlaces._2;
+            stepY = backwardScanRightAttendablePlaces._3;
+            maxX = backwardScanRightAttendablePlaces._4;
         }
         final int positionTolerant = Math.abs(Math.min(Configuration.Tolerant.position, Math.abs(stepY)));
         final int scanWidth = maxX - minX + 1 + positionTolerant * 2;
         final int scanHeight = Math.abs(stepY) + positionTolerant * 2;
         final int scanX = Math.max(0, minX - positionTolerant);
-        for (int i = 0; i < numberOfEventsPerColumn; i++) {
+        for (int i = 0; i < numberOfAttendablePlacesPerColumn; i++) {
             final int scanY = Math.max(0, firstY + stepY * i - positionTolerant);
             BufferedImage sc = captureScreen(scanX, scanY, scanWidth, scanHeight);
             try {
-                saveDebugImage(sc, String.format("findEvent_%d_", i));
+                saveDebugImage(sc, String.format("findAttendablePlace_%d_", i));
                 final BwMatrixMeta im = event.img;
                 //
                 boolean go = true;
@@ -152,7 +154,7 @@ public class AfkApp extends AbstractApplication {
                             continue;
                         }
 
-                        // debug(String.format("findEvent first match passed for %d,%d", x, y));
+                        // debug(String.format("findAttendablePlace first match passed for %d,%d", x, y));
                         boolean allGood = true;
 
                         for (int[] px : im.getBlackPixels()) {
@@ -162,13 +164,13 @@ public class AfkApp extends AbstractApplication {
                                     srcRgb, //
                                     Configuration.Tolerant.color)) {
                                 allGood = false;
-                                // debug(String.format("findEvent second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
+                                // debug(String.format("findAttendablePlace second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
                                 break;
                             }
                         }
 
                         if (allGood) {
-                            // debug("findEvent second match passed");
+                            // debug("findAttendablePlace second match passed");
                             for (int[] px : im.getNonBlackPixels()) {
                                 int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
                                 if (ImageUtil.areColorsSimilar(//
@@ -176,14 +178,14 @@ public class AfkApp extends AbstractApplication {
                                         srcRgb, //
                                         Configuration.Tolerant.color)) {
                                     allGood = false;
-                                    // debug(String.format("findEvent third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
+                                    // debug(String.format("findAttendablePlace third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
                                     break;
                                 }
                             }
                         }
 
                         if (allGood) {
-                            // debug("findEvent third match passed");
+                            // debug("findAttendablePlace third match passed");
                             go = false;
                             p = new Point(scanX + x, scanY + y);
                         }
@@ -199,58 +201,6 @@ public class AfkApp extends AbstractApplication {
             }
         }
         return null;
-    }
-
-    public static class Events {
-        public static class Ids {
-            // Right
-            public static final int Invasion = 1;
-            public static final int Trials = 2;
-            // Left
-            public static final int Pvp = 11;
-            public static final int WorldBoss = 12;
-            public static final int Raid = 13;
-        }
-
-        public static Event invasion = null;
-        public static Event trials = null;
-
-        public static Event pvp = null;
-        public static Event worldBoss = null;
-        public static Event raid = null;
-
-        static {
-            try {
-                invasion = new Event("Invasion", Ids.Invasion, "invasion-mx.bmp", false);
-                trials = new Event("Trials", Ids.Trials, "trials-mx.bmp", false);
-
-                pvp = new Event("PVP", Ids.Pvp, "pvp-mx.bmp", true);
-                worldBoss = new Event("World Boss", Ids.WorldBoss, "world-boss-mx.bmp", true);
-                raid = new Event("Raid", Ids.Raid, "raid-mx.bmp", true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public static class Event {
-        public final String name;
-        public final int id;
-        public final BwMatrixMeta img;
-        public final boolean left;
-
-        public Event(String name, int id, String imgName, boolean left) throws IOException {
-            this.name = name;
-            this.id = id;
-            this.img = new BwMatrixMeta(
-                    ImageUtil.loadImageFileFromResource(String.format("labels/events/%s", imgName)),
-                    new Configuration.Offset(0, 0),
-                    0xFFFFFF
-            );
-            this.left = left;
-        }
-
-        public int getId() { return id; }
     }
 
     @Override

@@ -19,8 +19,8 @@ public abstract class ScreenResolutionProfile {
     public abstract Offset getOffsetDetect100PcCatchingFish();
     public abstract Offset getOffsetScanCastingFish();
     public abstract Size getScanSizeCastingFish();
-    public abstract Tuple4<Integer, Integer, Integer, Integer> getBackwardScanRightEvents(); // min x, max y, step backward, max x
-    public abstract Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftEvents(); // min x, min y, step forward, max x
+    public abstract Tuple4<Integer, Integer, Integer, Integer> getBackwardScanRightSideAttendablePlaces(); // min x, max y, step backward, max x
+    public abstract Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftSideAttendablePlaces(); // min x, min y, step forward, max x
 
     public static class WebProfile extends ScreenResolutionProfile {
 
@@ -90,12 +90,12 @@ public abstract class ScreenResolutionProfile {
         }
 
         @Override
-        public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanRightEvents() {
+        public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanRightSideAttendablePlaces() {
             return new Tuple4<>(730, 433, -72, 789);
         }
 
         @Override
-        public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftEvents() {
+        public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftSideAttendablePlaces() {
             return new Tuple4<>(14, 96, 72, 59);
         }
     }
@@ -168,12 +168,12 @@ public abstract class ScreenResolutionProfile {
         }
 
         @Override
-        public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanRightEvents() {
+        public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanRightSideAttendablePlaces() {
             throw NotSupportedException.steam();
         }
 
         @Override
-        public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftEvents() {
+        public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftSideAttendablePlaces() {
             throw NotSupportedException.steam();
         }
     }
