@@ -19,6 +19,7 @@ import static bh.bot.common.utils.StringUtil.isNotBlank;
 public class Configuration {
     public static ScreenResolutionProfile screenResolutionProfile = null;
     public static String profileName = null;
+    public static final boolean enableDevFeatures = new File("im.dev").exists();
 
     public static class Offsets {
         public static Offset gameScreenOffset;

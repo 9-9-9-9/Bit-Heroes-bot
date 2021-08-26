@@ -141,6 +141,18 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta notEnoughTicket;
             }
         }
+
+        public static class Invasion {
+            public static class Buttons {
+                public static BwMatrixMeta play;
+                public static BwMatrixMeta accept;
+                public static BwMatrixMeta town;
+            }
+
+            public static class Dialogs {
+                public static BwMatrixMeta notEnoughBadges;
+            }
+        }
     }
 
     public static void load() throws IOException {
@@ -294,6 +306,36 @@ public class BwMatrixMeta {
                         "dialogs/pvp-arena.not-enough-ticket.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughPvpTicket(),
+                0xFFFFFF
+        );
+
+        // Invasion
+        Metas.Invasion.Buttons.play = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/invasion.play.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonPlayInvasion(),
+                0xFFFFFF
+        );
+        Metas.Invasion.Buttons.accept = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/invasion.accept.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptInvasion(),
+                0xFFFFFF
+        );
+        Metas.Invasion.Buttons.town = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/invasion.town.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedInvasion(),
+                0xFFFFFF
+        );
+        Metas.Invasion.Dialogs.notEnoughBadges = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "dialogs/invasion.not-enough-badges.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughInvasionBadges(),
                 0xFFFFFF
         );
     }

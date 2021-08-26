@@ -466,12 +466,7 @@ public abstract class AbstractApplication {
             if (!go) {
                 mouseMoveAndClickAndHide(p);
                 im.setLastMatchPoint(p.x, p.y);
-                if (im.getCoordinateOffset().X != p.x - Configuration.Offsets.gameScreenOffset.X || im.getCoordinateOffset().Y != p.y - Configuration.Offsets.gameScreenOffset.Y)
-                    debug(
-                            "Un-match offset! Defined %3d,%3d but actual %3d,%3d",
-                            im.getCoordinateOffset().X, im.getCoordinateOffset().Y,
-                            p.x - Configuration.Offsets.gameScreenOffset.X, p.y - Configuration.Offsets.gameScreenOffset.Y
-                    );
+                printIfIncorrectImgPosition(im.getCoordinateOffset(), p);
                 return true;
             }
 

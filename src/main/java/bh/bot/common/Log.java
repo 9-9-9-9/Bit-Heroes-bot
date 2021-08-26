@@ -2,6 +2,8 @@ package bh.bot.common;
 
 import bh.bot.common.utils.StringUtil;
 
+import java.awt.*;
+
 public class Log {
     private static boolean isOnDebugMode;
 
@@ -20,6 +22,25 @@ public class Log {
         if (!isOnDebugMode)
             return;
         println(String.format(format, objs));
+    }
+
+    public static void dev(String format, Object... objs) {
+        if (!Configuration.enableDevFeatures)
+            return;
+        println(String.format(format, objs));
+    }
+
+    public static void printIfIncorrectImgPosition(Configuration.Offset imCoordinateOffset, Point actualCoordinate) {
+        if (!Configuration.enableDevFeatures)
+            return;
+        int offsetX = actualCoordinate.x - Configuration.Offsets.gameScreenOffset.X;
+        if (imCoordinateOffset.X == offsetX && imCoordinateOffset.Y == actualCoordinate.y - Configuration.Offsets.gameScreenOffset.Y)
+            return;
+        info(
+                "** WARNING ** Un-match offset! Defined %3d,%3d but actual %3d,%3d",
+                imCoordinateOffset.X, imCoordinateOffset.Y,
+                offsetX, actualCoordinate.y - Configuration.Offsets.gameScreenOffset.Y
+        );
     }
 
     public static void info(Object obj) {
