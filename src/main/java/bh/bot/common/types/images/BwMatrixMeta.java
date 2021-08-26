@@ -89,6 +89,10 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta rerun;
                 public static BwMatrixMeta reconnect;
             }
+
+            public static class Dialogs {
+                public static BwMatrixMeta confirmStartNotFullTeam;
+            }
         }
 
         public static class Dungeons {
@@ -120,8 +124,21 @@ public class BwMatrixMeta {
             }
 
             public static class Dialogs {
-                public static BwMatrixMeta confirmStartNotFullTeam;
                 public static BwMatrixMeta notEnoughXeals;
+            }
+        }
+
+        public static class PvpArena {
+            public static class Buttons {
+                public static BwMatrixMeta play;
+                public static BwMatrixMeta fight1;
+                public static BwMatrixMeta accept;
+                public static BwMatrixMeta townOnWin;
+                public static BwMatrixMeta townOnLose;
+            }
+
+            public static class Dialogs {
+                public static BwMatrixMeta notEnoughTicket;
             }
         }
     }
@@ -141,12 +158,21 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetButtonReconnect(),
                 0xFFFFFF
         );
+        Metas.Globally.Dialogs.confirmStartNotFullTeam = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "dialogs/globally.confirm-start-not-full-team.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetDialogStartWithoutFullTeam(),
+                0xFFFFFF
+        );
         Metas.Dungeons.Buttons.rerun = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/dungeons.rerun-mx.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetButtonDungeonReRun(),
                 0xFFFFFF);
+
+        // Fishing
         Metas.Fishing.Labels.fishing = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "labels/fishing-mx.bmp"
@@ -175,6 +201,8 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetButtonFishingCatch(),
                 0xFFFFFF
         );
+
+        // World Boss
         Metas.WorldBoss.Buttons.summonOnListingPartiesWorldBoss = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/world-boss.summon-party-mx.bmp"
@@ -217,18 +245,55 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetButtonRegroupAfterDefeatByWorldBoss(),
                 0xFFFFFF
         );
-        Metas.WorldBoss.Dialogs.confirmStartNotFullTeam = new BwMatrixMeta(//
-                ImageUtil.loadImageFileFromResource( //
-                        "dialogs/world-boss.confirm-start-not-full-team.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetDialogStartWorldBossWithoutFullTeam(),
-                0xFFFFFF
-        );
         Metas.WorldBoss.Dialogs.notEnoughXeals = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "dialogs/world-boss.not-enough-xeals.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughXeals(),
+                0xFFFFFF
+        );
+
+        // PVP Arena
+        Metas.PvpArena.Buttons.play = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/pvp-arena.play.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonPlayPvpArena(),
+                0xFFFFFF
+        );
+        Metas.PvpArena.Buttons.fight1 = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/pvp-arena.fight.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonFight1PvpArena(),
+                0xFFFFFF
+        );
+        Metas.PvpArena.Buttons.accept = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/pvp-arena.accept.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptPvpArena(),
+                0xFFFFFF
+        );
+        Metas.PvpArena.Buttons.townOnWin = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/pvp-arena.town.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonBackToTownFromPvpArenaOnWin(),
+                0xFFFFFF
+        );
+        Metas.PvpArena.Buttons.townOnLose = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/pvp-arena.town.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonBackToTownFromPvpArenaOnLose(),
+                0xFFFFFF
+        );
+        Metas.PvpArena.Dialogs.notEnoughTicket = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "dialogs/pvp-arena.not-enough-ticket.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughPvpTicket(),
                 0xFFFFFF
         );
     }

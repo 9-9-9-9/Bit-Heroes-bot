@@ -24,6 +24,7 @@ public class Main {
                 new FishingApp(),
                 new AfkApp(),
                 new WorldBoss(),
+                new PvpApp(),
                 new GenMiniClient(),
                 //
                 new KeepPixApp(),

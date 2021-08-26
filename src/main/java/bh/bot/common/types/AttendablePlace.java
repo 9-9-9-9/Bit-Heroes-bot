@@ -14,10 +14,10 @@ public class AttendablePlace {
     public final short procedureTicketMinutes;
 
     public AttendablePlace(String name, int id, String imgName, boolean left) throws IOException {
-        this(name, id, imgName, left, (short) 0);
+        this(name, id, imgName, left, (short) 30);
     }
 
-    public AttendablePlace(String name, int id, String imgName, boolean left, short procedureTicketMinutes) throws IOException {
+    public AttendablePlace(String name, int id, String imgName, boolean left, int procedureTicketMinutes) throws IOException {
         this.name = name;
         this.id = id;
         this.img = new BwMatrixMeta(
@@ -26,7 +26,7 @@ public class AttendablePlace {
                 0xFFFFFF
         );
         this.left = left;
-        this.procedureTicketMinutes = procedureTicketMinutes;
+        this.procedureTicketMinutes = (short) procedureTicketMinutes;
     }
 
     public int getId() {

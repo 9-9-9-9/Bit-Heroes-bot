@@ -25,10 +25,16 @@ public abstract class ScreenResolutionProfile {
     public abstract Offset getOffsetButtonSummonOnListingWorldBosses();
     public abstract Offset getOffsetButtonSummonOnSelectingWorldBossTierAndDifficulty();
     public abstract Offset getOffsetButtonStartWorldBoss();
-    public abstract Offset getOffsetDialogStartWorldBossWithoutFullTeam();
+    public abstract Offset getOffsetDialogStartWithoutFullTeam();
     public abstract Offset getOffsetButtonRegroupWorldBoss();
     public abstract Offset getOffsetButtonRegroupAfterDefeatByWorldBoss();
     public abstract Offset getOffsetDialogNotEnoughXeals();
+    public abstract Offset getOffsetButtonPlayPvpArena();
+    public abstract Offset getOffsetButtonFight1PvpArena();
+    public abstract Offset getOffsetButtonAcceptPvpArena();
+    public abstract Offset getOffsetButtonBackToTownFromPvpArenaOnWin();
+    public abstract Offset getOffsetButtonBackToTownFromPvpArenaOnLose();
+    public abstract Offset getOffsetDialogNotEnoughPvpTicket();
 
 
     public static class WebProfile extends ScreenResolutionProfile {
@@ -129,7 +135,7 @@ public abstract class ScreenResolutionProfile {
         }
 
         @Override
-        public Offset getOffsetDialogStartWorldBossWithoutFullTeam() {
+        public Offset getOffsetDialogStartWithoutFullTeam() {
             return new Offset(279, 221);
         }
 
@@ -146,6 +152,36 @@ public abstract class ScreenResolutionProfile {
         @Override
         public Offset getOffsetDialogNotEnoughXeals() {
             return new Offset(285, 231);
+        }
+
+        @Override
+        public Offset getOffsetButtonPlayPvpArena() {
+            return new Offset(520, 266);
+        }
+
+        @Override
+        public Offset getOffsetButtonFight1PvpArena() {
+            return new Offset(575, 198);
+        }
+
+        @Override
+        public Offset getOffsetButtonAcceptPvpArena() {
+            return new Offset(474, 457);
+        }
+
+        @Override
+        public Offset getOffsetButtonBackToTownFromPvpArenaOnWin() {
+            return new Offset(462, 468);
+        }
+
+        @Override
+        public Offset getOffsetButtonBackToTownFromPvpArenaOnLose() {
+            return new Offset(387, 468);
+        }
+
+        @Override
+        public Offset getOffsetDialogNotEnoughPvpTicket() {
+            return new Offset(276, 231);
         }
     }
 
@@ -247,7 +283,7 @@ public abstract class ScreenResolutionProfile {
         }
 
         @Override
-        public Offset getOffsetDialogStartWorldBossWithoutFullTeam() {
+        public Offset getOffsetDialogStartWithoutFullTeam() {
             throw NotSupportedException.steam();
         }
 
@@ -263,6 +299,36 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetDialogNotEnoughXeals() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonPlayPvpArena() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonFight1PvpArena() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonAcceptPvpArena() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonBackToTownFromPvpArenaOnWin() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonBackToTownFromPvpArenaOnLose() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetDialogNotEnoughPvpTicket() {
             throw NotSupportedException.steam();
         }
     }

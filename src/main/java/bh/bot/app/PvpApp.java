@@ -20,8 +20,8 @@ import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
-public class WorldBoss extends AbstractApplication {
-    private final AttendablePlace ap = AttendablePlaces.worldBoss;
+public class PvpApp extends AbstractApplication {
+    private final AttendablePlace ap = AttendablePlaces.pvp;
     private InteractionUtil.Screen.Game gameScreenInteractor;
 
     @Override
@@ -35,7 +35,7 @@ public class WorldBoss extends AbstractApplication {
                 loopCount = Integer.parseInt(args[0]);
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
                 info(getHelp());
-                loopCount = readInput(br, "Loop count:", "How many time do you want to hunt World Boss", new Function<String, Tuple3<Boolean, String, Integer>>() {
+                loopCount = readInput(br, "Loop count:", "How many time do you want to do PVP", new Function<String, Tuple3<Boolean, String, Integer>>() {
                     @Override
                     public Tuple3<Boolean, String, Integer> apply(String s) {
                         try {
@@ -70,34 +70,26 @@ public class WorldBoss extends AbstractApplication {
         while (!masterSwitch.get() && loopCount > 0) {
             sleep(5_000);
 
-            if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingPartiesWorldBoss)) {
-                debug("summonOnListingPartiesWorldBoss");
+            if (clickImage(BwMatrixMeta.Metas.PvpArena.Buttons.play)) {
+                debug("play");
                 continuousNotFound = 0;
                 continue;
             }
 
-            if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses)) {
-                debug("summonOnListingWorldBosses");
+            if (clickImage(BwMatrixMeta.Metas.PvpArena.Buttons.fight1)) {
+                debug("fight1");
                 continuousNotFound = 0;
                 continue;
             }
 
-            if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnSelectingWorldBossTierAndAndDifficulty)) {
-                debug("summonOnSelectingWorldBossTierAndAndDifficulty");
+            if (clickImage(BwMatrixMeta.Metas.PvpArena.Buttons.accept)) {
+                debug("accept");
                 continuousNotFound = 0;
                 continue;
             }
 
-            if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.startBoss)) {
-                debug("startBoss");
-                continuousNotFound = 0;
-                continue;
-            }
-
-            if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.regroup)) {
-                debug("regroup");
-                loopCount--;
-                info("%d loop left", loopCount);
+            if (clickImage(BwMatrixMeta.Metas.PvpArena.Buttons.townOnWin)) {
+                debug("townOnWin");
                 continuousNotFound = 0;
                 continue;
             }
@@ -109,18 +101,16 @@ public class WorldBoss extends AbstractApplication {
                 continue;
             }
 
-            if (clickImage(BwMatrixMeta.Metas.WorldBoss.Dialogs.notEnoughXeals)) {
-                debug("notEnoughXeals");
+            if (clickImage(BwMatrixMeta.Metas.PvpArena.Dialogs.notEnoughTicket)) {
+                debug("notEnoughTicket");
                 InteractionUtil.Keyboard.sendEscape();
                 masterSwitch.set(true);
                 continuousNotFound = 0;
                 continue;
             }
 
-            if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.regroupOnDefeated)) {
-                debug("regroupOnDefeated");
-                loopCount--;
-                info("%d loop left", loopCount);
+            if (clickImage(BwMatrixMeta.Metas.PvpArena.Buttons.townOnLose)) {
+                debug("townOnLose");
                 continuousNotFound = 0;
                 continue;
             }
@@ -129,7 +119,7 @@ public class WorldBoss extends AbstractApplication {
             continuousNotFound++;
 
             if (continuousNotFound >= 12) {
-                info("Finding World Boss icon");
+                info("Finding PVP icon");
                 Point point = this.gameScreenInteractor.findAttendablePlace(ap);
                 if (point != null) {
                     InteractionUtil.Mouse.moveCursor(point);
@@ -142,17 +132,17 @@ public class WorldBoss extends AbstractApplication {
 
     @Override
     public String getAppCode() {
-        return "world-boss";
+        return "pvp";
     }
 
     @Override
     protected String getAppName() {
-        return "BH-World Boss";
+        return "BH-PVP";
     }
 
     @Override
     protected String getScriptFileName() {
-        return "world-boss";
+        return "pvp";
     }
 
     @Override
@@ -162,7 +152,7 @@ public class WorldBoss extends AbstractApplication {
 
     @Override
     protected String getDescription() {
-        return "Farm World Boss";
+        return "Do PVP";
     }
 
     @Override
@@ -174,6 +164,6 @@ public class WorldBoss extends AbstractApplication {
 
     @Override
     protected String getLimitationExplain() {
-        return "This function is solo only and does not support select level or type of World Boss, only select by default So which boss do you want to hit? Choose it before turn this on";
+        return "This function only hit first opponent and does not support select PVP ticket cost, so choose it before turn this on";
     }
 }
