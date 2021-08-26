@@ -1,36 +1,34 @@
 package bh.bot.app;
 
 import bh.bot.Main;
-import bh.bot.common.Configuration;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
-import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
-import bh.bot.common.types.tuples.Tuple4;
-import bh.bot.common.utils.ImageUtil;
+import bh.bot.common.utils.InteractionUtil;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
-import static bh.bot.common.utils.InteractionUtil.Screen.captureScreen;
 
 public class AfkApp extends AbstractApplication {
+    private InteractionUtil.Screen.Game gameScreenInteractor;
+
     @Override
     protected void internalRun(String[] args) {
+        this.gameScreenInteractor = InteractionUtil.Screen.Game.of(this);
         ArrayList<AttendablePlace> eventList = getAttendablePlaces();
         //
         debug("Scanning screen");
         for (AttendablePlace event : eventList) {
-            Point point = findAttendablePlace(event);
+            Point point = this.gameScreenInteractor.findAttendablePlace(event);
             if (point == null)
                 continue;
             debug("Found event id %2d at %3d,%3d", event.id, point.x, point.y);
@@ -116,93 +114,6 @@ public class AfkApp extends AbstractApplication {
         return eventList;
     }
 
-    private final int numberOfAttendablePlacesPerColumn = 5;
-    private Point findAttendablePlace(AttendablePlace event) {
-        int minX, maxX, stepY, firstY;
-        if (event.left) {
-            Tuple4<Integer, Integer, Integer, Integer> backwardScanLeftAttendablePlaces = Configuration.screenResolutionProfile.getBackwardScanLeftSideAttendablePlaces();
-            minX = backwardScanLeftAttendablePlaces._1;
-            firstY = backwardScanLeftAttendablePlaces._2;
-            stepY = backwardScanLeftAttendablePlaces._3;
-            maxX = backwardScanLeftAttendablePlaces._4;
-        } else { // right
-            Tuple4<Integer, Integer, Integer, Integer> backwardScanRightAttendablePlaces = Configuration.screenResolutionProfile.getBackwardScanRightSideAttendablePlaces();
-            minX = backwardScanRightAttendablePlaces._1;
-            firstY = backwardScanRightAttendablePlaces._2;
-            stepY = backwardScanRightAttendablePlaces._3;
-            maxX = backwardScanRightAttendablePlaces._4;
-        }
-        final int positionTolerant = Math.abs(Math.min(Configuration.Tolerant.position, Math.abs(stepY)));
-        final int scanWidth = maxX - minX + 1 + positionTolerant * 2;
-        final int scanHeight = Math.abs(stepY) + positionTolerant * 2;
-        final int scanX = Math.max(0, minX - positionTolerant);
-        for (int i = 0; i < numberOfAttendablePlacesPerColumn; i++) {
-            final int scanY = Math.max(0, firstY + stepY * i - positionTolerant);
-            BufferedImage sc = captureScreen(scanX, scanY, scanWidth, scanHeight);
-            try {
-                saveDebugImage(sc, String.format("findAttendablePlace_%d_", i));
-                final BwMatrixMeta im = event.img;
-                //
-                boolean go = true;
-                Point p = new Point();
-                final int blackPixelRgb = im.getBlackPixelRgb();
-                final ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
-                for (int y = 0; y < sc.getHeight() - im.getHeight() && go; y++) {
-                    for (int x = 0; x < sc.getWidth() - im.getWidth() && go; x++) {
-                        int rgb = sc.getRGB(x, y) & 0xFFFFFF;
-                        if (!im.isMatchBlackRgb(rgb)) {
-                            continue;
-                        }
-
-                        // debug(String.format("findAttendablePlace first match passed for %d,%d", x, y));
-                        boolean allGood = true;
-
-                        for (int[] px : im.getBlackPixels()) {
-                            int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
-                            if (!ImageUtil.areColorsSimilar(//
-                                    blackPixelDRgb, //
-                                    srcRgb, //
-                                    Configuration.Tolerant.color)) {
-                                allGood = false;
-                                // debug(String.format("findAttendablePlace second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
-                                break;
-                            }
-                        }
-
-                        if (allGood) {
-                            // debug("findAttendablePlace second match passed");
-                            for (int[] px : im.getNonBlackPixels()) {
-                                int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
-                                if (ImageUtil.areColorsSimilar(//
-                                        blackPixelRgb, //
-                                        srcRgb, //
-                                        Configuration.Tolerant.color)) {
-                                    allGood = false;
-                                    // debug(String.format("findAttendablePlace third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (allGood) {
-                            // debug("findAttendablePlace third match passed");
-                            go = false;
-                            p = new Point(scanX + x, scanY + y);
-                        }
-                    }
-                }
-
-                if (!go)
-                    return p;
-                //
-
-            } finally {
-                sc.flush();
-            }
-        }
-        return null;
-    }
-
     @Override
     public String getAppCode() {
         return "afk";
@@ -236,7 +147,7 @@ public class AfkApp extends AbstractApplication {
                 "--pvp : do PVP",
                 "--boss : do World Boss",
                 "--raid : do Raid",
-                "--exit=X : exit after X seconds if turns not all consumed"
+                "--exit=X : stop after X seconds"
         );
     }
 

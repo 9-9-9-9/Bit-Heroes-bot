@@ -1,9 +1,11 @@
 package bh.bot.common.utils;
 
+import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
-import bh.bot.common.Log;
+import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.images.ImgMeta;
+import bh.bot.common.types.tuples.Tuple4;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -23,7 +25,7 @@ public class InteractionUtil {
         public static void sendKey(int key) {
             robot.keyPress(key);
             robot.keyRelease(key);
-            Log.debug("Send key");
+            debug("Send key");
         }
 
         public static void sendSpaceKey() {
@@ -33,7 +35,7 @@ public class InteractionUtil {
 
     public static class Mouse {
         public static void moveCursor(Point p) {
-            Log.debug("Mouse move cursor");
+            debug("Mouse move cursor");
             robot.mouseMove(p.x, p.y);
             ThreadUtil.sleep(5);
         }
@@ -43,7 +45,7 @@ public class InteractionUtil {
             robot.mousePress(mask);
             ThreadUtil.sleep(50);
             robot.mouseRelease(mask);
-            Log.debug("Mouse click");
+            debug("Mouse click");
         }
 
         private static final Point pHideCursor = new Point(950, 100);
@@ -103,6 +105,106 @@ public class InteractionUtil {
                 this.y = y;
                 this.w = image.getWidth();
                 this.h = image.getHeight();
+            }
+        }
+
+        public static class Game<T extends AbstractApplication> {
+            private final T instance;
+
+            private final int numberOfAttendablePlacesPerColumn = 5;
+
+            private Game(T instance) {
+                this.instance = instance;
+            }
+
+            public static <T extends AbstractApplication> Game of(T instance) {
+                return new Game(instance);
+            }
+
+            public <T extends AbstractApplication> Point findAttendablePlace(AttendablePlace event) {
+                int minX, maxX, stepY, firstY;
+                if (event.left) {
+                    Tuple4<Integer, Integer, Integer, Integer> backwardScanLeftAttendablePlaces = Configuration.screenResolutionProfile.getBackwardScanLeftSideAttendablePlaces();
+                    minX = backwardScanLeftAttendablePlaces._1;
+                    firstY = backwardScanLeftAttendablePlaces._2;
+                    stepY = backwardScanLeftAttendablePlaces._3;
+                    maxX = backwardScanLeftAttendablePlaces._4;
+                } else { // right
+                    Tuple4<Integer, Integer, Integer, Integer> backwardScanRightAttendablePlaces = Configuration.screenResolutionProfile.getBackwardScanRightSideAttendablePlaces();
+                    minX = backwardScanRightAttendablePlaces._1;
+                    firstY = backwardScanRightAttendablePlaces._2;
+                    stepY = backwardScanRightAttendablePlaces._3;
+                    maxX = backwardScanRightAttendablePlaces._4;
+                }
+                final int positionTolerant = Math.abs(Math.min(Configuration.Tolerant.position, Math.abs(stepY)));
+                final int scanWidth = maxX - minX + 1 + positionTolerant * 2;
+                final int scanHeight = Math.abs(stepY) + positionTolerant * 2;
+                final int scanX = Math.max(0, minX - positionTolerant);
+                for (int i = 0; i < numberOfAttendablePlacesPerColumn; i++) {
+                    final int scanY = Math.max(0, firstY + stepY * i - positionTolerant);
+                    BufferedImage sc = captureScreen(scanX, scanY, scanWidth, scanHeight);
+                    try {
+                        instance.saveDebugImage(sc, String.format("findAttendablePlace_%d_", i));
+                        final BwMatrixMeta im = event.img;
+                        //
+                        boolean go = true;
+                        Point p = new Point();
+                        final int blackPixelRgb = im.getBlackPixelRgb();
+                        final ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
+                        for (int y = 0; y < sc.getHeight() - im.getHeight() && go; y++) {
+                            for (int x = 0; x < sc.getWidth() - im.getWidth() && go; x++) {
+                                int rgb = sc.getRGB(x, y) & 0xFFFFFF;
+                                if (!im.isMatchBlackRgb(rgb)) {
+                                    continue;
+                                }
+
+                                // debug(String.format("findAttendablePlace first match passed for %d,%d", x, y));
+                                boolean allGood = true;
+
+                                for (int[] px : im.getBlackPixels()) {
+                                    int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
+                                    if (!ImageUtil.areColorsSimilar(//
+                                            blackPixelDRgb, //
+                                            srcRgb, //
+                                            Configuration.Tolerant.color)) {
+                                        allGood = false;
+                                        // debug(String.format("findAttendablePlace second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
+                                        break;
+                                    }
+                                }
+
+                                if (allGood) {
+                                    // debug("findAttendablePlace second match passed");
+                                    for (int[] px : im.getNonBlackPixels()) {
+                                        int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
+                                        if (ImageUtil.areColorsSimilar(//
+                                                blackPixelRgb, //
+                                                srcRgb, //
+                                                Configuration.Tolerant.color)) {
+                                            allGood = false;
+                                            // debug(String.format("findAttendablePlace third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (allGood) {
+                                    // debug("findAttendablePlace third match passed");
+                                    go = false;
+                                    p = new Point(scanX + x, scanY + y);
+                                }
+                            }
+                        }
+
+                        if (!go)
+                            return p;
+                        //
+
+                    } finally {
+                        sc.flush();
+                    }
+                }
+                return null;
             }
         }
     }

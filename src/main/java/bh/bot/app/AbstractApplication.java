@@ -155,7 +155,7 @@ public abstract class AbstractApplication {
         return ImageIO.read(new File(path));
     }
 
-    protected void saveDebugImage(BufferedImage img, String prefix) {
+    public void saveDebugImage(BufferedImage img, String prefix) {
         if (!this.launchInfo.enableSavingDebugImages) {
             return;
         }
@@ -233,6 +233,10 @@ public abstract class AbstractApplication {
         sb.append("\n  --mute : do not send notification messages to Telegram channel");
         sb.append("\n  --debug : print debug messages (developers only)");
         sb.append("\n  --img : save screen captured pictures to disk (developers only)");
+        if (this.isSupportSteamScreenResolution()) {
+            sb.append("\n  --web : use mode resolution 800x520 (default)");
+            sb.append("\n  --steam : use mode resolution 800x480 (Steam client)");
+        }
         return sb.toString();
     }
 
