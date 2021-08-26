@@ -52,9 +52,6 @@ public abstract class AbstractApplication {
         else if (Telegram.isDisabled())
             Log.info("Telegram was disabled due to missing or invalid configuration");
 
-        if (hasFlag("--exit"))
-            err("Invalid usage of flag 'exit', should be '--exit=X' where X is the number of seconds to await before force exit, for example: '--exit=3600' means exit after 1 hours");
-
         List<String> exitCmd = flags.stream().filter(x -> x.startsWith("--exit=") && x.length() > 7).collect(Collectors.toList());
         int exitAfter = 0;
         if (exitCmd.size() > 0) {
@@ -89,7 +86,7 @@ public abstract class AbstractApplication {
         li.eInvasion = hasFlag("--invasion");
         li.eTrials = hasFlag("--trials") || hasFlag("--trial");
         li.ePvp = hasFlag("--pvp");
-        li.eWorldBoss = hasFlag("--boss") || hasFlag("--worldboss") || hasFlag("--world-boss");
+        li.eWorldBoss = hasFlag("--boss") || hasFlag("--world-boss");
         li.eRaid = hasFlag("--raid") || hasFlag("--raids");
         // end events
         flags.clear();
