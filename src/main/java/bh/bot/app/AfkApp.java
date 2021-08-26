@@ -12,10 +12,8 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -43,12 +41,28 @@ public class AfkApp extends AbstractApplication {
         //
         if (launchInfo.eInvasion)
             eventList.add(Events.invasion);
+        if (launchInfo.eTrials)
+            eventList.add(Events.trials);
+
+        if (launchInfo.ePvp)
+            eventList.add(Events.pvp);
+        if (launchInfo.eWorldBoss)
+            eventList.add(Events.worldBoss);
+        if (launchInfo.eRaid)
+            eventList.add(Events.raid);
         //
         if (eventList.size() == 0) {
             final ArrayList<Event> tmpEventList = new ArrayList<>();
-            final List<Event> allEvents = Arrays.asList(Events.invasion);
+            final List<Event> allEvents = Arrays.asList(
+                    Events.invasion,
+                    Events.trials,
+
+                    Events.pvp,
+                    Events.worldBoss,
+                    Events.raid
+            );
             info("Select events you want to do:");
-            for (Event event : allEvents)
+            for (Event event : allEvents.stream().sorted(Comparator.comparingInt(Event::getId)).collect(Collectors.toList()))
                 info("  %2d. %s", event.id, event.name);
             try (
                     InputStreamReader isr = new InputStreamReader(System.in);
@@ -199,10 +213,20 @@ public class AfkApp extends AbstractApplication {
         }
 
         public static Event invasion = null;
+        public static Event trials = null;
+
+        public static Event pvp = null;
+        public static Event worldBoss = null;
+        public static Event raid = null;
 
         static {
             try {
                 invasion = new Event("Invasion", Ids.Invasion, "invasion-mx.bmp", false);
+                trials = new Event("Trials", Ids.Trials, "trials-mx.bmp", false);
+
+                pvp = new Event("PVP", Ids.Pvp, "pvp-mx.bmp", true);
+                worldBoss = new Event("World Boss", Ids.WorldBoss, "world-boss-mx.bmp", true);
+                raid = new Event("Raid", Ids.Raid, "raid-mx.bmp", true);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -225,6 +249,8 @@ public class AfkApp extends AbstractApplication {
             );
             this.left = left;
         }
+
+        public int getId() { return id; }
     }
 
     @Override
