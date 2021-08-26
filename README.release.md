@@ -90,23 +90,15 @@ Supported flags:
 - `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./fishing.sh 20 --exit=1800` means will stop fishing after fishing 20 times or after 1800 seconds (30m), depends which condition completed first
 - [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
 
-### World Boss
+### Farm World Boss / PVP / Invasion / Trials
 
-[Read at Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22world-boss%22)
+[World Boss Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22world-boss%22)
 
-### PVP
+[PVP Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22pvp%22)
 
-[Read at Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22pvp%22)
+[Invasion Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22invasion%22)
 
-### Invasion
-For: everyone
-
-[Read at Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22invasion%22)
-
-### Trials
-For: everyone
-
-[Read at Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22trials%22)
+[Trials Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22trials%22)
 
 ### Mini client using Google Chrome
 [Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
