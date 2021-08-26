@@ -63,6 +63,8 @@ To enable Telegram notification (require technical skill)
 ### ReRun
 For: everyone
 
+[Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22rerun%22)
+
 *This function only supports clicking the ReRun button, that means you have to enter Dungeon/Raid manually, turn on the Auto and when the ReRun button appears, it will be automatically clicked*
 
 - Mini-client or Web:
@@ -88,6 +90,8 @@ Notes:
 ### Fishing
 For: everyone
 
+[Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22fishing%22)
+
 *To use this function, you the to be ready on fishing state, and the Start button is visible clearly on the screen*
 
 - Mini-client or Web:
@@ -107,6 +111,8 @@ Supported flags:
 ### World Boss
 For: everyone
 
+[Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22world-boss%22)
+
 *This function is solo only and does not support select level or type of World Boss, only select by default So which boss do you want to hit? Choose it before turn this on*
 
 - Mini-client or Web:
@@ -124,6 +130,8 @@ Supported flags:
 
 ### Mini client using Google Chrome
 For: everyone
+
+[Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome)
 
 Steps:
 1. Make sure you can play game on Google Chrome web browser at https://www.kongregate.com/games/Juppiomenz/bit-heroes
@@ -158,13 +166,7 @@ Read image, keep only pixels which has color (eg. FF0000 is red) as the same as 
 - `--mute` do not push notification to Telegram
 
 #### Tested environments:
-| OS | Result |
-| --- | --- |
-| Ubuntu 18.04 (development environment) | Work perfectly |
-| Windows 10 x64 | Work perfectly |
-| Windows 7 x64 (Virtual Box) | Work perfectly |
-| Steam on Windows 7 x64 (Virtual Box) | Work good (basically, not stable) |
-| MacOS 10.14 High Sierra | Bot functions not work, only mini-client works |
+Please find out on each function on [wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
 
 ### Windows users
 If you want to pass parameters/flags to program, you have to edit the `*.bat` files manually
