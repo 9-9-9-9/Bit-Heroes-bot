@@ -4,6 +4,7 @@ import bh.bot.Main;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.images.BwMatrixMeta;
+import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.ThreadUtil;
@@ -22,7 +23,7 @@ import static bh.bot.common.utils.ThreadUtil.sleep;
 public abstract class AbstractDoFarmingApp extends AbstractApplication {
     protected abstract String getAppShortName();
     protected abstract AttendablePlace getAttendablePlace();
-    protected abstract boolean isClickedSomething();
+    protected abstract Tuple2<Boolean, Boolean> isClickedSomething();
     protected abstract boolean isOutOfTicket();
 
     protected final AttendablePlace ap = getAttendablePlace();
@@ -74,9 +75,18 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
         while (!masterSwitch.get() && loopCount > 0) {
             sleep(5_000);
 
-            if (isClickedSomething()) {
+            Tuple2<Boolean, Boolean> result = isClickedSomething();
+            boolean clickedSomething = result._1;
+            if (clickedSomething) {
                 debug("isClickedSomething");
                 continuousNotFound = 0;
+
+                boolean decreaseLoopCount = result._2;
+                if (decreaseLoopCount) {
+                    loopCount--;
+                    info("%d loop left", loopCount);
+                }
+
                 continue;
             }
 
