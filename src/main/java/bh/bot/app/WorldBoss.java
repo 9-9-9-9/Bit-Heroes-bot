@@ -9,6 +9,7 @@ import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.ThreadUtil;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,6 +22,7 @@ import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public class WorldBoss extends AbstractApplication {
     private final AttendablePlace ap = AttendablePlaces.worldBoss;
+    private InteractionUtil.Screen.Game gameScreenInteractor;
 
     @Override
     protected void internalRun(String[] args) {
@@ -53,6 +55,7 @@ public class WorldBoss extends AbstractApplication {
 
         final int cnt = loopCount;
 
+        this.gameScreenInteractor = InteractionUtil.Screen.Game.of(this);
         AtomicBoolean masterSwitch = new AtomicBoolean(false);
         ThreadUtil.waitDone(
                 () -> loop(cnt, masterSwitch),
@@ -64,26 +67,31 @@ public class WorldBoss extends AbstractApplication {
     }
 
     private void loop(int loopCount, AtomicBoolean masterSwitch) {
+        int continuousNotFound = 0;
         while (!masterSwitch.get() && loopCount > 0) {
             sleep(5_000);
 
             if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingPartiesWorldBoss)) {
                 debug("summonOnListingPartiesWorldBoss");
+                continuousNotFound = 0;
                 continue;
             }
 
             if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses)) {
                 debug("summonOnListingWorldBosses");
+                continuousNotFound = 0;
                 continue;
             }
 
             if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnSelectingWorldBossTierAndAndDifficulty)) {
                 debug("summonOnSelectingWorldBossTierAndAndDifficulty");
+                continuousNotFound = 0;
                 continue;
             }
 
             if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.startBoss)) {
                 debug("startBoss");
+                continuousNotFound = 0;
                 continue;
             }
 
@@ -91,12 +99,14 @@ public class WorldBoss extends AbstractApplication {
                 debug("regroup");
                 loopCount--;
                 info("%d loop left", loopCount);
+                continuousNotFound = 0;
                 continue;
             }
 
             if (clickImage(BwMatrixMeta.Metas.WorldBoss.Dialogs.confirmStartNotFullTeam)) {
                 debug("confirmStartNotFullTeam");
                 InteractionUtil.Keyboard.sendSpaceKey();
+                continuousNotFound = 0;
                 continue;
             }
 
@@ -104,6 +114,7 @@ public class WorldBoss extends AbstractApplication {
                 debug("notEnoughXeals");
                 InteractionUtil.Keyboard.sendEscape();
                 masterSwitch.set(true);
+                continuousNotFound = 0;
                 continue;
             }
 
@@ -111,10 +122,22 @@ public class WorldBoss extends AbstractApplication {
                 debug("regroupOnDefeated");
                 loopCount--;
                 info("%d loop left", loopCount);
+                continuousNotFound = 0;
                 continue;
             }
 
             debug("None");
+            continuousNotFound++;
+
+            if (continuousNotFound >= 12) {
+                info("Finding World Boss icon");
+                Point point = this.gameScreenInteractor.findAttendablePlace(ap);
+                if (point != null) {
+                    InteractionUtil.Mouse.moveCursor(point);
+                    InteractionUtil.Mouse.mouseClick();
+                }
+                continuousNotFound = 0;
+            }
         }
     }
 
