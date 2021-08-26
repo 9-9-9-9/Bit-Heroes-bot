@@ -21,6 +21,7 @@ public abstract class ScreenResolutionProfile {
     public abstract Size getScanSizeCastingFish();
     public abstract Tuple4<Integer, Integer, Integer, Integer> getBackwardScanRightSideAttendablePlaces(); // min x, max y, step backward, max x
     public abstract Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftSideAttendablePlaces(); // min x, min y, step forward, max x
+    public abstract Offset getOffsetButtonSummonOnListingPartiesWorldBoss();
 
     public static class WebProfile extends ScreenResolutionProfile {
 
@@ -98,6 +99,11 @@ public abstract class ScreenResolutionProfile {
         public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftSideAttendablePlaces() {
             return new Tuple4<>(14, 96, 72, 59);
         }
+
+        @Override
+        public Offset getOffsetButtonSummonOnListingPartiesWorldBoss() {
+            return new Offset(452, 451);
+        }
     }
 
     public static class SteamProfile extends ScreenResolutionProfile {
@@ -174,6 +180,11 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftSideAttendablePlaces() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonSummonOnListingPartiesWorldBoss() {
             throw NotSupportedException.steam();
         }
     }

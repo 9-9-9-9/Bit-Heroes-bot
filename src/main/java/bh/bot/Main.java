@@ -29,6 +29,7 @@ public class Main {
                 new ExtractMatrixApp(),
                 new SamePixApp(),
                 //
+                new ScreenCaptureApp(),
                 new TestApp()
         );
         InteractionUtil.init();

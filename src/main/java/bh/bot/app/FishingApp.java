@@ -74,9 +74,10 @@ public class FishingApp extends AbstractApplication {
 
         debug("labelFishingCord: %3d, %3d", labelFishingCord.x, labelFishingCord.y);
 
+        Configuration.Offset offsetLabelFishing = Configuration.screenResolutionProfile.getOffsetLabelFishing();
         final Point anchorPoint = new Point(
-                labelFishingCord.x - Configuration.Offsets.Fishing.Labels.fishing.X,
-                labelFishingCord.y - Configuration.Offsets.Fishing.Labels.fishing.Y
+                labelFishingCord.x - offsetLabelFishing.X,
+                labelFishingCord.y - offsetLabelFishing.Y
         );
 
         info("Anchor point: %d,%d", anchorPoint.x, anchorPoint.y);
@@ -163,9 +164,10 @@ public class FishingApp extends AbstractApplication {
             if (curScreen == screenCatch) {
                 debug("On screen CATCH");
 
+                Configuration.Offset offsetDetect100PcCatchingFish = Configuration.screenResolutionProfile.getOffsetDetect100PcCatchingFish();
                 Color color = getPixelColor(
-                        anchorPoint.x + Configuration.Offsets.Fishing.Scan.detectColor100PercentCatchingFish.X,
-                        anchorPoint.y + Configuration.Offsets.Fishing.Scan.detectColor100PercentCatchingFish.Y
+                        anchorPoint.x + offsetDetect100PcCatchingFish.X,
+                        anchorPoint.y + offsetDetect100PcCatchingFish.Y
                 );
                 if (color.getGreen() < 230)
                     continue;
@@ -189,17 +191,19 @@ public class FishingApp extends AbstractApplication {
             } else if (curScreen == screenCast) {
                 debug("On screen CAST");
 
+                Configuration.Offset offsetScanCastingFish = Configuration.screenResolutionProfile.getOffsetScanCastingFish();
+                Configuration.Size scanSizeCastingFish = Configuration.screenResolutionProfile.getScanSizeCastingFish();
                 BufferedImage sc = captureScreen(
-                        anchorPoint.x + Configuration.Offsets.Fishing.Scan.beginScanCastingFish.X,
-                        anchorPoint.y + Configuration.Offsets.Fishing.Scan.beginScanCastingFish.Y,
-                        Configuration.Sizing.Fishing.Scan.castingFishSize.W,
-                        Configuration.Sizing.Fishing.Scan.castingFishSize.H
+                        anchorPoint.x + offsetScanCastingFish.X,
+                        anchorPoint.y + offsetScanCastingFish.Y,
+                        scanSizeCastingFish.W,
+                        scanSizeCastingFish.H
                 );
                 final int black = 0x000000;
                 try {
                     final int offset1 = 0;
-                    final int offset2 = Configuration.Sizing.Fishing.Scan.castingFishSize.H - 1;
-                    final int offsetSize = Configuration.Sizing.Fishing.Scan.castingFishSize.H / 4 - 2;
+                    final int offset2 = scanSizeCastingFish.H - 1;
+                    final int offsetSize = scanSizeCastingFish.H / 4 - 2;
                     final int offset3 = offset1 + offsetSize;
                     final int offset4 = offset2 - offsetSize;
                     for (int x = 0; x < sc.getWidth(); x++) {
@@ -257,8 +261,10 @@ public class FishingApp extends AbstractApplication {
 
             long timeStart = System.currentTimeMillis();
             BufferedImage sc = captureScreen(
-                    anchorPoint.x, anchorPoint.y,
-                    Configuration.Sizing.Globally.gameResolution.W, Configuration.Sizing.Globally.gameResolution.H
+                    anchorPoint.x,
+                    anchorPoint.y,
+                    Configuration.screenResolutionProfile.getSupportedGameResolutionWidth(),
+                    Configuration.screenResolutionProfile.getSupportedGameResolutionHeight()
             );
             try {
                 saveDebugImage(sc, "detectScreen_fishing");

@@ -38,6 +38,6 @@ public class WorldBoss extends AbstractApplication {
 
     @Override
     protected String getLimitationExplain() {
-        return null;
+        return "This function does not support select level or type of World Boss, only select by default so which boss do you want to hit? Choose it before turn this on";
     }
 }

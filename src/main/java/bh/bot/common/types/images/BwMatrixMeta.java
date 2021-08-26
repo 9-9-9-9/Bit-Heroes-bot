@@ -117,48 +117,48 @@ public class BwMatrixMeta {
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/globally.talkRightArrow-mx.bmp"
                 ), //
-                Configuration.Offsets.Globally.Buttons.talkRightArrow,
+                Configuration.screenResolutionProfile.getOffsetButtonTalkRightArrow(),
                 0x000000
         );
         Metas.Globally.Buttons.reconnect = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/globally.reconnect-mx.bmp"
                 ), //
-                Configuration.Offsets.Globally.Buttons.reconnect,
+                Configuration.screenResolutionProfile.getOffsetButtonReconnect(),
                 0xFFFFFF
         );
         Metas.Dungeons.Buttons.rerun = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/dungeons.rerun-mx.bmp"
                 ), //
-                Configuration.Offsets.Dungeons.Buttons.reRun,
+                Configuration.screenResolutionProfile.getOffsetButtonDungeonReRun(),
                 0xFFFFFF);
         Metas.Fishing.Labels.fishing = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "labels/fishing-mx.bmp"
                 ), //
-                Configuration.Offsets.Fishing.Labels.fishing,
+                Configuration.screenResolutionProfile.getOffsetLabelFishing(),
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.start = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/fishing.start-mx.bmp"
                 ), //
-                Configuration.Offsets.Fishing.Buttons.start,
+                Configuration.screenResolutionProfile.getOffsetButtonFishingStart(),
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.cast = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/fishing.cast-mx.bmp"
                 ), //
-                Configuration.Offsets.Fishing.Buttons.cast,
+                Configuration.screenResolutionProfile.getOffsetButtonFishingCast(),
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.catch_ = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/fishing.catch-mx.bmp"
                 ), //
-                Configuration.Offsets.Fishing.Buttons.catch_,
+                Configuration.screenResolutionProfile.getOffsetButtonFishingCatch(),
                 0xFFFFFF
         );
     }
