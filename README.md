@@ -104,7 +104,7 @@ Supported flags:
 - `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./fishing.sh 20 --exit=1800` means will stop fishing after fishing 20 times or after 1800 seconds (30m), depends which condition completed first
 - [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
 
-### World-boss
+### World Boss
 For: everyone
 
 *This function is solo only and does not support select level or type of World Boss, only select by default So which boss do you want to hit? Choose it before turn this on*
