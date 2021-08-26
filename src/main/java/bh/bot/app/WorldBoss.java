@@ -168,7 +168,9 @@ public class WorldBoss extends AbstractApplication {
 
     @Override
     protected String getFlags() {
-        return null;
+        return buildFlags(
+                "--exit=X : exit after X seconds if turns not all consumed, can be used to make sure do not run after boost has expired"
+        );
     }
 
     @Override
