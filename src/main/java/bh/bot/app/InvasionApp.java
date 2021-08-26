@@ -20,8 +20,8 @@ import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
-public class PvpApp extends AbstractApplication {
-    private final AttendablePlace ap = AttendablePlaces.pvp;
+public class InvasionApp extends AbstractApplication {
+    private final AttendablePlace ap = AttendablePlaces.invasion;
     private InteractionUtil.Screen.Game gameScreenInteractor;
 
     @Override
@@ -35,7 +35,7 @@ public class PvpApp extends AbstractApplication {
                 loopCount = Integer.parseInt(args[0]);
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
                 info(getHelp());
-                loopCount = readInput(br, "Loop count:", "How many time do you want to do PVP", new Function<String, Tuple3<Boolean, String, Integer>>() {
+                loopCount = readInput(br, "Loop count:", "How many time do you want to do Invasion", new Function<String, Tuple3<Boolean, String, Integer>>() {
                     @Override
                     public Tuple3<Boolean, String, Integer> apply(String s) {
                         try {
@@ -119,7 +119,7 @@ public class PvpApp extends AbstractApplication {
             continuousNotFound++;
 
             if (continuousNotFound >= 12) {
-                info("Finding PVP icon");
+                info("Finding Invasion icon");
                 Point point = this.gameScreenInteractor.findAttendablePlace(ap);
                 if (point != null) {
                     InteractionUtil.Mouse.moveCursor(point);
@@ -132,17 +132,17 @@ public class PvpApp extends AbstractApplication {
 
     @Override
     public String getAppCode() {
-        return "pvp";
+        return "invasion";
     }
 
     @Override
     protected String getAppName() {
-        return "BH-PVP Arena";
+        return "BH-Invasion";
     }
 
     @Override
     protected String getScriptFileName() {
-        return "pvp";
+        return "invasion";
     }
 
     @Override
@@ -152,7 +152,7 @@ public class PvpApp extends AbstractApplication {
 
     @Override
     protected String getDescription() {
-        return "Do PVP";
+        return "Do Invasion";
     }
 
     @Override
@@ -164,6 +164,6 @@ public class PvpApp extends AbstractApplication {
 
     @Override
     protected String getLimitationExplain() {
-        return "This function only hit first opponent and does not support select PVP ticket cost, so choose it before turn this on";
+        return "This function does not support select badge cost, so choose it before turn this on";
     }
 }
