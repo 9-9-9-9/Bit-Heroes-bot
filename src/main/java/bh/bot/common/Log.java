@@ -32,8 +32,8 @@ public class Log {
     public static void printIfIncorrectImgPosition(Configuration.Offset imCoordinateOffset, Point actualCoordinate) {
         if (!Configuration.enableDevFeatures)
             return;
-        int offsetX = actualCoordinate.x - Configuration.Offsets.gameScreenOffset.X;
-        if (imCoordinateOffset.X == offsetX && imCoordinateOffset.Y == actualCoordinate.y - Configuration.Offsets.gameScreenOffset.Y)
+        int offsetX = actualCoordinate.x - Configuration.gameScreenOffset.X;
+        if (imCoordinateOffset.X == offsetX && imCoordinateOffset.Y == actualCoordinate.y - Configuration.gameScreenOffset.Y)
             return;
         try {
             throw new Exception("Un-match offset (for debugging purpose)");
@@ -43,7 +43,7 @@ public class Log {
             info(
                     "** WARNING ** Un-match offset! Defined %3d,%3d but actual %3d,%3d",
                     imCoordinateOffset.X, imCoordinateOffset.Y,
-                    offsetX, actualCoordinate.y - Configuration.Offsets.gameScreenOffset.Y
+                    offsetX, actualCoordinate.y - Configuration.gameScreenOffset.Y
             );
         }
     }

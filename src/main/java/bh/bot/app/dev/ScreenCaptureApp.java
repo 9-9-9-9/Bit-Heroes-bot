@@ -12,8 +12,8 @@ import java.awt.image.BufferedImage;
 public class ScreenCaptureApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
-        int x = Configuration.Offsets.gameScreenOffset.X;
-        int y = Configuration.Offsets.gameScreenOffset.Y;
+        int x = Configuration.gameScreenOffset.X;
+        int y = Configuration.gameScreenOffset.Y;
         int w = 800;
         int h = Configuration.screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile
                 ? 480

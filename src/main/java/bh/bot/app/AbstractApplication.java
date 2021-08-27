@@ -443,12 +443,21 @@ public abstract class AbstractApplication {
     }
 
     protected <T> T readInput(BufferedReader br, String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform, boolean allowBlankAndIfBlankThenReturnNull) {
+        return readInput(br, ask, desc, null, transform, allowBlankAndIfBlankThenReturnNull);
+    }
+
+    protected <T> T readInput(BufferedReader br, String ask, String desc, Supplier<List<String>> selectedOptionsInfoProvider, Function<String, Tuple3<Boolean, String, T>> transform, boolean allowBlankAndIfBlankThenReturnNull) {
         try {
             String input;
             while (true) {
                 info(ask);
                 if (desc != null)
                     info("(%s)", desc);
+                if (selectedOptionsInfoProvider != null) {
+                    List<String> selectedOptions = selectedOptionsInfoProvider.get();
+                    if (selectedOptions.size() > 0)
+                        info("Selected: %s", String.join(", ", selectedOptions));
+                }
                 input = br.readLine();
 
                 if (isBlank(input)) {

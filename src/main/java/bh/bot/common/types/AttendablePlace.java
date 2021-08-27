@@ -5,6 +5,9 @@ import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.utils.ImageUtil;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AttendablePlace {
     public final String name;
@@ -31,5 +34,23 @@ public class AttendablePlace {
 
     public int getId() {
         return id;
+    }
+
+    public static class MenuItem {
+        public final String name;
+        public final int num;
+
+        private MenuItem(String name, int num) {
+            this.name = name;
+            this.num = num;
+        }
+
+        public static MenuItem from(AttendablePlace...attendablePlaces) {
+            List<AttendablePlace> aps = Arrays.asList(attendablePlaces).stream().distinct().collect(Collectors.toList());
+            int num = 0;
+            for (AttendablePlace ap : aps)
+                num |= ap.id;
+            return new MenuItem(String.join(" + ", aps.stream().map(x -> x.name).collect(Collectors.toList())), num);
+        }
     }
 }

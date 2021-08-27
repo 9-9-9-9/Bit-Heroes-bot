@@ -77,8 +77,8 @@ public class InteractionUtil {
         }
 
         private static ScreenCapturedResult captureElementInEstimatedArea(Configuration.Offset coordinate, int w, int h) {
-            int xS = Math.max(0, Configuration.Offsets.gameScreenOffset.X + coordinate.X - Configuration.Tolerant.position);
-            int yS = Math.max(0, Configuration.Offsets.gameScreenOffset.Y + coordinate.Y - Configuration.Tolerant.position);
+            int xS = Math.max(0, Configuration.gameScreenOffset.X + coordinate.X - Configuration.Tolerant.position);
+            int yS = Math.max(0, Configuration.gameScreenOffset.Y + coordinate.Y - Configuration.Tolerant.position);
             int wS = w + Configuration.Tolerant.position * 2;
             int hS = h + Configuration.Tolerant.position * 2;
             return new ScreenCapturedResult(captureScreen(xS, yS, wS, hS), xS, yS);

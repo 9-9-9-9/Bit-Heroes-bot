@@ -5,6 +5,7 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.utils.StringUtil;
 import com.sun.media.sound.InvalidDataException;
 
@@ -12,7 +13,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -24,11 +24,8 @@ import static bh.bot.common.utils.StringUtil.isNotBlank;
 public class Configuration {
     public static ScreenResolutionProfile screenResolutionProfile = null;
     public static String profileName = null;
+    public static Offset gameScreenOffset;
     public static final boolean enableDevFeatures = new File("im.dev").exists();
-
-    public static class Offsets {
-        public static Offset gameScreenOffset;
-    }
 
     public static class Tolerant {
         public static int position;
@@ -88,35 +85,35 @@ public class Configuration {
             }
         }
 
-        Offsets.gameScreenOffset = Offset.fromKeyPrefix("offset.screen");
+        gameScreenOffset = Offset.fromKeyPrefix("offset.screen");
 
         Tolerant.position = Math.max(5, readInt("tolerant.position"));
         Tolerant.color = Math.max(0, readInt("tolerant.color"));
         Tolerant.colorBw = Math.max(0, readInt("tolerant.color.bw"));
     }
 
-    private static final ArrayList<Class<? extends AbstractApplication>> applicationClasses = new ArrayList<>();
+    private static final ArrayList<Tuple2<Class<? extends AbstractApplication>, String>> applicationClassesInfo = new ArrayList<>();
 
     public static void registerApplicationInstances(Class<? extends AbstractApplication>... classes) {
         for (Class<? extends AbstractApplication> class_ : classes) {
-            applicationClasses.add(class_);
+            AppCode annotation = class_.getAnnotation(AppCode.class);
+            if (annotation == null)
+                throw new NotImplementedException(String.format("App '%s' missing @%s annotation", class_.getSimpleName(), AppCode.class.getSimpleName()));
+            String appCode = annotation.code();
+            if (StringUtil.isBlank(appCode))
+                throw new NotImplementedException(String.format("App '%s' missing app code in @%s annotation", class_.getSimpleName(), AppCode.class.getSimpleName()));
+            if (!appCode.equals(appCode.trim().toLowerCase()))
+                throw new RuntimeException(String.format("App code of app '%s' has to be normalized", class_.getSimpleName()));
+            applicationClassesInfo.add(new Tuple2<>(class_, appCode));
         }
     }
 
     public static Class<? extends AbstractApplication> getApplicationClassFromAppCode(String code) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         code = code.toLowerCase().trim();
-        for (Class<? extends AbstractApplication> applicationClass : applicationClasses) {
-            AppCode annotation = applicationClass.getAnnotation(AppCode.class);
-            if (annotation == null)
-                throw new NotImplementedException(String.format("'%s' missing %s annotation", applicationClass.getSimpleName(), AppCode.class.getSimpleName()));
-            String appCode = annotation.code();
-            if (StringUtil.isBlank(appCode))
-                throw new NotImplementedException(String.format("'%s' missing %s annotation", applicationClass.getSimpleName(), AppCode.class.getSimpleName()));
-            if (!appCode.equals(appCode.trim().toLowerCase()))
-                throw new RuntimeException(String.format("Value of '%s' need to be normalized", applicationClass.getSimpleName()));
-            if (!appCode.equals(code))
+        for (Tuple2<Class<? extends AbstractApplication>, String> applicationClassInfo : applicationClassesInfo) {
+            if (!code.equals(applicationClassInfo._2))
                 continue;
-            return applicationClass;
+            return applicationClassInfo._1;
         }
         err("Not match any app code");
         return null;
