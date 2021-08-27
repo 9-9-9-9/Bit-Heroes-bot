@@ -436,7 +436,7 @@ public abstract class AbstractApplication {
                     hideCursor();
 
                     info("Sent re-active");
-                    sleep(10_000);
+                    sleep(2_000);
                 }
             } else {
                 debug("Red Auto not found");
