@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class BwMatrixMeta {
+    private final int[] firstBlackPixelOffset;
     private final ArrayList<int[]> blackPixels;
     private final ArrayList<int[]> nonBlackPixels;
     private final int w;
@@ -37,9 +38,14 @@ public class BwMatrixMeta {
                         nonBlackPixels.add(new int[]{x, y});
                 }
             }
+            firstBlackPixelOffset = blackPixels.get(0);
         } finally {
             img.flush();
         }
+    }
+
+    public int[] getFirstBlackPixelOffset() {
+        return firstBlackPixelOffset;
     }
 
     public boolean isMatchBlackRgb(int rgb) {
@@ -163,6 +169,23 @@ public class BwMatrixMeta {
 
             public static class Dialogs {
                 public static BwMatrixMeta notEnoughTokens;
+            }
+        }
+
+        public static class Gvg {
+            public static class Buttons {
+                public static BwMatrixMeta play;
+                public static BwMatrixMeta fight;
+                public static BwMatrixMeta accept;
+                public static BwMatrixMeta town;
+            }
+        }
+
+        public static class Gauntlet {
+            public static class Buttons {
+                public static BwMatrixMeta play;
+                public static BwMatrixMeta accept;
+                public static BwMatrixMeta town;
             }
         }
     }
@@ -373,12 +396,64 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedTrials(),
                 0xFFFFFF
         );
-
         Metas.Trials.Dialogs.notEnoughTokens = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "dialogs/trials.not-enough-tokens.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughTrialsTokens(),
+                0xFFFFFF
+        );
+
+        // GVG
+        Metas.Gvg.Buttons.play = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/gvg.play-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonPlayGvg(),
+                0xFFFFFF
+        );
+        Metas.Gvg.Buttons.fight = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/gvg.fight-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonFight1Gvg(),
+                0xFFFFFF
+        );
+        Metas.Gvg.Buttons.accept = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/gvg.accept-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptGvg(),
+                0xFFFFFF
+        );
+        Metas.Gvg.Buttons.town = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/gvg.town-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedGvg(),
+                0xFFFFFF
+        );
+
+        // Gauntlet
+        Metas.Gauntlet.Buttons.play = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/gauntlet.play-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonPlayGauntlet(),
+                0xFFFFFF
+        );
+        Metas.Gauntlet.Buttons.accept = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/gauntlet.accept-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptGauntlet(),
+                0xFFFFFF
+        );
+        Metas.Gauntlet.Buttons.town = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/gauntlet.town-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedGauntlet(),
                 0xFFFFFF
         );
     }

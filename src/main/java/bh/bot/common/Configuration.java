@@ -103,7 +103,7 @@ public class Configuration {
         }
     }
 
-    public static AbstractApplication getInstanceFromAppCode(String code) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    public static Class<? extends AbstractApplication> getApplicationClassFromAppCode(String code) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         code = code.toLowerCase().trim();
         for (Class<? extends AbstractApplication> applicationClass : applicationClasses) {
             AppCode annotation = applicationClass.getAnnotation(AppCode.class);
@@ -116,8 +116,7 @@ public class Configuration {
                 throw new RuntimeException(String.format("Value of '%s' need to be normalized", applicationClass.getSimpleName()));
             if (!appCode.equals(code))
                 continue;
-            Constructor<?> cons = applicationClass.getConstructors()[0];
-            return (AbstractApplication) cons.newInstance();
+            return applicationClass;
         }
         err("Not match any app code");
         return null;

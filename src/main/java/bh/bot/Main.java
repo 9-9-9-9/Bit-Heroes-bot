@@ -6,11 +6,12 @@ import bh.bot.common.Log;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotImplementedException;
-import bh.bot.common.types.LaunchInfo;
+import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.flags.*;
 import bh.bot.common.utils.InteractionUtil;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,8 @@ public class Main {
                     PvpApp.class,
                     InvasionApp.class,
                     TrialsApp.class,
+                    GvgApp.class,
+                    GauntletApp.class,
                     GenMiniClient.class,
 //
                     KeepPixApp.class,
@@ -41,21 +44,33 @@ public class Main {
                     ScreenCaptureApp.class,
                     TestApp.class
             );
-            LaunchInfo launchInfo = parse(args);
-            if (launchInfo.displayHelp) {
-                System.out.println(launchInfo.instance.getHelp());
+
+            ParseArgumentsResult parseArgumentsResult = parseArguments(args);
+
+            if (parseArgumentsResult.enableDebugMessages)
+                Log.enableDebug();
+            if (parseArgumentsResult.disableTelegramNoti)
+                Telegram.disable();
+
+            Configuration.load(parseArgumentsResult.screenResolutionProfile);
+            InteractionUtil.init();
+
+            Constructor<?> cons = parseArgumentsResult.applicationClass.getConstructors()[0];
+            AbstractApplication instance = (AbstractApplication) cons.newInstance();
+
+            if (parseArgumentsResult.displayHelp) {
+                System.out.println(instance.getHelp());
                 info("With flag '--help' provided, application will exit immediately");
                 return;
             }
-            if (launchInfo.enableDebugMessages)
-                Log.enableDebug();
-            if (launchInfo.disableTelegramNoti)
-                Telegram.disable();
 
-            Configuration.load(launchInfo.screenResolutionProfile);
-            InteractionUtil.init();
+            for (FlagPattern flagPattern : parseArgumentsResult.usingFlags)
+                if (!flagPattern.isSupportedByApp(instance)) {
+                    System.out.println(instance.getHelp());
+                    throw new InvalidFlagException(String.format("Flag '--%s' does not supported by '%s'", flagPattern.getName(), instance.getAppCode()));
+                }
 
-            launchInfo.instance.run(launchInfo);
+            instance.run(parseArgumentsResult);
         } catch (InvalidFlagException ex) {
             err(ex.getMessage());
             System.exit(EXIT_CODE_INVALID_FLAG);
@@ -66,7 +81,7 @@ public class Main {
         }
     }
 
-    private static LaunchInfo parse(String[] args) throws InvalidFlagException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    private static ParseArgumentsResult parseArguments(String[] args) throws InvalidFlagException, IllegalAccessException, InstantiationException, InvocationTargetException {
         String appCode = args[0];
 
         List<FlagPattern> flagPatterns = Arrays.asList(Flags.allFlags);
@@ -136,22 +151,20 @@ public class Main {
                 .filter(x -> !x.startsWith("--"))
                 .toArray(String[]::new);
 
-        AbstractApplication instance = Configuration.getInstanceFromAppCode(appCode);
+        Class<? extends AbstractApplication> applicationClassFromAppCode = Configuration.getApplicationClassFromAppCode(appCode);
 
-        if (instance == null)
-            throw new IllegalArgumentException("First argument must be a valid app name");
+        if (applicationClassFromAppCode == null)
+            throw new IllegalArgumentException("First argument must be a valid app code");
 
-        for (FlagPattern flagPattern : usingFlagPatterns)
-            if (!flagPattern.isSupportedByApp(instance))
-                throw new InvalidFlagException(String.format("Flag '--%s' does not supported by '%s'", flagPattern.getName(), instance.getAppCode()));
-
-        LaunchInfo li = new LaunchInfo(instance, args);
+        ParseArgumentsResult li = new ParseArgumentsResult(applicationClassFromAppCode, args, usingFlagPatterns);
+        //LaunchInfo li = new LaunchInfo(instance, args);
         li.exitAfterXSecs = exitAfter;
         li.displayHelp = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagPrintHelpMessage);
         li.enableSavingDebugImages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSaveDebugImages);
         li.enableDebugMessages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShowDebugMessages);
         li.disableTelegramNoti = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagMuteNoti);
         li.screenResolutionProfile = screenResolutionProfile;
+        li.hasFlagAll = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagAll);
         // events
         li.eWorldBoss = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);
         li.ePvp = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoPvp);

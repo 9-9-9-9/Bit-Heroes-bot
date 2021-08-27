@@ -157,12 +157,6 @@ public class InteractionUtil {
                         final ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
                         for (int y = 0; y < sc.getHeight() - im.getHeight() && go; y++) {
                             for (int x = 0; x < sc.getWidth() - im.getWidth() && go; x++) {
-                                int rgb = sc.getRGB(x, y) & 0xFFFFFF;
-                                if (!im.isMatchBlackRgb(rgb)) {
-                                    continue;
-                                }
-
-                                // debug(String.format("findAttendablePlace first match passed for %d,%d", x, y));
                                 boolean allGood = true;
 
                                 for (int[] px : im.getBlackPixels()) {
@@ -178,7 +172,7 @@ public class InteractionUtil {
                                 }
 
                                 if (allGood) {
-                                    // debug("findAttendablePlace second match passed");
+                                    debug("findAttendablePlace second match passed");
                                     for (int[] px : im.getNonBlackPixels()) {
                                         int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
                                         if (ImageUtil.areColorsSimilar(//
