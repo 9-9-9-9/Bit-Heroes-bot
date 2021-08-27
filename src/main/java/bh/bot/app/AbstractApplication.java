@@ -4,7 +4,7 @@ import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
-import bh.bot.common.types.LaunchInfo;
+import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.flags.FlagPattern;
@@ -24,7 +24,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -39,18 +38,18 @@ import static bh.bot.common.utils.InteractionUtil.Screen.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
 
 public abstract class AbstractApplication {
-    protected LaunchInfo launchInfo;
+    protected ParseArgumentsResult argumentInfo;
     private final String appCode = this.getClass().getAnnotation(AppCode.class).code();
 
-    public void run(LaunchInfo launchInfo) throws Exception {
-        this.launchInfo = launchInfo;
+    public void run(ParseArgumentsResult launchInfo) throws Exception {
+        this.argumentInfo = launchInfo;
         if (Configuration.screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile && !isSupportSteamScreenResolution()) {
             err("'%s' does not support steam resolution");
             System.exit(Main.EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
             return;
         }
 
-        if (this.launchInfo.enableSavingDebugImages)
+        if (this.argumentInfo.enableSavingDebugImages)
             Log.info("Enabled saving debug images");
         initOutputDirectories();
         // ImgMeta.load(); // Deprecated class
@@ -77,7 +76,7 @@ public abstract class AbstractApplication {
     }
 
     public void saveDebugImage(BufferedImage img, String prefix) {
-        if (!this.launchInfo.enableSavingDebugImages) {
+        if (!this.argumentInfo.enableSavingDebugImages) {
             return;
         }
         File file = Paths.get("out", "images", getAppCode(), "dbg_" + prefix + "_" + System.currentTimeMillis() + ".bmp").toFile();

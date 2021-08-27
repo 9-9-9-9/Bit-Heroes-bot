@@ -63,6 +63,8 @@ cp ./world-boss.sh ./release/
 cp ./pvp.sh ./release/
 cp ./invasion.sh ./release/
 cp ./trials.sh ./release/
+cp ./gvg.sh ./release/
+cp ./gauntlet.sh ./release/
 
 # Copy launch scripts for Windows
 cp ./fishing.bat ./release/
@@ -72,6 +74,8 @@ cp ./world-boss.bat ./release/
 cp ./pvp.bat ./release/
 cp ./invasion.bat ./release/
 cp ./trials.bat ./release/
+cp ./gvg.bat ./release/
+cp ./gauntlet.bat ./release/
 
 # Copy steam scripts
 cp ./steam.*.bat ./release/

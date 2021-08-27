@@ -80,6 +80,20 @@ public abstract class ScreenResolutionProfile {
 
     public abstract Offset getOffsetDialogNotEnoughTrialsTokens();
 
+    public abstract Offset getOffsetButtonPlayGvg();
+
+    public abstract Offset getOffsetButtonFight1Gvg();
+
+    public abstract Offset getOffsetButtonAcceptGvg();
+
+    public abstract Offset getOffsetButtonTownAfterCompetedGvg();
+
+    public abstract Offset getOffsetButtonPlayGauntlet();
+
+    public abstract Offset getOffsetButtonAcceptGauntlet();
+
+    public abstract Offset getOffsetButtonTownAfterCompetedGauntlet();
+
 
     public static class WebProfile extends ScreenResolutionProfile {
 
@@ -267,6 +281,41 @@ public abstract class ScreenResolutionProfile {
         public Offset getOffsetDialogNotEnoughTrialsTokens() {
             return new Offset(279, 231);
         }
+
+        @Override
+        public Offset getOffsetButtonPlayGvg() {
+            return new Offset(521, 272);
+        }
+
+        @Override
+        public Offset getOffsetButtonFight1Gvg() {
+            return new Offset(575, 198);
+        }
+
+        @Override
+        public Offset getOffsetButtonAcceptGvg() {
+            return new Offset(474, 457);
+        }
+
+        @Override
+        public Offset getOffsetButtonTownAfterCompetedGvg() {
+            return new Offset(387, 468);
+        }
+
+        @Override
+        public Offset getOffsetButtonPlayGauntlet() {
+            return new Offset(520, 271);
+        }
+
+        @Override
+        public Offset getOffsetButtonAcceptGauntlet() {
+            return new Offset(474, 457);
+        }
+
+        @Override
+        public Offset getOffsetButtonTownAfterCompetedGauntlet() {
+            return new Offset(387, 468);
+        }
     }
 
     public static class SteamProfile extends ScreenResolutionProfile {
@@ -453,6 +502,41 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetDialogNotEnoughTrialsTokens() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonPlayGvg() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonFight1Gvg() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonAcceptGvg() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonTownAfterCompetedGvg() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonPlayGauntlet() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonAcceptGauntlet() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonTownAfterCompetedGauntlet() {
             throw NotSupportedException.steam();
         }
     }

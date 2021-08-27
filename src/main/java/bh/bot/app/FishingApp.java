@@ -94,7 +94,7 @@ public class FishingApp extends AbstractApplication {
                 () -> detectLongTimeNoSee(masterSwitch, unsureFrom, seeBtnStartFrom),
                 () -> detectScreen(masterSwitch, anchorPoint, screen, unsure, unsureFrom, seeBtnStartFrom),
                 () -> detectDisconnected(masterSwitch),
-                () -> autoExit(launchInfo.exitAfterXSecs, masterSwitch)
+                () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch)
         );
         Telegram.sendMessage("Stopped", false);
     }

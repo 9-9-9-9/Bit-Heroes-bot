@@ -2,6 +2,8 @@ package bh.bot.common.types.flags;
 
 public class Flags {
     public static final FlagPattern[] allFlags = new FlagPattern[]{
+            new FlagDoGvG(),
+            new FlagDoGauntlet(),
             new FlagDoInvasion(),
             new FlagDoPvp(),
             new FlagDoRaid(),
@@ -12,6 +14,7 @@ public class Flags {
             new FlagPrintHelpMessage(),
             new FlagSteamResolution800x480(),
             new FlagWebResolution800x520(),
+            new FlagAll(),
             new FlagSaveDebugImages(),
             new FlagShowDebugMessages(),
     };

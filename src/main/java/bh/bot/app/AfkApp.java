@@ -40,29 +40,33 @@ public class AfkApp extends AbstractApplication {
 
     private ArrayList<AttendablePlace> getAttendablePlaces() {
         ArrayList<AttendablePlace> eventList = new ArrayList<>();
+        final List<AttendablePlace> allAttendablePlaces = Arrays.asList(
+                AttendablePlaces.invasion,
+                AttendablePlaces.trials,
+                AttendablePlaces.gvg,
+                AttendablePlaces.gauntlet,
+
+                AttendablePlaces.pvp,
+                AttendablePlaces.worldBoss,
+                AttendablePlaces.raid
+        );
+        if (argumentInfo.hasFlagAll)
+            eventList.addAll(allAttendablePlaces);
         //
-        if (launchInfo.eInvasion)
+        if (argumentInfo.eInvasion)
             eventList.add(AttendablePlaces.invasion);
-        if (launchInfo.eTrials)
+        if (argumentInfo.eTrials)
             eventList.add(AttendablePlaces.trials);
 
-        if (launchInfo.ePvp)
+        if (argumentInfo.ePvp)
             eventList.add(AttendablePlaces.pvp);
-        if (launchInfo.eWorldBoss)
+        if (argumentInfo.eWorldBoss)
             eventList.add(AttendablePlaces.worldBoss);
-        if (launchInfo.eRaid)
+        if (argumentInfo.eRaid)
             eventList.add(AttendablePlaces.raid);
         //
         if (eventList.size() == 0) {
             final ArrayList<AttendablePlace> tmpAttendablePlaceList = new ArrayList<>();
-            final List<AttendablePlace> allAttendablePlaces = Arrays.asList(
-                    AttendablePlaces.invasion,
-                    AttendablePlaces.trials,
-
-                    AttendablePlaces.pvp,
-                    AttendablePlaces.worldBoss,
-                    AttendablePlaces.raid
-            );
             info("Select events you want to do:");
             for (AttendablePlace event : allAttendablePlaces.stream().sorted(Comparator.comparingInt(AttendablePlace::getId)).collect(Collectors.toList()))
                 info("  %2d. %s", event.id, event.name);
@@ -107,6 +111,8 @@ public class AfkApp extends AbstractApplication {
                 System.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
             }
         }
+
+        eventList = new ArrayList<>(eventList.stream().distinct().collect(Collectors.toList()));
 
         info("Selected events:");
         for (AttendablePlace event : eventList) {
