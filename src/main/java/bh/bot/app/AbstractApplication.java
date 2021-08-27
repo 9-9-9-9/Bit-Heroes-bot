@@ -406,7 +406,7 @@ public abstract class AbstractApplication {
     protected void autoReactiveAuto(AtomicBoolean masterSwitch) {
         final int sleepMs = 10_000;
         int continousRed = 0;
-        final int maxContinousRed = 3;
+        final int maxContinousRed = 6;
         while (!masterSwitch.get()) {
             sleep(sleepMs);
             Point point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoG);
@@ -427,7 +427,7 @@ public abstract class AbstractApplication {
             }
             if (ImageUtil.isRedLikeColor(color)) {
                 continousRed++;
-                if (continousRed >= 6)
+                if (continousRed >= 2)
                     info("Detected Auto is not turned on, gonna reactive it soon");
                 if (continousRed >= maxContinousRed) {
                     moveCursor(point);
