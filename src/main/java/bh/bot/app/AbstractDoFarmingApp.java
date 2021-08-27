@@ -120,7 +120,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
             continuousNotFound++;
             moveCursor(coordinateHideMouse);
 
-            if (continuousNotFound >= 3) {
+            if (continuousNotFound >= 12) {
                 debug("Finding %s icon", getAppShortName());
                 Point point = this.gameScreenInteractor.findAttendablePlace(ap);
                 if (point != null) {

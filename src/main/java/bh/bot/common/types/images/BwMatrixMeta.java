@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class BwMatrixMeta {
+    private final int[] firstBlackPixelOffset;
     private final ArrayList<int[]> blackPixels;
     private final ArrayList<int[]> nonBlackPixels;
     private final int w;
@@ -37,9 +38,14 @@ public class BwMatrixMeta {
                         nonBlackPixels.add(new int[]{x, y});
                 }
             }
+            firstBlackPixelOffset = blackPixels.get(0);
         } finally {
             img.flush();
         }
+    }
+
+    public int[] getFirstBlackPixelOffset() {
+        return firstBlackPixelOffset;
     }
 
     public boolean isMatchBlackRgb(int rgb) {

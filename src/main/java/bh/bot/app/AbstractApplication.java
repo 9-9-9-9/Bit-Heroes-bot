@@ -298,7 +298,8 @@ public abstract class AbstractApplication {
             return false;
         }
 
-        Point p = new Point(lastMatch[0], lastMatch[1]);
+        int[] firstBlackPixelOffset = im.getFirstBlackPixelOffset();
+        Point p = new Point(lastMatch[0] + firstBlackPixelOffset[0], lastMatch[1] + firstBlackPixelOffset[1]);
         Color c = getPixelColor(p);
         if (!im.isMatchBlackRgb(c.getRGB())) {
             return false;
