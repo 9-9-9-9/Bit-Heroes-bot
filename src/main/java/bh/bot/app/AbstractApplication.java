@@ -171,33 +171,6 @@ public abstract class AbstractApplication {
         return false;
     }
 
-    protected void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
-        moveCursor(new Point(950, 100));
-        long lastFound = System.currentTimeMillis();
-        while (loopCount > 0 && !masterSwitch.get()) {
-            if (clickImage()) {
-                loopCount--;
-                lastFound = System.currentTimeMillis();
-                info("%d loop left", loopCount);
-                ThreadUtil.sleep(10000);
-            } else {
-                debug("Not found, repeat");
-                ThreadUtil.sleep(10000);
-                if (System.currentTimeMillis() - lastFound > 900000) {
-                    info("Long time no see => Stop");
-                    Telegram.sendMessage("long time no see button", true);
-                    break;
-                }
-            }
-        }
-
-        masterSwitch.set(true);
-    }
-
-    protected boolean clickImage() {
-        throw new NotImplementedException();
-    }
-
     protected boolean clickImage(BwMatrixMeta im) {
         return clickImageExact(im) || clickImageScanBW(im);
     }
