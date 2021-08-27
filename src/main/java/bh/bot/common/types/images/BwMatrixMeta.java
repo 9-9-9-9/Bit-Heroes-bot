@@ -94,6 +94,7 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta talkRightArrow;
                 public static BwMatrixMeta rerun;
                 public static BwMatrixMeta reconnect;
+                public static BwMatrixMeta auto;
             }
 
             public static class Dialogs {
@@ -203,6 +204,13 @@ public class BwMatrixMeta {
                         "buttons/globally.reconnect-mx.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetButtonReconnect(),
+                0xFFFFFF
+        );
+        Metas.Globally.Buttons.auto = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/globally.auto-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonAuto(),
                 0xFFFFFF
         );
         Metas.Globally.Dialogs.confirmStartNotFullTeam = new BwMatrixMeta(//
