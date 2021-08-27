@@ -25,11 +25,8 @@ Only support English user interface
 ### Contains the following functions:
 1. [**ReRun** Dungeons and Raid](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22rerun%22)
 2. [Auto fishing](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22fishing%22)
-3. [Farm World Boss](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22world-boss%22)
-4. [Farm PVP](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22pvp%22)
-5. [Farm Invasion](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22invasion%22)
-6. [Farm Trials](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22trials%22)
-7. [Launch game in mini client using Google Chrome](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
+3. Farm  [World Boss](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22world-boss%22) / [PVP](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22pvp%22) / [Invasion](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22invasion%22) / [GVG](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22GVG%22) / [Trials](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22trials%22) / [Gauntlet](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22gauntlet%22)
+4. [Launch game in mini client using Google Chrome](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
 
 And some extra functions support developers on developing this bot:
 - Matrix: read an image, keep only pixels which has color (eg. FF0000 is red) as the same as input. Used to produce picture for BwMatrixMeta objects
@@ -111,16 +108,6 @@ Supported flags:
 - `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./fishing.sh 20 --exit=1800` means will stop fishing after fishing 20 times or after 1800 seconds (30m), depends which condition completed first
 - [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
 
-### Farm World Boss / PVP / Invasion / Trials
-
-[World Boss Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22world-boss%22)
-
-[PVP Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22pvp%22)
-
-[Invasion Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22invasion%22)
-
-[Trials Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22trials%22)
-
 ### Mini client using Google Chrome
 For: everyone
 
@@ -149,6 +136,9 @@ For: developers only
 Read image, keep only pixels which has color (eg. FF0000 is red) as the same as input. Used to produce picture for BwMatrixMeta objects
 
 [Those output image can be used to scan buttons on screen with minimal fault and work gracefully across OS and devices because it maybe not have to facing with "Gamma correction" issue](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/How-can-this-bot-works-cross-platform%3F)
+
+#### Other features
+[find out at our Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
 
 #### Global flags
 - `--help` show help for specific application, for example: `./rerun.sh --help`

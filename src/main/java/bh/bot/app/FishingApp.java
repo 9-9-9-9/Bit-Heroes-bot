@@ -71,7 +71,7 @@ public class FishingApp extends AbstractApplication {
 
         if (labelFishingCord == null) {
             info("Exiting");
-            System.exit(Main.EXIT_CODE_UNABLE_DETECTING_ANCHOR);
+            System.exit(Main.EXIT_CODE_UNABLE_DETECTING_FISHING_ANCHOR);
         }
 
         debug("labelFishingCord: %3d, %3d", labelFishingCord.x, labelFishingCord.y);
@@ -319,9 +319,8 @@ public class FishingApp extends AbstractApplication {
                     blackPixelDRgb, //
                     sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF, //
                     colorTolerant)) {
-                if (debug) {
+                if (debug)
                     debug("Fail (1) at %3d, %3d (offset=%3d, %3d, coor=%3d, %3d) with color: %d vs %d", offsetX + px[0], offsetY + px[1], offsetX, offsetY, px[0], px[1], blackPixelRgb, sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF);
-                }
                 return false;
             }
         }
@@ -331,9 +330,8 @@ public class FishingApp extends AbstractApplication {
                     blackPixelRgb, //
                     sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF, //
                     colorTolerant)) {
-                if (debug) {
+                if (debug)
                     debug("Fail (2) at %3d, %3d (offset=%3d, %3d, coor=%3d, %3d) with color: %d vs %d", offsetX + px[0], offsetY + px[1], offsetX, offsetY, px[0], px[1], blackPixelRgb, sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF);
-                }
                 return false;
             }
         }

@@ -1,5 +1,6 @@
-package bh.bot.app;
+package bh.bot.app.dev;
 
+import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppCode;

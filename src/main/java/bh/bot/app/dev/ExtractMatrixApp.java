@@ -1,6 +1,7 @@
-package bh.bot.app;
+package bh.bot.app.dev;
 
 import bh.bot.Main;
+import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple3;

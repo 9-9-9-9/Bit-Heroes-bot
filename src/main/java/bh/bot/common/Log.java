@@ -25,9 +25,8 @@ public class Log {
     }
 
     public static void dev(String format, Object... objs) {
-        if (!Configuration.enableDevFeatures)
-            return;
-        println(String.format(format, objs));
+        if (isOnDebugMode || Configuration.enableDevFeatures)
+            println(String.format(format, objs));
     }
 
     public static void printIfIncorrectImgPosition(Configuration.Offset imCoordinateOffset, Point actualCoordinate) {

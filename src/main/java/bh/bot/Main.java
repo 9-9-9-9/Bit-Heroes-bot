@@ -1,6 +1,9 @@
 package bh.bot;
 
 import bh.bot.app.*;
+import bh.bot.app.dev.ExtractMatrixApp;
+import bh.bot.app.dev.ScreenCaptureApp;
+import bh.bot.app.dev.TestApp;
 import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
@@ -37,9 +40,9 @@ public class Main {
                     GauntletApp.class,
                     GenMiniClient.class,
 //
-                    KeepPixApp.class,
+                    // KeepPixApp.class,
+                    // SamePixApp.class,
                     ExtractMatrixApp.class,
-                    SamePixApp.class,
 //
                     ScreenCaptureApp.class,
                     TestApp.class
@@ -157,7 +160,6 @@ public class Main {
             throw new IllegalArgumentException("First argument must be a valid app code");
 
         ParseArgumentsResult li = new ParseArgumentsResult(applicationClassFromAppCode, args, usingFlagPatterns);
-        //LaunchInfo li = new LaunchInfo(instance, args);
         li.exitAfterXSecs = exitAfter;
         li.displayHelp = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagPrintHelpMessage);
         li.enableSavingDebugImages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSaveDebugImages);
@@ -180,8 +182,6 @@ public class Main {
     public static final int EXIT_CODE_INVALID_NUMBER_OF_ARGUMENTS = 6;
     public static final int EXIT_CODE_EXTERNAL_REASON = 7;
     public static final int EXIT_CODE_INVALID_FLAG = 8;
-    // 20 to 40 for fishing
-    public static final int EXIT_CODE_UNABLE_DETECTING_ANCHOR = 20;
-    // end fishing
+    public static final int EXIT_CODE_UNABLE_DETECTING_FISHING_ANCHOR = 9;
     public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }

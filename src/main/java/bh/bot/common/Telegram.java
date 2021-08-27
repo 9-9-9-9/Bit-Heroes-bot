@@ -8,10 +8,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.info;
-import static bh.bot.common.utils.StringUtil.isNotBlank;
 import static bh.bot.common.utils.StringUtil.isBlank;
+import static bh.bot.common.utils.StringUtil.isNotBlank;
 
 public class Telegram {
     private static String appName = "BH-Unknown";
@@ -48,10 +46,11 @@ public class Telegram {
 
         while (retry > 0) {
             try {
-                internalSendMessage(msg, critical);
-                retry = 0;
+                if (internalSendMessage(msg, critical))
+                    break;
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.err("Error while posting Telegram message: %s", e.getMessage());
                 ThreadUtil.sleep(30000);
             } finally {
                 retry--;
@@ -59,7 +58,7 @@ public class Telegram {
         }
     }
 
-    private static void internalSendMessage(String msg, boolean critical) throws Exception {
+    private static boolean internalSendMessage(String msg, boolean critical) throws Exception {
         msg = String.format("[%s]%s %s", appName, critical ? " *** CRITICAL ***" : "", msg);
 
         String my_url = "https://api.telegram.org/bot" + token + "/sendMessage";
@@ -77,9 +76,10 @@ public class Telegram {
             outputStreamWriter.close();
 
             Log.debug("Telegram.sendMessage: sent");
-            Log.debug("RC: %d", httpURLConnection.getResponseCode());
+            int responseCode = httpURLConnection.getResponseCode();
+            Log.debug("RC: %d", responseCode);
             Log.debug("RM: %s", httpURLConnection.getResponseMessage());
-
+            return responseCode == 200;
         } finally {
             httpURLConnection.disconnect();
         }

@@ -1,6 +1,7 @@
-package bh.bot.app;
+package bh.bot.app.dev;
 
 import bh.bot.Main;
+import bh.bot.app.AbstractApplication;
 import bh.bot.common.Log;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple3;
@@ -14,6 +15,7 @@ import java.util.function.Function;
 import static bh.bot.common.Log.info;
 
 @AppCode(code = "keeppix")
+@Deprecated
 public class KeepPixApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {

@@ -2,7 +2,6 @@ package bh.bot.app;
 
 import bh.bot.Main;
 import bh.bot.common.Configuration;
-import bh.bot.common.Log;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
@@ -10,8 +9,6 @@ import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.flags.FlagPattern;
 import bh.bot.common.types.flags.Flags;
 import bh.bot.common.types.images.BwMatrixMeta;
-import bh.bot.common.types.images.ImgMeta;
-import bh.bot.common.types.images.Pixel;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.utils.ThreadUtil;
@@ -50,7 +47,7 @@ public abstract class AbstractApplication {
         }
 
         if (this.argumentInfo.enableSavingDebugImages)
-            Log.info("Enabled saving debug images");
+            info("Enabled saving debug images");
         initOutputDirectories();
         // ImgMeta.load(); // Deprecated class
         BwMatrixMeta.load();
@@ -84,7 +81,7 @@ public abstract class AbstractApplication {
             ImageIO.write(img, "bmp", file);
         } catch (IOException e) {
             e.printStackTrace();
-            Log.err("Unable to save image file '%s' to %s", file.getName(), file.toString());
+            err("Unable to save image file '%s' to %s", file.getName(), file.toString());
         }
     }
 
@@ -94,7 +91,7 @@ public abstract class AbstractApplication {
             ImageIO.write(img, "bmp", file);
         } catch (IOException e) {
             e.printStackTrace();
-            Log.err("Unable to save image file '%s' to %s", file.getName(), file.toString());
+            err("Unable to save image file '%s' to %s", file.getName(), file.toString());
         }
     }
 
@@ -181,13 +178,13 @@ public abstract class AbstractApplication {
             if (clickImage()) {
                 loopCount--;
                 lastFound = System.currentTimeMillis();
-                Log.info("%d loop left", loopCount);
+                info("%d loop left", loopCount);
                 ThreadUtil.sleep(10000);
             } else {
-                Log.debug("Not found, repeat");
+                debug("Not found, repeat");
                 ThreadUtil.sleep(10000);
                 if (System.currentTimeMillis() - lastFound > 900000) {
-                    Log.info("Long time no see => Stop");
+                    info("Long time no see => Stop");
                     Telegram.sendMessage("long time no see button", true);
                     break;
                 }
@@ -199,93 +196,6 @@ public abstract class AbstractApplication {
 
     protected boolean clickImage() {
         throw new NotImplementedException();
-    }
-
-    @Deprecated
-    protected boolean clickImage(ImgMeta im) {
-        return clickImageExact(im) || clickImageScanBW(im);
-    }
-
-    @Deprecated
-    protected boolean clickImageExact(ImgMeta im) {
-        int[] lastMatch = im.getLastMatchPoint();
-        if (lastMatch[0] < 0 || lastMatch[1] < 0) {
-            return false;
-        }
-
-        Point p = new Point(lastMatch[0], lastMatch[1]);
-        Color c = getPixelColor(p);
-        if (!im.isMatchFirstRgb(c.getRGB())) {
-            return false;
-        }
-
-        BufferedImage sc = captureScreen(lastMatch[0], lastMatch[1], im.getWidth(), im.getHeight());
-
-        try {
-            for (Pixel px : im.getPixelList()) {
-                int srcRgb = sc.getRGB(px.x, px.y) & 0xFFFFFF;
-                if (!ImageUtil.areColorsSimilar(//
-                        px.rgb, //
-                        srcRgb, //
-                        Configuration.Tolerant.color)) {
-                    return false;
-                }
-            }
-
-            Log.debug("Success on last click");
-            mouseMoveAndClickAndHide(p);
-            return true;
-        } finally {
-            sc.flush();
-        }
-    }
-
-    protected boolean clickImageScanBW(ImgMeta im) {
-        ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
-        BufferedImage sc = screenCapturedResult.image;
-
-        try {
-            saveDebugImage(sc, "clickImageScan");
-
-            boolean go = true;
-            Point p = new Point();
-            for (int y = 0; y < sc.getHeight() - im.getHeight() && go; y++) {
-                for (int x = 0; x < sc.getWidth() - im.getWidth() && go; x++) {
-                    int rgb = sc.getRGB(x, y);
-                    if (!im.isMatchFirstRgb(rgb)) {
-                        continue;
-                    }
-
-                    boolean allGood = true;
-
-                    for (Pixel px : im.getPixelList()) {
-                        int srcRgb = sc.getRGB(x + px.x, y + px.y) & 0xFFFFFF;
-                        if (!ImageUtil.areColorsSimilar(//
-                                px.rgb, //
-                                srcRgb, //
-                                Configuration.Tolerant.color)) {
-                            allGood = false;
-                            break;
-                        }
-                    }
-
-                    if (allGood) {
-                        go = false;
-                        p = new Point(screenCapturedResult.x + x, screenCapturedResult.y + y);
-                    }
-                }
-            }
-
-            if (!go) {
-                mouseMoveAndClickAndHide(p);
-                im.setLastMatchPoint(p.x, p.y);
-                return true;
-            }
-
-            return false;
-        } finally {
-            sc.flush();
-        }
     }
 
     protected boolean clickImage(BwMatrixMeta im) {
@@ -435,7 +345,7 @@ public abstract class AbstractApplication {
                         if (!allGood)
                             continue;
 
-                        debug("detectLabel second match passed");
+                        // debug("detectLabel second match passed");
                         for (int[] px : im.getNonBlackPixels()) {
                             int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
                             if (ImageUtil.areColorsSimilar(//
@@ -451,7 +361,6 @@ public abstract class AbstractApplication {
                         if (!allGood)
                             continue;
 
-                        // debug("detectLabel third match passed");
                         debug("detectLabel captured at %3d,%3d with size %3dx%3d, match at %3d,%3d", screenCapturedResult.x, screenCapturedResult.y, screenCapturedResult.w, screenCapturedResult.h, x, y);
                         Point result = new Point(screenCapturedResult.x + x, screenCapturedResult.y + y);
                         im.setLastMatchPoint(result.x, result.y);
@@ -483,10 +392,10 @@ public abstract class AbstractApplication {
 
             cnt = sleepSecs;
             if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.talkRightArrow)) {
-                Log.debug("clicked talk");
+                debug("clicked talk");
                 cnt = sleepSecsWhenClicked;
             } else {
-                Log.debug("No talk");
+                debug("No talk");
             }
         }
     }
@@ -516,12 +425,12 @@ public abstract class AbstractApplication {
             exitAfterXSecs--;
             ThreadUtil.sleep(1000);
             if (exitAfterXSecs % 60 == 0)
-                Log.info("Exit after %d seconds", exitAfterXSecs);
+                info("Exit after %d seconds", exitAfterXSecs);
             if (masterSwitch.get())
                 break;
         }
         masterSwitch.set(true);
-        Log.info("Application is going to exit now");
+        info("Application is going to exit now");
     }
 
     protected void throwNotSupportedFlagExit(int exitAfterXSecs) {
@@ -537,22 +446,22 @@ public abstract class AbstractApplication {
         try {
             String input;
             while (true) {
-                Log.info(ask);
+                info(ask);
                 if (desc != null)
-                    Log.info("(%s)", desc);
+                    info("(%s)", desc);
                 input = br.readLine();
 
                 if (isBlank(input)) {
                     if (allowBlankAndIfBlankThenReturnNull)
                         return null;
-                    Log.info("You inputted nothing, please try again!");
+                    info("You inputted nothing, please try again!");
                     continue;
                 }
 
                 Tuple3<Boolean, String, T> tuple = transform.apply(input);
                 if (!tuple._1) {
                     info(tuple._2);
-                    Log.info("Please try again!");
+                    info("Please try again!");
                     continue;
                 }
 

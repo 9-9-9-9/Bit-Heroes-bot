@@ -1,6 +1,7 @@
-package bh.bot.app;
+package bh.bot.app.dev;
 
 import bh.bot.Main;
+import bh.bot.app.AbstractApplication;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple3;
 
@@ -12,6 +13,7 @@ import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 
 @AppCode(code = "samepix")
+@Deprecated
 public class SamePixApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
