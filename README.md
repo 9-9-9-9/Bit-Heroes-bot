@@ -83,7 +83,8 @@ Supported flags:
 
 Notes:
 - Automatically exit if can not detect the ReRun button within 15 minutes
-- Automatically exit after detected the Reconnect button 
+- Automatically exit after detected the Reconnect button
+- Automatically re-active the Auto button if it been red for 60s
 - Support click the arrow button when having a conversation
 - Push notification to Telegram when detect Reconnect button (critical), not see ReRun within 15m (critical), exit (normal). But only works if you correctly configured Telegram
 

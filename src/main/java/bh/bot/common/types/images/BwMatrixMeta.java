@@ -94,7 +94,8 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta talkRightArrow;
                 public static BwMatrixMeta rerun;
                 public static BwMatrixMeta reconnect;
-                public static BwMatrixMeta auto;
+                public static BwMatrixMeta autoG;
+                public static BwMatrixMeta autoR;
             }
 
             public static class Dialogs {
@@ -206,9 +207,16 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetButtonReconnect(),
                 0xFFFFFF
         );
-        Metas.Globally.Buttons.auto = new BwMatrixMeta(//
+        Metas.Globally.Buttons.autoG = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
-                        "buttons/globally.auto-mx.bmp"
+                        "buttons/globally.auto-green-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonAuto(),
+                0xFFFFFF
+        );
+        Metas.Globally.Buttons.autoR = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/globally.auto-red-mx.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetButtonAuto(),
                 0xFFFFFF

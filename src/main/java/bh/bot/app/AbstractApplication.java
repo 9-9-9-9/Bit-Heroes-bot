@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static bh.bot.common.Log.*;
-import static bh.bot.common.utils.InteractionUtil.Mouse.mouseMoveAndClickAndHide;
+import static bh.bot.common.utils.InteractionUtil.Mouse.*;
 import static bh.bot.common.utils.InteractionUtil.Screen.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
 import static bh.bot.common.utils.ThreadUtil.sleep;
@@ -284,6 +284,13 @@ public abstract class AbstractApplication {
         }
     }
 
+    protected Point findImage(BwMatrixMeta im) {
+        Point result = findImageBasedOnLastClick(im);
+        if (result != null)
+            return result;
+        return scanToFindImage(im);
+    }
+
     protected boolean clickImageScanBW(BwMatrixMeta im) {
         Point p = scanToFindImage(im);
         if (p == null)
@@ -399,11 +406,40 @@ public abstract class AbstractApplication {
     protected void autoReactiveAuto(AtomicBoolean masterSwitch) {
         final int sleepMs = 10_000;
         int continousRed = 0;
+        final int maxContinousRed = 3;
         while (!masterSwitch.get()) {
-            sleep(000);
-            if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.reconnect)) {
-                masterSwitch.set(true);
-                Telegram.sendMessage("Disconnected", true);
+            sleep(sleepMs);
+            Point point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoG);
+            if (point == null) {
+                debug("AutoG button not found");
+                point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoR);
+                if (point == null) {
+                    debug("AutoR button not found");
+                    continue;
+                }
+            }
+            debug("Found the Auto button at %d,%d", point.x, point.y);
+            Color color = getPixelColor(point.x - 5, point.y);
+            if (ImageUtil.isGreenLikeColor(color)) {
+                debug("Auto is currently ON (green)");
+                continousRed = 0;
+                continue;
+            }
+            if (ImageUtil.isRedLikeColor(color)) {
+                continousRed++;
+                if (continousRed >= 6)
+                    info("Detected Auto is not turned on, gonna reactive it soon");
+                if (continousRed >= maxContinousRed) {
+                    moveCursor(point);
+                    sleep(100);
+                    mouseClick();
+                    hideCursor();
+
+                    info("Sent re-active");
+                    sleep(10_000);
+                }
+            } else {
+                debug("Red Auto not found");
             }
         }
     }

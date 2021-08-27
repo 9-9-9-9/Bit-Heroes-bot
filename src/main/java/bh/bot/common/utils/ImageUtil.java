@@ -3,6 +3,7 @@ package bh.bot.common.utils;
 import bh.bot.common.Configuration;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -50,6 +51,16 @@ public class ImageUtil {
 
     public static int getBlue(int rgb) {
         return rgb & 0xFF;
+    }
+
+    public static boolean isRedLikeColor(Color color) {
+        int rgb = color.getRGB();
+        return getRed(rgb) >= 220 && getGreen(rgb) <= 150 && getBlue(rgb) <= 150;
+    }
+
+    public static boolean isGreenLikeColor(Color color) {
+        int rgb = color.getRGB();
+        return getRed(rgb) <= 150 && getGreen(rgb) >= 220 && getBlue(rgb) <= 150;
     }
 
     public static class DynamicRgb {
