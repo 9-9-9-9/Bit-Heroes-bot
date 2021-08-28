@@ -17,8 +17,7 @@ chmod +x ./fishing.sh
 chmod +x ./matrix.sh
 
 # Generating mini client
-rm -f ./mini-game-on-chrome.sh
+rm -f ./mini-game-on-chrome*.sh
 rm -f mini
 java -jar ./BitHeroes.jar client
-chmod +x ./mini-game-on-chrome.sh
-ln -s ./mini-game-on-chrome.sh mini
+chmod +x ./mini-game-on-chrome*.sh

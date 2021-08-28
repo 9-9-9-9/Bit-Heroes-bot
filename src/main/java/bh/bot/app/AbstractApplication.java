@@ -459,11 +459,6 @@ public abstract class AbstractApplication {
         info("Application is going to exit now");
     }
 
-    protected void throwNotSupportedFlagExit(int exitAfterXSecs) {
-        if (exitAfterXSecs > 0)
-            throw new IllegalArgumentException(String.format("Flag --exit does not supported by this application"));
-    }
-
     protected <T> T readInput(BufferedReader br, String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform) {
         return readInput(br, ask, desc, transform, false);
     }

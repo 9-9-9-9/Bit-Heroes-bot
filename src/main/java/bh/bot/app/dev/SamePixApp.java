@@ -18,7 +18,6 @@ public class SamePixApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
         try {
-            throwNotSupportedFlagExit(argumentInfo.exitAfterXSecs);
             String img1, img2;
 
             try (

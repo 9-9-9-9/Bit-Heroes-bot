@@ -2,12 +2,12 @@ package bh.bot.common;
 
 import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
+import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.utils.StringUtil;
-import com.sun.media.sound.InvalidDataException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,12 +31,6 @@ public class Configuration {
         public static int position;
         public static int color;
         public static int colorBw;
-    }
-
-    public static class Game {
-        public static int kongUserId;
-        public static String kongUserName;
-        public static String authToken;
     }
 
     public static class OS {
@@ -117,23 +111,6 @@ public class Configuration {
         }
         err("Not match any app code");
         return null;
-    }
-
-    public static String loadGameCfg() {
-        try {
-            Game.kongUserId = Integer.parseInt(getFromConfigOrEnv("1.game.kong.user.id", "GAME_BH_KONG_USER_ID"));
-            Game.kongUserName = getFromConfigOrEnv("1.game.kong.user.name", "GAME_BH_KONG_USER_NAME");
-            Game.authToken = getFromConfigOrEnv("1.game.auth.token", "GAME_BH_AUTH_TOKEN");
-            if (Game.kongUserId < 1)
-                throw new InvalidDataException("Invalid kong user id");
-            if (Game.kongUserName == null)
-                throw new InvalidDataException("Invalid kong user name");
-            if (Game.authToken == null)
-                throw new InvalidDataException("Invalid game's auth token");
-            return null;
-        } catch (Exception e) {
-            return e.getMessage();
-        }
     }
 
     public static String read(String key) {
