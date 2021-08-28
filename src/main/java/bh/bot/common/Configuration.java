@@ -121,9 +121,9 @@ public class Configuration {
 
     public static String loadGameCfg() {
         try {
-            Game.kongUserId = Integer.parseInt(getFromConfigOrEnv("game.kong.user.id", "GAME_BH_KONG_USER_ID"));
-            Game.kongUserName = getFromConfigOrEnv("game.kong.user.name", "GAME_BH_KONG_USER_NAME");
-            Game.authToken = getFromConfigOrEnv("game.auth.token", "GAME_BH_AUTH_TOKEN");
+            Game.kongUserId = Integer.parseInt(getFromConfigOrEnv("1.game.kong.user.id", "GAME_BH_KONG_USER_ID"));
+            Game.kongUserName = getFromConfigOrEnv("1.game.kong.user.name", "GAME_BH_KONG_USER_NAME");
+            Game.authToken = getFromConfigOrEnv("1.game.auth.token", "GAME_BH_AUTH_TOKEN");
             if (Game.kongUserId < 1)
                 throw new InvalidDataException("Invalid kong user id");
             if (Game.kongUserName == null)

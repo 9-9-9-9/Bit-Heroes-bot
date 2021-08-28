@@ -13,9 +13,9 @@ if (active_user === undefined || active_user.getGameAttributes() === undefined |
     console.error("You have to login using your Kongregate account first");
 } else {
     console.log('# Game tokens');
-    console.log('game.kong.user.id=' + active_user.getAttributes().id);
-    console.log('game.kong.user.name=' + active_user.getAttributes().username);
-    console.log('game.auth.token=' + active_user.getGameAttributes().game_auth_token);
+    console.log('1.game.kong.user.id=' + active_user.getAttributes().id);
+    console.log('1.game.kong.user.name=' + active_user.getAttributes().username);
+    console.log('1.game.auth.token=' + active_user.getGameAttributes().game_auth_token);
 }
 
 // 6. Copy the output into `user-config.properties` file, make sure to override the correct properties
