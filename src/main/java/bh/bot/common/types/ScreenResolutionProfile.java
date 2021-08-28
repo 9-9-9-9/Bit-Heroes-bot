@@ -96,6 +96,8 @@ public abstract class ScreenResolutionProfile {
 
     public abstract Offset getOffsetButtonAuto();
 
+    public abstract Offset getOffsetButtonTownWhenDefeatedInRaid();
+
 
     public static class WebProfile extends ScreenResolutionProfile {
 
@@ -323,6 +325,11 @@ public abstract class ScreenResolutionProfile {
         public Offset getOffsetButtonAuto() {
             return new Offset(778, 213);
         }
+
+        @Override
+        public Offset getOffsetButtonTownWhenDefeatedInRaid() {
+            return new Offset(387, 468);
+        }
     }
 
     public static class SteamProfile extends ScreenResolutionProfile {
@@ -549,6 +556,11 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonAuto() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonTownWhenDefeatedInRaid() {
             throw NotSupportedException.steam();
         }
     }
