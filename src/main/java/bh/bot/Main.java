@@ -55,7 +55,8 @@ public class Main {
             if (parseArgumentsResult.disableTelegramNoti)
                 Telegram.disable();
 
-            Configuration.load(parseArgumentsResult.screenResolutionProfile);
+            Configuration.loadSystemConfig(parseArgumentsResult.screenResolutionProfile);
+            Configuration.loadUserConfig(parseArgumentsResult.profileNumber);
             InteractionUtil.init();
 
             Constructor<?> cons = parseArgumentsResult.applicationClass.getConstructors()[0];
@@ -111,12 +112,18 @@ public class Main {
         }
 
         int exitAfter = 0;
+        int profileNumber = -1;
         for (FlagPattern flagPattern : usingFlagPatterns) {
             if (!flagPattern.isAllowParam())
                 continue;
 
             if (flagPattern instanceof FlagExitAfterAmountOfSeconds) {
                 exitAfter = ((FlagExitAfterAmountOfSeconds) flagPattern).parseParams().get(0);
+                continue;
+            }
+
+            if (flagPattern instanceof FlagProfileNo) {
+                profileNumber = ((FlagProfileNo) flagPattern).parseParams().get(0);
                 continue;
             }
 
@@ -166,6 +173,7 @@ public class Main {
         li.enableDebugMessages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShowDebugMessages);
         li.disableTelegramNoti = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagMuteNoti);
         li.screenResolutionProfile = screenResolutionProfile;
+        li.profileNumber = profileNumber;
         li.hasFlagAll = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagAll);
         // events
         li.eWorldBoss = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);
@@ -183,5 +191,6 @@ public class Main {
     public static final int EXIT_CODE_EXTERNAL_REASON = 7;
     public static final int EXIT_CODE_INVALID_FLAG = 8;
     public static final int EXIT_CODE_UNABLE_DETECTING_FISHING_ANCHOR = 9;
+    public static final int EXIT_CODE_INCORRECT_PROFILE_NUMBER = 10;
     public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }

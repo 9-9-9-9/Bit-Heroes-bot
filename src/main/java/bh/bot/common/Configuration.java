@@ -41,9 +41,32 @@ public class Configuration {
         public static final boolean isUnix = !isMac && !isWin;
     }
 
+    public static class UserConfig {
+        public static int profileNo;
+        public static byte raidLevel;
+        public static byte raidMode;
+
+        public static final byte modeNormal = 1;
+        public static final byte modeHard = 2;
+        public static final byte modeHeroic = 3;
+
+        public static String getRaidModeDesc(byte mode) {
+            switch (mode) {
+                case modeNormal:
+                    return "NORMAL";
+                case modeHard:
+                    return "HARD";
+                case modeHeroic:
+                    return "HEROIC";
+                default:
+                    return "Not specified";
+            }
+        }
+    }
+
     private static Properties properties = new Properties();
 
-    public static void load(ScreenResolutionProfile screenResolutionProfile) throws IOException {
+    public static void loadSystemConfig(ScreenResolutionProfile screenResolutionProfile) throws IOException {
         info(
                 "Using '%s' profile which supports %dx%d game resolution",
                 screenResolutionProfile.getName(),
@@ -83,7 +106,60 @@ public class Configuration {
 
         Tolerant.position = Math.max(5, readInt("tolerant.position"));
         Tolerant.color = Math.max(0, readInt("tolerant.color"));
-        Tolerant.colorBw = (byte)Math.max(0, readInt("tolerant.color.bw"));
+        Tolerant.colorBw = (byte) Math.max(0, readInt("tolerant.color.bw"));
+    }
+
+    public static void loadUserConfig(int profileNo) throws IOException {
+        if (profileNo < 1)
+            return;
+        String profileConfigFileName = getProfileConfigFileName(profileNo);
+        final File fileCfg = new File(profileConfigFileName);
+        if (!fileCfg.exists() || !fileCfg.isFile()) {
+            debug("Unable to load user config for profile no.%d, reason: file '%s' not found", profileNo, profileConfigFileName);
+            return;
+        }
+
+        if (profileNo > 1)
+            info("Going to load configuration from %s", fileCfg.getName());
+
+        Properties properties = new Properties();
+        try (InputStream inputStream = new FileInputStream(fileCfg)) {
+            properties.load(inputStream);
+        }
+
+        UserConfig.profileNo = profileNo;
+
+        String raidLevelKey = "ig.user.raid.level";
+        String raidLevel = readKey(properties, raidLevelKey, "0", "Not specified");
+        try {
+            UserConfig.raidLevel = Byte.parseByte(raidLevel);
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Value of key '%s' is not a number", raidLevelKey);
+        }
+
+        String raidModeKey = "ig.user.raid.mode";
+        String raidMode = readKey(properties, raidModeKey, "0", "Not specified");
+        try {
+            UserConfig.raidMode = Byte.parseByte(raidMode);
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Value of key '%s' is not a number", raidModeKey);
+        }
+
+        info("Profile %d has configured raid level = %d", profileNo, UserConfig.raidLevel);
+        info("Profile %d has configured raid mode = %d (%s)", profileNo, UserConfig.raidMode, UserConfig.getRaidModeDesc(UserConfig.raidMode));
+    }
+
+    private static String readKey(Properties properties, String key, String defaultValue, String defaultValueDesc) {
+        String value = properties.getProperty(key);
+        if (isBlank(value)) {
+            info("Key '%s' does not exists, default value '%s' will be used (%s)", key, defaultValue, defaultValueDesc);
+            return defaultValue;
+        }
+        return value;
+    }
+
+    public static String getProfileConfigFileName(int profileNo) {
+        return String.format("readonly.%d.user-config.properties", profileNo);
     }
 
     private static final ArrayList<Tuple2<Class<? extends AbstractApplication>, String>> applicationClassesInfo = new ArrayList<>();

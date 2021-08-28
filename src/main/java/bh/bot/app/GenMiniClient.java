@@ -21,7 +21,7 @@ import static bh.bot.common.utils.StringUtil.isNotBlank;
 public class GenMiniClient extends AbstractApplication {
     private static final File chromeUserDir = new File("chrome-user-dir");
 
-    private static final int supportMaximumNumberOfAccounts = 10;
+    public static final int supportMaximumNumberOfAccounts = 10;
     private static final String keyChromePath = "external.application.chrome.path";
 
     @Override
