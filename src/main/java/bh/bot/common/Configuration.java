@@ -30,7 +30,7 @@ public class Configuration {
     public static class Tolerant {
         public static int position;
         public static int color;
-        public static int colorBw;
+        public static byte colorBw;
     }
 
     public static class OS {
@@ -83,7 +83,7 @@ public class Configuration {
 
         Tolerant.position = Math.max(5, readInt("tolerant.position"));
         Tolerant.color = Math.max(0, readInt("tolerant.color"));
-        Tolerant.colorBw = Math.max(0, readInt("tolerant.color.bw"));
+        Tolerant.colorBw = (byte)Math.max(0, readInt("tolerant.color.bw"));
     }
 
     private static final ArrayList<Tuple2<Class<? extends AbstractApplication>, String>> applicationClassesInfo = new ArrayList<>();
@@ -150,6 +150,10 @@ public class Configuration {
             if (y < 0)
                 throw new IllegalArgumentException(String.format("Value of offset %s.y can not be a negative number: %d", keyPrefix, y));
             return new Offset(x, y);
+        }
+
+        public static Offset none() {
+            return new Offset(-1, -1);
         }
     }
 

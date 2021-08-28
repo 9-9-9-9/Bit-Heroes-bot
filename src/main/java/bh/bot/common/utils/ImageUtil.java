@@ -1,6 +1,7 @@
 package bh.bot.common.utils;
 
 import bh.bot.common.Configuration;
+import bh.bot.common.types.images.BufferedImageInfo;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -8,14 +9,15 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class ImageUtil {
-    public static BufferedImage loadImageFileFromResource(String path) throws IOException {
+    public static BufferedImageInfo loadImageFileFromResource(String path) throws IOException {
         if (!path.toLowerCase().trim().endsWith("-mx.bmp"))
             throw new IllegalArgumentException("Only accept *-mx.bmp pictures");
-        BufferedImage bi = ImageIO.read(ImageUtil.class.getResource(String.format("/game-images/%s/%s", Configuration.profileName, path)));
+        String fileName = String.format("/game-images/%s/%s", Configuration.profileName, path);
+        BufferedImage bi = ImageIO.read(ImageUtil.class.getResource(fileName));
         final int acceptedType = BufferedImage.TYPE_3BYTE_BGR;
         if (bi.getType() != acceptedType)
             throw new IllegalArgumentException(String.format("Only accept bmp pictures with type = BufferedImage.TYPE_3BYTE_BGR (int value = %d)", acceptedType));
-        return bi;
+        return new BufferedImageInfo(bi, fileName);
     }
 
     public static boolean areColorsSimilar(int rgb1, int rgb2, int tolerance) {

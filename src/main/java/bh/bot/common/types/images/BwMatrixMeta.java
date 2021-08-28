@@ -1,11 +1,16 @@
 package bh.bot.common.types.images;
 
 import bh.bot.common.Configuration;
+import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.utils.ImageUtil;
+import bh.bot.common.utils.StringUtil;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.dev;
 
 public class BwMatrixMeta {
     private final int[] firstBlackPixelOffset;
@@ -16,15 +21,35 @@ public class BwMatrixMeta {
     private final int blackPixelRgb;
     private final ImageUtil.DynamicRgb blackPixelDRgb;
     private final Configuration.Offset coordinateOffset;
-    private int[] lastMatch = new int[]{-1, -1};
+    private final int[] lastMatch = new int[]{-1, -1};
+    private final byte tolerant;
 
-    public BwMatrixMeta(BufferedImage img, Configuration.Offset coordinateOffset, int blackPixelRgb) {
+    public BwMatrixMeta(BufferedImageInfo bii, Configuration.Offset coordinateOffset, int blackPixelRgb) {
+        String customTolerantKey = "tolerant.color.bw|" + bii.code;
+        try {
+            byte tolerant = Configuration.Tolerant.colorBw;
+            String value = Configuration.read(customTolerantKey);
+            if (StringUtil.isNotBlank(value)) {
+                tolerant = Byte.parseByte(value);
+                if (tolerant < 0)
+                    throw new InvalidDataException("Invalid value of configuration key '%s': must be a positive number", customTolerantKey);
+                if (tolerant > Configuration.Tolerant.colorBw)
+                    throw new InvalidDataException("Invalid value of configuration key '%s': must not greater than value of 'tolerant.color.bw' key (which is %d)", customTolerantKey, Configuration.Tolerant.colorBw);
+                if (tolerant != Configuration.Tolerant.colorBw)
+                    dev("Tolerant overrided to %d by key `%s`", tolerant, customTolerantKey);
+            }
+            this.tolerant = tolerant;
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Invalid format of key '%s': must be a number, valid value within range from 0 to %d", customTolerantKey, Configuration.Tolerant.colorBw);
+        }
+
         final int matrixPointColorPixelRgb = 0x000000;
         final int anyColorPixelRgb = 0xFFFFFF;
+        BufferedImage img = bii.bufferedImage;
         try {
             this.coordinateOffset = coordinateOffset;
             this.blackPixelRgb = blackPixelRgb & 0xFFFFFF;
-            this.blackPixelDRgb = new ImageUtil.DynamicRgb(this.blackPixelRgb, Configuration.Tolerant.colorBw);
+            this.blackPixelDRgb = new ImageUtil.DynamicRgb(this.blackPixelRgb, this.tolerant);
             blackPixels = new ArrayList<>();
             nonBlackPixels = new ArrayList<>();
             w = img.getWidth();
@@ -77,11 +102,16 @@ public class BwMatrixMeta {
     }
 
     public void setLastMatchPoint(int x, int y) {
-        lastMatch = new int[]{x, y};
+        lastMatch[0] = x;
+        lastMatch[1] = y;
     }
 
     public int[] getLastMatchPoint() {
         return lastMatch;
+    }
+
+    public int getTolerant() {
+        return tolerant;
     }
 
     public Configuration.Offset getCoordinateOffset() {
@@ -96,6 +126,7 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta reconnect;
                 public static BwMatrixMeta autoG;
                 public static BwMatrixMeta autoR;
+                public static BwMatrixMeta radioButton;
             }
 
             public static class Dialogs {
@@ -225,6 +256,13 @@ public class BwMatrixMeta {
                         "buttons/globally.auto-red-mx.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetButtonAuto(),
+                0xFFFFFF
+        );
+        Metas.Globally.Buttons.radioButton = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/globally.radio-button-mx.bmp"
+                ), //
+                Configuration.Offset.none(),
                 0xFFFFFF
         );
         Metas.Globally.Dialogs.confirmStartNotFullTeam = new BwMatrixMeta(//

@@ -311,7 +311,7 @@ public abstract class AbstractApplication {
                 for (int x = 0; x < sc.getWidth() - im.getWidth(); x++) {
                     for (int mainColor : mainColors) {
                         final int c = mainColor & 0xFFFFFF;
-                        final ImageUtil.DynamicRgb cDRgb = new ImageUtil.DynamicRgb(c, Configuration.Tolerant.colorBw);
+                        final ImageUtil.DynamicRgb cDRgb = new ImageUtil.DynamicRgb(c, im.getTolerant());
 
                         boolean allGood = true;
 
