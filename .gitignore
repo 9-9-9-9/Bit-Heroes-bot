@@ -10,6 +10,7 @@ BitHeroes-v*/
 *.jar
 *.log
 user-config.properties
+readonly.*.user-config.properties
 bh-client/index*.html
 mini-game-on-chrome*.sh
 mini-game-on-chrome*.bat

@@ -36,9 +36,9 @@ offset.screen.x=0
 offset.screen.y=57
 
 # Game tokens
-game.kong.user.id=
-game.kong.user.name=
-game.auth.token=
+1.game.kong.user.id=
+1.game.kong.user.name=
+1.game.auth.token=
 
 # Configure telegram
 telegram.token=
