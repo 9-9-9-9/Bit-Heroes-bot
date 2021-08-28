@@ -5,6 +5,8 @@ import bh.bot.common.Configuration.Size;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.tuples.Tuple4;
 
+import java.awt.*;
+
 public abstract class ScreenResolutionProfile {
     public abstract String getName();
 
@@ -97,6 +99,8 @@ public abstract class ScreenResolutionProfile {
     public abstract Offset getOffsetButtonAuto();
 
     public abstract Offset getOffsetButtonTownWhenDefeatedInRaid();
+
+    public abstract Rectangle getRectangleRadioButtonsOfRaid();
 
 
     public static class WebProfile extends ScreenResolutionProfile {
@@ -330,6 +334,11 @@ public abstract class ScreenResolutionProfile {
         public Offset getOffsetButtonTownWhenDefeatedInRaid() {
             return new Offset(387, 468);
         }
+
+        @Override
+        public Rectangle getRectangleRadioButtonsOfRaid() {
+            return new Rectangle(163, 435, 474, 15);
+        }
     }
 
     public static class SteamProfile extends ScreenResolutionProfile {
@@ -561,6 +570,11 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonTownWhenDefeatedInRaid() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Rectangle getRectangleRadioButtonsOfRaid() {
             throw NotSupportedException.steam();
         }
     }

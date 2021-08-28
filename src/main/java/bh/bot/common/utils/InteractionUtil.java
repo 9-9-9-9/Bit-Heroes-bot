@@ -4,7 +4,6 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.images.BwMatrixMeta;
-import bh.bot.common.types.images.ImgMeta;
 import bh.bot.common.types.tuples.Tuple4;
 
 import java.awt.*;
@@ -73,15 +72,11 @@ public class InteractionUtil {
     }
 
     public static class Screen {
-        public static ScreenCapturedResult captureElementInEstimatedArea(ImgMeta im) {
-            return captureElementInEstimatedArea(im.getCoordinateOffset(), im.getWidth(), im.getHeight());
-        }
-
         public static ScreenCapturedResult captureElementInEstimatedArea(BwMatrixMeta im) {
             return captureElementInEstimatedArea(im.getCoordinateOffset(), im.getWidth(), im.getHeight());
         }
 
-        private static ScreenCapturedResult captureElementInEstimatedArea(Configuration.Offset coordinate, int w, int h) {
+        public static ScreenCapturedResult captureElementInEstimatedArea(Configuration.Offset coordinate, int w, int h) {
             int xS = Math.max(0, Configuration.gameScreenOffset.X + coordinate.X - Configuration.Tolerant.position);
             int yS = Math.max(0, Configuration.gameScreenOffset.Y + coordinate.Y - Configuration.Tolerant.position);
             int wS = w + Configuration.Tolerant.position * 2;

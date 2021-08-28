@@ -263,7 +263,7 @@ public class BwMatrixMeta {
                         "buttons/globally.radio-button-mx.bmp"
                 ), //
                 Configuration.Offset.none(),
-                0xFFFFFF
+                0x000000
         );
         Metas.Globally.Dialogs.confirmStartNotFullTeam = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
@@ -522,7 +522,7 @@ public class BwMatrixMeta {
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/raid.town-mx.bmp"
                 ), //
-                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedGauntlet(),
+                Configuration.screenResolutionProfile.getOffsetButtonTownWhenDefeatedInRaid(),
                 0xFFFFFF
         );
     }
