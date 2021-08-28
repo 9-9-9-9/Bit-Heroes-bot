@@ -103,8 +103,8 @@ Steps:
 - Linux/Mac: run file `./client.sh` from terminal
 
 Enjoy it
-- Windows: click and run file `mini-game-on-chrome.bat`
-- Linux/Mac: run file `./mini` or `./mini-game-on-chrome.sh` from terminal
+- Windows: click and run file `mini-game-on-chrome*.bat`
+- Linux/Mac: run file `./mini` or `./mini-game-on-chrome*.sh` from terminal
 
 #### Other features
 [find out at our Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)

@@ -126,8 +126,8 @@ Steps:
 - Linux/Mac: run file `./client.sh` from terminal
 
 Enjoy it
-- Windows: click and run file `mini-game-on-chrome.bat`
-- Linux/Mac: run file `./mini` or `./mini-game-on-chrome.sh` from terminal
+- Windows: click and run file `mini-game-on-chrome*.bat`
+- Linux/Mac: run file `./mini` or `./mini-game-on-chrome*.sh` from terminal
 
 ### Matrix
 For: developers only
