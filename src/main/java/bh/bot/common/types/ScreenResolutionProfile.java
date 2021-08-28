@@ -94,6 +94,8 @@ public abstract class ScreenResolutionProfile {
 
     public abstract Offset getOffsetButtonTownAfterCompetedGauntlet();
 
+    public abstract Offset getOffsetButtonAuto();
+
 
     public static class WebProfile extends ScreenResolutionProfile {
 
@@ -316,6 +318,11 @@ public abstract class ScreenResolutionProfile {
         public Offset getOffsetButtonTownAfterCompetedGauntlet() {
             return new Offset(387, 468);
         }
+
+        @Override
+        public Offset getOffsetButtonAuto() {
+            return new Offset(778, 213);
+        }
     }
 
     public static class SteamProfile extends ScreenResolutionProfile {
@@ -537,6 +544,11 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonTownAfterCompetedGauntlet() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetButtonAuto() {
             throw NotSupportedException.steam();
         }
     }

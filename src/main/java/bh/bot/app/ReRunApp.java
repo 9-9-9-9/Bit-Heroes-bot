@@ -8,12 +8,16 @@ import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ThreadUtil;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
+import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
+import static bh.bot.common.utils.ThreadUtil.sleep;
 
 @AppCode(code = "rerun")
 public class ReRunApp extends AbstractApplication {
@@ -54,9 +58,33 @@ public class ReRunApp extends AbstractApplication {
                 () -> doLoopClickImage(loop, masterSwitch),
                 () -> doClickTalk(masterSwitch::get),
                 () -> detectDisconnected(masterSwitch),
+                () -> autoReactiveAuto(masterSwitch),
                 () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch)
         );
         Telegram.sendMessage("Stopped", false);
+    }
+
+    private void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
+        moveCursor(new Point(950, 100));
+        long lastFound = System.currentTimeMillis();
+        while (loopCount > 0 && !masterSwitch.get()) {
+            if (clickImage(BwMatrixMeta.Metas.Dungeons.Buttons.rerun)) {
+                loopCount--;
+                lastFound = System.currentTimeMillis();
+                info("%d loop left", loopCount);
+                sleep(10000);
+            } else {
+                debug("Not found, repeat");
+                sleep(10000);
+                if (System.currentTimeMillis() - lastFound > 900000) {
+                    info("Long time no see => Stop");
+                    Telegram.sendMessage("long time no see button", true);
+                    break;
+                }
+            }
+        }
+
+        masterSwitch.set(true);
     }
 
     @Override
@@ -77,11 +105,6 @@ public class ReRunApp extends AbstractApplication {
     @Override
     protected String getDescription() {
         return "Click ReRun button. Used to farming Dungeons and Raid";
-    }
-
-    @Override
-    protected boolean clickImage() {
-        return clickImage(BwMatrixMeta.Metas.Dungeons.Buttons.rerun);
     }
 
     @Override

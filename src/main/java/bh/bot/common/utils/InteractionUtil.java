@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
 import static bh.bot.common.Log.debug;
+import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public class InteractionUtil {
     private static Robot robot;
@@ -41,13 +42,13 @@ public class InteractionUtil {
         public static void moveCursor(Point p) {
             debug("Mouse move cursor");
             robot.mouseMove(p.x, p.y);
-            ThreadUtil.sleep(5);
+            sleep(5);
         }
 
         public static void mouseClick() {
             int mask = InputEvent.BUTTON1_DOWN_MASK;
             robot.mousePress(mask);
-            ThreadUtil.sleep(50);
+            sleep(50);
             robot.mouseRelease(mask);
             debug("Mouse click");
         }
@@ -56,13 +57,17 @@ public class InteractionUtil {
 
         public static void mouseMoveAndClickAndHide(Point p) {
             moveCursor(p);
-            ThreadUtil.sleep(100);
+            sleep(100);
             mouseClick();
-            ThreadUtil.sleep(200);
+            sleep(200);
             moveCursor(p);
-            ThreadUtil.sleep(100);
+            sleep(100);
             mouseClick();
-            ThreadUtil.sleep(200);
+            sleep(200);
+            hideCursor();
+        }
+
+        public static void hideCursor() {
             moveCursor(pHideCursor);
         }
     }
@@ -77,8 +82,8 @@ public class InteractionUtil {
         }
 
         private static ScreenCapturedResult captureElementInEstimatedArea(Configuration.Offset coordinate, int w, int h) {
-            int xS = Math.max(0, Configuration.Offsets.gameScreenOffset.X + coordinate.X - Configuration.Tolerant.position);
-            int yS = Math.max(0, Configuration.Offsets.gameScreenOffset.Y + coordinate.Y - Configuration.Tolerant.position);
+            int xS = Math.max(0, Configuration.gameScreenOffset.X + coordinate.X - Configuration.Tolerant.position);
+            int yS = Math.max(0, Configuration.gameScreenOffset.Y + coordinate.Y - Configuration.Tolerant.position);
             int wS = w + Configuration.Tolerant.position * 2;
             int hS = h + Configuration.Tolerant.position * 2;
             return new ScreenCapturedResult(captureScreen(xS, yS, wS, hS), xS, yS);

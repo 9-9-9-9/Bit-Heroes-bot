@@ -11,8 +11,6 @@ import bh.bot.common.types.flags.Flags;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
-import bh.bot.common.utils.ThreadUtil;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -29,10 +27,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static bh.bot.common.Log.*;
-import static bh.bot.common.utils.InteractionUtil.Mouse.mouseMoveAndClickAndHide;
-import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
+import static bh.bot.common.utils.InteractionUtil.Mouse.*;
 import static bh.bot.common.utils.InteractionUtil.Screen.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
+import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public abstract class AbstractApplication {
     protected ParseArgumentsResult argumentInfo;
@@ -171,50 +169,27 @@ public abstract class AbstractApplication {
         return false;
     }
 
-    protected void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
-        moveCursor(new Point(950, 100));
-        long lastFound = System.currentTimeMillis();
-        while (loopCount > 0 && !masterSwitch.get()) {
-            if (clickImage()) {
-                loopCount--;
-                lastFound = System.currentTimeMillis();
-                info("%d loop left", loopCount);
-                ThreadUtil.sleep(10000);
-            } else {
-                debug("Not found, repeat");
-                ThreadUtil.sleep(10000);
-                if (System.currentTimeMillis() - lastFound > 900000) {
-                    info("Long time no see => Stop");
-                    Telegram.sendMessage("long time no see button", true);
-                    break;
-                }
-            }
-        }
-
-        masterSwitch.set(true);
-    }
-
-    protected boolean clickImage() {
-        throw new NotImplementedException();
-    }
-
     protected boolean clickImage(BwMatrixMeta im) {
-        return clickImageExact(im) || clickImageScanBW(im);
+        Point p = findImageBasedOnLastClick(im);
+        if (p != null) {
+            mouseMoveAndClickAndHide(p);
+            return true;
+        }
+        return clickImageScanBW(im);
     }
 
-    protected boolean clickImageExact(BwMatrixMeta im) {
+    protected Point findImageBasedOnLastClick(BwMatrixMeta im) {
         int[] lastMatch = im.getLastMatchPoint();
         if (lastMatch[0] < 0 || lastMatch[1] < 0) {
-            return false;
+            return null;
         }
 
         int[] firstBlackPixelOffset = im.getFirstBlackPixelOffset();
         Point p = new Point(lastMatch[0] + firstBlackPixelOffset[0], lastMatch[1] + firstBlackPixelOffset[1]);
         Color c = getPixelColor(p);
-        if (!im.isMatchBlackRgb(c.getRGB())) {
-            return false;
-        }
-        // debug("clickImageExactBW match success 1");
+        if (!im.isMatchBlackRgb(c.getRGB()))
+            return null;
+        // debug("findImageBasedOnLastClick match success 1");
 
         BufferedImage sc = captureScreen(lastMatch[0], lastMatch[1], im.getWidth(), im.getHeight());
 
@@ -226,37 +201,34 @@ public abstract class AbstractApplication {
                         blackPixelDRgb, //
                         sc.getRGB(px[0], px[1]) & 0xFFFFFF, //
                         Configuration.Tolerant.color)) {
-                    return false;
+                    return null;
                 }
             }
 
-            // debug("clickImageExactBW match success 2");
+            // debug("findImageBasedOnLastClick match success 2");
 
             for (int[] px : im.getNonBlackPixels()) {
                 if (ImageUtil.areColorsSimilar(//
                         blackPixelRgb, //
                         sc.getRGB(px[0], px[1]) & 0xFFFFFF, //
                         Configuration.Tolerant.color)) {
-                    return false;
+                    return null;
                 }
             }
 
-            // debug("clickImageExactBW match success 3");
-
-            mouseMoveAndClickAndHide(p);
-            // debug("Success on last click");
-            return true;
+            // debug("findImageBasedOnLastClick match success (result)");
+            return p;
         } finally {
             sc.flush();
         }
     }
 
-    protected boolean clickImageScanBW(BwMatrixMeta im) {
+    protected Point scanToFindImage(BwMatrixMeta im) {
         ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
         BufferedImage sc = screenCapturedResult.image;
 
         try {
-            saveDebugImage(sc, "clickImageScanBW");
+            saveDebugImage(sc, "scanToFindImage");
 
             boolean go = true;
             Point p = new Point();
@@ -273,7 +245,7 @@ public abstract class AbstractApplication {
                                 srcRgb, //
                                 Configuration.Tolerant.color)) {
                             allGood = false;
-                            // debug(String.format("clickImageScanBW second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
+                            // debug(String.format("scanToFindImage second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
                             break;
                         }
                     }
@@ -281,7 +253,7 @@ public abstract class AbstractApplication {
                     if (!allGood)
                         continue;
 
-                    // debug("clickImageScanBW second match passed");
+                    // debug("scanToFindImage second match passed");
                     for (int[] px : im.getNonBlackPixels()) {
                         int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
                         if (ImageUtil.areColorsSimilar(//
@@ -289,7 +261,7 @@ public abstract class AbstractApplication {
                                 srcRgb, //
                                 Configuration.Tolerant.color)) {
                             allGood = false;
-                            // debug(String.format("clickImageScanBW third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
+                            // debug(String.format("scanToFindImage third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
                             break;
                         }
                     }
@@ -297,23 +269,36 @@ public abstract class AbstractApplication {
                     if (!allGood)
                         continue;
 
-                    // debug("clickImageScanBW third match passed");
+                    // debug("scanToFindImage third match passed");
                     go = false;
                     p = new Point(screenCapturedResult.x + x, screenCapturedResult.y + y);
                 }
             }
 
-            if (!go) {
-                mouseMoveAndClickAndHide(p);
-                im.setLastMatchPoint(p.x, p.y);
-                printIfIncorrectImgPosition(im.getCoordinateOffset(), p);
-                return true;
-            }
+            if (!go)
+                return p;
 
-            return false;
+            return null;
         } finally {
             sc.flush();
         }
+    }
+
+    protected Point findImage(BwMatrixMeta im) {
+        Point result = findImageBasedOnLastClick(im);
+        if (result != null)
+            return result;
+        return scanToFindImage(im);
+    }
+
+    protected boolean clickImageScanBW(BwMatrixMeta im) {
+        Point p = scanToFindImage(im);
+        if (p == null)
+            return false;
+        mouseMoveAndClickAndHide(p);
+        im.setLastMatchPoint(p.x, p.y);
+        printIfIncorrectImgPosition(im.getCoordinateOffset(), p);
+        return true;
     }
 
     protected Point detectLabel(BwMatrixMeta im, int... mainColors) {
@@ -385,7 +370,7 @@ public abstract class AbstractApplication {
         int cnt = sleepSecs;
         while (!shouldStop.get()) {
             cnt--;
-            ThreadUtil.sleep(1000);
+            sleep(1000);
             if (cnt > 0) {
                 continue;
             }
@@ -405,7 +390,7 @@ public abstract class AbstractApplication {
         int cnt = sleepSecs;
         while (!masterSwitch.get()) {
             cnt--;
-            ThreadUtil.sleep(1000);
+            sleep(1000);
             if (cnt > 0) {
                 continue;
             }
@@ -418,12 +403,53 @@ public abstract class AbstractApplication {
         }
     }
 
+    protected void autoReactiveAuto(AtomicBoolean masterSwitch) {
+        final int sleepMs = 10_000;
+        int continousRed = 0;
+        final int maxContinousRed = 6;
+        while (!masterSwitch.get()) {
+            sleep(sleepMs);
+            Point point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoG);
+            if (point == null) {
+                debug("AutoG button not found");
+                point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoR);
+                if (point == null) {
+                    debug("AutoR button not found");
+                    continue;
+                }
+            }
+            debug("Found the Auto button at %d,%d", point.x, point.y);
+            Color color = getPixelColor(point.x - 5, point.y);
+            if (ImageUtil.isGreenLikeColor(color)) {
+                debug("Auto is currently ON (green)");
+                continousRed = 0;
+                continue;
+            }
+            if (ImageUtil.isRedLikeColor(color)) {
+                continousRed++;
+                if (continousRed >= 2)
+                    info("Detected Auto is not turned on, gonna reactive it soon");
+                if (continousRed >= maxContinousRed) {
+                    moveCursor(point);
+                    sleep(100);
+                    mouseClick();
+                    hideCursor();
+
+                    info("Sent re-active");
+                    sleep(2_000);
+                }
+            } else {
+                debug("Red Auto not found");
+            }
+        }
+    }
+
     protected void autoExit(int exitAfterXSecs, AtomicBoolean masterSwitch) {
         if (exitAfterXSecs < 1)
             return;
         while (exitAfterXSecs > 0) {
             exitAfterXSecs--;
-            ThreadUtil.sleep(1000);
+            sleep(1000);
             if (exitAfterXSecs % 60 == 0)
                 info("Exit after %d seconds", exitAfterXSecs);
             if (masterSwitch.get())
@@ -433,22 +459,26 @@ public abstract class AbstractApplication {
         info("Application is going to exit now");
     }
 
-    protected void throwNotSupportedFlagExit(int exitAfterXSecs) {
-        if (exitAfterXSecs > 0)
-            throw new IllegalArgumentException(String.format("Flag --exit does not supported by this application"));
-    }
-
     protected <T> T readInput(BufferedReader br, String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform) {
         return readInput(br, ask, desc, transform, false);
     }
 
     protected <T> T readInput(BufferedReader br, String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform, boolean allowBlankAndIfBlankThenReturnNull) {
+        return readInput(br, ask, desc, null, transform, allowBlankAndIfBlankThenReturnNull);
+    }
+
+    protected <T> T readInput(BufferedReader br, String ask, String desc, Supplier<List<String>> selectedOptionsInfoProvider, Function<String, Tuple3<Boolean, String, T>> transform, boolean allowBlankAndIfBlankThenReturnNull) {
         try {
             String input;
             while (true) {
                 info(ask);
                 if (desc != null)
                     info("(%s)", desc);
+                if (selectedOptionsInfoProvider != null) {
+                    List<String> selectedOptions = selectedOptionsInfoProvider.get();
+                    if (selectedOptions.size() > 0)
+                        info("Selected: %s", String.join(", ", selectedOptions));
+                }
                 input = br.readLine();
 
                 if (isBlank(input)) {

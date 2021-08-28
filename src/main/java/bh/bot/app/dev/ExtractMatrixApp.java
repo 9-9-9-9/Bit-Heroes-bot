@@ -23,8 +23,6 @@ public class ExtractMatrixApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
         try {
-            throwNotSupportedFlagExit(argumentInfo.exitAfterXSecs);
-
             if (args.length != 0 && args.length != 3) {
                 info("Invalid number of arguments");
                 info(getHelp());

@@ -10,9 +10,9 @@ BitHeroes-v*/
 *.jar
 *.log
 user-config.properties
-bh-client/index.html
-mini-game-on-chrome.sh
-mini-game-on-chrome.bat
+bh-client/index*.html
+mini-game-on-chrome*.sh
+mini-game-on-chrome*.bat
 mini
 samepix.sh
 keeppix.sh

@@ -5,14 +5,14 @@ import java.io.IOException;
 public class AttendablePlaces {
     public static class Ids {
         // Right
-        public static final int Invasion = 1;
-        public static final int Trials = 2;
-        public static final int GvG = 3;
-        public static final int Gauntlet = 4;
+        public static final int Invasion    = 0b00000001;
+        public static final int Trials      = 0b00000010;
+        public static final int GvG         = 0b00000100;
+        public static final int Gauntlet    = 0b00001000;
         // Left
-        public static final int Pvp = 11;
-        public static final int WorldBoss = 12;
-        public static final int Raid = 13;
+        public static final int Pvp         = 0b00010000;
+        public static final int WorldBoss   = 0b00100000;
+        public static final int Raid        = 0b01000000;
     }
 
     public static AttendablePlace invasion = null;
@@ -32,7 +32,7 @@ public class AttendablePlaces {
             gauntlet = new AttendablePlace("Gauntlet", Ids.Gauntlet, "gauntlet-mx.bmp", false);
 
             pvp = new AttendablePlace("PVP", AttendablePlaces.Ids.Pvp, "pvp-mx.bmp", true);
-            worldBoss = new AttendablePlace("World Boss", AttendablePlaces.Ids.WorldBoss, "world-boss-mx.bmp", true);
+            worldBoss = new AttendablePlace("World Boss", AttendablePlaces.Ids.WorldBoss, "world-boss-mx.bmp", true, 60);
             raid = new AttendablePlace("Raid", AttendablePlaces.Ids.Raid, "raid-mx.bmp", true, 120);
         } catch (IOException e) {
             e.printStackTrace();
