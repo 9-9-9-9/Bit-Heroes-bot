@@ -58,6 +58,7 @@ public class ReRunApp extends AbstractApplication {
                 () -> doLoopClickImage(loop, masterSwitch),
                 () -> doClickTalk(masterSwitch::get),
                 () -> detectDisconnected(masterSwitch),
+                () -> detectDefeatedOnRaid(masterSwitch),
                 () -> autoReactiveAuto(masterSwitch),
                 () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch)
         );
@@ -92,6 +93,24 @@ public class ReRunApp extends AbstractApplication {
         }
 
         masterSwitch.set(true);
+    }
+
+    private void detectDefeatedOnRaid(AtomicBoolean masterSwitch) {
+        int sleepSecs = 60;
+        int cnt = sleepSecs;
+        while (!masterSwitch.get()) {
+            cnt--;
+            sleep(1000);
+            if (cnt > 0) {
+                continue;
+            }
+
+            cnt = sleepSecs;
+            if (clickImage(BwMatrixMeta.Metas.Raid.Buttons.town)) {
+                masterSwitch.set(true);
+                Telegram.sendMessage("Defeated", true);
+            }
+        }
     }
 
     @Override

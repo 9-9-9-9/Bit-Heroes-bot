@@ -190,6 +190,12 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta town;
             }
         }
+
+        public static class Raid {
+            public static class Buttons {
+                public static BwMatrixMeta town;
+            }
+        }
     }
 
     public static void load() throws IOException {
@@ -468,6 +474,15 @@ public class BwMatrixMeta {
         Metas.Gauntlet.Buttons.town = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "buttons/gauntlet.town-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedGauntlet(),
+                0xFFFFFF
+        );
+
+        // Raid
+        Metas.Raid.Buttons.town = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/raid.town-mx.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedGauntlet(),
                 0xFFFFFF

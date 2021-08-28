@@ -1,45 +1,105 @@
 package bh.bot.app;
 
 import bh.bot.Main;
+import bh.bot.common.Telegram;
+import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
+import bh.bot.common.utils.ThreadUtil;
 
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.types.AttendablePlace.MenuItem;
+import static bh.bot.common.utils.ThreadUtil.sleep;
 
 @AppCode(code = "afk")
 public class AfkApp extends AbstractApplication {
     private InteractionUtil.Screen.Game gameScreenInteractor;
+    private final AtomicBoolean isUnknownGvgOrInvasion = new AtomicBoolean();
+    private final AtomicBoolean isUnknownTrialsOrGauntlet = new AtomicBoolean();
+    private final AtomicLong blockPvpUntil = new AtomicLong(0);
+    private final AtomicLong blockWorldBossUntil = new AtomicLong(0);
+    private final AtomicLong blockRaidUntil = new AtomicLong(0);
+    private final AtomicLong blockGvgAndInvasionUntil = new AtomicLong(0);
+    private final AtomicLong blockTrialsAndGauntletUntil = new AtomicLong(0);
 
     @Override
     protected void internalRun(String[] args) {
         this.gameScreenInteractor = InteractionUtil.Screen.Game.of(this);
         ArrayList<AttendablePlace> eventList = getAttendablePlaces();
+        if (eventList.contains(AttendablePlaces.raid))
+            throw new NotSupportedException("Raid has not been supported");
         //
-        debug("Scanning screen");
-        for (AttendablePlace event : eventList) {
-            Point point = this.gameScreenInteractor.findAttendablePlace(event);
-            if (point == null)
-                continue;
-            debug("Found event id %2d at %3d,%3d", event.id, point.x, point.y);
+        isUnknownGvgOrInvasion.set(eventList.contains(AttendablePlaces.gvg) && eventList.contains(AttendablePlaces.invasion));
+        isUnknownTrialsOrGauntlet.set(eventList.contains(AttendablePlaces.trials) && eventList.contains(AttendablePlaces.gauntlet));
+        //
+        AtomicBoolean masterSwitch = new AtomicBoolean(false);
+        ThreadUtil.waitDone(
+                () -> doLoop(
+                        masterSwitch,
+                        eventList.contains(AttendablePlaces.pvp),
+                        eventList.contains(AttendablePlaces.worldBoss),
+                        eventList.contains(AttendablePlaces.raid),
+                        eventList.contains(AttendablePlaces.gvg),
+                        eventList.contains(AttendablePlaces.invasion),
+                        eventList.contains(AttendablePlaces.trials),
+                        eventList.contains(AttendablePlaces.gauntlet)
+                ),
+                () -> doClickTalk(masterSwitch::get),
+                () -> detectDisconnected(masterSwitch),
+                () -> autoReactiveAuto(masterSwitch),
+                () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch)
+        );
+        Telegram.sendMessage("Stopped", false);
+    }
+
+    private void doLoop(
+            AtomicBoolean masterSwitch,
+            boolean doPvp,
+            boolean doWorldBoss,
+            boolean doRaid,
+            boolean doGvg,
+            boolean doInvasion,
+            boolean doTrials,
+            boolean doGauntlet
+    ) {
+        while (!masterSwitch.get()) {
+            sleep(5_000);
+            long epoch = System.currentTimeMillis();
+
         }
-        debug("End");
+    }
+
+    private void blockMinutes(AttendablePlace attendablePlace) {
+        AtomicLong x;
+        if (attendablePlace == AttendablePlaces.pvp)
+            x = blockPvpUntil;
+        else if (attendablePlace == AttendablePlaces.worldBoss)
+            x = blockWorldBossUntil;
+        else if (attendablePlace == AttendablePlaces.raid)
+            x = blockRaidUntil;
+        else if (attendablePlace == AttendablePlaces.gvg || attendablePlace == AttendablePlaces.invasion)
+            x = blockGvgAndInvasionUntil;
+        else if (attendablePlace == AttendablePlaces.trials || attendablePlace == AttendablePlaces.gauntlet)
+            x = blockTrialsAndGauntletUntil;
+        else
+            throw new NotSupportedException(String.format("Not supported AttendablePlace.%s", attendablePlace.name));
+        x.set(System.currentTimeMillis() + attendablePlace.procedureTicketMinutes * 60_000);
     }
 
     private ArrayList<AttendablePlace> getAttendablePlaces() {
@@ -84,7 +144,7 @@ public class AfkApp extends AbstractApplication {
 
             String menuItem = String
                     .join("\n", menuItems.stream().map(x -> String.format("  %3d. %s", x.num, x.name))
-                    .collect(Collectors.toList()));
+                            .collect(Collectors.toList()));
 
             final ArrayList<AttendablePlace> selectedOptions = new ArrayList<>();
             final Supplier<List<String>> selectedOptionsInfoProvider = () -> selectedOptions.stream().map(x -> x.name).collect(Collectors.toList());
