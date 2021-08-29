@@ -115,6 +115,8 @@ public class AfkApp extends AbstractApplication {
         final short loopSleep = 5_000;
         final short originalCheckAreYouStillThereAfter = 20_000 / loopSleep;
         short checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
+        final short originalSleepWhileWaitingResourceRegen = 5 * 60_000 / loopSleep;
+        short sleepWhileWaitingResourceRegen = 0;
 
         ML:
         while (!masterSwitch.get()) {
@@ -136,16 +138,21 @@ public class AfkApp extends AbstractApplication {
                     InteractionUtil.Keyboard.sendEnter();
                     sleep(1_000);
                     InteractionUtil.Keyboard.sendEscape();
-                    checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
-                } else {
                     checkAreYouStillThereAfter = 2;
+                } else {
+                    checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
                 }
+                continue ML;
+            }
+
+            if (sleepWhileWaitingResourceRegen > 0) {
+                sleepWhileWaitingResourceRegen--;
                 continue ML;
             }
 
             if (taskList.stream().allMatch(x -> !isNotBlocked(x._2))) {
                 info("Waiting for resource generation, sleeping %d minutes", minutesSleepWaitingResourceGeneration);
-                sleep(minutesSleepWaitingResourceGeneration * 60_000);
+                sleepWhileWaitingResourceRegen = originalSleepWhileWaitingResourceRegen;
                 continue ML;
             }
 

@@ -5,6 +5,7 @@
 
 have inspiration from https://github.com/tiemonl/Bit-Heroes-Fishing-Bot
 
+**If you like my bot, please give this repo a Star, thanks**
 ___
 [Wiki version](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
 

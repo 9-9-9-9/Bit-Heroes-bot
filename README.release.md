@@ -6,6 +6,8 @@ ___
 ## Bit Heroes bot
 ##### on Linux / Windows / ~~MacOS~~
 
+**If you like my bot, please give this repo a Star, thanks**
+
 [Wiki version](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
 
 This readme file is for normal users
