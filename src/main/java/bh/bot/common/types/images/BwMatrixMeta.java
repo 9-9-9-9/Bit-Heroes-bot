@@ -1,11 +1,15 @@
 package bh.bot.common.types.images;
 
 import bh.bot.common.Configuration;
+import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.utils.ImageUtil;
+import bh.bot.common.utils.StringUtil;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import static bh.bot.common.Log.dev;
 
 public class BwMatrixMeta {
     private final int[] firstBlackPixelOffset;
@@ -16,15 +20,36 @@ public class BwMatrixMeta {
     private final int blackPixelRgb;
     private final ImageUtil.DynamicRgb blackPixelDRgb;
     private final Configuration.Offset coordinateOffset;
-    private int[] lastMatch = new int[]{-1, -1};
+    private final int[] lastMatch = new int[]{-1, -1};
+    private final byte tolerant;
+    private final String imageNameCode;
 
-    public BwMatrixMeta(BufferedImage img, Configuration.Offset coordinateOffset, int blackPixelRgb) {
+    public BwMatrixMeta(BufferedImageInfo bii, Configuration.Offset coordinateOffset, int blackPixelRgb) {
+        String customTolerantKey = "tolerant.color.bw|" + bii.code;
+        try {
+            byte tolerant = Configuration.Tolerant.colorBw;
+            String value = Configuration.read(customTolerantKey);
+            if (StringUtil.isNotBlank(value)) {
+                tolerant = Byte.parseByte(value);
+                if (tolerant < 0)
+                    throw new InvalidDataException("Invalid value of configuration key '%s': must be a positive number", customTolerantKey);
+                if (tolerant > Configuration.Tolerant.colorBw)
+                    throw new InvalidDataException("Invalid value of configuration key '%s': must not greater than value of 'tolerant.color.bw' key (which is %d)", customTolerantKey, Configuration.Tolerant.colorBw);
+                if (tolerant != Configuration.Tolerant.colorBw)
+                    dev("Tolerant overrided to %d by key `%s`", tolerant, customTolerantKey);
+            }
+            this.tolerant = tolerant;
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Invalid format of key '%s': must be a number, valid value within range from 0 to %d", customTolerantKey, Configuration.Tolerant.colorBw);
+        }
+
         final int matrixPointColorPixelRgb = 0x000000;
         final int anyColorPixelRgb = 0xFFFFFF;
+        BufferedImage img = bii.bufferedImage;
         try {
             this.coordinateOffset = coordinateOffset;
             this.blackPixelRgb = blackPixelRgb & 0xFFFFFF;
-            this.blackPixelDRgb = new ImageUtil.DynamicRgb(this.blackPixelRgb, Configuration.Tolerant.colorBw);
+            this.blackPixelDRgb = new ImageUtil.DynamicRgb(this.blackPixelRgb, this.tolerant);
             blackPixels = new ArrayList<>();
             nonBlackPixels = new ArrayList<>();
             w = img.getWidth();
@@ -42,6 +67,8 @@ public class BwMatrixMeta {
         } finally {
             img.flush();
         }
+
+        this.imageNameCode = bii.code;
     }
 
     public int[] getFirstBlackPixelOffset() {
@@ -77,16 +104,23 @@ public class BwMatrixMeta {
     }
 
     public void setLastMatchPoint(int x, int y) {
-        lastMatch = new int[]{x, y};
+        lastMatch[0] = x;
+        lastMatch[1] = y;
     }
 
     public int[] getLastMatchPoint() {
         return lastMatch;
     }
 
+    public int getTolerant() {
+        return tolerant;
+    }
+
     public Configuration.Offset getCoordinateOffset() {
         return coordinateOffset;
     }
+
+    public String getImageNameCode() { return imageNameCode; }
 
     public static class Metas {
         public static class Globally {
@@ -96,10 +130,14 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta reconnect;
                 public static BwMatrixMeta autoG;
                 public static BwMatrixMeta autoR;
+                public static BwMatrixMeta radioButton;
+                public static BwMatrixMeta close;
             }
 
             public static class Dialogs {
+                public static BwMatrixMeta confirmQuitBattle;
                 public static BwMatrixMeta confirmStartNotFullTeam;
+                public static BwMatrixMeta areYouStillThere;
             }
         }
 
@@ -190,6 +228,12 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta town;
             }
         }
+
+        public static class Raid {
+            public static class Buttons {
+                public static BwMatrixMeta town;
+            }
+        }
     }
 
     public static void load() throws IOException {
@@ -221,11 +265,39 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetButtonAuto(),
                 0xFFFFFF
         );
+        Metas.Globally.Buttons.radioButton = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/globally.radio-button-mx.bmp"
+                ), //
+                Configuration.Offset.none(),
+                0x000000
+        );
+        Metas.Globally.Buttons.close = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/globally.close-mx.bmp"
+                ), //
+                Configuration.Offset.none(),
+                0x000000
+        );
+        Metas.Globally.Dialogs.confirmQuitBattle = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "dialogs/globally.confirm-quit-battle-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetDialogConfirmQuitBattle(),
+                0xFFFFFF
+        );
         Metas.Globally.Dialogs.confirmStartNotFullTeam = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //
                         "dialogs/globally.confirm-start-not-full-team-mx.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetDialogStartWithoutFullTeam(),
+                0xFFFFFF
+        );
+        Metas.Globally.Dialogs.areYouStillThere = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "dialogs/globally.are-you-still-there-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetDialogAreYouStillThere(),
                 0xFFFFFF
         );
         Metas.Dungeons.Buttons.rerun = new BwMatrixMeta(//
@@ -470,6 +542,15 @@ public class BwMatrixMeta {
                         "buttons/gauntlet.town-mx.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedGauntlet(),
+                0xFFFFFF
+        );
+
+        // Raid
+        Metas.Raid.Buttons.town = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/raid.town-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetButtonTownWhenDefeatedInRaid(),
                 0xFFFFFF
         );
     }

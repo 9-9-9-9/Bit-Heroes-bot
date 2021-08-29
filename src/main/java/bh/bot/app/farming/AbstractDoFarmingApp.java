@@ -1,10 +1,10 @@
-package bh.bot.app;
+package bh.bot.app.farming;
 
 import bh.bot.Main;
+import bh.bot.app.AbstractApplication;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.images.BwMatrixMeta;
-import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.ThreadUtil;
@@ -13,6 +13,7 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -24,12 +25,12 @@ import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public abstract class AbstractDoFarmingApp extends AbstractApplication {
     protected abstract String getAppShortName();
+
     protected abstract AttendablePlace getAttendablePlace();
-    protected abstract Tuple2<Boolean, Boolean> isClickedSomething();
-    protected abstract boolean isOutOfTicket();
 
     protected final AttendablePlace ap = getAttendablePlace();
     protected InteractionUtil.Screen.Game gameScreenInteractor;
+    private final java.util.List<NextAction> predefinedImageActions = new ArrayList<>();
 
     @Override
     protected void internalRun(String[] args) {
@@ -61,7 +62,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
         }
 
         final int cnt = loopCount;
-
+        this.predefinedImageActions.addAll(getInternalPredefinedImageActions());
         this.gameScreenInteractor = InteractionUtil.Screen.Game.of(this);
         AtomicBoolean masterSwitch = new AtomicBoolean(false);
         ThreadUtil.waitDone(
@@ -76,25 +77,9 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
     protected void loop(int loopCount, AtomicBoolean masterSwitch) {
         int continuousNotFound = 0;
         final Point coordinateHideMouse = new Point(0, 0);
+        ML:
         while (!masterSwitch.get() && loopCount > 0) {
             sleep(5_000);
-
-            Tuple2<Boolean, Boolean> result = isClickedSomething();
-            boolean clickedSomething = result._1;
-            if (clickedSomething) {
-                debug("isClickedSomething");
-                continuousNotFound = 0;
-
-                boolean decreaseLoopCount = result._2;
-                if (decreaseLoopCount) {
-                    loopCount--;
-                    info("%d loop left", loopCount);
-                }
-
-                moveCursor(coordinateHideMouse);
-
-                continue;
-            }
 
             if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmStartNotFullTeam)) {
                 debug("confirmStartNotFullTeam");
@@ -103,18 +88,24 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
 
                 moveCursor(coordinateHideMouse);
 
-                continue;
+                continue ML;
             }
 
-            if (isOutOfTicket()) {
-                debug("isOutOfTicket");
-                InteractionUtil.Keyboard.sendEscape();
-                masterSwitch.set(true);
-                continuousNotFound = 0;
-
-                moveCursor(coordinateHideMouse);
-
-                continue;
+            for (NextAction predefinedImageAction : predefinedImageActions) {
+                if (clickImage(predefinedImageAction.image)) {
+                    debug(predefinedImageAction.image.getImageNameCode());
+                    continuousNotFound = 0;
+                    if (predefinedImageAction.reduceLoopCountOnFound) {
+                        loopCount--;
+                        info("%d loop left", loopCount);
+                    }
+                    if (predefinedImageAction.isOutOfTurns) {
+                        InteractionUtil.Keyboard.sendEscape();
+                        masterSwitch.set(true);
+                    }
+                    moveCursor(coordinateHideMouse);
+                    continue ML;
+                }
             }
 
             debug("None");
@@ -155,5 +146,19 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
     @Override
     protected String getDescription() {
         return "Do " + getAppShortName();
+    }
+
+    protected abstract java.util.List<NextAction> getInternalPredefinedImageActions();
+
+    public static class NextAction {
+        public final BwMatrixMeta image;
+        public final boolean reduceLoopCountOnFound;
+        public final boolean isOutOfTurns;
+
+        public NextAction(BwMatrixMeta image, boolean reduceLoopCountOnFound, boolean isOutOfTurns) {
+            this.image = image;
+            this.reduceLoopCountOnFound = reduceLoopCountOnFound;
+            this.isOutOfTurns = isOutOfTurns;
+        }
     }
 }

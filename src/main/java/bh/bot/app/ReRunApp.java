@@ -58,6 +58,7 @@ public class ReRunApp extends AbstractApplication {
                 () -> doLoopClickImage(loop, masterSwitch),
                 () -> doClickTalk(masterSwitch::get),
                 () -> detectDisconnected(masterSwitch),
+                () -> detectDefeatedOnRaid(masterSwitch),
                 () -> autoReactiveAuto(masterSwitch),
                 () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch)
         );
@@ -67,24 +68,49 @@ public class ReRunApp extends AbstractApplication {
     private void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
         moveCursor(new Point(950, 100));
         long lastFound = System.currentTimeMillis();
+        boolean clickedOnPreviousRound = false;
         while (loopCount > 0 && !masterSwitch.get()) {
+            sleep(10_000);
             if (clickImage(BwMatrixMeta.Metas.Dungeons.Buttons.rerun)) {
                 loopCount--;
                 lastFound = System.currentTimeMillis();
                 info("%d loop left", loopCount);
-                sleep(10000);
+                clickedOnPreviousRound = true;
             } else {
-                debug("Not found, repeat");
-                sleep(10000);
                 if (System.currentTimeMillis() - lastFound > 900000) {
                     info("Long time no see => Stop");
                     Telegram.sendMessage("long time no see button", true);
                     break;
+                } else {
+                    debug("Not found, repeat");
+                }
+
+                if (clickedOnPreviousRound) {
+                    clickedOnPreviousRound = false;
+                    sleep(60_000);
                 }
             }
         }
 
         masterSwitch.set(true);
+    }
+
+    private void detectDefeatedOnRaid(AtomicBoolean masterSwitch) {
+        int sleepSecs = 60;
+        int cnt = sleepSecs;
+        while (!masterSwitch.get()) {
+            cnt--;
+            sleep(1000);
+            if (cnt > 0) {
+                continue;
+            }
+
+            cnt = sleepSecs;
+            if (clickImage(BwMatrixMeta.Metas.Raid.Buttons.town)) {
+                masterSwitch.set(true);
+                Telegram.sendMessage("Defeated", true);
+            }
+        }
     }
 
     @Override

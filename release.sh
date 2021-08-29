@@ -36,16 +36,16 @@ offset.screen.x=0
 offset.screen.y=57
 
 # Game tokens
-game.kong.user.id=
-game.kong.user.name=
-game.auth.token=
+1.game.kong.user.id=
+1.game.kong.user.name=
+1.game.auth.token=
 
 # Configure telegram
 telegram.token=
 telegram.channel-id=
 
 # Tolerant
-tolerant.position=50
+tolerant.position=40
 tolerant.color=0
 
 # Google Chrome path, for Windows only
@@ -65,6 +65,7 @@ cp ./invasion.sh ./release/
 cp ./trials.sh ./release/
 cp ./gvg.sh ./release/
 cp ./gauntlet.sh ./release/
+cp ./afk.sh ./release/
 
 # Copy launch scripts for Windows
 cp ./fishing.bat ./release/
@@ -76,6 +77,7 @@ cp ./invasion.bat ./release/
 cp ./trials.bat ./release/
 cp ./gvg.bat ./release/
 cp ./gauntlet.bat ./release/
+cp ./afk.bat ./release/
 
 # Copy steam scripts
 cp ./steam.*.bat ./release/

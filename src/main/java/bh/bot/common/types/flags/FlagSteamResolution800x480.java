@@ -1,5 +1,8 @@
 package bh.bot.common.types.flags;
 
+import bh.bot.common.Configuration;
+import bh.bot.common.types.Platform;
+
 public class FlagSteamResolution800x480 extends FlagPattern.NonParamFlag {
     @Override
     public String getName() {
@@ -9,5 +12,14 @@ public class FlagSteamResolution800x480 extends FlagPattern.NonParamFlag {
     @Override
     public String getDescription() {
         return "Use mode game resolution 800x480 (Bit Heroes on Steam)";
+    }
+
+    @Override
+    public boolean isSupportedOnCurrentOsPlatform() {
+        return Configuration.OS.platform == Platform.Windows;
+    }
+
+    public Platform[] getSupportedOsPlatforms() {
+        return new Platform[] { Platform.Windows };
     }
 }

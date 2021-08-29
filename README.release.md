@@ -27,6 +27,7 @@ Only support English user interface
 2. [Auto fishing](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22fishing%22)
 3. Farm  [World Boss](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22world-boss%22) / [PVP](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22pvp%22) / [Invasion](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22invasion%22) / [GVG](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22GVG%22) / [Trials](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22trials%22) / [Gauntlet](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22gauntlet%22)
 4. [Launch game in mini client using Google Chrome](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
+5. [Do stuffs while AFK](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22afk%22)
 
 [Also supports pushing messages to Telegram for notification purpose](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
 
@@ -55,8 +56,12 @@ To enable Telegram notification, [follow me](https://github.com/9-9-9-9/Bit-Hero
 *This function only supports clicking the ReRun button, that means you have to enter Dungeon/Raid manually, turn on the Auto and when the ReRun button appears, it will be automatically clicked*
 
 - Mini-client or Web:
-  - Windows: click and run `rerun.bat`
-  - Linux/Mac: run `./rerun.sh` from terminal
+  - Windows:
+    - click and run `rerun.bat`
+    - or run from command line: `java -jar BitHeroes.jar rerun <loop_count>`
+  - Linux/Mac:
+    - run `./rerun.sh` from terminal
+    - or command `java -jar BitHeroes.jar rerun <loop_count>`
 - Steam:
   - Click and run: `steam.rerun.bat`
   - Run from commandline: `java -jar BitHeroes.jar rerun <loop_count> --steam`
@@ -78,8 +83,12 @@ Notes:
 *To use this function, you the to be ready on fishing state, and the Start button is visible clearly on the screen*
 
 - Mini-client or Web:
-  - Windows: click and run `fishing.bat`
-  - Linux/Mac: run `./fishing.sh` from terminal
+  - Windows:
+    - click and run `fishing.bat`
+    - or run from command line: `java -jar BitHeroes.jar fishing <hook_count>`
+  - Linux/Mac: 
+    - run `./fishing.sh` from terminal
+    - or command `java -jar BitHeroes.jar fishing <hook_count>`
 - Steam:
   - Click and run: `steam.fishing.bat`
   - Run from commandline: `java -jar BitHeroes.jar fishing <hook_count> --steam`
@@ -105,6 +114,31 @@ Steps:
 Enjoy it
 - Windows: click and run file `mini-game-on-chrome*.bat`
 - Linux/Mac: run file `./mini` or `./mini-game-on-chrome*.sh` from terminal
+
+### AFK
+[Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22afk%22)
+
+*This function does not support select level/mode, how many badge/ticket/... to consumes and can only everything by default so please chose everything first manually then use this*
+
+- Mini-client or Web:
+  - Windows:
+    - click and run `afk.bat`
+    - or run from command line: `java -jar BitHeroes.jar afk`
+  - Linux/Mac: 
+    - run `./afk.sh` from terminal
+    - or command `java -jar BitHeroes.jar afk`
+- Not support Steam
+
+Supported flags:
+- `--pvp` do PVP
+- `--boss` do world boss
+- `--gvg` do GVG
+- `--invasion` do Invasion
+- `--trials` do Trials
+- `--gauntlet` do Gauntlet
+- `--all` do everything above
+- `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./afk.sh --exit=1800` means will stop after 1800 seconds (30m)
+- [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
 
 #### Other features
 [find out at our Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)

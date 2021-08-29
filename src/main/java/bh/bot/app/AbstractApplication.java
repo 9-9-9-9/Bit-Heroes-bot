@@ -3,12 +3,14 @@ package bh.bot.app;
 import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
+import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.flags.FlagPattern;
 import bh.bot.common.types.flags.Flags;
 import bh.bot.common.types.images.BwMatrixMeta;
+import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
 
@@ -19,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -129,9 +132,10 @@ public abstract class AbstractApplication {
         sb.append("\n  Description: ");
         sb.append(getDescription());
         sb.append("\nUsage:\n");
-        if (Configuration.OS.isWin)
-            sb.append("java -jar BitHeroes.jar");
-        else
+        if (Configuration.OS.isWin) {
+            sb.append("java -jar BitHeroes.jar ");
+            sb.append(getAppCode());
+        } else
             sb.append(getScriptName());
         String usage = getUsage();
         if (usage != null) {
@@ -149,7 +153,7 @@ public abstract class AbstractApplication {
         if (localFlags.size() > 0) {
             sb.append("\nFlags:");
             for (FlagPattern localFlag : localFlags)
-                sb.append(String.format("\n  --%s%s : %s%s", localFlag.getName(), localFlag.isAllowParam() ? "=?" : "", localFlag.isDevelopersOnly() ? "(developers only) " : "", localFlag.getDescription()));
+                sb.append(localFlag);
         }
         // Global flags:
         List<FlagPattern> globalFlags = flagPatterns.stream()
@@ -157,7 +161,7 @@ public abstract class AbstractApplication {
                 .collect(Collectors.toList());
         sb.append("\nGlobal flags:");
         for (FlagPattern globalFlag : globalFlags)
-            sb.append(String.format("\n  --%s%s : %s%s", globalFlag.getName(), globalFlag.isAllowParam() ? "=?" : "", globalFlag.isDevelopersOnly() ? "(developers only) " : "", globalFlag.getDescription()));
+            sb.append(globalFlag);
         if (!this.isSupportSteamScreenResolution())
             sb.append("\n** WARNING ** This app does not supports '--steam' flag");
         return sb.toString();
@@ -311,7 +315,7 @@ public abstract class AbstractApplication {
                 for (int x = 0; x < sc.getWidth() - im.getWidth(); x++) {
                     for (int mainColor : mainColors) {
                         final int c = mainColor & 0xFFFFFF;
-                        final ImageUtil.DynamicRgb cDRgb = new ImageUtil.DynamicRgb(c, Configuration.Tolerant.colorBw);
+                        final ImageUtil.DynamicRgb cDRgb = new ImageUtil.DynamicRgb(c, im.getTolerant());
 
                         boolean allGood = true;
 
@@ -362,6 +366,118 @@ public abstract class AbstractApplication {
 
     protected Point detectLabelFishing() {
         return detectLabel(BwMatrixMeta.Metas.Fishing.Labels.fishing, 0xFFFFFF, 0x7F7F7F);
+    }
+
+    private final byte greenMinDiff = 70;
+
+    protected Tuple2<Point[], Byte> detectRadioButtons(Rectangle scanRect) {
+        final BwMatrixMeta im = BwMatrixMeta.Metas.Globally.Buttons.radioButton;
+        int positionTolerant = Math.min(10, Configuration.Tolerant.position);
+        ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(
+                new Configuration.Offset(
+                        Math.max(0, scanRect.x - positionTolerant),
+                        Math.max(0, scanRect.y - positionTolerant)
+                ),
+                scanRect.width + positionTolerant * 2,
+                scanRect.height + positionTolerant * 2
+        );
+        BufferedImage sc = screenCapturedResult.image;
+        try {
+            saveDebugImage(sc, "detectRadioButtons");
+
+            ArrayList<Point> startingCoord = new ArrayList<>();
+            int selectedRadioButtonIndex = -1;
+            int skipAfterXIfNotFoundAny = (int) Math.floor((double) sc.getWidth() / 4 * 3);
+
+            for (int y = 0; y < sc.getHeight() - im.getHeight() && startingCoord.size() < 1; y++) {
+                for (int x = 0; x < sc.getWidth() - im.getWidth(); x++) {
+                    if (x >= skipAfterXIfNotFoundAny && startingCoord.size() == 0)
+                        break;
+
+                    final int blackPixelRgb = im.getBlackPixelRgb();
+                    ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
+
+                    boolean allGood = true;
+
+                    for (int[] px : im.getBlackPixels()) {
+                        int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
+                        if (!ImageUtil.areColorsSimilar(//
+                                blackPixelDRgb, //
+                                srcRgb, //
+                                Configuration.Tolerant.color)) {
+                            allGood = false;
+                            // debug(String.format("detectRadioButtons second match failed at %d,%d (%d,%d), %s vs %s", x + px[0], y + px[1], px[0], px[1], String.format("%06X", blackPixelRgb), String.format("%06X", srcRgb)));
+                            break;
+                        }
+                    }
+
+                    if (!allGood)
+                        continue;
+
+                    // debug("detectRadioButtons second match passed");
+                    for (int[] px : im.getNonBlackPixels()) {
+                        int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
+                        if (ImageUtil.areColorsSimilar(//
+                                blackPixelRgb, //
+                                srcRgb, //
+                                Configuration.Tolerant.color)) {
+                            allGood = false;
+                            // debug(String.format("detectRadioButtons third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
+                            break;
+                        }
+                    }
+
+                    if (!allGood)
+                        continue;
+
+                    // detect selected button index
+                    for (int[] px : im.getNonBlackPixels()) {
+                        int rgb = sc.getRGB(x + px[0], y + px[1]);
+                        int green = ImageUtil.getGreen(rgb);
+                        if (green <= greenMinDiff)
+                            continue;
+                        int red = ImageUtil.getRed(rgb);
+                        if (red > green - greenMinDiff)
+                            continue;
+                        int blue = ImageUtil.getBlue(rgb);
+                        if (blue > green - greenMinDiff)
+                            continue;
+
+                        int curRadioButtonIndex = startingCoord.size();
+                        if (selectedRadioButtonIndex < 0)
+                            selectedRadioButtonIndex = curRadioButtonIndex;
+                        else {
+                            if (selectedRadioButtonIndex != curRadioButtonIndex)
+                                throw new InvalidDataException("Found more than one selected radio button which is absolutely wrong!");
+                        }
+                        break;
+                    }
+
+                    // debug("detectRadioButtons captured at %3d,%3d with size %3dx%3d, match at %3d,%3d", screenCapturedResult.x, screenCapturedResult.y, screenCapturedResult.w, screenCapturedResult.h, x, y);
+                    // im.setLastMatchPoint(startingCoord.x, startingCoord.y);
+                    startingCoord.add(new Point(x, y));
+                }
+            }
+
+            if (selectedRadioButtonIndex < 0)
+                throw new InvalidDataException("Unable to detect index of selected radio button among %d results", startingCoord.size());
+
+            return new Tuple2<>(
+                    startingCoord
+                            .stream()
+                            .map(c ->
+                                    new Point(
+                                            screenCapturedResult.x + c.x,
+                                            screenCapturedResult.y + c.y
+                                    )
+                            )
+                            .collect(Collectors.toList())
+                            .toArray(new Point[0]),
+                    (byte) selectedRadioButtonIndex
+            );
+        } finally {
+            sc.flush();
+        }
     }
 
     protected void doClickTalk(Supplier<Boolean> shouldStop) {
@@ -472,13 +588,14 @@ public abstract class AbstractApplication {
             String input;
             while (true) {
                 info(ask);
-                if (desc != null)
-                    info("(%s)", desc);
                 if (selectedOptionsInfoProvider != null) {
                     List<String> selectedOptions = selectedOptionsInfoProvider.get();
                     if (selectedOptions.size() > 0)
                         info("Selected: %s", String.join(", ", selectedOptions));
                 }
+                if (desc != null)
+                    info("(%s)", desc);
+                info("** Notice ** Please complete the above question first, otherwise bot will be hanged here!!!");
                 input = br.readLine();
 
                 if (isBlank(input)) {

@@ -4,6 +4,7 @@ import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotImplementedException;
+import bh.bot.common.types.Platform;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple2;
@@ -30,7 +31,7 @@ public class Configuration {
     public static class Tolerant {
         public static int position;
         public static int color;
-        public static int colorBw;
+        public static byte colorBw;
     }
 
     public static class OS {
@@ -38,12 +39,60 @@ public class Configuration {
         private static final String normalizedName = name.toLowerCase();
         public static final boolean isMac = normalizedName.indexOf("mac") >= 0 || normalizedName.indexOf("darwin") >= 0;
         public static final boolean isWin = !isMac && normalizedName.indexOf("win") >= 0;
-        public static final boolean isUnix = !isMac && !isWin;
+        public static final boolean isLinux = !isMac && !isWin;
+        public static Platform platform = isWin ? Platform.Windows : isMac ? Platform.MacOS :  isLinux ? Platform.Linux : Platform.Unknown;
+    }
+
+    public static class UserConfig {
+        public static int profileNo;
+        public static byte raidLevel;
+        public static byte raidMode;
+        public static byte worldBossLevel;
+        public static byte worldBossMode;
+
+        public static final byte modeNormal = 1;
+        public static final byte modeHard = 2;
+        public static final byte modeHeroic = 3;
+
+        public static String getRaidModeDesc(byte mode) {
+            return getDifficultyModeDesc(mode, "Raid");
+        }
+
+        public static String getWorldBossModeDesc(byte mode) {
+            return getDifficultyModeDesc(mode, "Raid");
+        }
+
+        private static String getDifficultyModeDesc(byte mode, String name) {
+            if (!isValidDifficultyMode(mode))
+                return "Not specified";
+
+            switch (mode) {
+                case modeNormal:
+                    return "NORMAL";
+                case modeHard:
+                    return "HARD";
+                case modeHeroic:
+                    return "HEROIC";
+                default:
+                    throw new InvalidDataException("Invalid %s mode %d", name, mode);
+            }
+        }
+
+        public static boolean isValidDifficultyMode(byte mode) {
+            switch (mode) {
+                case modeNormal:
+                case modeHard:
+                case modeHeroic:
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 
     private static Properties properties = new Properties();
 
-    public static void load(ScreenResolutionProfile screenResolutionProfile) throws IOException {
+    public static void loadSystemConfig(ScreenResolutionProfile screenResolutionProfile) throws IOException {
         info(
                 "Using '%s' profile which supports %dx%d game resolution",
                 screenResolutionProfile.getName(),
@@ -83,7 +132,93 @@ public class Configuration {
 
         Tolerant.position = Math.max(5, readInt("tolerant.position"));
         Tolerant.color = Math.max(0, readInt("tolerant.color"));
-        Tolerant.colorBw = Math.max(0, readInt("tolerant.color.bw"));
+        Tolerant.colorBw = (byte) Math.max(0, readInt("tolerant.color.bw"));
+    }
+
+    public static void loadUserConfig(int profileNo) throws IOException {
+        if (profileNo < 1)
+            return;
+        String profileConfigFileName = getProfileConfigFileName(profileNo);
+        final File fileCfg = new File(profileConfigFileName);
+        if (!fileCfg.exists() || !fileCfg.isFile()) {
+            debug("Unable to load user config for profile no.%d, reason: file '%s' not found", profileNo, profileConfigFileName);
+            return;
+        }
+
+        if (profileNo > 1)
+            info("Going to load configuration from %s", fileCfg.getName());
+
+        Properties properties = new Properties();
+        try (InputStream inputStream = new FileInputStream(fileCfg)) {
+            properties.load(inputStream);
+        }
+
+        UserConfig.profileNo = profileNo;
+
+        String raidLevelKey = "ig.user.raid.level";
+        String raidLevel = readKey(properties, raidLevelKey, "0", "Not specified");
+        try {
+            UserConfig.raidLevel = Byte.parseByte(raidLevel);
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Value of key '%s' is not a number", raidLevelKey);
+        }
+
+        String raidModeKey = "ig.user.raid.mode";
+        String raidMode = readKey(properties, raidModeKey, "0", "Not specified");
+        try {
+            UserConfig.raidMode = Byte.parseByte(raidMode);
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Value of key '%s' is not a number", raidModeKey);
+        }
+
+        String worldBossLevelKey = "ig.user.world-boss.level";
+        String worldBossLevel = readKey(properties, worldBossLevelKey, "0", "Not specified");
+        try {
+            UserConfig.worldBossLevel = Byte.parseByte(worldBossLevel);
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Value of key '%s' is not a number", worldBossLevelKey);
+        }
+
+        String worldBossModeKey = "ig.user.world-boss.mode";
+        String worldBossMode = readKey(properties, worldBossModeKey, "0", "Not specified");
+        try {
+            UserConfig.worldBossMode = Byte.parseByte(worldBossMode);
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Value of key '%s' is not a number", worldBossModeKey);
+        }
+
+        if (UserConfig.raidLevel > 0)
+            info("Profile %d has configured Raid level = %d", profileNo, UserConfig.raidLevel);
+        else
+            info("Profile %d hasn't configured Raid level", profileNo);
+
+        if (UserConfig.isValidDifficultyMode(UserConfig.raidMode))
+            info("Profile %d has configured Raid mode = %d (%s)", profileNo, UserConfig.raidMode, UserConfig.getRaidModeDesc(UserConfig.raidMode));
+        else
+            info("Profile %d hasn't configured Raid mode", profileNo);
+
+        if (UserConfig.worldBossLevel > 0)
+            info("Profile %d has configured World Boss level = %d", profileNo, UserConfig.worldBossLevel);
+        else
+            info("Profile %d hasn't configured World Boss level", profileNo);
+
+        if (UserConfig.isValidDifficultyMode(UserConfig.worldBossMode))
+            info("Profile %d has configured World Boss mode = %d (%s)", profileNo, UserConfig.worldBossMode, UserConfig.getWorldBossModeDesc(UserConfig.worldBossMode));
+        else
+            info("Profile %d hasn't configured World Boss mode", profileNo);
+    }
+
+    private static String readKey(Properties properties, String key, String defaultValue, String defaultValueDesc) {
+        String value = properties.getProperty(key);
+        if (isBlank(value)) {
+            info("Key '%s' does not exists, default value '%s' will be used (%s)", key, defaultValue, defaultValueDesc);
+            return defaultValue;
+        }
+        return value;
+    }
+
+    public static String getProfileConfigFileName(int profileNo) {
+        return String.format("readonly.%d.user-config.properties", profileNo);
     }
 
     private static final ArrayList<Tuple2<Class<? extends AbstractApplication>, String>> applicationClassesInfo = new ArrayList<>();
@@ -150,6 +285,10 @@ public class Configuration {
             if (y < 0)
                 throw new IllegalArgumentException(String.format("Value of offset %s.y can not be a negative number: %d", keyPrefix, y));
             return new Offset(x, y);
+        }
+
+        public static Offset none() {
+            return new Offset(-1, -1);
         }
     }
 

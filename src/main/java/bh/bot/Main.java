@@ -4,11 +4,13 @@ import bh.bot.app.*;
 import bh.bot.app.dev.ExtractMatrixApp;
 import bh.bot.app.dev.ScreenCaptureApp;
 import bh.bot.app.dev.TestApp;
+import bh.bot.app.farming.*;
 import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotImplementedException;
+import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.flags.*;
@@ -32,7 +34,7 @@ public class Main {
                     ReRunApp.class,
                     FishingApp.class,
                     AfkApp.class,
-                    WorldBoss.class,
+                    WorldBossApp.class,
                     PvpApp.class,
                     InvasionApp.class,
                     TrialsApp.class,
@@ -55,7 +57,8 @@ public class Main {
             if (parseArgumentsResult.disableTelegramNoti)
                 Telegram.disable();
 
-            Configuration.load(parseArgumentsResult.screenResolutionProfile);
+            Configuration.loadSystemConfig(parseArgumentsResult.screenResolutionProfile);
+            Configuration.loadUserConfig(parseArgumentsResult.profileNumber);
             InteractionUtil.init();
 
             Constructor<?> cons = parseArgumentsResult.applicationClass.getConstructors()[0];
@@ -97,6 +100,7 @@ public class Main {
 
         ArrayList<FlagPattern> usingFlagPatterns = new ArrayList<>();
 
+        // Check flags
         for (String rawFlag : rawFlags) {
             boolean isAFlagPattern = false;
             for (FlagPattern flagPattern : flagPatterns) {
@@ -110,13 +114,20 @@ public class Main {
                 throw new InvalidFlagException(String.format("Flag '%s' can not be recognized", rawFlag));
         }
 
+        // Parse param
         int exitAfter = 0;
+        int profileNumber = -1;
         for (FlagPattern flagPattern : usingFlagPatterns) {
             if (!flagPattern.isAllowParam())
                 continue;
 
             if (flagPattern instanceof FlagExitAfterAmountOfSeconds) {
                 exitAfter = ((FlagExitAfterAmountOfSeconds) flagPattern).parseParams().get(0);
+                continue;
+            }
+
+            if (flagPattern instanceof FlagProfileNo) {
+                profileNumber = ((FlagProfileNo) flagPattern).parseParams().get(0);
                 continue;
             }
 
@@ -128,6 +139,11 @@ public class Main {
             int m = (exitAfter - h * 3600) / 60;
             info("Application will exit after %d hours and %d minutes", h, m);
         }
+
+        // Validate flags
+        for (FlagPattern flagPattern : usingFlagPatterns)
+            if (!flagPattern.isSupportedOnCurrentOsPlatform())
+                throw new NotSupportedException(String.format("Flag '--%s' is not supported on %s", flagPattern.getName(), Configuration.OS.name));
 
         ScreenResolutionProfile screenResolutionProfile;
         boolean is800x480Resolution = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSteamResolution800x480);
@@ -166,6 +182,7 @@ public class Main {
         li.enableDebugMessages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShowDebugMessages);
         li.disableTelegramNoti = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagMuteNoti);
         li.screenResolutionProfile = screenResolutionProfile;
+        li.profileNumber = profileNumber;
         li.hasFlagAll = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagAll);
         // events
         li.eWorldBoss = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);
@@ -183,5 +200,6 @@ public class Main {
     public static final int EXIT_CODE_EXTERNAL_REASON = 7;
     public static final int EXIT_CODE_INVALID_FLAG = 8;
     public static final int EXIT_CODE_UNABLE_DETECTING_FISHING_ANCHOR = 9;
+    public static final int EXIT_CODE_INCORRECT_PROFILE_NUMBER = 10;
     public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }
