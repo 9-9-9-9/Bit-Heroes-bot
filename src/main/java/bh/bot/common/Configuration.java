@@ -51,6 +51,9 @@ public class Configuration {
         public static final byte modeHeroic = 3;
 
         public static String getRaidModeDesc(byte mode) {
+            if (!isValidRaidMode(mode))
+                return "Not specified";
+
             switch (mode) {
                 case modeNormal:
                     return "NORMAL";
@@ -59,7 +62,18 @@ public class Configuration {
                 case modeHeroic:
                     return "HEROIC";
                 default:
-                    return "Not specified";
+                    throw new InvalidDataException("Invalid raid mode %d", mode);
+            }
+        }
+
+        public static boolean isValidRaidMode(byte mode) {
+            switch (mode) {
+                case modeNormal:
+                case modeHard:
+                case modeHeroic:
+                    return true;
+                default:
+                    return false;
             }
         }
     }
@@ -145,8 +159,14 @@ public class Configuration {
             throw new InvalidDataException("Value of key '%s' is not a number", raidModeKey);
         }
 
-        info("Profile %d has configured raid level = %d", profileNo, UserConfig.raidLevel);
-        info("Profile %d has configured raid mode = %d (%s)", profileNo, UserConfig.raidMode, UserConfig.getRaidModeDesc(UserConfig.raidMode));
+        if (UserConfig.raidLevel > 0)
+            info("Profile %d has configured raid level = %d", profileNo, UserConfig.raidLevel);
+        else
+            info("Profile %d hasn't configured raid level", profileNo);
+        if (UserConfig.isValidRaidMode(UserConfig.raidMode))
+            info("Profile %d has configured raid mode = %d (%s)", profileNo, UserConfig.raidMode, UserConfig.getRaidModeDesc(UserConfig.raidMode));
+        else
+            info("Profile %d hasn't configured raid mode", profileNo);
     }
 
     private static String readKey(Properties properties, String key, String defaultValue, String defaultValueDesc) {
