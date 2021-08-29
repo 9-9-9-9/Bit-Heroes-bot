@@ -56,8 +56,12 @@ To enable Telegram notification, [follow me](https://github.com/9-9-9-9/Bit-Hero
 *This function only supports clicking the ReRun button, that means you have to enter Dungeon/Raid manually, turn on the Auto and when the ReRun button appears, it will be automatically clicked*
 
 - Mini-client or Web:
-  - Windows: click and run `rerun.bat`
-  - Linux/Mac: run `./rerun.sh` from terminal
+  - Windows:
+    - click and run `rerun.bat`
+    - or run from command line: `java -jar BitHeroes.jar rerun <loop_count>`
+  - Linux/Mac:
+    - run `./rerun.sh` from terminal
+    - or command `java -jar BitHeroes.jar rerun <loop_count>`
 - Steam:
   - Click and run: `steam.rerun.bat`
   - Run from commandline: `java -jar BitHeroes.jar rerun <loop_count> --steam`
@@ -79,8 +83,12 @@ Notes:
 *To use this function, you the to be ready on fishing state, and the Start button is visible clearly on the screen*
 
 - Mini-client or Web:
-  - Windows: click and run `fishing.bat`
-  - Linux/Mac: run `./fishing.sh` from terminal
+  - Windows:
+    - click and run `fishing.bat`
+    - or run from command line: `java -jar BitHeroes.jar fishing <hook_count>`
+  - Linux/Mac: 
+    - run `./fishing.sh` from terminal
+    - or command `java -jar BitHeroes.jar fishing <hook_count>`
 - Steam:
   - Click and run: `steam.fishing.bat`
   - Run from commandline: `java -jar BitHeroes.jar fishing <hook_count> --steam`
@@ -108,16 +116,18 @@ Enjoy it
 - Linux/Mac: run file `./mini` or `./mini-game-on-chrome*.sh` from terminal
 
 ### AFK
-
 [Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22afk%22)
 
 *This function does not support select level/mode, how many badge/ticket/... to consumes and can only everything by default so please chose everything first manually then use this*
 
 - Mini-client or Web:
-  - Windows: click and run `afk.bat`
-  - Linux/Mac: run `./afk.sh` from terminal
-- Steam:
-  (not supported)
+  - Windows:
+    - click and run `afk.bat`
+    - or run from command line: `java -jar BitHeroes.jar afk`
+  - Linux/Mac: 
+    - run `./afk.sh` from terminal
+    - or command `java -jar BitHeroes.jar afk`
+- Not support Steam
 
 Supported flags:
 - `--pvp` do PVP
