@@ -120,6 +120,8 @@ public class BwMatrixMeta {
         return coordinateOffset;
     }
 
+    public String getImageNameCode() { return imageNameCode; }
+
     public static class Metas {
         public static class Globally {
             public static class Buttons {

@@ -1,10 +1,13 @@
-package bh.bot.app;
+package bh.bot.app.farming;
 
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static bh.bot.common.Log.debug;
 
@@ -43,6 +46,21 @@ public class GvgApp extends InvasionApp {
         }
 
         return new Tuple2<>(false, false);
+    }
+
+    @Override
+    protected List<NextAction> getInternalPredefinedImageActions() {
+        return GvgApp.getPredefinedImageActions();
+    }
+
+    public static List<NextAction> getPredefinedImageActions() {
+        return Arrays.asList(
+                new NextAction(BwMatrixMeta.Metas.Gvg.Buttons.play, false, false),
+                new NextAction(BwMatrixMeta.Metas.Gvg.Buttons.fight, false, false),
+                new NextAction(BwMatrixMeta.Metas.Gvg.Buttons.accept, false, false),
+                new NextAction(BwMatrixMeta.Metas.Gvg.Buttons.town, true, false),
+                new NextAction(BwMatrixMeta.Metas.Invasion.Dialogs.notEnoughBadges, false, true)
+        );
     }
 
     @Override

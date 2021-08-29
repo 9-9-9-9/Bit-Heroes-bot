@@ -1,6 +1,7 @@
 package bh.bot.common.types.flags;
 
 import bh.bot.app.*;
+import bh.bot.app.farming.AbstractDoFarmingApp;
 import bh.bot.common.exceptions.InvalidFlagException;
 
 public class FlagExitAfterAmountOfSeconds extends FlagPattern<Integer> {

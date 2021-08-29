@@ -4,6 +4,7 @@ import bh.bot.app.*;
 import bh.bot.app.dev.ExtractMatrixApp;
 import bh.bot.app.dev.ScreenCaptureApp;
 import bh.bot.app.dev.TestApp;
+import bh.bot.app.farming.*;
 import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;

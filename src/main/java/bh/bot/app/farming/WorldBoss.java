@@ -1,10 +1,13 @@
-package bh.bot.app;
+package bh.bot.app.farming;
 
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static bh.bot.common.Log.debug;
 
@@ -58,6 +61,24 @@ public class WorldBoss extends AbstractDoFarmingApp {
     @Override
     protected boolean isOutOfTicket() {
         return clickImage(BwMatrixMeta.Metas.WorldBoss.Dialogs.notEnoughXeals);
+    }
+
+
+    @Override
+    protected List<NextAction> getInternalPredefinedImageActions() {
+        return WorldBoss.getPredefinedImageActions();
+    }
+
+    public static List<NextAction> getPredefinedImageActions() {
+        return Arrays.asList(
+                new NextAction(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingPartiesWorldBoss, false, false),
+                new NextAction(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses, false, false),
+                new NextAction(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnSelectingWorldBossTierAndAndDifficulty, false, false),
+                new NextAction(BwMatrixMeta.Metas.WorldBoss.Buttons.startBoss, false, false),
+                new NextAction(BwMatrixMeta.Metas.WorldBoss.Buttons.regroup, true, false),
+                new NextAction(BwMatrixMeta.Metas.WorldBoss.Buttons.regroupOnDefeated, true, false),
+                new NextAction(BwMatrixMeta.Metas.WorldBoss.Dialogs.notEnoughXeals, false, true)
+        );
     }
 
     @Override
