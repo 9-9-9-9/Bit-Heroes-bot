@@ -371,22 +371,27 @@ public abstract class AbstractApplication {
 
     protected Tuple2<Point[], Byte> detectRadioButtons(BwMatrixMeta im, Rectangle scanRect) {
         int positionTolerant = Math.min(10, Configuration.Tolerant.position);
-
-        int xS = Math.max(0, scanRect.x - positionTolerant);
-        int yS = Math.max(0, scanRect.y - positionTolerant);
-        int wS = scanRect.width + positionTolerant * 2;
-        int hS = scanRect.height + positionTolerant * 2;
-
-        ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(new Configuration.Offset(xS, yS), wS, hS);
+        ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(
+                new Configuration.Offset(
+                        Math.max(0, scanRect.x - positionTolerant),
+                        Math.max(0, scanRect.y - positionTolerant)
+                ),
+                scanRect.width + positionTolerant * 2,
+                scanRect.height + positionTolerant * 2
+        );
         BufferedImage sc = screenCapturedResult.image;
         try {
             saveDebugImage(sc, "detectRadioButtons");
 
             ArrayList<Point> startingCoord = new ArrayList<>();
             int selectedRadioButtonIndex = -1;
+            int skipAfterXIfNotFoundAny = (int)Math.floor((double) sc.getWidth() / 4 * 3);
 
-            for (int y = 0; y < sc.getHeight() - im.getHeight(); y++) {
+            for (int y = 0; y < sc.getHeight() - im.getHeight() && startingCoord.size() < 1; y++) {
                 for (int x = 0; x < sc.getWidth() - im.getWidth(); x++) {
+                    if (x >= skipAfterXIfNotFoundAny && startingCoord.size() == 0)
+                        break;
+
                     final int blackPixelRgb = im.getBlackPixelRgb();
                     ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
 
