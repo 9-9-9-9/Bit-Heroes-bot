@@ -276,8 +276,8 @@ public class AfkApp extends AbstractApplication {
                 AttendablePlaces.gauntlet,
 
                 AttendablePlaces.pvp,
-                AttendablePlaces.worldBoss,
-                AttendablePlaces.raid
+                AttendablePlaces.worldBoss
+                // TODO RAID AttendablePlaces.raid
         );
         if (argumentInfo.hasFlagAll)
             eventList.addAll(allAttendablePlaces);
@@ -299,12 +299,12 @@ public class AfkApp extends AbstractApplication {
             final List<MenuItem> menuItems = Stream.concat(
                     allAttendablePlaces.stream().map(x -> MenuItem.from(x)),
                     Arrays.asList(
-                            MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.invasion, AttendablePlaces.trials),
-                            MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg, AttendablePlaces.gauntlet),
-                            MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss),
+                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss),
                             MenuItem.from(AttendablePlaces.invasion, AttendablePlaces.trials),
                             MenuItem.from(AttendablePlaces.gvg, AttendablePlaces.gauntlet),
-                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg, AttendablePlaces.gauntlet, AttendablePlaces.invasion, AttendablePlaces.trials)
+                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg, AttendablePlaces.gauntlet, AttendablePlaces.invasion, AttendablePlaces.trials),
+                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.invasion, AttendablePlaces.trials),
+                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg, AttendablePlaces.gauntlet)
                     ).stream()
             ).collect(Collectors.toList());
 
@@ -389,12 +389,12 @@ public class AfkApp extends AbstractApplication {
 
     @Override
     protected String getDescription() {
-        return "Burns your turns while you are AFK";
+        return "It helps you AFK by automatically consume PVP/World Boss/GVG/Invasion/Trials/Gauntlet turns";
     }
 
     @Override
     protected String getLimitationExplain() {
-        return null;
+        return "This function does not support select level/mode, how many badge/ticket/... to consumes and can only everything by default so please chose everything first manually then use this";
     }
 
     private List<AbstractDoFarmingApp.NextAction> getPredefinedImageActionsOfRaid() {

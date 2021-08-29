@@ -65,6 +65,7 @@ cp ./invasion.sh ./release/
 cp ./trials.sh ./release/
 cp ./gvg.sh ./release/
 cp ./gauntlet.sh ./release/
+cp ./afk.sh ./release/
 
 # Copy launch scripts for Windows
 cp ./fishing.bat ./release/
@@ -76,6 +77,7 @@ cp ./invasion.bat ./release/
 cp ./trials.bat ./release/
 cp ./gvg.bat ./release/
 cp ./gauntlet.bat ./release/
+cp ./afk.bat ./release/
 
 # Copy steam scripts
 cp ./steam.*.bat ./release/

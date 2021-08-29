@@ -27,6 +27,7 @@ Only support English user interface
 2. [Auto fishing](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22fishing%22)
 3. Farm  [World Boss](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22world-boss%22) / [PVP](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22pvp%22) / [Invasion](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22invasion%22) / [GVG](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22GVG%22) / [Trials](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22trials%22) / [Gauntlet](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22gauntlet%22)
 4. [Launch game in mini client using Google Chrome](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
+5. [Do stuffs while AFK](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22afk%22)
 
 And some extra functions support developers on developing this bot:
 - Matrix: read an image, keep only pixels which has color (eg. FF0000 is red) as the same as input. Used to produce picture for BwMatrixMeta objects
@@ -107,6 +108,30 @@ Arguments:
 
 Supported flags:
 - `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./fishing.sh 20 --exit=1800` means will stop fishing after fishing 20 times or after 1800 seconds (30m), depends which condition completed first
+- [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
+
+### AFK
+For: everyone
+
+[Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22afk%22)
+
+*This function does not support select level/mode, how many badge/ticket/... to consumes and can only everything by default so please chose everything first manually then use this*
+
+- Mini-client or Web:
+  - Windows: click and run `afk.bat`
+  - Linux/Mac: run `./afk.sh` from terminal
+- Steam:
+  (not supported)
+
+Supported flags:
+- `--pvp` do PVP
+- `--boss` do world boss
+- `--gvg` do GVG
+- `--invasion` do Invasion
+- `--trials` do Trials
+- `--gauntlet` do Gauntlet
+- `--all` do everything above
+- `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./afk.sh --exit=1800` means will stop after 1800 seconds (30m)
 - [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
 
 ### Mini client using Google Chrome

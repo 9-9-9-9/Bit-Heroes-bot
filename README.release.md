@@ -27,6 +27,7 @@ Only support English user interface
 2. [Auto fishing](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22fishing%22)
 3. Farm  [World Boss](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22world-boss%22) / [PVP](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22pvp%22) / [Invasion](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22invasion%22) / [GVG](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22GVG%22) / [Trials](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22trials%22) / [Gauntlet](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22gauntlet%22)
 4. [Launch game in mini client using Google Chrome](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
+5. [Do stuffs while AFK](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22afk%22)
 
 [Also supports pushing messages to Telegram for notification purpose](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
 
@@ -105,6 +106,29 @@ Steps:
 Enjoy it
 - Windows: click and run file `mini-game-on-chrome*.bat`
 - Linux/Mac: run file `./mini` or `./mini-game-on-chrome*.sh` from terminal
+
+### AFK
+
+[Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22afk%22)
+
+*This function does not support select level/mode, how many badge/ticket/... to consumes and can only everything by default so please chose everything first manually then use this*
+
+- Mini-client or Web:
+  - Windows: click and run `afk.bat`
+  - Linux/Mac: run `./afk.sh` from terminal
+- Steam:
+  (not supported)
+
+Supported flags:
+- `--pvp` do PVP
+- `--boss` do world boss
+- `--gvg` do GVG
+- `--invasion` do Invasion
+- `--trials` do Trials
+- `--gauntlet` do Gauntlet
+- `--all` do everything above
+- `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./afk.sh --exit=1800` means will stop after 1800 seconds (30m)
+- [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
 
 #### Other features
 [find out at our Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
