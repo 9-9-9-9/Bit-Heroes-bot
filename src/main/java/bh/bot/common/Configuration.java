@@ -47,13 +47,23 @@ public class Configuration {
         public static int profileNo;
         public static byte raidLevel;
         public static byte raidMode;
+        public static byte worldBossLevel;
+        public static byte worldBossMode;
 
         public static final byte modeNormal = 1;
         public static final byte modeHard = 2;
         public static final byte modeHeroic = 3;
 
         public static String getRaidModeDesc(byte mode) {
-            if (!isValidRaidMode(mode))
+            return getDifficultyModeDesc(mode, "Raid");
+        }
+
+        public static String getWorldBossModeDesc(byte mode) {
+            return getDifficultyModeDesc(mode, "Raid");
+        }
+
+        private static String getDifficultyModeDesc(byte mode, String name) {
+            if (!isValidDifficultyMode(mode))
                 return "Not specified";
 
             switch (mode) {
@@ -64,11 +74,11 @@ public class Configuration {
                 case modeHeroic:
                     return "HEROIC";
                 default:
-                    throw new InvalidDataException("Invalid raid mode %d", mode);
+                    throw new InvalidDataException("Invalid %s mode %d", name, mode);
             }
         }
 
-        public static boolean isValidRaidMode(byte mode) {
+        public static boolean isValidDifficultyMode(byte mode) {
             switch (mode) {
                 case modeNormal:
                 case modeHard:
@@ -161,14 +171,41 @@ public class Configuration {
             throw new InvalidDataException("Value of key '%s' is not a number", raidModeKey);
         }
 
+        String worldBossLevelKey = "ig.user.world-boss.level";
+        String worldBossLevel = readKey(properties, worldBossLevelKey, "0", "Not specified");
+        try {
+            UserConfig.worldBossLevel = Byte.parseByte(worldBossLevel);
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Value of key '%s' is not a number", worldBossLevelKey);
+        }
+
+        String worldBossModeKey = "ig.user.world-boss.mode";
+        String worldBossMode = readKey(properties, worldBossModeKey, "0", "Not specified");
+        try {
+            UserConfig.worldBossMode = Byte.parseByte(worldBossMode);
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Value of key '%s' is not a number", worldBossModeKey);
+        }
+
         if (UserConfig.raidLevel > 0)
-            info("Profile %d has configured raid level = %d", profileNo, UserConfig.raidLevel);
+            info("Profile %d has configured Raid level = %d", profileNo, UserConfig.raidLevel);
         else
-            info("Profile %d hasn't configured raid level", profileNo);
-        if (UserConfig.isValidRaidMode(UserConfig.raidMode))
-            info("Profile %d has configured raid mode = %d (%s)", profileNo, UserConfig.raidMode, UserConfig.getRaidModeDesc(UserConfig.raidMode));
+            info("Profile %d hasn't configured Raid level", profileNo);
+
+        if (UserConfig.isValidDifficultyMode(UserConfig.raidMode))
+            info("Profile %d has configured Raid mode = %d (%s)", profileNo, UserConfig.raidMode, UserConfig.getRaidModeDesc(UserConfig.raidMode));
         else
-            info("Profile %d hasn't configured raid mode", profileNo);
+            info("Profile %d hasn't configured Raid mode", profileNo);
+
+        if (UserConfig.worldBossLevel > 0)
+            info("Profile %d has configured World Boss level = %d", profileNo, UserConfig.worldBossLevel);
+        else
+            info("Profile %d hasn't configured World Boss level", profileNo);
+
+        if (UserConfig.isValidDifficultyMode(UserConfig.worldBossMode))
+            info("Profile %d has configured World Boss mode = %d (%s)", profileNo, UserConfig.worldBossMode, UserConfig.getWorldBossModeDesc(UserConfig.worldBossMode));
+        else
+            info("Profile %d hasn't configured World Boss mode", profileNo);
     }
 
     private static String readKey(Properties properties, String key, String defaultValue, String defaultValueDesc) {

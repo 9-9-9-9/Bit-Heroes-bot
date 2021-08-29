@@ -595,6 +595,7 @@ public abstract class AbstractApplication {
                 }
                 if (desc != null)
                     info("(%s)", desc);
+                info("** Notice ** Please complete the above question first, otherwise bot will be hanged here!!!");
                 input = br.readLine();
 
                 if (isBlank(input)) {
