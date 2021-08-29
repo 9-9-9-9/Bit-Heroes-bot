@@ -4,8 +4,11 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.exceptions.NotSupportedException;
+import bh.bot.common.types.Platform;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public abstract class FlagPattern<T> {
     private final ArrayList<String> rawFlags = new ArrayList<>();
@@ -99,6 +102,17 @@ public abstract class FlagPattern<T> {
     public abstract String getDescription();
     public boolean isSupportedOnCurrentOsPlatform() {
         return true;
+    }
+    public Platform[] getSupportedOsPlatforms() {
+        return new Platform[] { Platform.Linux, Platform.Windows, Platform.MacOS };
+    }
+
+    @Override
+    public String toString() {
+        String text = String.format("\n  --%s%s : %s%s", getName(), isAllowParam() ? "=?" : "", isDevelopersOnly() ? "(developers only) " : "", getDescription());
+        if (!isSupportedOnCurrentOsPlatform())
+            text += ". Only supports " + String.join(", ", Arrays.asList(getSupportedOsPlatforms()).stream().map(x -> x.toString()).collect(Collectors.toList()));
+        return text;
     }
 
     public static abstract class NonParamFlag extends FlagPattern<Void> {

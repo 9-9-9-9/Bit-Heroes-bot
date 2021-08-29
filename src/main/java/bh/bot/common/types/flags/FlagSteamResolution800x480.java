@@ -18,4 +18,8 @@ public class FlagSteamResolution800x480 extends FlagPattern.NonParamFlag {
     public boolean isSupportedOnCurrentOsPlatform() {
         return Configuration.OS.platform == Platform.Windows;
     }
+
+    public Platform[] getSupportedOsPlatforms() {
+        return new Platform[] { Platform.Windows };
+    }
 }

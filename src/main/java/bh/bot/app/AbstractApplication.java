@@ -152,7 +152,7 @@ public abstract class AbstractApplication {
         if (localFlags.size() > 0) {
             sb.append("\nFlags:");
             for (FlagPattern localFlag : localFlags)
-                sb.append(String.format("\n  --%s%s : %s%s", localFlag.getName(), localFlag.isAllowParam() ? "=?" : "", localFlag.isDevelopersOnly() ? "(developers only) " : "", localFlag.getDescription()));
+                sb.append(localFlag);
         }
         // Global flags:
         List<FlagPattern> globalFlags = flagPatterns.stream()
@@ -160,7 +160,7 @@ public abstract class AbstractApplication {
                 .collect(Collectors.toList());
         sb.append("\nGlobal flags:");
         for (FlagPattern globalFlag : globalFlags)
-            sb.append(String.format("\n  --%s%s : %s%s", globalFlag.getName(), globalFlag.isAllowParam() ? "=?" : "", globalFlag.isDevelopersOnly() ? "(developers only) " : "", globalFlag.getDescription()));
+            sb.append(globalFlag);
         if (!this.isSupportSteamScreenResolution())
             sb.append("\n** WARNING ** This app does not supports '--steam' flag");
         return sb.toString();
@@ -385,7 +385,7 @@ public abstract class AbstractApplication {
 
             ArrayList<Point> startingCoord = new ArrayList<>();
             int selectedRadioButtonIndex = -1;
-            int skipAfterXIfNotFoundAny = (int)Math.floor((double) sc.getWidth() / 4 * 3);
+            int skipAfterXIfNotFoundAny = (int) Math.floor((double) sc.getWidth() / 4 * 3);
 
             for (int y = 0; y < sc.getHeight() - im.getHeight() && startingCoord.size() < 1; y++) {
                 for (int x = 0; x < sc.getWidth() - im.getWidth(); x++) {
