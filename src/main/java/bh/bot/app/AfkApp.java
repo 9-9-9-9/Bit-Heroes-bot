@@ -85,7 +85,7 @@ public class AfkApp extends AbstractApplication {
         }
     }
 
-    private void blockMinutes(AttendablePlace attendablePlace) {
+    private void tempBlock(AttendablePlace attendablePlace) {
         AtomicLong x;
         if (attendablePlace == AttendablePlaces.pvp)
             x = blockPvpUntil;

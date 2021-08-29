@@ -9,7 +9,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.dev;
 
 public class BwMatrixMeta {
@@ -23,6 +22,7 @@ public class BwMatrixMeta {
     private final Configuration.Offset coordinateOffset;
     private final int[] lastMatch = new int[]{-1, -1};
     private final byte tolerant;
+    private final String imageNameCode;
 
     public BwMatrixMeta(BufferedImageInfo bii, Configuration.Offset coordinateOffset, int blackPixelRgb) {
         String customTolerantKey = "tolerant.color.bw|" + bii.code;
@@ -67,6 +67,8 @@ public class BwMatrixMeta {
         } finally {
             img.flush();
         }
+
+        this.imageNameCode = bii.code;
     }
 
     public int[] getFirstBlackPixelOffset() {

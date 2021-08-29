@@ -368,6 +368,7 @@ public abstract class AbstractApplication {
     }
 
     private final byte greenMinDiff = 70;
+
     protected Tuple2<Point[], Byte> detectRadioButtons(BwMatrixMeta im, Rectangle scanRect) {
         int positionTolerant = Math.min(10, Configuration.Tolerant.position);
 
@@ -438,8 +439,7 @@ public abstract class AbstractApplication {
                         int curRadioButtonIndex = startingCoord.size();
                         if (selectedRadioButtonIndex < 0)
                             selectedRadioButtonIndex = curRadioButtonIndex;
-                        else
-                        {
+                        else {
                             if (selectedRadioButtonIndex != curRadioButtonIndex)
                                 throw new InvalidDataException("Found more than one selected radio button which is absolutely wrong!");
                         }
