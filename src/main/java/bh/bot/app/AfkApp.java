@@ -112,10 +112,13 @@ public class AfkApp extends AbstractApplication {
         AttendablePlace toBeRemoved = null;
 
         final byte minutesSleepWaitingResourceGeneration = 5;
+        final short loopSleep = 5_000;
+        final short originalCheckAreYouStillThereAfter = 20_000 / loopSleep;
+        short checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
 
         ML:
         while (!masterSwitch.get()) {
-            sleep(5_000);
+            sleep(loopSleep);
 
             if (toBeRemoved != null) {
                 final AttendablePlace target = toBeRemoved;
@@ -124,6 +127,19 @@ public class AfkApp extends AbstractApplication {
                     debug("Removed %s from taskList", target.name);
                     continue ML;
                 }
+            }
+
+            if (--checkAreYouStillThereAfter <= 0) {
+
+                if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouStillThere)) {
+                    InteractionUtil.Keyboard.sendEnter();
+                    sleep(1000);
+                    InteractionUtil.Keyboard.sendEscape();
+                    checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
+                } else {
+                    checkAreYouStillThereAfter = 2;
+                }
+                continue ML;
             }
 
             if (taskList.stream().allMatch(x -> !isNotBlocked(x._2))) {

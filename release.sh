@@ -45,7 +45,7 @@ telegram.token=
 telegram.channel-id=
 
 # Tolerant
-tolerant.position=50
+tolerant.position=40
 tolerant.color=0
 
 # Google Chrome path, for Windows only

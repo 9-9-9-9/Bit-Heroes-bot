@@ -137,6 +137,7 @@ public class BwMatrixMeta {
             public static class Dialogs {
                 public static BwMatrixMeta confirmQuitBattle;
                 public static BwMatrixMeta confirmStartNotFullTeam;
+                public static BwMatrixMeta areYouStillThere;
             }
         }
 
@@ -290,6 +291,13 @@ public class BwMatrixMeta {
                         "dialogs/globally.confirm-start-not-full-team-mx.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetDialogStartWithoutFullTeam(),
+                0xFFFFFF
+        );
+        Metas.Globally.Dialogs.areYouStillThere = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "dialogs/globally.are-you-still-there-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetDialogAreYouStillThere(),
                 0xFFFFFF
         );
         Metas.Dungeons.Buttons.rerun = new BwMatrixMeta(//

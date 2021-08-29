@@ -50,6 +50,8 @@ public abstract class ScreenResolutionProfile {
 
     public abstract Offset getOffsetDialogStartWithoutFullTeam();
 
+    public abstract Offset getOffsetDialogAreYouStillThere();
+
     public abstract Offset getOffsetButtonRegroupWorldBoss();
 
     public abstract Offset getOffsetButtonRegroupAfterDefeatByWorldBoss();
@@ -210,6 +212,11 @@ public abstract class ScreenResolutionProfile {
         @Override
         public Offset getOffsetDialogStartWithoutFullTeam() {
             return new Offset(279, 221);
+        }
+
+        @Override
+        public Offset getOffsetDialogAreYouStillThere() {
+            return new Offset(314, 242);
         }
 
         @Override
@@ -452,6 +459,11 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetDialogStartWithoutFullTeam() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetDialogAreYouStillThere() {
             throw NotSupportedException.steam();
         }
 
