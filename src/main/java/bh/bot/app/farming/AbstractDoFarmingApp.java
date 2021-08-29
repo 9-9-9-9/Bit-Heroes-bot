@@ -5,7 +5,6 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.images.BwMatrixMeta;
-import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.ThreadUtil;
@@ -15,7 +14,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -29,10 +27,6 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
     protected abstract String getAppShortName();
 
     protected abstract AttendablePlace getAttendablePlace();
-
-    protected abstract Tuple2<Boolean, Boolean> isClickedSomething();
-
-    protected abstract boolean isOutOfTicket();
 
     protected final AttendablePlace ap = getAttendablePlace();
     protected InteractionUtil.Screen.Game gameScreenInteractor;

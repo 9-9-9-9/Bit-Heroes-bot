@@ -1,6 +1,8 @@
 package bh.bot.app;
 
 import bh.bot.Main;
+import bh.bot.app.farming.AbstractDoFarmingApp;
+import bh.bot.app.farming.PvpApp;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.AttendablePlace;
@@ -77,6 +79,13 @@ public class AfkApp extends AbstractApplication {
         boolean isUnknownTrialsOrGauntlet = doTrials && doGauntlet;
         while (!masterSwitch.get()) {
             sleep(5_000);
+            if (doPvp) {
+                for (AbstractDoFarmingApp.NextAction predefinedImageAction : PvpApp.getPredefinedImageActions()) {
+                    if (clickImage(predefinedImageAction.image)) {
+
+                    }
+                }
+            }
         }
     }
 
