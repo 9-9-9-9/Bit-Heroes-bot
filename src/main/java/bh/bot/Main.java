@@ -34,7 +34,7 @@ public class Main {
                     ReRunApp.class,
                     FishingApp.class,
                     AfkApp.class,
-                    WorldBoss.class,
+                    WorldBossApp.class,
                     PvpApp.class,
                     InvasionApp.class,
                     TrialsApp.class,

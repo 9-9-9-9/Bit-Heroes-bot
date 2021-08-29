@@ -46,6 +46,8 @@ public abstract class ScreenResolutionProfile {
 
     public abstract Offset getOffsetButtonStartWorldBoss();
 
+    public abstract Offset getOffsetDialogConfirmQuitBattle();
+
     public abstract Offset getOffsetDialogStartWithoutFullTeam();
 
     public abstract Offset getOffsetButtonRegroupWorldBoss();
@@ -198,6 +200,11 @@ public abstract class ScreenResolutionProfile {
         @Override
         public Offset getOffsetButtonStartWorldBoss() {
             return new Offset(342, 460);
+        }
+
+        @Override
+        public Offset getOffsetDialogConfirmQuitBattle() {
+            return new Offset(288, 232);
         }
 
         @Override
@@ -435,6 +442,11 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonStartWorldBoss() {
+            throw NotSupportedException.steam();
+        }
+
+        @Override
+        public Offset getOffsetDialogConfirmQuitBattle() {
             throw NotSupportedException.steam();
         }
 

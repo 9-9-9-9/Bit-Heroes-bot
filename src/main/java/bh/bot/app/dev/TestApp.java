@@ -14,7 +14,7 @@ import static bh.bot.common.Log.info;
 public class TestApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
-        Tuple2<Point[], Byte> result = detectRadioButtons(BwMatrixMeta.Metas.Globally.Buttons.radioButton, Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
+        Tuple2<Point[], Byte> result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
         Point[] points = result._1;
         byte selectedIndex = result._2;
 

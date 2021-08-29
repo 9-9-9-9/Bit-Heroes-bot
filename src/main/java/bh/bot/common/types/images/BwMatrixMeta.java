@@ -131,9 +131,11 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta autoG;
                 public static BwMatrixMeta autoR;
                 public static BwMatrixMeta radioButton;
+                public static BwMatrixMeta close;
             }
 
             public static class Dialogs {
+                public static BwMatrixMeta confirmQuitBattle;
                 public static BwMatrixMeta confirmStartNotFullTeam;
             }
         }
@@ -268,6 +270,20 @@ public class BwMatrixMeta {
                 ), //
                 Configuration.Offset.none(),
                 0x000000
+        );
+        Metas.Globally.Buttons.close = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "buttons/globally.close-mx.bmp"
+                ), //
+                Configuration.Offset.none(),
+                0x000000
+        );
+        Metas.Globally.Dialogs.confirmQuitBattle = new BwMatrixMeta(//
+                ImageUtil.loadImageFileFromResource( //
+                        "dialogs/globally.confirm-quit-battle-mx.bmp"
+                ), //
+                Configuration.screenResolutionProfile.getOffsetDialogConfirmQuitBattle(),
+                0xFFFFFF
         );
         Metas.Globally.Dialogs.confirmStartNotFullTeam = new BwMatrixMeta(//
                 ImageUtil.loadImageFileFromResource( //

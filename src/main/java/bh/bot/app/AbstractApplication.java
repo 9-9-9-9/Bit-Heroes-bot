@@ -370,7 +370,8 @@ public abstract class AbstractApplication {
 
     private final byte greenMinDiff = 70;
 
-    protected Tuple2<Point[], Byte> detectRadioButtons(BwMatrixMeta im, Rectangle scanRect) {
+    protected Tuple2<Point[], Byte> detectRadioButtons(Rectangle scanRect) {
+        final BwMatrixMeta im = BwMatrixMeta.Metas.Globally.Buttons.radioButton;
         int positionTolerant = Math.min(10, Configuration.Tolerant.position);
         ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(
                 new Configuration.Offset(
@@ -587,13 +588,13 @@ public abstract class AbstractApplication {
             String input;
             while (true) {
                 info(ask);
-                if (desc != null)
-                    info("(%s)", desc);
                 if (selectedOptionsInfoProvider != null) {
                     List<String> selectedOptions = selectedOptionsInfoProvider.get();
                     if (selectedOptions.size() > 0)
                         info("Selected: %s", String.join(", ", selectedOptions));
                 }
+                if (desc != null)
+                    info("(%s)", desc);
                 input = br.readLine();
 
                 if (isBlank(input)) {

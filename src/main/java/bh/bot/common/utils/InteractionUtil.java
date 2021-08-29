@@ -32,6 +32,10 @@ public class InteractionUtil {
             sendKey(KeyEvent.VK_SPACE);
         }
 
+        public static void sendEnter() {
+            sendKey(KeyEvent.VK_ENTER);
+        }
+
         public static void sendEscape() {
             sendKey(KeyEvent.VK_ESCAPE);
         }

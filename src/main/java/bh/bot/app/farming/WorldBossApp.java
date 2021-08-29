@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @AppCode(code = "world-boss")
-public class WorldBoss extends AbstractDoFarmingApp {
+public class WorldBossApp extends AbstractDoFarmingApp {
     @Override
     protected String getAppShortName() {
         return "World Boss";
@@ -22,7 +22,7 @@ public class WorldBoss extends AbstractDoFarmingApp {
 
     @Override
     protected List<NextAction> getInternalPredefinedImageActions() {
-        return WorldBoss.getPredefinedImageActions();
+        return WorldBossApp.getPredefinedImageActions();
     }
 
     public static List<NextAction> getPredefinedImageActions() {
