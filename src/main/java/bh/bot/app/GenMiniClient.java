@@ -127,7 +127,7 @@ public class GenMiniClient extends AbstractApplication {
                     sb.append('\n');
                     sb.append("sleep 2s");
                     sb.append('\n');
-                } else if (Configuration.OS.isUnix) {
+                } else if (Configuration.OS.isLinux) {
                     sb.append("#!/bin/bash");
                 }
 
@@ -138,7 +138,7 @@ public class GenMiniClient extends AbstractApplication {
                     sb.append(arg);
                 }
 
-                if (Configuration.OS.isMac || Configuration.OS.isUnix) {
+                if (Configuration.OS.isMac || Configuration.OS.isLinux) {
                     sb.append(" > /dev/null 2>&1&");
                 }
 
@@ -147,7 +147,7 @@ public class GenMiniClient extends AbstractApplication {
                 info("Generated file '%s' for account %s", scriptFileName, gameAccount.kongUserName);
             }
 
-            if (Configuration.OS.isMac || Configuration.OS.isUnix) {
+            if (Configuration.OS.isMac || Configuration.OS.isLinux) {
                 info("Now you can launch mini game client by running the following script in terminal:");
                 info(" bash ./%s*.%s", scriptNamePrefix, scriptExtension);
             } else if (Configuration.OS.isWin) {

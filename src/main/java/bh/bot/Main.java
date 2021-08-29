@@ -10,6 +10,7 @@ import bh.bot.common.Log;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotImplementedException;
+import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.flags.*;
@@ -99,6 +100,7 @@ public class Main {
 
         ArrayList<FlagPattern> usingFlagPatterns = new ArrayList<>();
 
+        // Check flags
         for (String rawFlag : rawFlags) {
             boolean isAFlagPattern = false;
             for (FlagPattern flagPattern : flagPatterns) {
@@ -112,6 +114,7 @@ public class Main {
                 throw new InvalidFlagException(String.format("Flag '%s' can not be recognized", rawFlag));
         }
 
+        // Parse param
         int exitAfter = 0;
         int profileNumber = -1;
         for (FlagPattern flagPattern : usingFlagPatterns) {
@@ -136,6 +139,11 @@ public class Main {
             int m = (exitAfter - h * 3600) / 60;
             info("Application will exit after %d hours and %d minutes", h, m);
         }
+
+        // Validate flags
+        for (FlagPattern flagPattern : usingFlagPatterns)
+            if (!flagPattern.isSupportedOnCurrentOsPlatform())
+                throw new NotSupportedException(String.format("Flag '--%s' is not supported on %s", flagPattern.getName(), Configuration.OS.name));
 
         ScreenResolutionProfile screenResolutionProfile;
         boolean is800x480Resolution = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSteamResolution800x480);

@@ -30,8 +30,6 @@ import static bh.bot.common.utils.ThreadUtil.sleep;
 @AppCode(code = "afk")
 public class AfkApp extends AbstractApplication {
     private InteractionUtil.Screen.Game gameScreenInteractor;
-    private final AtomicBoolean isUnknownGvgOrInvasion = new AtomicBoolean();
-    private final AtomicBoolean isUnknownTrialsOrGauntlet = new AtomicBoolean();
     private final AtomicLong blockPvpUntil = new AtomicLong(0);
     private final AtomicLong blockWorldBossUntil = new AtomicLong(0);
     private final AtomicLong blockRaidUntil = new AtomicLong(0);
@@ -44,9 +42,6 @@ public class AfkApp extends AbstractApplication {
         ArrayList<AttendablePlace> eventList = getAttendablePlaces();
         if (eventList.contains(AttendablePlaces.raid))
             throw new NotSupportedException("Raid has not been supported");
-        //
-        isUnknownGvgOrInvasion.set(eventList.contains(AttendablePlaces.gvg) && eventList.contains(AttendablePlaces.invasion));
-        isUnknownTrialsOrGauntlet.set(eventList.contains(AttendablePlaces.trials) && eventList.contains(AttendablePlaces.gauntlet));
         //
         AtomicBoolean masterSwitch = new AtomicBoolean(false);
         ThreadUtil.waitDone(
@@ -78,11 +73,15 @@ public class AfkApp extends AbstractApplication {
             boolean doTrials,
             boolean doGauntlet
     ) {
+        boolean isUnknownGvgOrInvasion = doGvg && doInvasion;
+        boolean isUnknownTrialsOrGauntlet = doTrials && doGauntlet;
         while (!masterSwitch.get()) {
             sleep(5_000);
-            long epoch = System.currentTimeMillis();
-
         }
+    }
+
+    private boolean shouldDo(boolean flag, AtomicLong blockUntil) {
+        return flag && blockUntil.get() < System.currentTimeMillis();
     }
 
     private void tempBlock(AttendablePlace attendablePlace) {

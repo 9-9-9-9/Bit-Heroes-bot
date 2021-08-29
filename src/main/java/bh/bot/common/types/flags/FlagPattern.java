@@ -97,6 +97,9 @@ public abstract class FlagPattern<T> {
 
     public abstract String getName();
     public abstract String getDescription();
+    public boolean isSupportedOnCurrentOsPlatform() {
+        return true;
+    }
 
     public static abstract class NonParamFlag extends FlagPattern<Void> {
     }
