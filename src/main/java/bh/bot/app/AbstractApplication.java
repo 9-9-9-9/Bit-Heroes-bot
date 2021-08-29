@@ -238,8 +238,8 @@ public abstract class AbstractApplication {
             Point p = new Point();
             final int blackPixelRgb = im.getBlackPixelRgb();
             final ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
-            for (int y = 0; y < sc.getHeight() - im.getHeight() && go; y++) {
-                for (int x = 0; x < sc.getWidth() - im.getWidth() && go; x++) {
+            for (int y = sc.getHeight() - im.getHeight() - 1; y >= 0 && go; y--) {
+                for (int x = sc.getWidth() - im.getWidth() - 1; x >= 0 && go; x--) {
                     boolean allGood = true;
 
                     for (int[] px : im.getBlackPixels()) {
@@ -311,8 +311,8 @@ public abstract class AbstractApplication {
         try {
             saveDebugImage(sc, "detectLabel");
 
-            for (int y = 0; y < sc.getHeight() - im.getHeight(); y++) {
-                for (int x = 0; x < sc.getWidth() - im.getWidth(); x++) {
+            for (int y = sc.getHeight() - im.getHeight() - 1; y >= 0; y--) {
+                for (int x = sc.getWidth() - im.getWidth() - 1; x >= 0; x--) {
                     for (int mainColor : mainColors) {
                         final int c = mainColor & 0xFFFFFF;
                         final ImageUtil.DynamicRgb cDRgb = new ImageUtil.DynamicRgb(c, im.getTolerant());

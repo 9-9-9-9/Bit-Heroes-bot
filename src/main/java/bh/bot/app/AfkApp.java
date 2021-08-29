@@ -132,8 +132,9 @@ public class AfkApp extends AbstractApplication {
             if (--checkAreYouStillThereAfter <= 0) {
 
                 if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouStillThere)) {
+                    info("Knock knock, are you still there?");
                     InteractionUtil.Keyboard.sendEnter();
-                    sleep(1000);
+                    sleep(1_000);
                     InteractionUtil.Keyboard.sendEscape();
                     checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
                 } else {
@@ -159,7 +160,7 @@ public class AfkApp extends AbstractApplication {
             if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmQuitBattle)) {
                 debug("confirmQuitBattle");
                 InteractionUtil.Keyboard.sendEnter();
-                sleep(1000);
+                sleep(1_000);
                 spamEscape(1);
                 continuousNotFound = 0;
                 moveCursor(coordinateHideMouse);
@@ -192,7 +193,7 @@ public class AfkApp extends AbstractApplication {
                 for (AbstractDoFarmingApp.NextAction nextAction : outOfTurnNextActionList) {
                     if (clickImage(nextAction.image)) {
                         spamEscape(2);
-                        sleep(1000);
+                        sleep(1_000);
                     }
                 }
 
@@ -367,7 +368,7 @@ public class AfkApp extends AbstractApplication {
     private void spamEscape(int expectedCount) {
         int cnt = expectedCount + 4;
         while (cnt-- > 0) {
-            sleep(1000);
+            sleep(1_000);
             InteractionUtil.Keyboard.sendEscape();
         }
     }

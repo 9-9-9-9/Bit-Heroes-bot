@@ -159,8 +159,8 @@ public class InteractionUtil {
                         Point p = new Point();
                         final int blackPixelRgb = im.getBlackPixelRgb();
                         final ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
-                        for (int y = 0; y < sc.getHeight() - im.getHeight() && go; y++) {
-                            for (int x = 0; x < sc.getWidth() - im.getWidth() && go; x++) {
+                        for (int y = sc.getHeight() - im.getHeight() - 1; y >= 0 && go; y--) {
+                            for (int x = sc.getWidth() - im.getWidth() - 1; x >= 0 && go; x--) {
                                 boolean allGood = true;
 
                                 for (int[] px : im.getBlackPixels()) {
