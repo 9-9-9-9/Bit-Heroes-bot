@@ -31,25 +31,25 @@ touch ./release/user-config.properties
 cat <<EOF > ./release/user-config.properties
 # Screen offset
 # from left
-offset.screen.x=0
+#offset.screen.x=0
 # from top
-offset.screen.y=57
+#offset.screen.y=57
 
 # Game tokens
-1.game.kong.user.id=
-1.game.kong.user.name=
-1.game.auth.token=
+#1.game.kong.user.id=
+#1.game.kong.user.name=
+#1.game.auth.token=
 
 # Configure telegram
-telegram.token=
-telegram.channel-id=
+#telegram.token=
+#telegram.channel-id=
 
 # Tolerant
-tolerant.position=40
-tolerant.color=0
+#tolerant.position=40
+#tolerant.color=0
 
 # Google Chrome path, for Windows only
-external.application.chrome.path=C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe
+#external.application.chrome.path=C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe
 EOF
 
 # Copy files for mini client
