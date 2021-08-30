@@ -196,7 +196,7 @@ public class AfkApp extends AbstractApplication {
             continuousNotFound++;
             moveCursor(coordinateHideMouse);
 
-            if (continuousNotFound >= 3) { // TODO 12
+            if (continuousNotFound >= 6) {
                 for (AbstractDoFarmingApp.NextAction nextAction : outOfTurnNextActionList) {
                     if (clickImage(nextAction.image)) {
                         spamEscape(2);

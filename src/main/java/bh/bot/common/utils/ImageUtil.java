@@ -7,13 +7,17 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 
 public class ImageUtil {
     public static BufferedImageInfo loadImageFileFromResource(String path) throws IOException {
         if (!path.toLowerCase().trim().endsWith("-mx.bmp"))
             throw new IllegalArgumentException("Only accept *-mx.bmp pictures");
         String fileName = String.format("/game-images/%s/%s", Configuration.profileName, path);
-        BufferedImage bi = ImageIO.read(ImageUtil.class.getResource(fileName));
+        URL resource = ImageUtil.class.getResource(fileName);
+        if (resource == null)
+            return BufferedImageInfo.notAvailable(fileName);
+        BufferedImage bi = ImageIO.read(resource);
         final int acceptedType = BufferedImage.TYPE_3BYTE_BGR;
         if (bi.getType() != acceptedType)
             throw new IllegalArgumentException(String.format("Only accept bmp pictures with type = BufferedImage.TYPE_3BYTE_BGR (int value = %d)", acceptedType));
@@ -57,12 +61,12 @@ public class ImageUtil {
 
     public static boolean isRedLikeColor(Color color) {
         int rgb = color.getRGB();
-        return getRed(rgb) >= 220 && getGreen(rgb) <= 150 && getBlue(rgb) <= 150;
+        return getRed(rgb) >= 205 && getGreen(rgb) <= 150 && getBlue(rgb) <= 150;
     }
 
     public static boolean isGreenLikeColor(Color color) {
         int rgb = color.getRGB();
-        return getRed(rgb) <= 150 && getGreen(rgb) >= 220 && getBlue(rgb) <= 150;
+        return getRed(rgb) <= 150 && getGreen(rgb) >= 205 && getBlue(rgb) <= 150;
     }
 
     public static class DynamicRgb {

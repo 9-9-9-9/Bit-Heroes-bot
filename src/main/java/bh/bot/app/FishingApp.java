@@ -100,29 +100,35 @@ public class FishingApp extends AbstractApplication {
     }
 
     private void detectLongTimeNoSee(final AtomicBoolean masterSwitch, final AtomicLong unsureFrom, final AtomicLong seeBtnStartFrom) {
-        final long MAX_TIME = 300_000;
-        while (!masterSwitch.get()) {
-            long now = System.currentTimeMillis();
-            long usf = now - unsureFrom.get();
-            long ssf = now - seeBtnStartFrom.get();
+        try {
+            final long MAX_TIME = 300_000;
+            while (!masterSwitch.get()) {
+                long now = System.currentTimeMillis();
+                long usf = now - unsureFrom.get();
+                long ssf = now - seeBtnStartFrom.get();
 
-            if (usf < MAX_TIME && ssf < MAX_TIME) {
-                sleep(60_000);
-                continue;
+                if (usf < MAX_TIME && ssf < MAX_TIME) {
+                    sleep(60_000);
+                    continue;
+                }
+
+                String msg;
+                if (usf >= MAX_TIME) {
+                    msg = "Unable to continue (unsure)";
+                } else {
+                    msg = "Unable to continue (stuck at Start button)";
+                }
+
+                info(msg);
+                Telegram.sendMessage(msg, true);
+
+                masterSwitch.set(true);
+                break;
             }
-
-            String msg;
-            if (usf >= MAX_TIME) {
-                msg = "Unable to continue (unsure)";
-            } else {
-                msg = "Unable to continue (stuck at Start button)";
-            }
-
-            info(msg);
-            Telegram.sendMessage(msg, true);
-
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
             masterSwitch.set(true);
-            break;
         }
     }
 
@@ -132,174 +138,186 @@ public class FishingApp extends AbstractApplication {
     private final int screenCatch = 3;
 
     private void doLoopFishing(int loopCount, final AtomicBoolean masterSwitch, final Point anchorPoint, final AtomicInteger screen, final AtomicBoolean unsure, final AtomicLong unsureFrom) {
-        moveCursor(new Point(950, 100));
+        try {
+            moveCursor(new Point(950, 100));
 
-        final int xButton1 = anchorPoint.x + BwMatrixMeta.Metas.Fishing.Buttons.start.getCoordinateOffset().X - 40;
-        final int yButton1 = anchorPoint.y + BwMatrixMeta.Metas.Fishing.Buttons.start.getCoordinateOffset().Y;
-        final Point pButton1 = new Point(xButton1, yButton1);
+            final int xButton1 = anchorPoint.x + BwMatrixMeta.Metas.Fishing.Buttons.start.getCoordinateOffset().X - 40;
+            final int yButton1 = anchorPoint.y + BwMatrixMeta.Metas.Fishing.Buttons.start.getCoordinateOffset().Y;
+            final Point pButton1 = new Point(xButton1, yButton1);
 
-        boolean requestedToExit = false;
+            boolean requestedToExit = false;
 
-        while (!masterSwitch.get()) {
-            sleep(50);
+            while (!masterSwitch.get()) {
+                sleep(50);
 
-            if (loopCount < 1 && !requestedToExit)
-                requestedToExit = true;
+                if (loopCount < 1 && !requestedToExit)
+                    requestedToExit = true;
 
-            final int curScreen = screen.get();
-            if (curScreen == screenNone) {
-                sleep(2000);
-                continue;
-            }
-
-            if (unsure.get()) {
-                sendSpaceKey();
-                sleep(4000);
-                continue;
-            }
-
-            if (curScreen == screenCatch) {
-                debug("On screen CATCH");
-
-                Configuration.Offset offsetDetect100PcCatchingFish = Configuration.screenResolutionProfile.getOffsetDetect100PcCatchingFish();
-                Color color = getPixelColor(
-                        anchorPoint.x + offsetDetect100PcCatchingFish.X,
-                        anchorPoint.y + offsetDetect100PcCatchingFish.Y
-                );
-                if (color.getGreen() < 230)
+                final int curScreen = screen.get();
+                if (curScreen == screenNone) {
+                    sleep(2000);
                     continue;
-                if (color.getRed() > 100)
-                    continue;
-                if (color.getBlue() > 100)
-                    continue;
-
-                debug("Catch %3d,%3d,%3d", color.getRed(), color.getGreen(), color.getBlue());
-
-                sendSpaceKey();
-                unsure.set(true);
-                unsureFrom.set(System.currentTimeMillis());
-                moveCursor(pButton1);
-                if (requestedToExit)
-                    break;
-                mouseClick();
-                sendSpaceKey();
-                sleep(1500);
-
-            } else if (curScreen == screenCast) {
-                debug("On screen CAST");
-
-                Configuration.Offset offsetScanCastingFish = Configuration.screenResolutionProfile.getOffsetScanCastingFish();
-                Configuration.Size scanSizeCastingFish = Configuration.screenResolutionProfile.getScanSizeCastingFish();
-                BufferedImage sc = captureScreen(
-                        anchorPoint.x + offsetScanCastingFish.X,
-                        anchorPoint.y + offsetScanCastingFish.Y,
-                        scanSizeCastingFish.W,
-                        scanSizeCastingFish.H
-                );
-                final int black = 0x000000;
-                try {
-                    final int offset1 = 0;
-                    final int offset2 = scanSizeCastingFish.H - 1;
-                    final int offsetSize = scanSizeCastingFish.H / 4 - 2;
-                    final int offset3 = offset1 + offsetSize;
-                    final int offset4 = offset2 - offsetSize;
-                    for (int x = 0; x < sc.getWidth(); x++) {
-                        if ((sc.getRGB(x, offset3) & 0xFFFFFF) != black) {
-                            debug("Fail check CAST step p1: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset3) & 0xFFFFFF)), x, offset3);
-                            continue;
-                        }
-                        if ((sc.getRGB(x, offset4) & 0xFFFFFF) != black) {
-                            debug("Fail check CAST step p2: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset4) & 0xFFFFFF)), x, offset4);
-                            continue;
-                        }
-                        if ((sc.getRGB(x, offset1) & 0xFFFFFF) != black) {
-                            debug("Fail check CAST step p3: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset1) & 0xFFFFFF)), x, offset1);
-                            continue;
-                        }
-                        if ((sc.getRGB(x, offset2) & 0xFFFFFF) != black) {
-                            debug("Fail check CAST step p4: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset2) & 0xFFFFFF)), x, offset2);
-                            continue;
-                        }
-
-                        debug("Good, casting now");
-
-                        sendSpaceKey();
-                        unsure.set(true);
-                        unsureFrom.set(System.currentTimeMillis());
-
-                        loopCount--;
-                        info("Remaining: %d", loopCount);
-
-                        sleep(1500);
-                        break;
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    sleep(500);
-                } finally {
-                    sc.flush();
                 }
 
-            } else if (curScreen == screenStart) {
-                debug("On screen START");
-                moveCursor(pButton1);
-                mouseClick();
-                sleep(1500);
-            }
-        }
+                if (unsure.get()) {
+                    sendSpaceKey();
+                    sleep(4000);
+                    continue;
+                }
 
-        masterSwitch.set(true);
-        info("Fishing has completed");
+                if (curScreen == screenCatch) {
+                    debug("On screen CATCH");
+
+                    Configuration.Offset offsetDetect100PcCatchingFish = Configuration.screenResolutionProfile.getOffsetDetect100PcCatchingFish();
+                    Color color = getPixelColor(
+                            anchorPoint.x + offsetDetect100PcCatchingFish.X,
+                            anchorPoint.y + offsetDetect100PcCatchingFish.Y
+                    );
+                    if (color.getGreen() < 230)
+                        continue;
+                    if (color.getRed() > 100)
+                        continue;
+                    if (color.getBlue() > 100)
+                        continue;
+
+                    debug("Catch %3d,%3d,%3d", color.getRed(), color.getGreen(), color.getBlue());
+
+                    sendSpaceKey();
+                    unsure.set(true);
+                    unsureFrom.set(System.currentTimeMillis());
+                    moveCursor(pButton1);
+                    if (requestedToExit)
+                        break;
+                    mouseClick();
+                    sendSpaceKey();
+                    sleep(1500);
+
+                } else if (curScreen == screenCast) {
+                    debug("On screen CAST");
+
+                    Configuration.Offset offsetScanCastingFish = Configuration.screenResolutionProfile.getOffsetScanCastingFish();
+                    Configuration.Size scanSizeCastingFish = Configuration.screenResolutionProfile.getScanSizeCastingFish();
+                    BufferedImage sc = captureScreen(
+                            anchorPoint.x + offsetScanCastingFish.X,
+                            anchorPoint.y + offsetScanCastingFish.Y,
+                            scanSizeCastingFish.W,
+                            scanSizeCastingFish.H
+                    );
+                    final int black = 0x000000;
+                    try {
+                        final int offset1 = 0;
+                        final int offset2 = scanSizeCastingFish.H - 1;
+                        final int offsetSize = scanSizeCastingFish.H / 4 - 2;
+                        final int offset3 = offset1 + offsetSize;
+                        final int offset4 = offset2 - offsetSize;
+                        for (int x = 0; x < sc.getWidth(); x++) {
+                            if ((sc.getRGB(x, offset3) & 0xFFFFFF) != black) {
+                                debug("Fail check CAST step p1: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset3) & 0xFFFFFF)), x, offset3);
+                                continue;
+                            }
+                            if ((sc.getRGB(x, offset4) & 0xFFFFFF) != black) {
+                                debug("Fail check CAST step p2: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset4) & 0xFFFFFF)), x, offset4);
+                                continue;
+                            }
+                            if ((sc.getRGB(x, offset1) & 0xFFFFFF) != black) {
+                                debug("Fail check CAST step p3: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset1) & 0xFFFFFF)), x, offset1);
+                                continue;
+                            }
+                            if ((sc.getRGB(x, offset2) & 0xFFFFFF) != black) {
+                                debug("Fail check CAST step p4: %s at %3d,%3d", Integer.toHexString((sc.getRGB(x, offset2) & 0xFFFFFF)), x, offset2);
+                                continue;
+                            }
+
+                            debug("Good, casting now");
+
+                            sendSpaceKey();
+                            unsure.set(true);
+                            unsureFrom.set(System.currentTimeMillis());
+
+                            loopCount--;
+                            info("Remaining: %d", loopCount);
+
+                            sleep(1500);
+                            break;
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        sleep(500);
+                    } finally {
+                        sc.flush();
+                    }
+
+                } else if (curScreen == screenStart) {
+                    debug("On screen START");
+                    moveCursor(pButton1);
+                    mouseClick();
+                    sleep(1500);
+                }
+            }
+
+            masterSwitch.set(true);
+            info("Fishing has completed");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
+            masterSwitch.set(true);
+        }
     }
 
     private void detectScreen(final AtomicBoolean masterSwitch, final Point anchorPoint, final AtomicInteger screen, final AtomicBoolean unsure, final AtomicLong unsureFrom, final AtomicLong seeBtnStartFrom) {
-        while (!masterSwitch.get()) {
-            sleep(1000);
+        try {
+            while (!masterSwitch.get()) {
+                sleep(1000);
 
-            long timeStart = System.currentTimeMillis();
-            BufferedImage sc = captureScreen(
-                    anchorPoint.x,
-                    anchorPoint.y,
-                    Configuration.screenResolutionProfile.getSupportedGameResolutionWidth(),
-                    Configuration.screenResolutionProfile.getSupportedGameResolutionHeight()
-            );
-            try {
-                saveDebugImage(sc, "detectScreen_fishing");
+                long timeStart = System.currentTimeMillis();
+                BufferedImage sc = captureScreen(
+                        anchorPoint.x,
+                        anchorPoint.y,
+                        Configuration.screenResolutionProfile.getSupportedGameResolutionWidth(),
+                        Configuration.screenResolutionProfile.getSupportedGameResolutionHeight()
+                );
+                try {
+                    saveDebugImage(sc, "detectScreen_fishing");
 
-                if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.catch_)) {
-                    screen.set(screenCatch);
-                    unsure.set(false);
-                    unsureFrom.set(Long.MAX_VALUE);
+                    if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.catch_)) {
+                        screen.set(screenCatch);
+                        unsure.set(false);
+                        unsureFrom.set(Long.MAX_VALUE);
+                        seeBtnStartFrom.set(Long.MAX_VALUE);
+                        continue;
+                    }
+
+                    if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.cast)) {
+                        screen.set(screenCast);
+                        unsure.set(false);
+                        unsureFrom.set(Long.MAX_VALUE);
+                        seeBtnStartFrom.set(Long.MAX_VALUE);
+                        continue;
+                    }
+
+                    if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.start)) {
+                        screen.set(screenStart);
+                        unsure.set(false);
+                        unsureFrom.set(Long.MAX_VALUE);
+                        seeBtnStartFrom.set(System.currentTimeMillis());
+                        continue;
+                    }
+
+                    unsure.set(true);
+                    unsureFrom.set(System.currentTimeMillis());
                     seeBtnStartFrom.set(Long.MAX_VALUE);
-                    continue;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    sleep(2000);
+                } finally {
+                    debug("detectScreen process time: %d ms", System.currentTimeMillis() - timeStart);
+                    sc.flush();
                 }
-
-                if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.cast)) {
-                    screen.set(screenCast);
-                    unsure.set(false);
-                    unsureFrom.set(Long.MAX_VALUE);
-                    seeBtnStartFrom.set(Long.MAX_VALUE);
-                    continue;
-                }
-
-                if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.start)) {
-                    screen.set(screenStart);
-                    unsure.set(false);
-                    unsureFrom.set(Long.MAX_VALUE);
-                    seeBtnStartFrom.set(System.currentTimeMillis());
-                    continue;
-                }
-
-                unsure.set(true);
-                unsureFrom.set(System.currentTimeMillis());
-                seeBtnStartFrom.set(Long.MAX_VALUE);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                sleep(2000);
-            } finally {
-                debug("detectScreen process time: %d ms", System.currentTimeMillis() - timeStart);
-                sc.flush();
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
+            masterSwitch.set(true);
         }
     }
 
@@ -308,6 +326,8 @@ public class FishingApp extends AbstractApplication {
     }
 
     private boolean isContains(BufferedImage sc, BwMatrixMeta im, boolean debug) {
+        im.throwIfNotAvailable();
+
         final int offsetX = im.getCoordinateOffset().X;
         final int offsetY = im.getCoordinateOffset().Y;
         final int colorTolerant = Configuration.Tolerant.color;
