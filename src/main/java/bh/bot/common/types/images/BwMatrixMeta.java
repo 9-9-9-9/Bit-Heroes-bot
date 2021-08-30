@@ -3,6 +3,7 @@ package bh.bot.common.types.images;
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
+import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.utils.StringUtil;
@@ -581,6 +582,37 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetButtonTownWhenDefeatedInRaid(),
                 0xFFFFFF
         );
+
+        // test
+        testImgImportedFromTp();
+    }
+
+    private static void testImgImportedFromTp() throws IOException {
+        if (Configuration.screenResolutionProfile instanceof ScreenResolutionProfile.WebProfile) {
+            BwMatrixMeta g = BwMatrixMeta.fromTpImage(//
+                    "buttons/globally.auto-green-tp.bmp", //
+                    new Configuration.Offset(Configuration.screenResolutionProfile.getOffsetButtonAuto().X - 2, Configuration.screenResolutionProfile.getOffsetButtonAuto().Y - 2),
+                    0xFFFFFF
+            );
+            BwMatrixMeta r = BwMatrixMeta.fromTpImage(//
+                    "buttons/globally.auto-red-tp.bmp", //
+                    new Configuration.Offset(Configuration.screenResolutionProfile.getOffsetButtonAuto().X - 2, Configuration.screenResolutionProfile.getOffsetButtonAuto().Y - 2),
+                    0xFFFFFF
+            );
+
+            assert g.notAvailable == false;
+            assert r.notAvailable == false;
+            assert Metas.Globally.Buttons.autoG.notAvailable == false;
+            assert Metas.Globally.Buttons.autoR.notAvailable == false;
+            assert Metas.Globally.Buttons.autoG.coordinateOffset.X == g.coordinateOffset.X;
+            assert Metas.Globally.Buttons.autoG.coordinateOffset.Y == g.coordinateOffset.Y;
+            assert Metas.Globally.Buttons.autoR.coordinateOffset.X == r.coordinateOffset.X;
+            assert Metas.Globally.Buttons.autoR.coordinateOffset.Y == r.coordinateOffset.Y;
+            assert Metas.Globally.Buttons.autoG.w == g.w;
+            assert Metas.Globally.Buttons.autoG.h == g.h;
+            assert Metas.Globally.Buttons.autoR.w == r.w;
+            assert Metas.Globally.Buttons.autoR.h == r.h;
+        }
     }
 
     public static BwMatrixMeta fromTpImage(String path, Configuration.Offset tpImageOffset, int blackPixelRgb) throws IOException {
