@@ -2,7 +2,6 @@ package bh.bot.app.dev;
 
 import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
-import bh.bot.common.Configuration;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
@@ -12,8 +11,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 
 import static bh.bot.common.Log.info;
@@ -114,80 +111,12 @@ public class ExtractMatrixApp extends AbstractApplication {
 
             BufferedImage bi = loadImageFromFile(img);
 
-            int minX = Integer.MAX_VALUE;
-            int minY = Integer.MAX_VALUE;
-            int maxX = Integer.MIN_VALUE;
-            int maxY = Integer.MIN_VALUE;
+            ImageUtil.TestTransformMxResult testTransformMxResult = ImageUtil.testTransformMx(bi, rgb, tolerant);
 
-            final ImageUtil.DynamicRgb dRgb = new ImageUtil.DynamicRgb(rgb, tolerant);
+            saveImage(testTransformMxResult.mx, "result");
+            saveImage(testTransformMxResult.tp, "a-tp");
 
-            List<int[]> pos = new ArrayList<>();
-            for (int y = 0; y < bi.getHeight(); y++) {
-                for (int x = 0; x < bi.getWidth(); x++) {
-                    int posRgb = bi.getRGB(x, y) & 0xFFFFFF;
-                    if (!ImageUtil.areColorsSimilar(dRgb, posRgb, Configuration.Tolerant.color)) {
-                        continue;
-                    }
-                    pos.add(new int[]{x, y});
-
-                    minX = Math.min(minX, x);
-                    minY = Math.min(minY, y);
-                    maxX = Math.max(maxX, x);
-                    maxY = Math.max(maxY, y);
-                }
-            }
-
-            List<int[]> translatedPos = new ArrayList<>();
-            for (int[] p : pos) {
-                translatedPos.add(new int[]{p[0] - minX, p[1] - minY});
-            }
-
-            final int white = 0xFFFFFF;
-            final int black = 0x000000;
-            final int red = 0xFF0000;
-
-            BufferedImage biSample = new BufferedImage(maxX - minX + 1, maxY - minY + 1, 5);
-            for (int[] p : translatedPos)
-                biSample.setRGB(p[0], p[1], white);
-
-            BufferedImage biTransformed = new BufferedImage(biSample.getWidth(), biSample.getHeight(), biSample.getType());
-            for (int y = 0; y < biTransformed.getHeight(); y++) {
-                for (int x = 0; x < biTransformed.getWidth(); x++) {
-                    biTransformed.setRGB(x, y, white);
-                }
-            }
-
-            for (int y = 0; y < biSample.getHeight(); y++) {
-                for (int x = 0; x < biSample.getWidth(); x++) {
-                    int rgbFromSample = biSample.getRGB(x, y) & 0xFFFFFF;
-                    if (rgbFromSample != white) {
-                        // biTransformed.setRGB(x, y, white);
-                        continue;
-                    }
-                    // rgbFromSample is white
-                    biTransformed.setRGB(x, y, black);
-                    for (int oY = -1; oY <= 1; oY++) {
-                        for (int oX = -1; oX <= 1; oX++) {
-                            if (oX == 0 && oY == 0)
-                                continue;
-                            int sX = x + oX;
-                            int sY = y + oY;
-                            if (sX < 0 || sX >= biSample.getWidth())
-                                continue;
-                            if (sY < 0 || sY >= biSample.getHeight())
-                                continue;
-                            rgbFromSample = biSample.getRGB(sX, sY) & 0xFFFFFF;
-                            if (rgbFromSample == black)
-                                biTransformed.setRGB(sX, sY, red);
-                        }
-                    }
-                }
-            }
-
-            saveImage(biSample, "cropped-output-sample");
-            saveImage(biTransformed, "result");
-
-            info("Done %dx%d", biSample.getWidth(), biSample.getHeight());
+            info("Done %dx%d from offset %d,%d", testTransformMxResult.mx.getWidth(), testTransformMxResult.mx.getHeight(), testTransformMxResult.mxOffset.X, testTransformMxResult.mxOffset.Y);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -205,7 +134,7 @@ public class ExtractMatrixApp extends AbstractApplication {
 
     @Override
     protected String getUsage() {
-        return "<KeepHexColor> <image>";
+        return "<KeepHexColor> <tolerant> <image>";
     }
 
     @Override

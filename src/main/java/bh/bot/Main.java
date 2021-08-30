@@ -2,6 +2,7 @@ package bh.bot;
 
 import bh.bot.app.*;
 import bh.bot.app.dev.ExtractMatrixApp;
+import bh.bot.app.dev.ImportTpImageApp;
 import bh.bot.app.dev.ScreenCaptureApp;
 import bh.bot.app.dev.TestApp;
 import bh.bot.app.farming.*;
@@ -45,6 +46,7 @@ public class Main {
                     // KeepPixApp.class,
                     // SamePixApp.class,
                     ExtractMatrixApp.class,
+                    ImportTpImageApp.class,
 //
                     ScreenCaptureApp.class,
                     TestApp.class
