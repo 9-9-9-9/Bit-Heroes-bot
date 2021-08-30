@@ -588,12 +588,12 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonAuto() {
-            return null;
+            return new Offset(779, 196); //
         }
 
         @Override
         public Offset getOffsetButtonTownWhenDefeatedInRaid() {
-            return null;
+            return new Offset(388, 435); //
         }
 
         @Override

@@ -61,12 +61,12 @@ public class ImageUtil {
 
     public static boolean isRedLikeColor(Color color) {
         int rgb = color.getRGB();
-        return getRed(rgb) >= 220 && getGreen(rgb) <= 150 && getBlue(rgb) <= 150;
+        return getRed(rgb) >= 205 && getGreen(rgb) <= 150 && getBlue(rgb) <= 150;
     }
 
     public static boolean isGreenLikeColor(Color color) {
         int rgb = color.getRGB();
-        return getRed(rgb) <= 150 && getGreen(rgb) >= 220 && getBlue(rgb) <= 150;
+        return getRed(rgb) <= 150 && getGreen(rgb) >= 205 && getBlue(rgb) <= 150;
     }
 
     public static class DynamicRgb {
