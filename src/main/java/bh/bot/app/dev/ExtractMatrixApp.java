@@ -114,6 +114,7 @@ public class ExtractMatrixApp extends AbstractApplication {
             ImageUtil.TestTransformMxResult testTransformMxResult = ImageUtil.testTransformMx(bi, rgb, tolerant);
 
             saveImage(testTransformMxResult.mx, "result");
+            saveImage(testTransformMxResult.tp, "a-tp");
 
             info("Done %dx%d from offset %d,%d", testTransformMxResult.mx.getWidth(), testTransformMxResult.mx.getHeight(), testTransformMxResult.mxOffset.X, testTransformMxResult.mxOffset.Y);
         } catch (IOException ex) {
@@ -133,7 +134,7 @@ public class ExtractMatrixApp extends AbstractApplication {
 
     @Override
     protected String getUsage() {
-        return "<KeepHexColor> <image>";
+        return "<KeepHexColor> <tolerant> <image>";
     }
 
     @Override
