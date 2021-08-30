@@ -17,7 +17,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -97,7 +96,7 @@ public class ImportTpImageApp extends AbstractApplication {
                         return new Tuple3<>(false, String.format("Directory is not exists: %s", dir.getAbsolutePath()), null);
                     File targetFile = Paths.get(dir.getAbsolutePath(), fileName).toFile();
                     if (targetFile.exists())
-                        return new Tuple3<>(false, String.format("Target file is already exists: %s", targetFile.getAbsolutePath()), null)
+                        return new Tuple3<>(false, String.format("Target file is already exists: %s", targetFile.getAbsolutePath()), null);
                     return new Tuple3<>(true, null, targetFile.getAbsolutePath());
                 });
             } catch (IOException e) {
@@ -153,5 +152,4 @@ public class ImportTpImageApp extends AbstractApplication {
     protected String getLimitationExplain() {
         return null;
     }
-}
 }
