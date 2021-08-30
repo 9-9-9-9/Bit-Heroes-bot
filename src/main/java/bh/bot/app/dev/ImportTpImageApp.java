@@ -8,6 +8,7 @@ import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.utils.StringUtil;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -110,7 +111,7 @@ public class ImportTpImageApp extends AbstractApplication {
             File file = new File(filePath);
             if (file.exists())
                 throw new InvalidDataException("File exists!!!");
-            saveImage(testTransformMxResult.tp, "bmp, file");
+            ImageIO.write(testTransformMxResult.tp, "bmp", file);
 
             info("Done");
         } catch (Exception e) {
