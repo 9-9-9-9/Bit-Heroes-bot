@@ -3,6 +3,7 @@ package bh.bot.common.types.images;
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
+import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.utils.StringUtil;
 
@@ -580,5 +581,11 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetButtonTownWhenDefeatedInRaid(),
                 0xFFFFFF
         );
+    }
+
+    public static BwMatrixMeta fromTpImage(String path, Configuration.Offset tpImageOffset, int blackPixelRgb) throws IOException {
+        BufferedImageInfo bii = ImageUtil.loadTpImageFromResource(path);
+        Tuple2<BufferedImageInfo, Configuration.Offset> transformed = ImageUtil.transformFromTpToMxImage(bii, blackPixelRgb, tpImageOffset);
+        return new BwMatrixMeta(transformed._1, transformed._2, blackPixelRgb);
     }
 }
