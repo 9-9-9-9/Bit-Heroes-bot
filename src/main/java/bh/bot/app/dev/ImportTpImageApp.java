@@ -49,9 +49,9 @@ public class ImportTpImageApp extends AbstractApplication {
                 info("2. Steam");
                 profileName = readInput(br, "Which profile?", null, s -> {
                     s = s.trim();
-                    if (s == "1")
+                    if (s.equals("1"))
                         return new Tuple3<>(true, null, "web");
-                    if (s == "2")
+                    if (s.equals("2"))
                         return new Tuple3<>(true, null, "steam");
                     return new Tuple3<>(false, "Not supported", null);
                 });
@@ -76,7 +76,7 @@ public class ImportTpImageApp extends AbstractApplication {
                     return new Tuple3<>(true, null, s);
                 });
 
-                final String fileName = String.format("%s.%s-tp.bmp");
+                final String fileName = String.format("%s.%s-tp.bmp", group, name);
 
                 for (int i = 0; i < opts.size(); i++)
                     info("%d. %s", i + 1, opts.get(i).name);
