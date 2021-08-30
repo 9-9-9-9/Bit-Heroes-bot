@@ -2,6 +2,7 @@ package bh.bot.common.types.images;
 
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.utils.StringUtil;
 
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import static bh.bot.common.Log.dev;
+import static bh.bot.common.Log.err;
 
 public class BwMatrixMeta {
     private final int[] firstBlackPixelOffset;
@@ -23,52 +25,75 @@ public class BwMatrixMeta {
     private final int[] lastMatch = new int[]{-1, -1};
     private final byte tolerant;
     private final String imageNameCode;
+    private final boolean notAvailable;
 
     public BwMatrixMeta(BufferedImageInfo bii, Configuration.Offset coordinateOffset, int blackPixelRgb) {
-        String customTolerantKey = "tolerant.color.bw|" + bii.code;
-        try {
-            byte tolerant = Configuration.Tolerant.colorBw;
-            String value = Configuration.read(customTolerantKey);
-            if (StringUtil.isNotBlank(value)) {
-                tolerant = Byte.parseByte(value);
-                if (tolerant < 0)
-                    throw new InvalidDataException("Invalid value of configuration key '%s': must be a positive number", customTolerantKey);
-                if (tolerant > Configuration.Tolerant.colorBw)
-                    throw new InvalidDataException("Invalid value of configuration key '%s': must not greater than value of 'tolerant.color.bw' key (which is %d)", customTolerantKey, Configuration.Tolerant.colorBw);
-                if (tolerant != Configuration.Tolerant.colorBw)
-                    dev("Tolerant overrided to %d by key `%s`", tolerant, customTolerantKey);
-            }
-            this.tolerant = tolerant;
-        } catch (NumberFormatException ex) {
-            throw new InvalidDataException("Invalid format of key '%s': must be a number, valid value within range from 0 to %d", customTolerantKey, Configuration.Tolerant.colorBw);
-        }
-
-        final int matrixPointColorPixelRgb = 0x000000;
-        final int anyColorPixelRgb = 0xFFFFFF;
-        BufferedImage img = bii.bufferedImage;
-        try {
-            this.coordinateOffset = coordinateOffset;
-            this.blackPixelRgb = blackPixelRgb & 0xFFFFFF;
-            this.blackPixelDRgb = new ImageUtil.DynamicRgb(this.blackPixelRgb, this.tolerant);
-            blackPixels = new ArrayList<>();
-            nonBlackPixels = new ArrayList<>();
-            w = img.getWidth();
-            h = img.getHeight();
-            for (int y = 0; y < img.getHeight(); y++) {
-                for (int x = 0; x < img.getWidth(); x++) {
-                    int rgb = img.getRGB(x, y) & 0xFFFFFF;
-                    if (rgb == matrixPointColorPixelRgb)
-                        blackPixels.add(new int[]{x, y});
-                    else if (rgb != anyColorPixelRgb)
-                        nonBlackPixels.add(new int[]{x, y});
+        if (bii.notAvailable) {
+            this.firstBlackPixelOffset = null;
+            this.blackPixels = null;
+            this.nonBlackPixels = null;
+            this.w = 0;
+            this.h = 0;
+            this.blackPixelRgb = 0;
+            this.blackPixelDRgb = null;
+            this.coordinateOffset = null;
+            this.tolerant = -1;
+            this.imageNameCode = bii.code;
+            this.notAvailable = true;
+        } else {
+            String customTolerantKey = "tolerant.color.bw|" + bii.code;
+            try {
+                byte tolerant = Configuration.Tolerant.colorBw;
+                String value = Configuration.read(customTolerantKey);
+                if (StringUtil.isNotBlank(value)) {
+                    tolerant = Byte.parseByte(value);
+                    if (tolerant < 0)
+                        throw new InvalidDataException("Invalid value of configuration key '%s': must be a positive number", customTolerantKey);
+                    if (tolerant > Configuration.Tolerant.colorBw)
+                        throw new InvalidDataException("Invalid value of configuration key '%s': must not greater than value of 'tolerant.color.bw' key (which is %d)", customTolerantKey, Configuration.Tolerant.colorBw);
+                    if (tolerant != Configuration.Tolerant.colorBw)
+                        dev("Tolerant overrided to %d by key `%s`", tolerant, customTolerantKey);
                 }
+                this.tolerant = tolerant;
+            } catch (NumberFormatException ex) {
+                throw new InvalidDataException("Invalid format of key '%s': must be a number, valid value within range from 0 to %d", customTolerantKey, Configuration.Tolerant.colorBw);
             }
-            firstBlackPixelOffset = blackPixels.get(0);
-        } finally {
-            img.flush();
-        }
 
-        this.imageNameCode = bii.code;
+            final int matrixPointColorPixelRgb = 0x000000;
+            final int anyColorPixelRgb = 0xFFFFFF;
+            BufferedImage img = bii.bufferedImage;
+            try {
+                this.coordinateOffset = coordinateOffset;
+                this.blackPixelRgb = blackPixelRgb & 0xFFFFFF;
+                this.blackPixelDRgb = new ImageUtil.DynamicRgb(this.blackPixelRgb, this.tolerant);
+                this.blackPixels = new ArrayList<>();
+                this.nonBlackPixels = new ArrayList<>();
+                this.w = img.getWidth();
+                this.h = img.getHeight();
+                for (int y = 0; y < img.getHeight(); y++) {
+                    for (int x = 0; x < img.getWidth(); x++) {
+                        int rgb = img.getRGB(x, y) & 0xFFFFFF;
+                        if (rgb == matrixPointColorPixelRgb)
+                            this.blackPixels.add(new int[]{x, y});
+                        else if (rgb != anyColorPixelRgb)
+                            this.nonBlackPixels.add(new int[]{x, y});
+                    }
+                }
+                this.firstBlackPixelOffset = this.blackPixels.get(0);
+            } finally {
+                img.flush();
+            }
+
+            this.imageNameCode = bii.code;
+            this.notAvailable = false;
+        }
+    }
+
+    public void throwIfNotAvailable() {
+        if (this.notAvailable) {
+            err("Image is not available: %s", this.imageNameCode);
+            throw new NotSupportedException(String.format("Image is not available for profile '--%s': %s", Configuration.profileName, this.imageNameCode));
+        }
     }
 
     public int[] getFirstBlackPixelOffset() {
@@ -120,7 +145,9 @@ public class BwMatrixMeta {
         return coordinateOffset;
     }
 
-    public String getImageNameCode() { return imageNameCode; }
+    public String getImageNameCode() {
+        return imageNameCode;
+    }
 
     public static class Metas {
         public static class Globally {

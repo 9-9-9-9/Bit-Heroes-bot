@@ -183,6 +183,8 @@ public abstract class AbstractApplication {
     }
 
     protected Point findImageBasedOnLastClick(BwMatrixMeta im) {
+        im.throwIfNotAvailable();
+
         int[] lastMatch = im.getLastMatchPoint();
         if (lastMatch[0] < 0 || lastMatch[1] < 0) {
             return null;
@@ -228,6 +230,8 @@ public abstract class AbstractApplication {
     }
 
     protected Point scanToFindImage(BwMatrixMeta im) {
+        im.throwIfNotAvailable();
+
         ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
         BufferedImage sc = screenCapturedResult.image;
 
@@ -306,6 +310,8 @@ public abstract class AbstractApplication {
     }
 
     protected Point detectLabel(BwMatrixMeta im, int... mainColors) {
+        im.throwIfNotAvailable();
+
         ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
         BufferedImage sc = screenCapturedResult.image;
         try {
@@ -372,6 +378,8 @@ public abstract class AbstractApplication {
 
     protected Tuple2<Point[], Byte> detectRadioButtons(Rectangle scanRect) {
         final BwMatrixMeta im = BwMatrixMeta.Metas.Globally.Buttons.radioButton;
+        im.throwIfNotAvailable();
+
         int positionTolerant = Math.min(10, Configuration.Tolerant.position);
         ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(
                 new Configuration.Offset(

@@ -16,7 +16,7 @@ public class ImageUtil {
         String fileName = String.format("/game-images/%s/%s", Configuration.profileName, path);
         URL resource = ImageUtil.class.getResource(fileName);
         if (resource == null)
-            throw new IllegalArgumentException(String.format("File does not exists: %s", fileName));
+            return BufferedImageInfo.notAvailable(fileName);
         BufferedImage bi = ImageIO.read(resource);
         final int acceptedType = BufferedImage.TYPE_3BYTE_BGR;
         if (bi.getType() != acceptedType)

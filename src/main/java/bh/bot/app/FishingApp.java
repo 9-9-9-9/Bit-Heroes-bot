@@ -308,6 +308,8 @@ public class FishingApp extends AbstractApplication {
     }
 
     private boolean isContains(BufferedImage sc, BwMatrixMeta im, boolean debug) {
+        im.throwIfNotAvailable();
+
         final int offsetX = im.getCoordinateOffset().X;
         final int offsetY = im.getCoordinateOffset().Y;
         final int colorTolerant = Configuration.Tolerant.color;
