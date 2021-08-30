@@ -113,7 +113,7 @@ public class ImportTpImageApp extends AbstractApplication {
                 throw new InvalidDataException("File exists!!!");
             ImageIO.write(testTransformMxResult.tp, "bmp", file);
 
-            info("Done");
+            info("Saved TP image with name '%s' to %s", file.getName(), file.getAbsolutePath());
         } catch (Exception e) {
             e.printStackTrace();
         }
