@@ -2,7 +2,6 @@ package bh.bot.common.types;
 
 import bh.bot.common.Configuration.Offset;
 import bh.bot.common.Configuration.Size;
-import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.tuples.Tuple4;
 
 import java.awt.*;
@@ -424,182 +423,182 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanRightSideAttendablePlaces() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftSideAttendablePlaces() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonSummonOnListingPartiesWorldBoss() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonSummonOnListingWorldBosses() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonSummonOnSelectingWorldBossTierAndDifficulty() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonStartWorldBoss() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetDialogConfirmQuitBattle() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetDialogStartWithoutFullTeam() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetDialogAreYouStillThere() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonRegroupWorldBoss() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonRegroupAfterDefeatByWorldBoss() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetDialogNotEnoughXeals() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonPlayPvpArena() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonFight1PvpArena() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonAcceptPvpArena() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonBackToTownFromPvpArenaOnWin() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonBackToTownFromPvpArenaOnLose() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetDialogNotEnoughPvpTicket() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonPlayInvasion() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonAcceptInvasion() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonTownAfterCompetedInvasion() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetDialogNotEnoughInvasionBadges() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonPlayTrials() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonAcceptTrials() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonTownAfterCompetedTrials() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetDialogNotEnoughTrialsTokens() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonPlayGvg() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonFight1Gvg() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonAcceptGvg() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonTownAfterCompetedGvg() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonPlayGauntlet() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonAcceptGauntlet() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonTownAfterCompetedGauntlet() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonAuto() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Offset getOffsetButtonTownWhenDefeatedInRaid() {
-            throw NotSupportedException.steam();
+            return null;
         }
 
         @Override
         public Rectangle getRectangleRadioButtonsOfRaid() {
-            throw NotSupportedException.steam();
+            return null;
         }
     }
 }
