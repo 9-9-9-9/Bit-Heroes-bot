@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import static bh.bot.common.Log.dev;
 import static bh.bot.common.Log.err;
+import static bh.bot.common.utils.ImageUtil.freeMem;
 
 public class BwMatrixMeta {
     private final int[] firstBlackPixelOffset;
@@ -83,7 +84,7 @@ public class BwMatrixMeta {
                 }
                 this.firstBlackPixelOffset = this.blackPixels.get(0);
             } finally {
-                img.flush();
+                freeMem(img);
             }
 
             this.imageNameCode = bii.code;
@@ -617,7 +618,11 @@ public class BwMatrixMeta {
 
     public static BwMatrixMeta fromTpImage(String path, Configuration.Offset tpImageOffset, int blackPixelRgb) throws IOException {
         BufferedImageInfo bii = ImageUtil.loadTpImageFromResource(path);
-        Tuple2<BufferedImageInfo, Configuration.Offset> transformed = ImageUtil.transformFromTpToMxImage(bii, blackPixelRgb, tpImageOffset);
-        return new BwMatrixMeta(transformed._1, transformed._2, blackPixelRgb);
+        try {
+            Tuple2<BufferedImageInfo, Configuration.Offset> transformed = ImageUtil.transformFromTpToMxImage(bii, blackPixelRgb, tpImageOffset);
+            return new BwMatrixMeta(transformed._1, transformed._2, blackPixelRgb);
+        } finally {
+            ImageUtil.freeMem(bii.bufferedImage);
+        }
     }
 }

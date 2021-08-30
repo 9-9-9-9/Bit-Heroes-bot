@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
 import static bh.bot.common.Log.debug;
+import static bh.bot.common.utils.ImageUtil.freeMem;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public class InteractionUtil {
@@ -204,7 +205,7 @@ public class InteractionUtil {
                         //
 
                     } finally {
-                        sc.flush();
+                        freeMem(sc);
                     }
                 }
                 return null;

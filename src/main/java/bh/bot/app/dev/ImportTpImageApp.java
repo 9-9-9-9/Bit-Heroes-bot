@@ -153,4 +153,9 @@ public class ImportTpImageApp extends AbstractApplication {
     protected String getLimitationExplain() {
         return null;
     }
+
+    @Override
+    protected boolean isRequiredToLoadImages() {
+        return false;
+    }
 }

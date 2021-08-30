@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static bh.bot.common.Log.*;
+import static bh.bot.common.utils.ImageUtil.freeMem;
 import static bh.bot.common.utils.InteractionUtil.Keyboard.sendSpaceKey;
 import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
@@ -244,7 +245,7 @@ public class FishingApp extends AbstractApplication {
                         ex.printStackTrace();
                         sleep(500);
                     } finally {
-                        sc.flush();
+                        freeMem(sc);
                     }
 
                 } else if (curScreen == screenStart) {
@@ -269,7 +270,6 @@ public class FishingApp extends AbstractApplication {
             while (!masterSwitch.get()) {
                 sleep(1000);
 
-                long timeStart = System.currentTimeMillis();
                 BufferedImage sc = captureScreen(
                         anchorPoint.x,
                         anchorPoint.y,
@@ -310,8 +310,7 @@ public class FishingApp extends AbstractApplication {
                     ex.printStackTrace();
                     sleep(2000);
                 } finally {
-                    debug("detectScreen process time: %d ms", System.currentTimeMillis() - timeStart);
-                    sc.flush();
+                    freeMem(sc);
                 }
             }
         } catch (Exception ex) {

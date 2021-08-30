@@ -8,6 +8,8 @@ import bh.bot.common.utils.InteractionUtil;
 
 import java.awt.image.BufferedImage;
 
+import static bh.bot.common.utils.ImageUtil.freeMem;
+
 @AppCode(code = "sc")
 public class ScreenCaptureApp extends AbstractApplication {
     @Override
@@ -23,7 +25,7 @@ public class ScreenCaptureApp extends AbstractApplication {
         try {
             saveImage(sc, "screen-shot");
         } finally {
-            sc.flush();
+            freeMem(sc);
         }
     }
 
@@ -55,5 +57,10 @@ public class ScreenCaptureApp extends AbstractApplication {
     @Override
     protected boolean isSupportSteamScreenResolution() {
         return true;
+    }
+
+    @Override
+    protected boolean isRequiredToLoadImages() {
+        return false;
     }
 }

@@ -268,4 +268,9 @@ public class GenMiniClient extends AbstractApplication {
         }
         return resultStringBuilder.toString();
     }
+
+    @Override
+    protected boolean isRequiredToLoadImages() {
+        return false;
+    }
 }

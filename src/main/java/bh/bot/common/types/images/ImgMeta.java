@@ -6,6 +6,8 @@ import bh.bot.common.utils.ImageUtil;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import static bh.bot.common.utils.ImageUtil.freeMem;
+
 @Deprecated
 public class ImgMeta {
     private final ArrayList<Pixel> a2;
@@ -38,7 +40,7 @@ public class ImgMeta {
                 }
             }
         } finally {
-            img.flush();
+            freeMem(img);
         }
     }
 

@@ -30,6 +30,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static bh.bot.common.Log.*;
+import static bh.bot.common.utils.ImageUtil.freeMem;
 import static bh.bot.common.utils.InteractionUtil.Mouse.*;
 import static bh.bot.common.utils.InteractionUtil.Screen.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
@@ -51,7 +52,8 @@ public abstract class AbstractApplication {
             info("Enabled saving debug images");
         initOutputDirectories();
         // ImgMeta.load(); // Deprecated class
-        BwMatrixMeta.load();
+        if (isRequiredToLoadImages())
+            BwMatrixMeta.load();
         Telegram.setAppName(getAppName());
         warn(getLimitationExplain());
         internalRun(launchInfo.arguments);
@@ -116,17 +118,6 @@ public abstract class AbstractApplication {
 
     protected abstract String getDescription();
 
-    protected String buildFlags(String... flags) {
-        if (flags.length < 1)
-            return null;
-        StringBuilder sb = new StringBuilder();
-        for (String flag : flags) {
-            sb.append("\n  ");
-            sb.append(flag);
-        }
-        return sb.toString();
-    }
-
     public String getHelp() {
         StringBuilder sb = new StringBuilder(getAppName());
         sb.append("\n  Description: ");
@@ -171,6 +162,10 @@ public abstract class AbstractApplication {
 
     protected boolean isSupportSteamScreenResolution() {
         return false;
+    }
+
+    protected boolean isRequiredToLoadImages() {
+        return true;
     }
 
     protected boolean clickImage(BwMatrixMeta im) {
@@ -225,7 +220,7 @@ public abstract class AbstractApplication {
             // debug("findImageBasedOnLastClick match success (result)");
             return p;
         } finally {
-            sc.flush();
+            freeMem(sc);
         }
     }
 
@@ -288,7 +283,7 @@ public abstract class AbstractApplication {
 
             return null;
         } finally {
-            sc.flush();
+            freeMem(sc);
         }
     }
 
@@ -366,7 +361,7 @@ public abstract class AbstractApplication {
 
             return null;
         } finally {
-            sc.flush();
+            freeMem(sc);
         }
     }
 
@@ -484,7 +479,7 @@ public abstract class AbstractApplication {
                     (byte) selectedRadioButtonIndex
             );
         } finally {
-            sc.flush();
+            freeMem(sc);
         }
     }
 

@@ -43,8 +43,7 @@ public class ImageUtil {
 
         int tolerant = Configuration.Tolerant.colorBw;
         TestTransformMxResult testTransformMxResult = testTransformMx(bii.bufferedImage, blackPixelRgb, tolerant);
-        testTransformMxResult.original.flush();
-        testTransformMxResult.tp.flush();
+        freeMem(testTransformMxResult.tp);
         return new Tuple2<>(new BufferedImageInfo(testTransformMxResult.mx, bii.code), testTransformMxResult.mxOffset);
     }
 
@@ -129,7 +128,7 @@ public class ImageUtil {
 
             return new TestTransformMxResult(bi, mx, tp, new Configuration.Offset(minX, minY));
         } finally {
-            biSample.flush();
+            freeMem(biSample);
         }
     }
 
@@ -176,6 +175,15 @@ public class ImageUtil {
     public static boolean isGreenLikeColor(Color color) {
         int rgb = color.getRGB();
         return getRed(rgb) <= 150 && getGreen(rgb) >= 205 && getBlue(rgb) <= 150;
+    }
+
+    public static void freeMem(BufferedImage bi) {
+        if (bi == null)
+            return;
+        try {
+            bi.flush();
+        } catch (Exception ex) {
+        }
     }
 
     public static class DynamicRgb {
