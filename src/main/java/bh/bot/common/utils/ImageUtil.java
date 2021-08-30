@@ -7,13 +7,17 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 
 public class ImageUtil {
     public static BufferedImageInfo loadImageFileFromResource(String path) throws IOException {
         if (!path.toLowerCase().trim().endsWith("-mx.bmp"))
             throw new IllegalArgumentException("Only accept *-mx.bmp pictures");
         String fileName = String.format("/game-images/%s/%s", Configuration.profileName, path);
-        BufferedImage bi = ImageIO.read(ImageUtil.class.getResource(fileName));
+        URL resource = ImageUtil.class.getResource(fileName);
+        if (resource == null)
+            throw new IllegalArgumentException(String.format("File does not exists: %s", fileName));
+        BufferedImage bi = ImageIO.read(resource);
         final int acceptedType = BufferedImage.TYPE_3BYTE_BGR;
         if (bi.getType() != acceptedType)
             throw new IllegalArgumentException(String.format("Only accept bmp pictures with type = BufferedImage.TYPE_3BYTE_BGR (int value = %d)", acceptedType));
