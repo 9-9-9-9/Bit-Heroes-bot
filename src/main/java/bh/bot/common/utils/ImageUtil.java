@@ -84,49 +84,53 @@ public class ImageUtil {
         final int red = 0xFF0000;
 
         BufferedImage biSample = new BufferedImage(maxX - minX + 1, maxY - minY + 1, 5);
-        for (int[] p : translatedPos)
-            biSample.setRGB(p[0], p[1], white);
+        try {
+            for (int[] p : translatedPos)
+                biSample.setRGB(p[0], p[1], white);
 
-        mx = new BufferedImage(biSample.getWidth(), biSample.getHeight(), biSample.getType());
-        for (int y = 0; y < mx.getHeight(); y++) {
-            for (int x = 0; x < mx.getWidth(); x++) {
-                mx.setRGB(x, y, white);
+            mx = new BufferedImage(biSample.getWidth(), biSample.getHeight(), biSample.getType());
+            for (int y = 0; y < mx.getHeight(); y++) {
+                for (int x = 0; x < mx.getWidth(); x++) {
+                    mx.setRGB(x, y, white);
+                }
             }
-        }
 
-        for (int y = 0; y < biSample.getHeight(); y++) {
-            for (int x = 0; x < biSample.getWidth(); x++) {
-                int rgbFromSample = biSample.getRGB(x, y) & 0xFFFFFF;
-                if (rgbFromSample != white)
-                    continue;
+            for (int y = 0; y < biSample.getHeight(); y++) {
+                for (int x = 0; x < biSample.getWidth(); x++) {
+                    int rgbFromSample = biSample.getRGB(x, y) & 0xFFFFFF;
+                    if (rgbFromSample != white)
+                        continue;
 
-                mx.setRGB(x, y, black);
+                    mx.setRGB(x, y, black);
 
-                // surround with red
-                for (int oY = -1; oY <= 1; oY++) {
-                    for (int oX = -1; oX <= 1; oX++) {
-                        if (oX == 0 && oY == 0)
-                            continue;
-                        int sX = x + oX;
-                        int sY = y + oY;
-                        if (sX < 0 || sX >= biSample.getWidth())
-                            continue;
-                        if (sY < 0 || sY >= biSample.getHeight())
-                            continue;
-                        rgbFromSample = biSample.getRGB(sX, sY) & 0xFFFFFF;
-                        if (rgbFromSample == black)
-                            mx.setRGB(sX, sY, red);
+                    // surround with red
+                    for (int oY = -1; oY <= 1; oY++) {
+                        for (int oX = -1; oX <= 1; oX++) {
+                            if (oX == 0 && oY == 0)
+                                continue;
+                            int sX = x + oX;
+                            int sY = y + oY;
+                            if (sX < 0 || sX >= biSample.getWidth())
+                                continue;
+                            if (sY < 0 || sY >= biSample.getHeight())
+                                continue;
+                            rgbFromSample = biSample.getRGB(sX, sY) & 0xFFFFFF;
+                            if (rgbFromSample == black)
+                                mx.setRGB(sX, sY, red);
+                        }
                     }
                 }
             }
+
+            tp = new BufferedImage(mx.getWidth(), mx.getHeight(), mx.getType());
+            for (int y = 0; y < tp.getHeight(); y++)
+                for (int x = 0; x < tp.getWidth(); x++)
+                    tp.setRGB(x, y, bi.getRGB(x + minX, y + minY));
+
+            return new TestTransformMxResult(bi, mx, tp, new Configuration.Offset(minX, minY));
+        } finally {
+            biSample.flush();
         }
-
-        tp = new BufferedImage(mx.getWidth(), mx.getHeight(), mx.getType());
-        for (int y = 0; y < tp.getHeight(); y++)
-            for (int x = 0; x < tp.getWidth(); x++)
-                tp.setRGB(x, y, bi.getRGB(x + minX, y + minY));
-
-        return new TestTransformMxResult(bi, mx, tp, new Configuration.Offset(minX, minY));
     }
 
     public static boolean areColorsSimilar(int rgb1, int rgb2, int tolerance) {
