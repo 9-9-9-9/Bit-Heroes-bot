@@ -24,7 +24,7 @@ public class AttendablePlace {
         this.name = name;
         this.id = id;
         this.img = new BwMatrixMeta(
-                ImageUtil.loadImageFileFromResource(String.format("labels/attendable-places/%s", imgName)),
+                ImageUtil.loadMxImageFromResource(String.format("labels/attendable-places/%s", imgName)),
                 new Configuration.Offset(0, 0),
                 0xFFFFFF
         );

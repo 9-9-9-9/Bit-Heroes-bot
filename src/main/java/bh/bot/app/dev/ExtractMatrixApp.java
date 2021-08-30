@@ -138,9 +138,8 @@ public class ExtractMatrixApp extends AbstractApplication {
             }
 
             List<int[]> translatedPos = new ArrayList<>();
-            for (int[] p : pos) {
+            for (int[] p : pos)
                 translatedPos.add(new int[]{p[0] - minX, p[1] - minY});
-            }
 
             final int white = 0xFFFFFF;
             final int black = 0x000000;

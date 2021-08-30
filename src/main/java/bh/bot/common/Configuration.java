@@ -44,11 +44,13 @@ public class Configuration {
     }
 
     public static class UserConfig {
+        private static final byte defaultValue = 0;
+
         public static int profileNo;
-        public static byte raidLevel;
-        public static byte raidMode;
-        public static byte worldBossLevel;
-        public static byte worldBossMode;
+        public static byte raidLevel = defaultValue;
+        public static byte raidMode = defaultValue;
+        public static byte worldBossLevel = defaultValue;
+        public static byte worldBossMode = defaultValue;
 
         public static final byte modeNormal = 1;
         public static final byte modeHard = 2;
@@ -87,6 +89,10 @@ public class Configuration {
                 default:
                     return false;
             }
+        }
+
+        public static boolean isDefaultValue(int value) {
+            return value == defaultValue;
         }
     }
 
@@ -142,6 +148,7 @@ public class Configuration {
         final File fileCfg = new File(profileConfigFileName);
         if (!fileCfg.exists() || !fileCfg.isFile()) {
             debug("Unable to load user config for profile no.%d, reason: file '%s' not found", profileNo, profileConfigFileName);
+            System.exit(Main.EXIT_CODE_INCORRECT_PROFILE_NUMBER);
             return;
         }
 
