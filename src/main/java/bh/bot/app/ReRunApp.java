@@ -66,50 +66,62 @@ public class ReRunApp extends AbstractApplication {
     }
 
     private void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
-        moveCursor(new Point(950, 100));
-        long lastFound = System.currentTimeMillis();
-        boolean clickedOnPreviousRound = false;
-        while (loopCount > 0 && !masterSwitch.get()) {
-            sleep(10_000);
-            if (clickImage(BwMatrixMeta.Metas.Dungeons.Buttons.rerun)) {
-                loopCount--;
-                lastFound = System.currentTimeMillis();
-                info("%d loop left", loopCount);
-                clickedOnPreviousRound = true;
-            } else {
-                if (System.currentTimeMillis() - lastFound > 900000) {
-                    info("Long time no see => Stop");
-                    Telegram.sendMessage("long time no see button", true);
-                    break;
+        try {
+            moveCursor(new Point(950, 100));
+            long lastFound = System.currentTimeMillis();
+            boolean clickedOnPreviousRound = false;
+            while (loopCount > 0 && !masterSwitch.get()) {
+                sleep(10_000);
+                if (clickImage(BwMatrixMeta.Metas.Dungeons.Buttons.rerun)) {
+                    loopCount--;
+                    lastFound = System.currentTimeMillis();
+                    info("%d loop left", loopCount);
+                    clickedOnPreviousRound = true;
                 } else {
-                    debug("Not found, repeat");
-                }
+                    if (System.currentTimeMillis() - lastFound > 900000) {
+                        info("Long time no see => Stop");
+                        Telegram.sendMessage("long time no see button", true);
+                        break;
+                    } else {
+                        debug("Not found, repeat");
+                    }
 
-                if (clickedOnPreviousRound) {
-                    clickedOnPreviousRound = false;
-                    sleep(60_000);
+                    if (clickedOnPreviousRound) {
+                        clickedOnPreviousRound = false;
+                        sleep(60_000);
+                    }
                 }
             }
-        }
 
-        masterSwitch.set(true);
+            masterSwitch.set(true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
+            masterSwitch.set(true);
+        }
     }
 
     private void detectDefeatedOnRaid(AtomicBoolean masterSwitch) {
-        int sleepSecs = 60;
-        int cnt = sleepSecs;
-        while (!masterSwitch.get()) {
-            cnt--;
-            sleep(1000);
-            if (cnt > 0) {
-                continue;
-            }
+        try {
+            int sleepSecs = 60;
+            int cnt = sleepSecs;
+            while (!masterSwitch.get()) {
+                cnt--;
+                sleep(1000);
+                if (cnt > 0) {
+                    continue;
+                }
 
-            cnt = sleepSecs;
-            if (clickImage(BwMatrixMeta.Metas.Raid.Buttons.town)) {
-                masterSwitch.set(true);
-                Telegram.sendMessage("Defeated", true);
+                cnt = sleepSecs;
+                if (clickImage(BwMatrixMeta.Metas.Raid.Buttons.town)) {
+                    masterSwitch.set(true);
+                    Telegram.sendMessage("Defeated", true);
+                }
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
+            masterSwitch.set(true);
         }
     }
 

@@ -489,98 +489,121 @@ public abstract class AbstractApplication {
     }
 
     protected void doClickTalk(Supplier<Boolean> shouldStop) {
-        int sleepSecs = 60;
-        int sleepSecsWhenClicked = 3;
-        int cnt = sleepSecs;
-        while (!shouldStop.get()) {
-            cnt--;
-            sleep(1000);
-            if (cnt > 0) {
-                continue;
-            }
+        try {
+            int sleepSecs = 60;
+            int sleepSecsWhenClicked = 3;
+            int cnt = sleepSecs;
+            while (!shouldStop.get()) {
+                cnt--;
+                sleep(1000);
+                if (cnt > 0) {
+                    continue;
+                }
 
-            cnt = sleepSecs;
-            if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.talkRightArrow)) {
-                debug("clicked talk");
-                cnt = sleepSecsWhenClicked;
-            } else {
-                debug("No talk");
+                cnt = sleepSecs;
+                if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.talkRightArrow)) {
+                    debug("clicked talk");
+                    cnt = sleepSecsWhenClicked;
+                } else {
+                    debug("No talk");
+                }
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
         }
     }
 
     protected void detectDisconnected(AtomicBoolean masterSwitch) {
-        int sleepSecs = 60;
-        int cnt = sleepSecs;
-        while (!masterSwitch.get()) {
-            cnt--;
-            sleep(1000);
-            if (cnt > 0) {
-                continue;
-            }
+        try {
+            int sleepSecs = 60;
+            int cnt = sleepSecs;
+            while (!masterSwitch.get()) {
+                cnt--;
+                sleep(1000);
+                if (cnt > 0) {
+                    continue;
+                }
 
-            cnt = sleepSecs;
-            if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.reconnect)) {
-                masterSwitch.set(true);
-                Telegram.sendMessage("Disconnected", true);
+                cnt = sleepSecs;
+                if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.reconnect)) {
+                    masterSwitch.set(true);
+                    Telegram.sendMessage("Disconnected", true);
+                }
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
+            masterSwitch.set(true);
         }
     }
 
     protected void autoReactiveAuto(AtomicBoolean masterSwitch) {
-        final int sleepMs = 10_000;
-        int continousRed = 0;
-        final int maxContinousRed = 6;
-        while (!masterSwitch.get()) {
-            sleep(sleepMs);
-            Point point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoG);
-            if (point == null) {
-                debug("AutoG button not found");
-                point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoR);
+        try {
+            final int sleepMs = 10_000;
+            int continousRed = 0;
+            final int maxContinousRed = 6;
+            while (!masterSwitch.get()) {
+                sleep(sleepMs);
+                Point point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoG);
                 if (point == null) {
-                    debug("AutoR button not found");
+                    debug("AutoG button not found");
+                    point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoR);
+                    if (point == null) {
+                        debug("AutoR button not found");
+                        continue;
+                    }
+                }
+                debug("Found the Auto button at %d,%d", point.x, point.y);
+                Color color = getPixelColor(point.x - 5, point.y);
+                if (ImageUtil.isGreenLikeColor(color)) {
+                    debug("Auto is currently ON (green)");
+                    continousRed = 0;
                     continue;
                 }
-            }
-            debug("Found the Auto button at %d,%d", point.x, point.y);
-            Color color = getPixelColor(point.x - 5, point.y);
-            if (ImageUtil.isGreenLikeColor(color)) {
-                debug("Auto is currently ON (green)");
-                continousRed = 0;
-                continue;
-            }
-            if (ImageUtil.isRedLikeColor(color)) {
-                continousRed++;
-                if (continousRed >= 2)
-                    info("Detected Auto is not turned on, gonna reactive it soon");
-                if (continousRed >= maxContinousRed) {
-                    moveCursor(point);
-                    sleep(100);
-                    mouseClick();
-                    hideCursor();
+                if (ImageUtil.isRedLikeColor(color)) {
+                    continousRed++;
+                    if (continousRed >= 2)
+                        info("Detected Auto is not turned on, gonna reactive it soon");
+                    if (continousRed >= maxContinousRed) {
+                        moveCursor(point);
+                        sleep(100);
+                        mouseClick();
+                        hideCursor();
 
-                    info("Sent re-active");
-                    sleep(2_000);
+                        info("Sent re-active");
+                        sleep(2_000);
+                    }
+                } else {
+                    debug("Red Auto not found");
                 }
-            } else {
-                debug("Red Auto not found");
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
+            masterSwitch.set(true);
         }
     }
 
     protected void autoExit(int exitAfterXSecs, AtomicBoolean masterSwitch) {
-        if (exitAfterXSecs < 1)
-            return;
-        while (exitAfterXSecs > 0) {
-            exitAfterXSecs--;
-            sleep(1000);
-            if (exitAfterXSecs % 60 == 0)
-                info("Exit after %d seconds", exitAfterXSecs);
-            if (masterSwitch.get())
-                break;
+        try {
+            if (exitAfterXSecs < 1)
+                return;
+            while (exitAfterXSecs > 0) {
+                exitAfterXSecs--;
+                sleep(1000);
+                if (exitAfterXSecs % 60 == 0)
+                    info("Exit after %d seconds", exitAfterXSecs);
+                if (masterSwitch.get())
+                    break;
+            }
+            masterSwitch.set(true);
+            info("Application is going to exit now");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
+            masterSwitch.set(true);
         }
-        masterSwitch.set(true);
-        info("Application is going to exit now");
     }
 
     protected <T> T readInput(BufferedReader br, String ask, String desc, Function<String, Tuple3<Boolean, String, T>> transform) {
