@@ -32,6 +32,8 @@ public class Main {
         try {
 
             Configuration.registerApplicationInstances(
+                    SettingApp.class,
+//
                     ReRunApp.class,
                     FishingApp.class,
                     AfkApp.class,

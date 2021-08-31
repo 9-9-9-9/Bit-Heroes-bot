@@ -122,7 +122,7 @@ public class AfkApp extends AbstractApplication {
 
     private void printRequiresSetting() {
         err("You have to do setting before using this function");
-        err("Please launch script 'settings.%s' and follow instruction", Configuration.OS.isWin ? "bat" : "sh");
+        err("Please launch script 'setting.%s' and follow instruction", Configuration.OS.isWin ? "bat" : "sh");
     }
 
     private void doLoop(
