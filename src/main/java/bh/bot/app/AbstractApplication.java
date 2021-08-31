@@ -231,7 +231,7 @@ public abstract class AbstractApplication {
         BufferedImage sc = screenCapturedResult.image;
 
         try {
-            saveDebugImage(sc, "scanToFindImage");
+            saveDebugImage(sc, "scanToFindImage." + im.getImageNameCode());
 
             boolean go = true;
             Point p = new Point();

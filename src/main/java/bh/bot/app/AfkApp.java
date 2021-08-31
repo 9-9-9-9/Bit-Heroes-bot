@@ -49,7 +49,6 @@ public class AfkApp extends AbstractApplication {
         ArrayList<AttendablePlace> eventList;
         Configuration.UserConfig userConfig = null;
 
-
         try (
                 InputStreamReader isr = new InputStreamReader(System.in);
                 BufferedReader br = new BufferedReader(isr);
@@ -457,18 +456,24 @@ public class AfkApp extends AbstractApplication {
             spamEscape(1);
             return false;
         }
+        mouseMoveAndClickAndHide(coord);
         BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog.setLastMatchPoint(coord.x, coord.y);
         Tuple2<Point[], Byte> result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
         Point[] points = result._1;
         int selectedLevel = result._2 + 1;
         info("Found %d, selected %d", points.length, selectedLevel);
         if (selectedLevel != userConfig.raidLevel)
-            clickRadioButton(6, points, "Raid");
+            clickRadioButton(userConfig.raidLevel, points, "Raid");
         sleep(3_000);
-        if (!clickImage(BwMatrixMeta.Metas.Raid.Buttons.summon)) {
+        result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
+        selectedLevel = result._2 + 1;
+        if (selectedLevel != userConfig.raidLevel) {
+            err("Failure on selecting raid level");
             spamEscape(1);
             return false;
         }
+        sleep(1_000);
+        mouseMoveAndClickAndHide(fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord, Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid()));
         sleep(5_000);
         if (Configuration.UserConfig.isNormalMode(userConfig.raidMode)) {
             mouseMoveAndClickAndHide(fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord, Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()));

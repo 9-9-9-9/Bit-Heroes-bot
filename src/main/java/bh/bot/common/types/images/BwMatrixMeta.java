@@ -261,7 +261,6 @@ public class BwMatrixMeta {
         public static class Raid {
             public static class Buttons {
                 public static BwMatrixMeta town;
-                public static BwMatrixMeta summon;
                 public static BwMatrixMeta accept;
             }
 
@@ -590,11 +589,6 @@ public class BwMatrixMeta {
                         "buttons/raid.town-mx.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetButtonTownWhenDefeatedInRaid(),
-                0xFFFFFF
-        );
-        Metas.Raid.Buttons.summon = BwMatrixMeta.fromTpImage(//
-                "buttons/raid.summon-tp.bmp", //
-                Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid(),
                 0xFFFFFF
         );
         Metas.Raid.Buttons.accept = BwMatrixMeta.fromTpImage(//
