@@ -502,9 +502,9 @@ public class AfkApp extends AbstractApplication {
     private List<AbstractDoFarmingApp.NextAction> getPredefinedImageActionsOfRaid() {
         return Arrays.asList(
                 new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.town, true, false),
-                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Globally.Buttons.rerun, true, false)
-                // TODO new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Globally.Buttons.accept, false, false)
-                // TODO new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.outOfShards, false, true)
+                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Globally.Buttons.rerun, true, false),
+                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.accept, false, false),
+                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Dialogs.notEnoughShards, false, true)
         );
     }
 }

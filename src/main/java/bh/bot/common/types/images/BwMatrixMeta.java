@@ -262,10 +262,15 @@ public class BwMatrixMeta {
             public static class Buttons {
                 public static BwMatrixMeta town;
                 public static BwMatrixMeta summon;
+                public static BwMatrixMeta accept;
             }
 
             public static class Labels {
                 public static BwMatrixMeta labelInSummonDialog;
+            }
+
+            public static class Dialogs {
+                public static BwMatrixMeta notEnoughShards;
             }
         }
     }
@@ -592,9 +597,19 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid(),
                 0xFFFFFF
         );
+        Metas.Raid.Buttons.accept = BwMatrixMeta.fromTpImage(//
+                "buttons/raid.accept-tp.bmp", //
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptTeamOfRaid(),
+                0xFFFFFF
+        );
         Metas.Raid.Labels.labelInSummonDialog = BwMatrixMeta.fromTpImage(//
                 "labels/raid-tp.bmp", //
                 Configuration.screenResolutionProfile.getOffsetLabelRaidInSummonDialog(),
+                0xFFFFFF
+        );
+        Metas.Raid.Dialogs.notEnoughShards = BwMatrixMeta.fromTpImage(//
+                "dialogs/raid.not-enough-shards-tp.bmp", //
+                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughShards(),
                 0xFFFFFF
         );
 

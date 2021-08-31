@@ -109,6 +109,10 @@ public abstract class ScreenResolutionProfile {
 
     public abstract Offset getOffsetButtonSummonOfRaid();
 
+    public abstract Offset getOffsetButtonAcceptTeamOfRaid();
+
+    public abstract Offset getOffsetDialogNotEnoughShards();
+
     public abstract Offset getOffsetButtonEnterNormalRaid();
 
     public abstract Offset getOffsetButtonEnterHardRaid();
@@ -371,6 +375,16 @@ public abstract class ScreenResolutionProfile {
         @Override
         public Offset getOffsetButtonSummonOfRaid() {
             return new Offset(490, 365);
+        }
+
+        @Override
+        public Offset getOffsetButtonAcceptTeamOfRaid() {
+            return new Offset(474, 457);
+        }
+
+        @Override
+        public Offset getOffsetDialogNotEnoughShards() {
+            return new Offset(279, 231);
         }
 
         @Override
@@ -643,6 +657,16 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonSummonOfRaid() {
+            return null;
+        }
+
+        @Override
+        public Offset getOffsetButtonAcceptTeamOfRaid() {
+            return null;
+        }
+
+        @Override
+        public Offset getOffsetDialogNotEnoughShards() {
             return null;
         }
 
