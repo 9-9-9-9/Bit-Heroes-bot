@@ -190,7 +190,7 @@ public abstract class AbstractApplication {
         Color c = getPixelColor(p);
         if (!im.isMatchBlackRgb(c.getRGB()))
             return null;
-        // debug("findImageBasedOnLastClick match success 1");
+        debug("findImageBasedOnLastClick match success 1 for %s", im.getImageNameCode());
 
         BufferedImage sc = captureScreen(lastMatch[0], lastMatch[1], im.getWidth(), im.getHeight());
 

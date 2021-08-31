@@ -12,8 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static bh.bot.common.Log.dev;
-import static bh.bot.common.Log.err;
+import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.ImageUtil.freeMem;
 
 public class BwMatrixMeta {
@@ -262,6 +261,11 @@ public class BwMatrixMeta {
         public static class Raid {
             public static class Buttons {
                 public static BwMatrixMeta town;
+                public static BwMatrixMeta summon;
+            }
+
+            public static class Labels {
+                public static BwMatrixMeta labelInSummonDialog;
             }
         }
     }
@@ -583,6 +587,16 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetButtonTownWhenDefeatedInRaid(),
                 0xFFFFFF
         );
+        Metas.Raid.Buttons.summon = BwMatrixMeta.fromTpImage(//
+                "buttons/raid.summon-tp.bmp", //
+                Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid(),
+                0xFFFFFF
+        );
+        Metas.Raid.Labels.labelInSummonDialog = BwMatrixMeta.fromTpImage(//
+                "labels/raid-tp.bmp", //
+                Configuration.screenResolutionProfile.getOffsetLabelRaidInSummonDialog(),
+                0xFFFFFF
+        );
 
         // test
         testImgImportedFromTp();
@@ -601,6 +615,7 @@ public class BwMatrixMeta {
                     0xFFFFFF
             );
 
+            /*
             assert g.notAvailable == false;
             assert r.notAvailable == false;
             assert Metas.Globally.Buttons.autoG.notAvailable == false;
@@ -613,6 +628,7 @@ public class BwMatrixMeta {
             assert Metas.Globally.Buttons.autoG.h == g.h;
             assert Metas.Globally.Buttons.autoR.w == r.w;
             assert Metas.Globally.Buttons.autoR.h == r.h;
+             */
         }
     }
 
@@ -620,7 +636,7 @@ public class BwMatrixMeta {
         BufferedImageInfo bii = ImageUtil.loadTpImageFromResource(path);
         try {
             Tuple2<BufferedImageInfo, Configuration.Offset> transformed = ImageUtil.transformFromTpToMxImage(bii, blackPixelRgb, tpImageOffset);
-            return new BwMatrixMeta(transformed._1, transformed._2, blackPixelRgb);
+            return new BwMatrixMeta(transformed._1, new Configuration.Offset(tpImageOffset.X + transformed._2.X, tpImageOffset.Y + transformed._2.Y), blackPixelRgb);
         } finally {
             ImageUtil.freeMem(bii.bufferedImage);
         }
