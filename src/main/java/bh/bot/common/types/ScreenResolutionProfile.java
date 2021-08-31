@@ -103,7 +103,7 @@ public abstract class ScreenResolutionProfile {
 
     public abstract Offset getOffsetButtonTownWhenDefeatedInRaid();
 
-    public abstract Rectangle getRectangleRadioButtonsOfRaid();
+    public abstract Rectangle getRectangleRadioButtonsOfRaidAndWorldBoss();
 
     public abstract Offset getOffsetLabelRaidInSummonDialog();
 
@@ -363,7 +363,7 @@ public abstract class ScreenResolutionProfile {
         }
 
         @Override
-        public Rectangle getRectangleRadioButtonsOfRaid() {
+        public Rectangle getRectangleRadioButtonsOfRaidAndWorldBoss() {
             return new Rectangle(163, 435, 474, 15);
         }
 
@@ -646,7 +646,7 @@ public abstract class ScreenResolutionProfile {
         }
 
         @Override
-        public Rectangle getRectangleRadioButtonsOfRaid() {
+        public Rectangle getRectangleRadioButtonsOfRaidAndWorldBoss() {
             return null;
         }
 

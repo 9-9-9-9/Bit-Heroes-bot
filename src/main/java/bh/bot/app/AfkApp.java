@@ -458,14 +458,14 @@ public class AfkApp extends AbstractApplication {
         }
         mouseMoveAndClickAndHide(coord);
         BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog.setLastMatchPoint(coord.x, coord.y);
-        Tuple2<Point[], Byte> result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
+        Tuple2<Point[], Byte> result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaidAndWorldBoss());
         Point[] points = result._1;
         int selectedLevel = result._2 + 1;
         info("Found %d, selected %d", points.length, selectedLevel);
         if (selectedLevel != userConfig.raidLevel)
             clickRadioButton(userConfig.raidLevel, points, "Raid");
         sleep(3_000);
-        result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
+        result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaidAndWorldBoss());
         selectedLevel = result._2 + 1;
         if (selectedLevel != userConfig.raidLevel) {
             err("Failure on selecting raid level");
