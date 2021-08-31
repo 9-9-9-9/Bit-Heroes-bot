@@ -59,7 +59,7 @@ public class AfkApp extends AbstractApplication {
             if (eventList.contains(AttendablePlaces.raid)) {
                 int profileNumber = this.argumentInfo.profileNumber;
                 if (profileNumber < 1) {
-                    info("You have to specific profile number first!");
+                    info("You want to do Raid so you have to specific profile number first!");
                     profileNumber = readInput(br, "Select profile number", String.format("min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), new Function<String, Tuple3<Boolean, String, Integer>>() {
                         @Override
                         public Tuple3<Boolean, String, Integer> apply(String s) {
@@ -84,8 +84,7 @@ public class AfkApp extends AbstractApplication {
                 userConfig = resultLoadUserConfig._2;
 
                 try {
-                    info(userConfig.getRaidLevelDesc());
-                    info(userConfig.getRaidModeDesc());
+                    info("You have selected %s mode of %s", userConfig.getRaidModeDesc(), userConfig.getRaidLevelDesc());
                 } catch (InvalidDataException ex2) {
                     err(ex2.getMessage());
                     printRequiresSetting();
