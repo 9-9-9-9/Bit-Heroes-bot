@@ -113,7 +113,7 @@ public class Configuration {
             return new Tuple2<>(modeNormal, modeHeroic);
         }
 
-        private static String getDifficultyModeDesc(byte mode, String name) {
+        public static String getDifficultyModeDesc(byte mode, String name) {
             if (!isValidDifficultyMode(mode))
                 return "Not specified";
 
