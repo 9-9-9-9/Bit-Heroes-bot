@@ -47,7 +47,6 @@ public class Configuration {
         public static final String raidLevelKey = "ig.user.raid.level";
         public static final String raidModeKey = "ig.user.raid.mode";
         public static final String worldBossLevelKey = "ig.user.world-boss.level";
-        public static final String worldBossModeKey = "ig.user.world-boss.mode";
 
         public static final byte modeNormal = 1;
         public static final byte modeHard = 2;
@@ -62,14 +61,12 @@ public class Configuration {
         public final byte raidLevel;
         public final byte raidMode;
         public final byte worldBossLevel;
-        public final byte worldBossMode;
 
-        public UserConfig(int profileNo, byte raidLevel, byte raidMode, byte worldBossLevel, byte worldBossMode) {
+        public UserConfig(int profileNo, byte raidLevel, byte raidMode, byte worldBossLevel) {
             this.profileNo = profileNo;
             this.raidLevel = raidLevel;
             this.raidMode = raidMode;
             this.worldBossLevel = worldBossLevel;
-            this.worldBossMode = worldBossMode;
         }
 
         public String getRaidLevelDesc() {
@@ -87,11 +84,6 @@ public class Configuration {
         public String getRaidModeDesc() {
             return getDifficultyModeDesc(raidMode, "Raid");
         }
-
-        public String getWorldBossModeDesc() {
-            return getDifficultyModeDesc(worldBossMode, "World Boss");
-        }
-
 
         public boolean isValidRaidLevel() {
             return raidLevel >= raidLevelMin && raidLevel <= raidLevelMax;
@@ -224,7 +216,7 @@ public class Configuration {
             return new Tuple2<>(false, null);
         }
 
-        byte raidLevel, raidMode, worldBossLevel, worldBossMode;
+        byte raidLevel, raidMode, worldBossLevel;
 
         if (profileNo > 1)
             info("Going to load configuration from %s", fileCfg.getName());
@@ -252,13 +244,7 @@ public class Configuration {
             throw new InvalidDataException("Value of key '%s' is not a number", UserConfig.worldBossLevelKey);
         }
 
-        try {
-            worldBossMode = Byte.parseByte(readKey(properties, UserConfig.worldBossModeKey, "0", "Not specified"));
-        } catch (NumberFormatException ex) {
-            throw new InvalidDataException("Value of key '%s' is not a number", UserConfig.worldBossModeKey);
-        }
-
-        return new Tuple2<>(true, new UserConfig(profileNo, raidLevel, raidMode, worldBossLevel, worldBossMode));
+        return new Tuple2<>(true, new UserConfig(profileNo, raidLevel, raidMode, worldBossLevel));
     }
 
     private static String readKey(Properties properties, String key, String defaultValue, String defaultValueDesc) {

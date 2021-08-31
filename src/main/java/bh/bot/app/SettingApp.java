@@ -44,12 +44,11 @@ public class SettingApp extends AbstractApplication {
             if (file.exists() && file.isDirectory())
                 throw new InvalidDataException("%s is a directory", fileName);
             Tuple2<Boolean, Configuration.UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(profileNumber);
-            int raidLevel, raidMode, worldBossLevel, worldBossMode;
+            int raidLevel, raidMode, worldBossLevel;
             if (resultLoadUserConfig._1) {
                 raidLevel = resultLoadUserConfig._2.raidLevel;
                 raidMode = resultLoadUserConfig._2.raidMode;
                 worldBossLevel = resultLoadUserConfig._2.worldBossLevel;
-                worldBossMode = resultLoadUserConfig._2.worldBossMode;
 
                 if (resultLoadUserConfig._2.isValidRaidLevel())
                     info("Selected Raid level %s", resultLoadUserConfig._2.getRaidLevelDesc());
@@ -65,16 +64,10 @@ public class SettingApp extends AbstractApplication {
                     info("Selected World Boss %s", resultLoadUserConfig._2.getWorldBossLevelDesc());
                 else
                     info("You haven't specified World Boss level");
-
-                if (Configuration.UserConfig.isValidDifficultyMode(resultLoadUserConfig._2.worldBossMode))
-                    info("Selected World Boss mode %s", resultLoadUserConfig._2.getWorldBossModeDesc());
-                else
-                    info("You haven't specified World Boss mode (Normal/Hard/Heroic)");
             } else {
                 raidLevel = 0;
                 raidMode = 0;
                 worldBossLevel = 0;
-                worldBossMode = 0;
             }
 
             //
@@ -136,23 +129,6 @@ public class SettingApp extends AbstractApplication {
             }, true);
             worldBossLevel = tmp == null ? worldBossLevel : tmp.intValue();
             //
-            info("All World Boss's difficulty mode:");
-            for (byte rl = modeRange._1; rl <= modeRange._2; rl++)
-                info("%2d. %s", rl, Configuration.UserConfig.getDifficultyModeDesc(rl, "World Boss"));
-            tmp = readInput(br, "Specific World Boss mode?", "See the list above. To skip and keep the current value, just leave this empty and press Enter", new Function<String, Tuple3<Boolean, String, Integer>>() {
-                @Override
-                public Tuple3<Boolean, String, Integer> apply(String s) {
-                    try {
-                        int num = Integer.parseInt(s);
-                        if (num >= modeRange._1 && num <= modeRange._2)
-                            return new Tuple3<>(true, null, num);
-                        return new Tuple3<>(false, String.format("Value must in range from %d to %d", modeRange._1, modeRange._2), 0);
-                    } catch (NumberFormatException ex) {
-                        return new Tuple3<>(false, String.format("Must be a number in range from %d to %d", modeRange._1, modeRange._2), 0);
-                    }
-                }
-            }, true);
-            worldBossMode = tmp == null ? worldBossMode : tmp.intValue();
 
             StringBuilder sb = new StringBuilder();
             sb.append(String.format("%s=%d", Configuration.UserConfig.raidLevelKey, raidLevel));
@@ -160,12 +136,10 @@ public class SettingApp extends AbstractApplication {
             sb.append(String.format("%s=%d", Configuration.UserConfig.raidModeKey, raidMode));
             sb.append('\n');
             sb.append(String.format("%s=%d", Configuration.UserConfig.worldBossLevelKey, worldBossLevel));
-            sb.append('\n');
-            sb.append(String.format("%s=%d", Configuration.UserConfig.worldBossModeKey, worldBossMode));
 
             info("You have selected:");
             info("  %s mode of raid %s", Configuration.UserConfig.getDifficultyModeDesc((byte)raidMode, "Raid"), Configuration.UserConfig.getRaidLevelDesc((byte)raidLevel));
-            info("  %s mode of world boss %s", Configuration.UserConfig.getDifficultyModeDesc((byte)worldBossMode, "World Boss"), Configuration.UserConfig.getWorldBossLevelDesc((byte)worldBossLevel));
+            info("  world boss %s", Configuration.UserConfig.getWorldBossLevelDesc((byte)worldBossLevel));
             boolean save = readInput(br, "Do you want to save the above setting into profile number " + profileNumber + "?", "Press Y/N then enter", new Function<String, Tuple3<Boolean, String, Boolean>>() {
                 @Override
                 public Tuple3<Boolean, String, Boolean> apply(String s) {
