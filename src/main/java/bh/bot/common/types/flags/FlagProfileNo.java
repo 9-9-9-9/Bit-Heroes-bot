@@ -36,4 +36,9 @@ public class FlagProfileNo extends FlagPattern<Integer> {
     public <TApp extends AbstractApplication> boolean isSupportedByApp(TApp instance) {
         return instance instanceof AfkApp;
     }
+
+    @Override
+    public boolean isAllowParam() {
+        return true;
+    }
 }

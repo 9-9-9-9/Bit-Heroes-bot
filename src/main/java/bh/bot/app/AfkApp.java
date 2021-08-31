@@ -136,174 +136,192 @@ public class AfkApp extends AbstractApplication {
             boolean doTrials,
             boolean doGauntlet
     ) {
-        info("Begin AFK");
-        boolean isUnknownGvgOrInvasion = doGvg && doInvasion;
-        boolean isUnknownTrialsOrGauntlet = doTrials && doGauntlet;
-        int continuousNotFound = 0;
-        final Point coordinateHideMouse = new Point(0, 0);
-        final ArrayList<Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>>> taskList = new ArrayList<>();
-        if (doPvp)
-            taskList.add(new Tuple3<>(AttendablePlaces.pvp, blockPvpUntil, PvpApp.getPredefinedImageActions()));
-        if (doWorldBoss)
-            taskList.add(new Tuple3<>(AttendablePlaces.worldBoss, blockWorldBossUntil, WorldBossApp.getPredefinedImageActions()));
-        if (doRaid)
-            taskList.add(new Tuple3<>(AttendablePlaces.raid, blockRaidUntil, getPredefinedImageActionsOfRaid()));
-        if (doGvg)
-            taskList.add(new Tuple3<>(AttendablePlaces.gvg, blockGvgAndInvasionUntil, GvgApp.getPredefinedImageActions()));
-        if (doInvasion)
-            taskList.add(new Tuple3<>(AttendablePlaces.invasion, blockGvgAndInvasionUntil, InvasionApp.getPredefinedImageActions()));
-        if (doTrials)
-            taskList.add(new Tuple3<>(AttendablePlaces.trials, blockTrialsAndGauntletUntil, TrialsApp.getPredefinedImageActions()));
-        if (doGauntlet)
-            taskList.add(new Tuple3<>(AttendablePlaces.gauntlet, blockTrialsAndGauntletUntil, GauntletApp.getPredefinedImageActions()));
+        try {
 
-        ArrayList<AbstractDoFarmingApp.NextAction> outOfTurnNextActionList = new ArrayList<>();
-        addOutOfTurnActionsToList(outOfTurnNextActionList, PvpApp.getPredefinedImageActions());
-        addOutOfTurnActionsToList(outOfTurnNextActionList, WorldBossApp.getPredefinedImageActions());
-        addOutOfTurnActionsToList(outOfTurnNextActionList, getPredefinedImageActionsOfRaid());
-        addOutOfTurnActionsToList(outOfTurnNextActionList, GvgApp.getPredefinedImageActions());
-        addOutOfTurnActionsToList(outOfTurnNextActionList, InvasionApp.getPredefinedImageActions());
-        addOutOfTurnActionsToList(outOfTurnNextActionList, TrialsApp.getPredefinedImageActions());
-        addOutOfTurnActionsToList(outOfTurnNextActionList, GauntletApp.getPredefinedImageActions());
+            info("Begin AFK");
+            boolean isUnknownGvgOrInvasion = doGvg && doInvasion;
+            boolean isUnknownTrialsOrGauntlet = doTrials && doGauntlet;
+            int continuousNotFound = 0;
+            final Point coordinateHideMouse = new Point(0, 0);
+            final ArrayList<Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>>> taskList = new ArrayList<>();
+            if (doPvp)
+                taskList.add(new Tuple3<>(AttendablePlaces.pvp, blockPvpUntil, PvpApp.getPredefinedImageActions()));
+            if (doWorldBoss)
+                taskList.add(new Tuple3<>(AttendablePlaces.worldBoss, blockWorldBossUntil, WorldBossApp.getPredefinedImageActions()));
+            if (doRaid)
+                taskList.add(new Tuple3<>(AttendablePlaces.raid, blockRaidUntil, getPredefinedImageActionsOfRaid()));
+            if (doGvg)
+                taskList.add(new Tuple3<>(AttendablePlaces.gvg, blockGvgAndInvasionUntil, GvgApp.getPredefinedImageActions()));
+            if (doInvasion)
+                taskList.add(new Tuple3<>(AttendablePlaces.invasion, blockGvgAndInvasionUntil, InvasionApp.getPredefinedImageActions()));
+            if (doTrials)
+                taskList.add(new Tuple3<>(AttendablePlaces.trials, blockTrialsAndGauntletUntil, TrialsApp.getPredefinedImageActions()));
+            if (doGauntlet)
+                taskList.add(new Tuple3<>(AttendablePlaces.gauntlet, blockTrialsAndGauntletUntil, GauntletApp.getPredefinedImageActions()));
 
-        AttendablePlace toBeRemoved = null;
-
-        final byte minutesSleepWaitingResourceGeneration = 5;
-        final short loopSleep = 5_000;
-        final short originalCheckAreYouStillThereAfter = 20_000 / loopSleep;
-        short checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
-        final short originalSleepWhileWaitingResourceRegen = 5 * 60_000 / loopSleep;
-        short sleepWhileWaitingResourceRegen = 0;
-
-        ML:
-        while (!masterSwitch.get()) {
-            sleep(loopSleep);
-
-            if (toBeRemoved != null) {
-                final AttendablePlace target = toBeRemoved;
-                if (taskList.removeIf(x -> x._1 == target)) {
-                    toBeRemoved = null;
-                    debug("Removed %s from taskList", target.name);
-                    continue ML;
+            for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tp : taskList) {
+                for (AbstractDoFarmingApp.NextAction na : tp._3) {
+                    if (na.image == null)
+                        throw new InvalidDataException("Null occurs at %s (reduceLoopCountOnFound %s, isOutOfTurns %s)", tp._1.name, String.valueOf(na.reduceLoopCountOnFound), String.valueOf(na.isOutOfTurns));
                 }
             }
 
-            if (--checkAreYouStillThereAfter <= 0) {
+            ArrayList<AbstractDoFarmingApp.NextAction> outOfTurnNextActionList = new ArrayList<>();
+            addOutOfTurnActionsToList(outOfTurnNextActionList, PvpApp.getPredefinedImageActions());
+            addOutOfTurnActionsToList(outOfTurnNextActionList, WorldBossApp.getPredefinedImageActions());
+            addOutOfTurnActionsToList(outOfTurnNextActionList, getPredefinedImageActionsOfRaid());
+            addOutOfTurnActionsToList(outOfTurnNextActionList, GvgApp.getPredefinedImageActions());
+            addOutOfTurnActionsToList(outOfTurnNextActionList, InvasionApp.getPredefinedImageActions());
+            addOutOfTurnActionsToList(outOfTurnNextActionList, TrialsApp.getPredefinedImageActions());
+            addOutOfTurnActionsToList(outOfTurnNextActionList, GauntletApp.getPredefinedImageActions());
 
-                if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouStillThere)) {
-                    info("Knock knock, are you still there?");
-                    InteractionUtil.Keyboard.sendEnter();
-                    sleep(1_000);
-                    InteractionUtil.Keyboard.sendEscape();
-                    checkAreYouStillThereAfter = 2;
-                } else {
-                    checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
-                }
-                continue ML;
-            }
+            AttendablePlace toBeRemoved = null;
 
-            if (sleepWhileWaitingResourceRegen > 0) {
-                sleepWhileWaitingResourceRegen--;
-                continue ML;
-            }
+            final byte minutesSleepWaitingResourceGeneration = 5;
+            final short loopSleep = 5_000;
+            final short originalCheckAreYouStillThereAfter = 20_000 / loopSleep;
+            short checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
+            final short originalSleepWhileWaitingResourceRegen = 5 * 60_000 / loopSleep;
+            short sleepWhileWaitingResourceRegen = 0;
 
-            if (taskList.stream().allMatch(x -> !isNotBlocked(x._2))) {
-                info("Waiting for resource generation, sleeping %d minutes", minutesSleepWaitingResourceGeneration);
-                sleepWhileWaitingResourceRegen = originalSleepWhileWaitingResourceRegen;
-                continue ML;
-            }
+            ML:
+            while (!masterSwitch.get()) {
+                sleep(loopSleep);
 
-            if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmStartNotFullTeam)) {
-                debug("confirmStartNotFullTeam");
-                InteractionUtil.Keyboard.sendSpaceKey();
-                continuousNotFound = 0;
-                moveCursor(coordinateHideMouse);
-                continue ML;
-            }
-
-            if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmQuitBattle)) {
-                debug("confirmQuitBattle");
-                InteractionUtil.Keyboard.sendEnter();
-                sleep(1_000);
-                spamEscape(1);
-                continuousNotFound = 0;
-                moveCursor(coordinateHideMouse);
-                continue ML;
-            }
-
-            if (tryEnterRaid(doRaid, userConfig)) {
-                debug("tryEnterRaid");
-                continuousNotFound = 0;
-                moveCursor(coordinateHideMouse);
-                continue ML;
-            }
-
-            for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tuple : taskList) {
-                if (!isNotBlocked(tuple._2))
-                    continue;
-                AbstractDoFarmingApp.NextAction nextAction = tryToClickOnBatch(tuple._3);
-                if (nextAction == null)
-                    continue;
-                debug(nextAction.image.getImageNameCode());
-                if (nextAction.isOutOfTurns) {
-                    spamEscape(2);
-                    tempBlock(tuple._1);
-                }
-                continuousNotFound = 0;
-                moveCursor(coordinateHideMouse);
-                continue ML;
-            }
-
-            debug("None");
-            continuousNotFound++;
-            moveCursor(coordinateHideMouse);
-
-            if (continuousNotFound >= 6) {
-                for (AbstractDoFarmingApp.NextAction nextAction : outOfTurnNextActionList) {
-                    if (clickImage(nextAction.image)) {
-                        spamEscape(2);
-                        sleep(1_000);
+                debug("doLoop on loop");
+                if (toBeRemoved != null) {
+                    final AttendablePlace target = toBeRemoved;
+                    if (taskList.removeIf(x -> x._1 == target)) {
+                        toBeRemoved = null;
+                        debug("Removed %s from taskList", target.name);
+                        continue ML;
                     }
                 }
 
-                spamEscape(1);
+                if (--checkAreYouStillThereAfter <= 0) {
+
+                    if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouStillThere)) {
+                        info("Knock knock, are you still there?");
+                        InteractionUtil.Keyboard.sendEnter();
+                        sleep(1_000);
+                        InteractionUtil.Keyboard.sendEscape();
+                        checkAreYouStillThereAfter = 2;
+                    } else {
+                        checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
+                    }
+                    continue ML;
+                }
+
+                if (sleepWhileWaitingResourceRegen > 0) {
+                    sleepWhileWaitingResourceRegen--;
+                    debug("sleepWhileWaitingResourceRegen--");
+                    continue ML;
+                }
+
+                if (taskList.stream().allMatch(x -> !isNotBlocked(x._2))) {
+                    info("Waiting for resource generation, sleeping %d minutes", minutesSleepWaitingResourceGeneration);
+                    sleepWhileWaitingResourceRegen = originalSleepWhileWaitingResourceRegen;
+                    continue ML;
+                }
+
+                if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmStartNotFullTeam)) {
+                    debug("confirmStartNotFullTeam");
+                    InteractionUtil.Keyboard.sendSpaceKey();
+                    continuousNotFound = 0;
+                    moveCursor(coordinateHideMouse);
+                    continue ML;
+                }
+
+                if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmQuitBattle)) {
+                    debug("confirmQuitBattle");
+                    InteractionUtil.Keyboard.sendEnter();
+                    sleep(1_000);
+                    spamEscape(1);
+                    continuousNotFound = 0;
+                    moveCursor(coordinateHideMouse);
+                    continue ML;
+                }
+
+                if (tryEnterRaid(doRaid, userConfig)) {
+                    debug("tryEnterRaid");
+                    continuousNotFound = 0;
+                    moveCursor(coordinateHideMouse);
+                    continue ML;
+                }
 
                 for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tuple : taskList) {
                     if (!isNotBlocked(tuple._2))
                         continue;
-                    debug("Finding %s icon", tuple._1.name);
-                    Point point = this.gameScreenInteractor.findAttendablePlace(tuple._1);
-                    if (point != null) {
-                        if (isUnknownGvgOrInvasion) {
-                            if (tuple._1 == AttendablePlaces.gvg) {
-                                isUnknownGvgOrInvasion = false;
-                                toBeRemoved = AttendablePlaces.invasion;
-                            }
-                            if (tuple._1 == AttendablePlaces.invasion) {
-                                isUnknownGvgOrInvasion = false;
-                                toBeRemoved = AttendablePlaces.gvg;
-                            }
-                        }
-                        if (isUnknownTrialsOrGauntlet) {
-                            if (tuple._1 == AttendablePlaces.trials) {
-                                isUnknownTrialsOrGauntlet = false;
-                                toBeRemoved = AttendablePlaces.gauntlet;
-                            }
-                            if (tuple._1 == AttendablePlaces.gauntlet) {
-                                isUnknownTrialsOrGauntlet = false;
-                                toBeRemoved = AttendablePlaces.trials;
-                            }
-                        }
+                    AbstractDoFarmingApp.NextAction nextAction = tryToClickOnBatch(tuple._3);
+                    if (nextAction == null)
+                        continue;
+                    debug(nextAction.image.getImageNameCode());
+                    if (nextAction.isOutOfTurns) {
+                        spamEscape(2);
+                        tempBlock(tuple._1);
+                    }
+                    continuousNotFound = 0;
+                    moveCursor(coordinateHideMouse);
+                    continue ML;
+                }
 
-                        moveCursor(point);
-                        mouseClick();
-                        sleep(100);
-                        moveCursor(coordinateHideMouse);
-                        continuousNotFound = 0;
-                        continue ML;
+                debug("None");
+                continuousNotFound++;
+                moveCursor(coordinateHideMouse);
+
+                if (continuousNotFound >= 6) {
+                    for (AbstractDoFarmingApp.NextAction nextAction : outOfTurnNextActionList) {
+                        if (clickImage(nextAction.image)) {
+                            spamEscape(2);
+                            sleep(1_000);
+                        }
+                    }
+
+                    spamEscape(1);
+
+                    for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tuple : taskList) {
+                        if (!isNotBlocked(tuple._2))
+                            continue;
+                        debug("Finding %s icon", tuple._1.name);
+                        Point point = this.gameScreenInteractor.findAttendablePlace(tuple._1);
+                        if (point != null) {
+                            if (isUnknownGvgOrInvasion) {
+                                if (tuple._1 == AttendablePlaces.gvg) {
+                                    isUnknownGvgOrInvasion = false;
+                                    toBeRemoved = AttendablePlaces.invasion;
+                                }
+                                if (tuple._1 == AttendablePlaces.invasion) {
+                                    isUnknownGvgOrInvasion = false;
+                                    toBeRemoved = AttendablePlaces.gvg;
+                                }
+                            }
+                            if (isUnknownTrialsOrGauntlet) {
+                                if (tuple._1 == AttendablePlaces.trials) {
+                                    isUnknownTrialsOrGauntlet = false;
+                                    toBeRemoved = AttendablePlaces.gauntlet;
+                                }
+                                if (tuple._1 == AttendablePlaces.gauntlet) {
+                                    isUnknownTrialsOrGauntlet = false;
+                                    toBeRemoved = AttendablePlaces.trials;
+                                }
+                            }
+
+                            moveCursor(point);
+                            mouseClick();
+                            sleep(100);
+                            moveCursor(coordinateHideMouse);
+                            continuousNotFound = 0;
+                            continue ML;
+                        }
                     }
                 }
             }
+            debug("end of doLoop");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            err("doLoop encountered error!");
+        } finally {
+            masterSwitch.set(true);
         }
     }
 
@@ -444,8 +462,12 @@ public class AfkApp extends AbstractApplication {
         Point[] points = result._1;
         int selectedLevel = result._2 + 1;
         info("Found %d, selected %d", points.length, selectedLevel);
-        if (selectedLevel != userConfig.raidLevel) {
+        if (selectedLevel != userConfig.raidLevel)
             clickRadioButton(6, points, "Raid");
+        sleep(3_000);
+        if (!clickImage(BwMatrixMeta.Metas.Raid.Buttons.summon)) {
+            spamEscape(1);
+            return false;
         }
         sleep(5_000);
         if (Configuration.UserConfig.isNormalMode(userConfig.raidMode)) {
@@ -502,7 +524,7 @@ public class AfkApp extends AbstractApplication {
     private List<AbstractDoFarmingApp.NextAction> getPredefinedImageActionsOfRaid() {
         return Arrays.asList(
                 new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.town, true, false),
-                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Globally.Buttons.rerun, true, false),
+                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Dungeons.Buttons.rerun, true, false),
                 new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.accept, false, false),
                 new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Dialogs.notEnoughShards, false, true)
         );

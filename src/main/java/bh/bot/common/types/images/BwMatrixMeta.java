@@ -12,7 +12,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static bh.bot.common.Log.*;
+import static bh.bot.common.Log.dev;
+import static bh.bot.common.Log.err;
 import static bh.bot.common.utils.ImageUtil.freeMem;
 
 public class BwMatrixMeta {
@@ -155,7 +156,6 @@ public class BwMatrixMeta {
         public static class Globally {
             public static class Buttons {
                 public static BwMatrixMeta talkRightArrow;
-                public static BwMatrixMeta rerun;
                 public static BwMatrixMeta reconnect;
                 public static BwMatrixMeta autoG;
                 public static BwMatrixMeta autoR;
