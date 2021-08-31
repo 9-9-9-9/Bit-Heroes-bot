@@ -44,7 +44,15 @@ public class Configuration {
     }
 
     public static class UserConfig {
+        public static final String raidLevelKey = "ig.user.raid.level";
+        public static final String raidModeKey = "ig.user.raid.mode";
+        public static final String worldBossLevelKey = "ig.user.world-boss.level";
+        public static final String worldBossModeKey = "ig.user.world-boss.mode";
+
         private static final byte defaultValue = 0;
+        public static final byte modeNormal = 1;
+        public static final byte modeHard = 2;
+        public static final byte modeHeroic = 3;
 
         public static int profileNo;
         public static byte raidLevel = defaultValue;
@@ -52,16 +60,13 @@ public class Configuration {
         public static byte worldBossLevel = defaultValue;
         public static byte worldBossMode = defaultValue;
 
-        public static final byte modeNormal = 1;
-        public static final byte modeHard = 2;
-        public static final byte modeHeroic = 3;
 
         public static String getRaidModeDesc(byte mode) {
             return getDifficultyModeDesc(mode, "Raid");
         }
 
         public static String getWorldBossModeDesc(byte mode) {
-            return getDifficultyModeDesc(mode, "Raid");
+            return getDifficultyModeDesc(mode, "World Boss");
         }
 
         private static String getDifficultyModeDesc(byte mode, String name) {
@@ -183,6 +188,9 @@ public class Configuration {
         UserConfig.profileNo = profileNo;
 
         String raidLevelKey = "ig.user.raid.level";
+        String raidModeKey = "ig.user.raid.mode";
+        String worldBossLevelKey = "ig.user.world-boss.level";
+        String worldBossModeKey = "ig.user.world-boss.mode";
         String raidLevel = readKey(properties, raidLevelKey, "0", "Not specified");
         try {
             UserConfig.raidLevel = Byte.parseByte(raidLevel);
@@ -190,7 +198,6 @@ public class Configuration {
             throw new InvalidDataException("Value of key '%s' is not a number", raidLevelKey);
         }
 
-        String raidModeKey = "ig.user.raid.mode";
         String raidMode = readKey(properties, raidModeKey, "0", "Not specified");
         try {
             UserConfig.raidMode = Byte.parseByte(raidMode);
@@ -198,7 +205,6 @@ public class Configuration {
             throw new InvalidDataException("Value of key '%s' is not a number", raidModeKey);
         }
 
-        String worldBossLevelKey = "ig.user.world-boss.level";
         String worldBossLevel = readKey(properties, worldBossLevelKey, "0", "Not specified");
         try {
             UserConfig.worldBossLevel = Byte.parseByte(worldBossLevel);
@@ -206,7 +212,6 @@ public class Configuration {
             throw new InvalidDataException("Value of key '%s' is not a number", worldBossLevelKey);
         }
 
-        String worldBossModeKey = "ig.user.world-boss.mode";
         String worldBossMode = readKey(properties, worldBossModeKey, "0", "Not specified");
         try {
             UserConfig.worldBossMode = Byte.parseByte(worldBossMode);
