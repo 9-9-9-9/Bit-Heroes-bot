@@ -11,9 +11,9 @@ public class FlagProfileNo extends FlagPattern<Integer> {
     protected Integer internalParseParam(String paramPart) throws InvalidFlagException {
         int profileNo = Integer.parseInt(paramPart);
         if (profileNo < minimumValue)
-            throw new InvalidFlagException(String.format("Minimum value is %d", minimumValue));
+            throw new InvalidFlagException(String.format("Minimum value of flag '--%s' is %d", getName(), minimumValue));
         if (profileNo > GenMiniClient.supportMaximumNumberOfAccounts)
-            throw new InvalidFlagException(String.format("Maximum value is %d", GenMiniClient.supportMaximumNumberOfAccounts));
+            throw new InvalidFlagException(String.format("Maximum value of flag '--%s' is %d", getName(), GenMiniClient.supportMaximumNumberOfAccounts));
         return profileNo;
     }
 

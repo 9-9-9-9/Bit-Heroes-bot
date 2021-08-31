@@ -46,30 +46,65 @@ public class AfkApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
         this.gameScreenInteractor = InteractionUtil.Screen.Game.of(this);
-        ArrayList<AttendablePlace> eventList = getAttendablePlaces();
+        ArrayList<AttendablePlace> eventList;
+        Configuration.UserConfig userConfig = null;
 
-        if (eventList.contains(AttendablePlaces.raid)) {
-            if (!Configuration.UserConfig.isValidRaidLevel() && !Configuration.UserConfig.isValidDifficultyMode(Configuration.UserConfig.raidMode)) {
-                err("You haven't selected Raid Level and Mode");
-                printRequiresSetting();
-                System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
+
+        try (
+                InputStreamReader isr = new InputStreamReader(System.in);
+                BufferedReader br = new BufferedReader(isr);
+        ) {
+            eventList = getAttendablePlaces(br);
+
+            if (eventList.contains(AttendablePlaces.raid)) {
+                int profileNumber = this.argumentInfo.profileNumber;
+                if (profileNumber < 1) {
+                    info("You have to specific profile number first!");
+                    profileNumber = readInput(br, "Select profile number", String.format("min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), new Function<String, Tuple3<Boolean, String, Integer>>() {
+                        @Override
+                        public Tuple3<Boolean, String, Integer> apply(String s) {
+                            try {
+                                int num = Integer.parseInt(s.trim());
+                                if (num >= 1 && num <= GenMiniClient.supportMaximumNumberOfAccounts)
+                                    return new Tuple3<>(true, null, num);
+                                return new Tuple3<>(false, "Value must be in range from 1 to " + GenMiniClient.supportMaximumNumberOfAccounts, 0);
+                            } catch (NumberFormatException ex) {
+                                return new Tuple3<>(false, "Not a number", 0);
+                            }
+                        }
+                    });
+                }
+                Tuple2<Boolean, Configuration.UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(profileNumber);
+                if (!resultLoadUserConfig._1) {
+                    err("Profile number %d could not be found");
+                    printRequiresSetting();
+                    System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
+                }
+
+                userConfig = resultLoadUserConfig._2;
+
+                try {
+                    info(userConfig.getRaidLevelDesc());
+                    info(userConfig.getRaidModeDesc());
+                } catch (InvalidDataException ex2) {
+                    err(ex2.getMessage());
+                    printRequiresSetting();
+                    System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
+                    return;
+                }
             }
-            if (!Configuration.UserConfig.isValidDifficultyMode(Configuration.UserConfig.raidMode)) {
-                err("You haven't selected Raid Mode");
-                printRequiresSetting();
-                System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
-            }
-            if (!Configuration.UserConfig.isValidRaidLevel()) {
-                err("You haven't selected Raid Level");
-                printRequiresSetting();
-                System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
-            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
+            return;
         }
         //
-        AtomicBoolean masterSwitch = new AtomicBoolean(false);
+        final AtomicBoolean masterSwitch = new AtomicBoolean(false);
+        final Configuration.UserConfig finalUserConfig = userConfig;
         ThreadUtil.waitDone(
                 () -> doLoop(
                         masterSwitch,
+                        finalUserConfig,
                         eventList.contains(AttendablePlaces.pvp),
                         eventList.contains(AttendablePlaces.worldBoss),
                         eventList.contains(AttendablePlaces.raid),
@@ -93,6 +128,7 @@ public class AfkApp extends AbstractApplication {
 
     private void doLoop(
             AtomicBoolean masterSwitch,
+            Configuration.UserConfig userConfig,
             boolean doPvp,
             boolean doWorldBoss,
             boolean doRaid,
@@ -196,10 +232,8 @@ public class AfkApp extends AbstractApplication {
                 continue ML;
             }
 
-            if (tryEnterRaid()) {
+            if (tryEnterRaid(doRaid, userConfig)) {
                 debug("tryEnterRaid");
-                sleep(3_500);
-                spamEscape(1);
                 continuousNotFound = 0;
                 moveCursor(coordinateHideMouse);
                 continue ML;
@@ -306,7 +340,7 @@ public class AfkApp extends AbstractApplication {
         x.set(System.currentTimeMillis() + attendablePlace.procedureTicketMinutes * 60_000);
     }
 
-    private ArrayList<AttendablePlace> getAttendablePlaces() {
+    private ArrayList<AttendablePlace> getAttendablePlaces(BufferedReader br) {
         ArrayList<AttendablePlace> eventList = new ArrayList<>();
         final List<AttendablePlace> allAttendablePlaces = Arrays.asList(
                 AttendablePlaces.invasion,
@@ -358,36 +392,28 @@ public class AfkApp extends AbstractApplication {
             final Supplier<List<String>> selectedOptionsInfoProvider = () -> selectedOptions.stream().map(x -> x.name).collect(Collectors.toList());
 
             String ask = "Select events you want to do:\n" + menuItem;
-            try (
-                    InputStreamReader isr = new InputStreamReader(System.in);
-                    BufferedReader br = new BufferedReader(isr);
-            ) {
-                while (true) {
-                    List<AttendablePlace> events = readInput(br, ask, "To select an event, press the number then press Enter. To finish input, just enter without supply a number", selectedOptionsInfoProvider, new Function<String, Tuple3<Boolean, String, List<AttendablePlace>>>() {
-                        @Override
-                        public Tuple3<Boolean, String, List<AttendablePlace>> apply(String s) {
-                            try {
-                                int result = Integer.parseInt(s);
-                                List<AttendablePlace> events = allAttendablePlaces.stream().filter(x -> (result & x.id) == x.id).collect(Collectors.toList());
-                                if (events.size() == 0)
-                                    return new Tuple3<>(false, "Incorrect value", null);
-                                return new Tuple3<>(true, null, events);
-                            } catch (Exception ex2) {
-                                return new Tuple3<>(false, "Unable to parse your input, error: " + ex2.getMessage(), null);
-                            }
+            while (true) {
+                List<AttendablePlace> events = readInput(br, ask, "To select an event, press the number then press Enter. To finish input, just enter without supply a number", selectedOptionsInfoProvider, new Function<String, Tuple3<Boolean, String, List<AttendablePlace>>>() {
+                    @Override
+                    public Tuple3<Boolean, String, List<AttendablePlace>> apply(String s) {
+                        try {
+                            int result = Integer.parseInt(s);
+                            List<AttendablePlace> events = allAttendablePlaces.stream().filter(x -> (result & x.id) == x.id).collect(Collectors.toList());
+                            if (events.size() == 0)
+                                return new Tuple3<>(false, "Incorrect value", null);
+                            return new Tuple3<>(true, null, events);
+                        } catch (Exception ex2) {
+                            return new Tuple3<>(false, "Unable to parse your input, error: " + ex2.getMessage(), null);
                         }
-                    }, true);
+                    }
+                }, true);
 
-                    if (events == null)
-                        break;
-                    eventList.addAll(events);
-                    eventList = new ArrayList<>(eventList.stream().distinct().collect(Collectors.toList()));
-                    selectedOptions.clear();
-                    selectedOptions.addAll(eventList);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
+                if (events == null)
+                    break;
+                eventList.addAll(events);
+                eventList = new ArrayList<>(eventList.stream().distinct().collect(Collectors.toList()));
+                selectedOptions.clear();
+                selectedOptions.addAll(eventList);
             }
 
             if (eventList.size() == 0) {
@@ -406,27 +432,31 @@ public class AfkApp extends AbstractApplication {
         return eventList;
     }
 
-    private boolean tryEnterRaid() {
+    private boolean tryEnterRaid(boolean doRaid, Configuration.UserConfig userConfig) {
         Point coord = findImage(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog);
         if (coord == null)
             return false;
+        if (!isNotBlocked(blockRaidUntil) || !doRaid) {
+            spamEscape(1);
+            return false;
+        }
         BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog.setLastMatchPoint(coord.x, coord.y);
         Tuple2<Point[], Byte> result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
         Point[] points = result._1;
         int selectedLevel = result._2 + 1;
         info("Found %d, selected %d", points.length, selectedLevel);
-        if (selectedLevel != Configuration.UserConfig.raidLevel) {
+        if (selectedLevel != userConfig.raidLevel) {
             clickRadioButton(6, points, "Raid");
         }
         sleep(5_000);
-        if (Configuration.UserConfig.isNormalMode(Configuration.UserConfig.raidMode)) {
+        if (Configuration.UserConfig.isNormalMode(userConfig.raidMode)) {
             mouseMoveAndClickAndHide(fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord, Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()));
-        } else if (Configuration.UserConfig.isHardMode(Configuration.UserConfig.raidMode)) {
+        } else if (Configuration.UserConfig.isHardMode(userConfig.raidMode)) {
             mouseMoveAndClickAndHide(fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHardRaid()));
-        } else if (Configuration.UserConfig.isHeroicMode(Configuration.UserConfig.raidMode)) {
+        } else if (Configuration.UserConfig.isHeroicMode(userConfig.raidMode)) {
             mouseMoveAndClickAndHide(fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicRaid()));
         } else {
-            throw new InvalidDataException("Unknown raid mode value: %d", Configuration.UserConfig.raidMode);
+            throw new InvalidDataException("Unknown raid mode value: %d", userConfig.raidMode);
         }
         return true;
     }
@@ -474,6 +504,7 @@ public class AfkApp extends AbstractApplication {
         return Arrays.asList(
                 new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.town, true, false),
                 new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Globally.Buttons.rerun, true, false)
+                // TODO new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Globally.Buttons.accept, false, false)
                 // TODO new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.outOfShards, false, true)
         );
     }
