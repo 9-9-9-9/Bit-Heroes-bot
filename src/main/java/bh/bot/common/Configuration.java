@@ -80,6 +80,14 @@ public class Configuration {
             }
         }
 
+        public static boolean isValidRaidLevel() {
+            return !isDefaultValue(raidLevel) && raidLevel >= 1 && raidLevel <= 13;
+        }
+
+        public static boolean isValidWorldBossLevel() {
+            return !isDefaultValue(worldBossLevel) && worldBossLevel >= 1 && worldBossLevel <= 8;
+        }
+
         public static boolean isValidDifficultyMode(byte mode) {
             switch (mode) {
                 case modeNormal:
@@ -89,6 +97,18 @@ public class Configuration {
                 default:
                     return false;
             }
+        }
+
+        public static boolean isNormalMode(byte mode) {
+            return mode == modeNormal;
+        }
+
+        public static boolean isHardMode(byte mode) {
+            return mode == modeHard;
+        }
+
+        public static boolean isHeroicMode(byte mode) {
+            return mode == modeHeroic;
         }
 
         public static boolean isDefaultValue(int value) {

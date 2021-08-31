@@ -2,12 +2,15 @@ package bh.bot.app;
 
 import bh.bot.Main;
 import bh.bot.app.farming.*;
+import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
+import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.images.BwMatrixMeta;
+import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.ThreadUtil;
@@ -26,11 +29,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.*;
 import static bh.bot.common.types.AttendablePlace.MenuItem;
-import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
-import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
+import static bh.bot.common.utils.InteractionUtil.Mouse.*;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 @AppCode(code = "afk")
@@ -46,8 +47,24 @@ public class AfkApp extends AbstractApplication {
     protected void internalRun(String[] args) {
         this.gameScreenInteractor = InteractionUtil.Screen.Game.of(this);
         ArrayList<AttendablePlace> eventList = getAttendablePlaces();
-        if (eventList.contains(AttendablePlaces.raid))
-            throw new NotSupportedException("Raid has not been supported");
+
+        if (eventList.contains(AttendablePlaces.raid)) {
+            if (!Configuration.UserConfig.isValidRaidLevel() && !Configuration.UserConfig.isValidDifficultyMode(Configuration.UserConfig.raidMode)) {
+                err("You haven't selected Raid Level and Mode");
+                printRequiresSetting();
+                System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
+            }
+            if (!Configuration.UserConfig.isValidDifficultyMode(Configuration.UserConfig.raidMode)) {
+                err("You haven't selected Raid Mode");
+                printRequiresSetting();
+                System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
+            }
+            if (!Configuration.UserConfig.isValidRaidLevel()) {
+                err("You haven't selected Raid Level");
+                printRequiresSetting();
+                System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
+            }
+        }
         //
         AtomicBoolean masterSwitch = new AtomicBoolean(false);
         ThreadUtil.waitDone(
@@ -67,6 +84,11 @@ public class AfkApp extends AbstractApplication {
                 () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch)
         );
         Telegram.sendMessage("Stopped", false);
+    }
+
+    private void printRequiresSetting() {
+        err("You have to do setting before using this function");
+        err("Please launch script 'settings.%s' and follow instruction", Configuration.OS.isWin ? "bat" : "sh");
     }
 
     private void doLoop(
@@ -172,8 +194,15 @@ public class AfkApp extends AbstractApplication {
                 continuousNotFound = 0;
                 moveCursor(coordinateHideMouse);
                 continue ML;
-            } else {
-                debug("confirmQuitBattle not found");
+            }
+
+            if (tryEnterRaid()) {
+                debug("tryEnterRaid");
+                sleep(3_500);
+                spamEscape(1);
+                continuousNotFound = 0;
+                moveCursor(coordinateHideMouse);
+                continue ML;
             }
 
             for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tuple : taskList) {
@@ -203,6 +232,8 @@ public class AfkApp extends AbstractApplication {
                         sleep(1_000);
                     }
                 }
+
+                spamEscape(1);
 
                 for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tuple : taskList) {
                     if (!isNotBlocked(tuple._2))
@@ -284,8 +315,8 @@ public class AfkApp extends AbstractApplication {
                 AttendablePlaces.gauntlet,
 
                 AttendablePlaces.pvp,
-                AttendablePlaces.worldBoss
-                // TODO RAID AttendablePlaces.raid
+                AttendablePlaces.worldBoss,
+                AttendablePlaces.raid
         );
         if (argumentInfo.hasFlagAll)
             eventList.addAll(allAttendablePlaces);
@@ -312,7 +343,10 @@ public class AfkApp extends AbstractApplication {
                             MenuItem.from(AttendablePlaces.gvg, AttendablePlaces.gauntlet),
                             MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg, AttendablePlaces.gauntlet, AttendablePlaces.invasion, AttendablePlaces.trials),
                             MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.invasion, AttendablePlaces.trials),
-                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg, AttendablePlaces.gauntlet)
+                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg, AttendablePlaces.gauntlet),
+                            MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg, AttendablePlaces.gauntlet, AttendablePlaces.invasion, AttendablePlaces.trials),
+                            MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.invasion, AttendablePlaces.trials),
+                            MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg, AttendablePlaces.gauntlet)
                     ).stream()
             ).collect(Collectors.toList());
 
@@ -372,6 +406,37 @@ public class AfkApp extends AbstractApplication {
         return eventList;
     }
 
+    private boolean tryEnterRaid() {
+        Point coord = findImage(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog);
+        if (coord == null)
+            return false;
+        BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog.setLastMatchPoint(coord.x, coord.y);
+        Tuple2<Point[], Byte> result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
+        Point[] points = result._1;
+        int selectedLevel = result._2 + 1;
+        info("Found %d, selected %d", points.length, selectedLevel);
+        if (selectedLevel != Configuration.UserConfig.raidLevel) {
+            clickRadioButton(6, points, "Raid");
+        }
+        sleep(5_000);
+        if (Configuration.UserConfig.isNormalMode(Configuration.UserConfig.raidMode)) {
+            mouseMoveAndClickAndHide(fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord, Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()));
+        } else if (Configuration.UserConfig.isHardMode(Configuration.UserConfig.raidMode)) {
+            mouseMoveAndClickAndHide(fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHardRaid()));
+        } else if (Configuration.UserConfig.isHeroicMode(Configuration.UserConfig.raidMode)) {
+            mouseMoveAndClickAndHide(fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicRaid()));
+        } else {
+            throw new InvalidDataException("Unknown raid mode value: %d", Configuration.UserConfig.raidMode);
+        }
+        return true;
+    }
+
+    private Point fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta sampleImg, Point sampleImgCoord, Configuration.Offset targetOffset) {
+        int x = sampleImgCoord.x - sampleImg.getCoordinateOffset().X;
+        int y = sampleImgCoord.y - sampleImg.getCoordinateOffset().Y;
+        return new Point(x + targetOffset.X, y + targetOffset.Y);
+    }
+
     private void spamEscape(int expectedCount) {
         int cnt = expectedCount + 4;
         while (cnt-- > 0) {
@@ -406,7 +471,10 @@ public class AfkApp extends AbstractApplication {
     }
 
     private List<AbstractDoFarmingApp.NextAction> getPredefinedImageActionsOfRaid() {
-        // TODO Afk Raid
-        return new ArrayList<>();
+        return Arrays.asList(
+                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.town, true, false),
+                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Globally.Buttons.rerun, true, false)
+                // TODO new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.outOfShards, false, true)
+        );
     }
 }
