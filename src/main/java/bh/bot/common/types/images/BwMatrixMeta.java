@@ -12,8 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static bh.bot.common.Log.dev;
-import static bh.bot.common.Log.err;
+import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.ImageUtil.freeMem;
 
 public class BwMatrixMeta {
@@ -279,340 +278,254 @@ public class BwMatrixMeta {
     }
 
     public static void load() throws IOException {
-        Metas.Globally.Buttons.talkRightArrow = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/globally.talkRightArrow-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonTalkRightArrow(),
+        Metas.Globally.Buttons.talkRightArrow = BwMatrixMeta.from(//
+                "buttons/globally.talkRightArrow?",
+                Configuration.screenResolutionProfile.getOffsetButtonTalkRightArrow(), //
                 0x000000
         );
-        Metas.Globally.Buttons.reconnect = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/globally.reconnect-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonReconnect(),
+        Metas.Globally.Buttons.reconnect = BwMatrixMeta.from(//
+                "buttons/globally.reconnect?",
+                Configuration.screenResolutionProfile.getOffsetButtonReconnect(), //
                 0xFFFFFF
         );
-        Metas.Globally.Buttons.autoG = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/globally.auto-green-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonAuto(),
+        Metas.Globally.Buttons.autoG = BwMatrixMeta.from(//
+                "buttons/globally.auto-green?",
+                Configuration.screenResolutionProfile.getOffsetButtonAuto(), //
                 0xFFFFFF
         );
-        Metas.Globally.Buttons.autoR = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/globally.auto-red-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonAuto(),
+        Metas.Globally.Buttons.autoR = BwMatrixMeta.from(//
+                "buttons/globally.auto-red?",
+                Configuration.screenResolutionProfile.getOffsetButtonAuto(), //
                 0xFFFFFF
         );
-        Metas.Globally.Buttons.radioButton = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/globally.radio-button-mx.bmp"
-                ), //
-                Configuration.Offset.none(),
+        Metas.Globally.Buttons.radioButton = BwMatrixMeta.from(//
+                "buttons/globally.radio-button?",
+                Configuration.Offset.none(), //
                 0x000000
         );
-        Metas.Globally.Buttons.close = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/globally.close-mx.bmp"
-                ), //
-                Configuration.Offset.none(),
+        Metas.Globally.Buttons.close = BwMatrixMeta.from(//
+                "buttons/globally.close?",
+                Configuration.Offset.none(), //
                 0x000000
         );
-        Metas.Globally.Dialogs.confirmQuitBattle = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "dialogs/globally.confirm-quit-battle-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetDialogConfirmQuitBattle(),
+        Metas.Globally.Dialogs.confirmQuitBattle = BwMatrixMeta.from(//
+                "dialogs/globally.confirm-quit-battle?",
+                Configuration.screenResolutionProfile.getOffsetDialogConfirmQuitBattle(), //
                 0xFFFFFF
         );
-        Metas.Globally.Dialogs.confirmStartNotFullTeam = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "dialogs/globally.confirm-start-not-full-team-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetDialogStartWithoutFullTeam(),
+        Metas.Globally.Dialogs.confirmStartNotFullTeam = BwMatrixMeta.from(//
+                "dialogs/globally.confirm-start-not-full-team?",
+                Configuration.screenResolutionProfile.getOffsetDialogStartWithoutFullTeam(), //
                 0xFFFFFF
         );
-        Metas.Globally.Dialogs.areYouStillThere = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "dialogs/globally.are-you-still-there-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetDialogAreYouStillThere(),
+        Metas.Globally.Dialogs.areYouStillThere = BwMatrixMeta.from(//
+                "dialogs/globally.are-you-still-there?",
+                Configuration.screenResolutionProfile.getOffsetDialogAreYouStillThere(), //
                 0xFFFFFF
         );
-        Metas.Dungeons.Buttons.rerun = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/dungeons.rerun-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonDungeonReRun(),
+        Metas.Dungeons.Buttons.rerun = BwMatrixMeta.from(//
+                "buttons/dungeons.rerun?",
+                Configuration.screenResolutionProfile.getOffsetButtonDungeonReRun(), //
                 0xFFFFFF);
 
         // Fishing
-        Metas.Fishing.Labels.fishing = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "labels/fishing-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetLabelFishing(),
+        Metas.Fishing.Labels.fishing = BwMatrixMeta.from(//
+                "labels/fishing?",
+                Configuration.screenResolutionProfile.getOffsetLabelFishing(), //
                 0xFFFFFF
         );
-        Metas.Fishing.Buttons.start = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/fishing.start-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonFishingStart(),
+        Metas.Fishing.Buttons.start = BwMatrixMeta.from(//
+                "buttons/fishing.start?",
+                Configuration.screenResolutionProfile.getOffsetButtonFishingStart(), //
                 0xFFFFFF
         );
-        Metas.Fishing.Buttons.cast = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/fishing.cast-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonFishingCast(),
+        Metas.Fishing.Buttons.cast = BwMatrixMeta.from(//
+                "buttons/fishing.cast?",
+                Configuration.screenResolutionProfile.getOffsetButtonFishingCast(), //
                 0xFFFFFF
         );
-        Metas.Fishing.Buttons.catch_ = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/fishing.catch-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonFishingCatch(),
+        Metas.Fishing.Buttons.catch_ = BwMatrixMeta.from(//
+                "buttons/fishing.catch?",
+                Configuration.screenResolutionProfile.getOffsetButtonFishingCatch(), //
                 0xFFFFFF
         );
 
         // World Boss
-        Metas.WorldBoss.Buttons.summonOnListingPartiesWorldBoss = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/world-boss.summon-party-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonSummonOnListingPartiesWorldBoss(),
+        Metas.WorldBoss.Buttons.summonOnListingPartiesWorldBoss = BwMatrixMeta.from(//
+                "buttons/world-boss.summon-party?",
+                Configuration.screenResolutionProfile.getOffsetButtonSummonOnListingPartiesWorldBoss(), //
                 0xFFFFFF
         );
-        Metas.WorldBoss.Buttons.summonOnListingWorldBosses = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/world-boss.summon-boss-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonSummonOnListingWorldBosses(),
+        Metas.WorldBoss.Buttons.summonOnListingWorldBosses = BwMatrixMeta.from(//
+                "buttons/world-boss.summon-boss?",
+                Configuration.screenResolutionProfile.getOffsetButtonSummonOnListingWorldBosses(), //
                 0xFFFFFF
         );
-        Metas.WorldBoss.Buttons.summonOnSelectingWorldBossTierAndAndDifficulty = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/world-boss.summon-tier-diff-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonSummonOnSelectingWorldBossTierAndDifficulty(),
+        Metas.WorldBoss.Buttons.summonOnSelectingWorldBossTierAndAndDifficulty = BwMatrixMeta.from(//
+                "buttons/world-boss.summon-tier-diff?",
+                Configuration.screenResolutionProfile.getOffsetButtonSummonOnSelectingWorldBossTierAndDifficulty(), //
                 0xFFFFFF
         );
-        Metas.WorldBoss.Buttons.startBoss = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/world-boss.start-boss-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonStartWorldBoss(),
+        Metas.WorldBoss.Buttons.startBoss = BwMatrixMeta.from(//
+                "buttons/world-boss.start-boss?",
+                Configuration.screenResolutionProfile.getOffsetButtonStartWorldBoss(), //
                 0xFFFFFF
         );
-        Metas.WorldBoss.Buttons.regroup = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/world-boss.regroup-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonRegroupWorldBoss(),
+        Metas.WorldBoss.Buttons.regroup = BwMatrixMeta.from(//
+                "buttons/world-boss.regroup?",
+                Configuration.screenResolutionProfile.getOffsetButtonRegroupWorldBoss(), //
                 0xFFFFFF
         );
-        Metas.WorldBoss.Buttons.regroupOnDefeated = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/world-boss.regroup-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonRegroupAfterDefeatByWorldBoss(),
+        Metas.WorldBoss.Buttons.regroupOnDefeated = BwMatrixMeta.from(//
+                "buttons/world-boss.regroup?",
+                Configuration.screenResolutionProfile.getOffsetButtonRegroupAfterDefeatByWorldBoss(), //
                 0xFFFFFF
         );
-        Metas.WorldBoss.Dialogs.notEnoughXeals = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "dialogs/world-boss.not-enough-xeals-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughXeals(),
+        Metas.WorldBoss.Dialogs.notEnoughXeals = BwMatrixMeta.from(//
+                "dialogs/world-boss.not-enough-xeals?",
+                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughXeals(), //
                 0xFFFFFF
         );
-        Metas.WorldBoss.Labels.labelInSummonDialog = BwMatrixMeta.fromTpImage(//
+        Metas.WorldBoss.Labels.labelInSummonDialog = BwMatrixMeta.from(//
                 "labels/world-boss-tp.bmp", //
-                Configuration.screenResolutionProfile.getOffsetLabelWorldBossInSummonDialog(),
+                Configuration.screenResolutionProfile.getOffsetLabelWorldBossInSummonDialog(), //
                 0xFFFFFF
         );
 
         // PVP Arena
-        Metas.PvpArena.Buttons.play = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/pvp-arena.play-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonPlayPvpArena(),
+        Metas.PvpArena.Buttons.play = BwMatrixMeta.from(//
+                "buttons/pvp-arena.play?",
+                Configuration.screenResolutionProfile.getOffsetButtonPlayPvpArena(), //
                 0xFFFFFF
         );
-        Metas.PvpArena.Buttons.fight1 = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/pvp-arena.fight-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonFight1PvpArena(),
+        Metas.PvpArena.Buttons.fight1 = BwMatrixMeta.from(//
+                "buttons/pvp-arena.fight?",
+                Configuration.screenResolutionProfile.getOffsetButtonFight1PvpArena(), //
                 0xFFFFFF
         );
-        Metas.PvpArena.Buttons.accept = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/pvp-arena.accept-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonAcceptPvpArena(),
+        Metas.PvpArena.Buttons.accept = BwMatrixMeta.from(//
+                "buttons/pvp-arena.accept?",
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptPvpArena(), //
                 0xFFFFFF
         );
-        Metas.PvpArena.Buttons.townOnWin = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/pvp-arena.town-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonBackToTownFromPvpArenaOnWin(),
+        Metas.PvpArena.Buttons.townOnWin = BwMatrixMeta.from(//
+                "buttons/pvp-arena.town?",
+                Configuration.screenResolutionProfile.getOffsetButtonBackToTownFromPvpArenaOnWin(), //
                 0xFFFFFF
         );
-        Metas.PvpArena.Buttons.townOnLose = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/pvp-arena.town-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonBackToTownFromPvpArenaOnLose(),
+        Metas.PvpArena.Buttons.townOnLose = BwMatrixMeta.from(//
+                "buttons/pvp-arena.town?",
+                Configuration.screenResolutionProfile.getOffsetButtonBackToTownFromPvpArenaOnLose(), //
                 0xFFFFFF
         );
-        Metas.PvpArena.Dialogs.notEnoughTicket = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "dialogs/pvp-arena.not-enough-ticket-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughPvpTicket(),
+        Metas.PvpArena.Dialogs.notEnoughTicket = BwMatrixMeta.from(//
+                "dialogs/pvp-arena.not-enough-ticket?",
+                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughPvpTicket(), //
                 0xFFFFFF
         );
 
         // Invasion
-        Metas.Invasion.Buttons.play = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/invasion.play-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonPlayInvasion(),
+        Metas.Invasion.Buttons.play = BwMatrixMeta.from(//
+                "buttons/invasion.play?",
+                Configuration.screenResolutionProfile.getOffsetButtonPlayInvasion(), //
                 0xFFFFFF
         );
-        Metas.Invasion.Buttons.accept = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/invasion.accept-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonAcceptInvasion(),
+        Metas.Invasion.Buttons.accept = BwMatrixMeta.from(//
+                "buttons/invasion.accept?",
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptInvasion(), //
                 0xFFFFFF
         );
-        Metas.Invasion.Buttons.town = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/invasion.town-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedInvasion(),
+        Metas.Invasion.Buttons.town = BwMatrixMeta.from(//
+                "buttons/invasion.town?",
+                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedInvasion(), //
                 0xFFFFFF
         );
-        Metas.Invasion.Dialogs.notEnoughBadges = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "dialogs/invasion.not-enough-badges-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughInvasionBadges(),
+        Metas.Invasion.Dialogs.notEnoughBadges = BwMatrixMeta.from(//
+                "dialogs/invasion.not-enough-badges?",
+                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughInvasionBadges(), //
                 0xFFFFFF
         );
 
         // Trials
-        Metas.Trials.Buttons.play = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/trials.play-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonPlayTrials(),
+        Metas.Trials.Buttons.play = BwMatrixMeta.from(//
+                "buttons/trials.play?",
+                Configuration.screenResolutionProfile.getOffsetButtonPlayTrials(), //
                 0xFFFFFF
         );
-        Metas.Trials.Buttons.accept = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/trials.accept-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonAcceptTrials(),
+        Metas.Trials.Buttons.accept = BwMatrixMeta.from(//
+                "buttons/trials.accept?",
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptTrials(), //
                 0xFFFFFF
         );
-        Metas.Trials.Buttons.town = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/trials.town-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedTrials(),
+        Metas.Trials.Buttons.town = BwMatrixMeta.from(//
+                "buttons/trials.town?",
+                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedTrials(), //
                 0xFFFFFF
         );
-        Metas.Trials.Dialogs.notEnoughTokens = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "dialogs/trials.not-enough-tokens-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughTrialsTokens(),
+        Metas.Trials.Dialogs.notEnoughTokens = BwMatrixMeta.from(//
+                "dialogs/trials.not-enough-tokens?",
+                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughTrialsTokens(), //
                 0xFFFFFF
         );
 
         // GVG
-        Metas.Gvg.Buttons.play = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/gvg.play-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonPlayGvg(),
+        Metas.Gvg.Buttons.play = BwMatrixMeta.from(//
+                "buttons/gvg.play?",
+                Configuration.screenResolutionProfile.getOffsetButtonPlayGvg(), //
                 0xFFFFFF
         );
-        Metas.Gvg.Buttons.fight = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/gvg.fight-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonFight1Gvg(),
+        Metas.Gvg.Buttons.fight = BwMatrixMeta.from(//
+                "buttons/gvg.fight?",
+                Configuration.screenResolutionProfile.getOffsetButtonFight1Gvg(), //
                 0xFFFFFF
         );
-        Metas.Gvg.Buttons.accept = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/gvg.accept-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonAcceptGvg(),
+        Metas.Gvg.Buttons.accept = BwMatrixMeta.from(//
+                "buttons/gvg.accept?",
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptGvg(), //
                 0xFFFFFF
         );
-        Metas.Gvg.Buttons.town = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/gvg.town-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedGvg(),
+        Metas.Gvg.Buttons.town = BwMatrixMeta.from(//
+                "buttons/gvg.town?",
+                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedGvg(), //
                 0xFFFFFF
         );
 
         // Gauntlet
-        Metas.Gauntlet.Buttons.play = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/gauntlet.play-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonPlayGauntlet(),
+        Metas.Gauntlet.Buttons.play = BwMatrixMeta.from(//
+                "buttons/gauntlet.play?", //
+                Configuration.screenResolutionProfile.getOffsetButtonPlayGauntlet(), //
                 0xFFFFFF
         );
-        Metas.Gauntlet.Buttons.accept = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/gauntlet.accept-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonAcceptGauntlet(),
+        Metas.Gauntlet.Buttons.accept = BwMatrixMeta.from(//
+                "buttons/gauntlet.accept?", //
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptGauntlet(), //
                 0xFFFFFF
         );
-        Metas.Gauntlet.Buttons.town = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/gauntlet.town-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedGauntlet(),
+        Metas.Gauntlet.Buttons.town = BwMatrixMeta.from(//
+                "buttons/gauntlet.town?", //
+                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedGauntlet(), //
                 0xFFFFFF
         );
 
         // Raid
-        Metas.Raid.Buttons.town = new BwMatrixMeta(//
-                ImageUtil.loadMxImageFromResource( //
-                        "buttons/raid.town-mx.bmp"
-                ), //
-                Configuration.screenResolutionProfile.getOffsetButtonTownWhenDefeatedInRaid(),
+        Metas.Raid.Buttons.town = BwMatrixMeta.from(//
+                "buttons/raid.town?", //
+                Configuration.screenResolutionProfile.getOffsetButtonTownWhenDefeatedInRaid(), //
                 0xFFFFFF
         );
-        Metas.Raid.Buttons.accept = BwMatrixMeta.fromTpImage(//
+        Metas.Raid.Buttons.accept = BwMatrixMeta.from(//
                 "buttons/raid.accept-tp.bmp", //
-                Configuration.screenResolutionProfile.getOffsetButtonAcceptTeamOfRaid(),
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptTeamOfRaid(), //
                 0xFFFFFF
         );
-        Metas.Raid.Labels.labelInSummonDialog = BwMatrixMeta.fromTpImage(//
+        Metas.Raid.Labels.labelInSummonDialog = BwMatrixMeta.from(//
                 "labels/raid-tp.bmp", //
-                Configuration.screenResolutionProfile.getOffsetLabelRaidInSummonDialog(),
+                Configuration.screenResolutionProfile.getOffsetLabelRaidInSummonDialog(), //
                 0xFFFFFF
         );
-        Metas.Raid.Dialogs.notEnoughShards = BwMatrixMeta.fromTpImage(//
+        Metas.Raid.Dialogs.notEnoughShards = BwMatrixMeta.from(//
                 "dialogs/raid.not-enough-shards-tp.bmp", //
-                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughShards(),
+                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughShards(), //
                 0xFFFFFF
         );
 
@@ -622,12 +535,12 @@ public class BwMatrixMeta {
 
     private static void testImgImportedFromTp() throws IOException {
         if (Configuration.screenResolutionProfile instanceof ScreenResolutionProfile.WebProfile) {
-            BwMatrixMeta g = BwMatrixMeta.fromTpImage(//
+            BwMatrixMeta g = BwMatrixMeta.from(//
                     "buttons/globally.auto-green-tp.bmp", //
                     new Configuration.Offset(Configuration.screenResolutionProfile.getOffsetButtonAuto().X - 2, Configuration.screenResolutionProfile.getOffsetButtonAuto().Y - 2),
                     0xFFFFFF
             );
-            BwMatrixMeta r = BwMatrixMeta.fromTpImage(//
+            BwMatrixMeta r = BwMatrixMeta.from(//
                     "buttons/globally.auto-red-tp.bmp", //
                     new Configuration.Offset(Configuration.screenResolutionProfile.getOffsetButtonAuto().X - 2, Configuration.screenResolutionProfile.getOffsetButtonAuto().Y - 2),
                     0xFFFFFF
@@ -648,6 +561,26 @@ public class BwMatrixMeta {
             assert Metas.Globally.Buttons.autoR.h == r.h;
              */
         }
+    }
+
+    public static BwMatrixMeta from(String path, Configuration.Offset imageOffset, int blackPixelRgb) throws IOException {
+        String normalized = path.trim().toLowerCase();
+        if (normalized.endsWith("?")) {
+            String prefix = path.substring(0, path.length() - 1);
+            BwMatrixMeta bwMatrixMeta = new BwMatrixMeta(ImageUtil.loadMxImageFromResource(prefix + "-mx.bmp"), imageOffset, blackPixelRgb);
+            if (bwMatrixMeta.notAvailable == false)
+                return bwMatrixMeta;
+            debug("MX type of %s is not available, going to load TP", path);
+            if (bwMatrixMeta.notAvailable == false)
+                debug("TP type of %s is not available either", path);
+            bwMatrixMeta = fromTpImage(prefix + "-tp.bmp", imageOffset, blackPixelRgb);
+            return bwMatrixMeta;
+        } else if (normalized.endsWith("-mx.bmp"))
+            return new BwMatrixMeta(ImageUtil.loadMxImageFromResource(path), imageOffset, blackPixelRgb);
+        else if (normalized.endsWith("-tp.bmp"))
+            return fromTpImage(path, imageOffset, blackPixelRgb);
+        else
+            throw new NotSupportedException("Un-recognized format");
     }
 
     public static BwMatrixMeta fromTpImage(String path, Configuration.Offset tpImageOffset, int blackPixelRgb) throws IOException {
