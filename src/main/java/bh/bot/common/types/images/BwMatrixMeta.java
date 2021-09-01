@@ -93,9 +93,8 @@ public class BwMatrixMeta {
 
     public boolean throwIfNotAvailable() {
         if (this.notAvailable) {
-            err("Image is not available: %s", this.imageNameCode);
-            // TODO always throw
-            if (!Configuration.enableDevFeatures)
+            err("Image is not available: %s, profile %s", this.imageNameCode, Configuration.profileName);
+            if (!Configuration.noThrowWhenImageNotAvailable)
             	throw new NotSupportedException(String.format("Image is not available for profile '--%s': %s", Configuration.profileName, this.imageNameCode));
             return true;
         }
@@ -164,12 +163,14 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta autoR;
                 public static BwMatrixMeta radioButton;
                 public static BwMatrixMeta close;
+                public static BwMatrixMeta mapButtonOnFamiliarUi;
             }
 
             public static class Dialogs {
                 public static BwMatrixMeta confirmQuitBattle;
                 public static BwMatrixMeta confirmStartNotFullTeam;
                 public static BwMatrixMeta areYouStillThere;
+                public static BwMatrixMeta areYouSureWantToExit;
             }
         }
 
@@ -312,6 +313,11 @@ public class BwMatrixMeta {
                 Configuration.Offset.none(), //
                 0x000000
         );
+        Metas.Globally.Buttons.mapButtonOnFamiliarUi = BwMatrixMeta.from(//
+                "buttons/globally.map-on-familiar-ui?",
+                Configuration.screenResolutionProfile.getOffsetButtonMapOnFamiliarUi(), //
+                0x000000
+        );
         Metas.Globally.Dialogs.confirmQuitBattle = BwMatrixMeta.from(//
                 "dialogs/globally.confirm-quit-battle?",
                 Configuration.screenResolutionProfile.getOffsetDialogConfirmQuitBattle(), //
@@ -325,6 +331,11 @@ public class BwMatrixMeta {
         Metas.Globally.Dialogs.areYouStillThere = BwMatrixMeta.from(//
                 "dialogs/globally.are-you-still-there?",
                 Configuration.screenResolutionProfile.getOffsetDialogAreYouStillThere(), //
+                0xFFFFFF
+        );
+        Metas.Globally.Dialogs.areYouSureWantToExit = BwMatrixMeta.from(//
+                "dialogs/globally.are-you-sure-want-to-exit?",
+                Configuration.screenResolutionProfile.getOffsetDialogAreYouSureWantToExit(), //
                 0xFFFFFF
         );
         Metas.Dungeons.Buttons.rerun = BwMatrixMeta.from(//

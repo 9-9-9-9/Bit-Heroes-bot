@@ -6,6 +6,8 @@ import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.types.Platform;
 import bh.bot.common.types.ScreenResolutionProfile;
+import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
+import bh.bot.common.types.ScreenResolutionProfile.WebProfile;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.utils.StringUtil;
@@ -25,8 +27,11 @@ import static bh.bot.common.utils.StringUtil.isNotBlank;
 public class Configuration {
     public static ScreenResolutionProfile screenResolutionProfile = null;
     public static String profileName = null;
+    public static boolean isSteamProfile = false;
+    public static boolean isWebProfile = false;
     public static Offset gameScreenOffset;
     public static final boolean enableDevFeatures = new File("im.dev").exists();
+    public static boolean noThrowWhenImageNotAvailable = false;
 
     public static class Tolerant {
         public static int position;
@@ -174,11 +179,13 @@ public class Configuration {
         );
 
         Configuration.screenResolutionProfile = screenResolutionProfile;
+        Configuration.isSteamProfile = screenResolutionProfile instanceof SteamProfile;
+        Configuration.isWebProfile = screenResolutionProfile instanceof WebProfile;
         Configuration.profileName = screenResolutionProfile.getName().trim();
         if (isBlank(profileName))
             throw new InvalidDataException("profileName");
 
-        if (screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile) {
+        if (Configuration.isSteamProfile) {
             if (!OS.isWin) {
                 err("Steam profile only available on Windows");
                 System.exit(Main.EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
@@ -201,6 +208,10 @@ public class Configuration {
             }
         }
 
+        String devNoThrowImgUnavailable = read("dev.no-throw-when-image-not-available");
+        devNoThrowImgUnavailable = isNotBlank(devNoThrowImgUnavailable) ? devNoThrowImgUnavailable.trim().toLowerCase() : null;
+        noThrowWhenImageNotAvailable = devNoThrowImgUnavailable.equals("true") || devNoThrowImgUnavailable.equals("yes") || devNoThrowImgUnavailable.equals("y");
+        
         gameScreenOffset = Offset.fromKeyPrefix("offset.screen");
 
         Tolerant.position = Math.max(5, readInt("tolerant.position"));

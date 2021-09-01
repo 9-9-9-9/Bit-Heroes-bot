@@ -140,6 +140,9 @@ public class AfkApp extends AbstractApplication {
             boolean doGauntlet
     ) {
         try {
+        	
+        	if ((doInvasion || doTrials) && Configuration.isSteamProfile)
+        		throw new NotSupportedException("Invasion and Trials have not been supported on Steam");
 
             info("Starting AFK");
             boolean isUnknownGvgOrInvasion = doGvg && doInvasion;
@@ -202,19 +205,27 @@ public class AfkApp extends AbstractApplication {
                         continue ML;
                     }
                 }
-
-                if (--checkAreYouStillThereAfter <= 0) {
-
-                    if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouStillThere)) {
-                        info("Knock knock, are you still there?");
-                        InteractionUtil.Keyboard.sendEnter();
-                        sleep(1_000);
+                
+                if (Configuration.isSteamProfile) {
+                	if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouSureWantToExit)) {
+                        info("areYouSureWantToExit");
                         InteractionUtil.Keyboard.sendEscape();
-                        checkAreYouStillThereAfter = 2;
-                    } else {
-                        checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
+                        continue ML;
                     }
-                    continue ML;
+                } else {
+                	if (--checkAreYouStillThereAfter <= 0) {
+
+                        if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouStillThere)) {
+                            info("Knock knock, are you still there?");
+                            InteractionUtil.Keyboard.sendEnter();
+                            sleep(1_000);
+                            InteractionUtil.Keyboard.sendEscape();
+                            checkAreYouStillThereAfter = 2;
+                        } else {
+                            checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
+                        }
+                        continue ML;
+                    }
                 }
 
                 if (sleepWhileWaitingResourceRegen > 0) {
@@ -242,6 +253,16 @@ public class AfkApp extends AbstractApplication {
                     InteractionUtil.Keyboard.sendEnter();
                     sleep(1_000);
                     spamEscape(1);
+                    continuousNotFound = 0;
+                    moveCursor(coordinateHideMouse);
+                    continue ML;
+                }
+
+                Point coordMap = findImage(BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi);
+                if (coordMap != null) {
+                    BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi.setLastMatchPoint(coordMap.x, coordMap.y);
+                    debug("mapButtonOnFamiliarUi");
+                    InteractionUtil.Keyboard.sendEscape();
                     continuousNotFound = 0;
                     moveCursor(coordinateHideMouse);
                     continue ML;

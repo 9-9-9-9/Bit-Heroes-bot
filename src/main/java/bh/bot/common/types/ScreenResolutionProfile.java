@@ -123,6 +123,10 @@ public abstract class ScreenResolutionProfile {
 
     public abstract Offset getOffsetButtonEnterHeroicRaid();
 
+    public abstract Offset getOffsetButtonMapOnFamiliarUi();
+
+    public abstract Offset getOffsetDialogAreYouSureWantToExit();
+
 
     public static class WebProfile extends ScreenResolutionProfile {
 
@@ -415,6 +419,16 @@ public abstract class ScreenResolutionProfile {
         public Offset getOffsetButtonEnterHeroicRaid() {
             return new Offset(590, 233);
         }
+
+		@Override
+		public Offset getOffsetButtonMapOnFamiliarUi() {
+			return new Offset(66, 135);
+		}
+
+		@Override
+		public Offset getOffsetDialogAreYouSureWantToExit() {
+			return null;
+		}
     }
 
     public static class SteamProfile extends ScreenResolutionProfile {
@@ -596,7 +610,7 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetDialogNotEnoughInvasionBadges() {
-            return null;
+            return new Offset(286, 213);
         }
 
         @Override
@@ -616,42 +630,42 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetDialogNotEnoughTrialsTokens() {
-            return null;
+            return new Offset(286, 213);
         }
 
         @Override
         public Offset getOffsetButtonPlayGvg() {
-            return null;
+            return new Offset(514, 251);
         }
 
         @Override
         public Offset getOffsetButtonFight1Gvg() {
-            return null;
+            return new Offset(564, 182);
         }
 
         @Override
         public Offset getOffsetButtonAcceptGvg() {
-            return null;
+            return new Offset(470, 424);
         }
 
         @Override
         public Offset getOffsetButtonTownAfterCompetedGvg() {
-            return null;
+            return new Offset(388, 435);
         }
 
         @Override
         public Offset getOffsetButtonPlayGauntlet() {
-            return null;
+            return new Offset(513, 250);
         }
 
         @Override
         public Offset getOffsetButtonAcceptGauntlet() {
-            return null;
+            return new Offset(470, 424);
         }
 
         @Override
         public Offset getOffsetButtonTownAfterCompetedGauntlet() {
-            return null;
+            return new Offset(388, 435);
         }
 
         @Override
@@ -676,37 +690,47 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetLabelRaidInSummonDialog() {
-            return null;
+            return new Offset(367, 94);
         }
 
         @Override
         public Offset getOffsetButtonSummonOfRaid() {
-            return null;
+            return new Offset(486, 340);
         }
 
         @Override
         public Offset getOffsetButtonAcceptTeamOfRaid() {
-            return null;
+            return new Offset(470, 424);
         }
 
         @Override
         public Offset getOffsetDialogNotEnoughShards() {
-            return null;
+            return new Offset(286, 213);
         }
 
         @Override
         public Offset getOffsetButtonEnterNormalRaid() {
-            return null;
+            return new Offset(218, 215);
         }
 
         @Override
         public Offset getOffsetButtonEnterHardRaid() {
-            return null;
+        	return new Offset(399, 215);
         }
 
         @Override
         public Offset getOffsetButtonEnterHeroicRaid() {
-            return null;
+        	return new Offset(579, 215);
         }
+
+		@Override
+		public Offset getOffsetButtonMapOnFamiliarUi() {
+			return new Offset(86, 123);
+		}
+
+		@Override
+		public Offset getOffsetDialogAreYouSureWantToExit() {
+			return new Offset(296, 213);
+		}
     }
 }

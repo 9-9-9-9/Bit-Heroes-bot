@@ -133,7 +133,9 @@ For: everyone
   - Linux/Mac: 
     - run `./afk.sh` from terminal
     - or command `java -jar BitHeroes.jar afk`
-- Not support Steam
+- Steam **(not yet supported Invasion & Trials):**
+  - Click and run: `steam.afk.bat`
+  - Run from commandline: `java -jar BitHeroes.jar afk --steam`
 
 Supported flags:
 - `--pvp` do PVP
