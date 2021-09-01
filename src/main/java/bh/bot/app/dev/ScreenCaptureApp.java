@@ -55,11 +55,6 @@ public class ScreenCaptureApp extends AbstractApplication {
     }
 
     @Override
-    protected boolean isSupportSteamScreenResolution() {
-        return true;
-    }
-
-    @Override
     protected boolean isRequiredToLoadImages() {
         return false;
     }

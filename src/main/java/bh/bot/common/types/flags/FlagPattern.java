@@ -111,7 +111,7 @@ public abstract class FlagPattern<T> {
     public String toString() {
         String text = String.format("\n  --%s%s : %s%s", getName(), isAllowParam() ? "=?" : "", isDevelopersOnly() ? "(developers only) " : "", getDescription());
         if (!isSupportedOnCurrentOsPlatform())
-            text += ". Only supports " + String.join(", ", Arrays.asList(getSupportedOsPlatforms()).stream().map(x -> x.toString()).collect(Collectors.toList()));
+            text += ". Only supports " + String.join(", ", Arrays.asList(getSupportedOsPlatforms()).stream().map(x -> x.toString()).collect(Collectors.toList())) + " OS";
         return text;
     }
 

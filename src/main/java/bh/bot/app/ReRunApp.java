@@ -150,9 +150,4 @@ public class ReRunApp extends AbstractApplication {
     protected String getLimitationExplain() {
         return "This function only supports clicking the ReRun button, that means you have to enter Dungeon/Raid manually, turn on the Auto and when the ReRun button appears, it will be automatically clicked";
     }
-
-    @Override
-    protected boolean isSupportSteamScreenResolution() {
-        return true;
-    }
 }

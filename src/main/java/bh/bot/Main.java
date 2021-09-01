@@ -11,7 +11,6 @@ import bh.bot.common.Log;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotImplementedException;
-import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.flags.*;
@@ -146,7 +145,7 @@ public class Main {
         // Validate flags
         for (FlagPattern flagPattern : usingFlagPatterns)
             if (!flagPattern.isSupportedOnCurrentOsPlatform())
-                throw new NotSupportedException(String.format("Flag '--%s' is not supported on %s", flagPattern.getName(), Configuration.OS.name));
+                throw new InvalidFlagException(String.format("Flag '--%s' is not supported on %s", flagPattern.getName(), Configuration.OS.name));
 
         ScreenResolutionProfile screenResolutionProfile;
         boolean is800x480Resolution = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSteamResolution800x480);

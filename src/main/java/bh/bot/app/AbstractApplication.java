@@ -5,7 +5,6 @@ import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.ParseArgumentsResult;
-import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.flags.FlagPattern;
 import bh.bot.common.types.flags.Flags;
@@ -43,11 +42,6 @@ public abstract class AbstractApplication {
 
     public void run(ParseArgumentsResult launchInfo) throws Exception {
         this.argumentInfo = launchInfo;
-        if (Configuration.screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile && !isSupportSteamScreenResolution()) {
-            err("'%s' does not support steam resolution");
-            System.exit(Main.EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
-            return;
-        }
 
         if (this.argumentInfo.enableSavingDebugImages)
             info("Enabled saving debug images");
@@ -152,18 +146,12 @@ public abstract class AbstractApplication {
                 .filter(x -> x.isGlobalFlag())
                 .collect(Collectors.toList());
         sb.append("\nGlobal flags:");
-        for (FlagPattern globalFlag : globalFlags)
+        for (FlagPattern globalFlag : globalFlags.stream().filter(x -> x.isSupportedByApp(this)).collect(Collectors.toList()))
             sb.append(globalFlag);
-        if (!this.isSupportSteamScreenResolution())
-            sb.append("\n** WARNING ** This app does not supports '--steam' flag");
         return sb.toString();
     }
 
     protected abstract String getLimitationExplain();
-
-    protected boolean isSupportSteamScreenResolution() {
-        return false;
-    }
 
     protected boolean isRequiredToLoadImages() {
         return true;
