@@ -123,6 +123,8 @@ public abstract class ScreenResolutionProfile {
 
     public abstract Offset getOffsetButtonEnterHeroicRaid();
 
+    public abstract Offset getOffsetButtonMapOnFamiliarUi();
+
 
     public static class WebProfile extends ScreenResolutionProfile {
 
@@ -415,6 +417,12 @@ public abstract class ScreenResolutionProfile {
         public Offset getOffsetButtonEnterHeroicRaid() {
             return new Offset(590, 233);
         }
+
+		@Override
+		public Offset getOffsetButtonMapOnFamiliarUi() {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 
     public static class SteamProfile extends ScreenResolutionProfile {
@@ -708,5 +716,10 @@ public abstract class ScreenResolutionProfile {
         public Offset getOffsetButtonEnterHeroicRaid() {
             return null;
         }
+
+		@Override
+		public Offset getOffsetButtonMapOnFamiliarUi() {
+			return new Offset(86, 123);
+		}
     }
 }

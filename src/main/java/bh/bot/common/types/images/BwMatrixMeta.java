@@ -163,6 +163,7 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta autoR;
                 public static BwMatrixMeta radioButton;
                 public static BwMatrixMeta close;
+                public static BwMatrixMeta mapButtonOnFamiliarUi;
             }
 
             public static class Dialogs {
@@ -309,6 +310,11 @@ public class BwMatrixMeta {
         Metas.Globally.Buttons.close = BwMatrixMeta.from(//
                 "buttons/globally.close?",
                 Configuration.Offset.none(), //
+                0x000000
+        );
+        Metas.Globally.Buttons.mapButtonOnFamiliarUi = BwMatrixMeta.from(//
+                "buttons/globally.map-on-familiar-ui?",
+                Configuration.screenResolutionProfile.getOffsetButtonMapOnFamiliarUi(), //
                 0x000000
         );
         Metas.Globally.Dialogs.confirmQuitBattle = BwMatrixMeta.from(//

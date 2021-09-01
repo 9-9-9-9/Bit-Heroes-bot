@@ -50,6 +50,16 @@ public class Log {
             );
         }
     }
+    
+    public static void printStackTrace() {
+        if (!Configuration.enableDevFeatures)
+            return;
+        try {
+            throw new Exception("Print stack trace for debugging purpose");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     public static void info(Object obj) {
         println(obj);

@@ -62,12 +62,12 @@ public class InteractionUtil {
 
         public static void mouseMoveAndClickAndHide(Point p) {
             moveCursor(p);
-            sleep(100);
+            sleep(300);
             mouseClick();
-            sleep(200);
-            moveCursor(p);
-            sleep(100);
-            mouseClick();
+            // sleep(200);
+            // moveCursor(p);
+            // sleep(100);
+            // mouseClick();
             sleep(200);
             hideCursor();
         }
