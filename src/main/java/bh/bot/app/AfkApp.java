@@ -258,6 +258,16 @@ public class AfkApp extends AbstractApplication {
                     continue ML;
                 }
 
+                Point coordMap = findImage(BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi);
+                if (coordMap != null) {
+                    BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi.setLastMatchPoint(coordMap.x, coordMap.y);
+                    debug("mapButtonOnFamiliarUi");
+                    InteractionUtil.Keyboard.sendEscape();
+                    continuousNotFound = 0;
+                    moveCursor(coordinateHideMouse);
+                    continue ML;
+                }
+
                 if (tryEnterRaid(doRaid, userConfig)) {
                     debug("tryEnterRaid");
                     continuousNotFound = 0;

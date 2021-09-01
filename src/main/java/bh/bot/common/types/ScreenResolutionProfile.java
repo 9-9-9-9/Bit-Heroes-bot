@@ -422,8 +422,7 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetButtonMapOnFamiliarUi() {
-			// TODO Auto-generated method stub
-			return null;
+			return new Offset(66, 135);
 		}
 
 		@Override

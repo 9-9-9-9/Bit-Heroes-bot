@@ -119,7 +119,6 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 }
             }
 
-            /*
             Point coordMap = findImage(BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi);
             if (coordMap != null) {
             	BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi.setLastMatchPoint(coordMap.x, coordMap.y);
@@ -129,7 +128,6 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 moveCursor(coordinateHideMouse);
                 continue ML;
             }
-            */
 
             debug("None");
             continuousNotFound++;
