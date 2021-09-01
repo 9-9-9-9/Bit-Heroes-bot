@@ -573,6 +573,8 @@ public class BwMatrixMeta {
             debug("MX type of %s is not available, going to load TP", path);
             if (bwMatrixMeta.notAvailable == false)
                 debug("TP type of %s is not available either", path);
+            else
+            	debug("Loaded TP successfully for %s", path);
             bwMatrixMeta = fromTpImage(prefix + "-tp.bmp", imageOffset, blackPixelRgb);
             return bwMatrixMeta;
         } else if (normalized.endsWith("-mx.bmp"))
