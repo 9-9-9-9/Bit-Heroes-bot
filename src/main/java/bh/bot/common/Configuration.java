@@ -210,7 +210,7 @@ public class Configuration {
 
         String devNoThrowImgUnavailable = read("dev.no-throw-when-image-not-available");
         devNoThrowImgUnavailable = isNotBlank(devNoThrowImgUnavailable) ? devNoThrowImgUnavailable.trim().toLowerCase() : null;
-        noThrowWhenImageNotAvailable = devNoThrowImgUnavailable.equals("true") || devNoThrowImgUnavailable.equals("yes") || devNoThrowImgUnavailable.equals("y");
+        noThrowWhenImageNotAvailable = devNoThrowImgUnavailable != null && (devNoThrowImgUnavailable.equals("true") || devNoThrowImgUnavailable.equals("yes") || devNoThrowImgUnavailable.equals("y"));
         
         gameScreenOffset = Offset.fromKeyPrefix("offset.screen");
 
