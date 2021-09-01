@@ -167,7 +167,8 @@ public class InteractionUtil {
                     try {
                         instance.saveDebugImage(sc, String.format("findAttendablePlace_%d_", i));
                         final BwMatrixMeta im = event.img;
-                        im.throwIfNotAvailable();
+                        if (im.throwIfNotAvailable())
+                        	continue;
                         //
                         boolean go = true;
                         Point p = new Point();

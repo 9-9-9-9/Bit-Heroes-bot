@@ -170,7 +170,8 @@ public abstract class AbstractApplication {
     }
 
     protected Point findImageBasedOnLastClick(BwMatrixMeta im) {
-        im.throwIfNotAvailable();
+        if (im.throwIfNotAvailable())
+        	return null;
 
         int[] lastMatch = im.getLastMatchPoint();
         if (lastMatch[0] < 0 || lastMatch[1] < 0) {
@@ -217,7 +218,8 @@ public abstract class AbstractApplication {
     }
 
     protected Point scanToFindImage(BwMatrixMeta im) {
-        im.throwIfNotAvailable();
+        if (im.throwIfNotAvailable())
+        	return null;
 
         ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
         BufferedImage sc = screenCapturedResult.image;
@@ -297,7 +299,8 @@ public abstract class AbstractApplication {
     }
 
     protected Point detectLabel(BwMatrixMeta im, int... mainColors) {
-        im.throwIfNotAvailable();
+        if (im.throwIfNotAvailable())
+        	return null;
 
         ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
         BufferedImage sc = screenCapturedResult.image;
@@ -380,13 +383,13 @@ public abstract class AbstractApplication {
         try {
             saveDebugImage(sc, "detectRadioButtons");
 
-            ArrayList<Point> startingCoord = new ArrayList<>();
+            ArrayList<Point> startingCoords = new ArrayList<>();
             int selectedRadioButtonIndex = -1;
             int skipAfterXIfNotFoundAny = (int) Math.floor((double) sc.getWidth() / 4 * 3);
 
-            for (int y = 0; y < sc.getHeight() - im.getHeight() && startingCoord.size() < 1; y++) {
+            for (int y = 0; y < sc.getHeight() - im.getHeight() && startingCoords.size() < 1; y++) {
                 for (int x = 0; x < sc.getWidth() - im.getWidth(); x++) {
-                    if (x >= skipAfterXIfNotFoundAny && startingCoord.size() == 0)
+                    if (x >= skipAfterXIfNotFoundAny && startingCoords.size() == 0)
                         break;
 
                     final int blackPixelRgb = im.getBlackPixelRgb();
@@ -438,7 +441,7 @@ public abstract class AbstractApplication {
                         if (blue > green - greenMinDiff)
                             continue;
 
-                        int curRadioButtonIndex = startingCoord.size();
+                        int curRadioButtonIndex = startingCoords.size();
                         if (selectedRadioButtonIndex < 0)
                             selectedRadioButtonIndex = curRadioButtonIndex;
                         else {
@@ -450,15 +453,15 @@ public abstract class AbstractApplication {
 
                     // debug("detectRadioButtons captured at %3d,%3d with size %3dx%3d, match at %3d,%3d", screenCapturedResult.x, screenCapturedResult.y, screenCapturedResult.w, screenCapturedResult.h, x, y);
                     // im.setLastMatchPoint(startingCoord.x, startingCoord.y);
-                    startingCoord.add(new Point(x, y));
+                    startingCoords.add(new Point(x, y));
                 }
             }
 
             if (selectedRadioButtonIndex < 0)
-                throw new InvalidDataException("Unable to detect index of selected radio button among %d results", startingCoord.size());
+                throw new InvalidDataException("Unable to detect index of selected radio button among %d results", startingCoords.size());
 
             return new Tuple2<>(
-                    startingCoord
+                    startingCoords
                             .stream()
                             .map(c ->
                                     new Point(
@@ -650,14 +653,15 @@ public abstract class AbstractApplication {
         }
         mouseMoveAndClickAndHide(coord);
         BwMatrixMeta.Metas.WorldBoss.Labels.labelInSummonDialog.setLastMatchPoint(coord.x, coord.y);
-        Tuple2<Point[], Byte> result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaidAndWorldBoss());
+        debug("Trying to detect radio buttons");
+        Tuple2<Point[], Byte> result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfWorldBoss());
         Point[] points = result._1;
         int selectedLevel = result._2 + 1;
         info("Found %d, selected %d", points.length, selectedLevel);
         if (selectedLevel != userConfig.worldBossLevel)
             clickRadioButton(userConfig.worldBossLevel, points, "World Boss");
         sleep(3_000);
-        result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaidAndWorldBoss());
+        result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfWorldBoss());
         selectedLevel = result._2 + 1;
         if (selectedLevel != userConfig.worldBossLevel) {
             err("Failure on selecting world boss level");

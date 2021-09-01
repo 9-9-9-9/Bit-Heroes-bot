@@ -20,11 +20,11 @@ public class AttendablePlace {
         this(name, id, imgName, left, (short) 30);
     }
 
-    public AttendablePlace(String name, int id, String imgName, boolean left, int procedureTicketMinutes) throws IOException {
+    public AttendablePlace(String name, int id, String imgCode, boolean left, int procedureTicketMinutes) throws IOException {
         this.name = name;
         this.id = id;
-        this.img = new BwMatrixMeta(
-                ImageUtil.loadMxImageFromResource(String.format("labels/attendable-places/%s", imgName)),
+        this.img = BwMatrixMeta.from(
+                String.format("labels/attendable-places/%s?", imgCode),
                 new Configuration.Offset(0, 0),
                 0xFFFFFF
         );

@@ -26,14 +26,14 @@ public class AttendablePlaces {
 
     static {
         try {
-            invasion = new AttendablePlace("Invasion", AttendablePlaces.Ids.Invasion, "invasion-mx.bmp", false);
-            trials = new AttendablePlace("Trials", AttendablePlaces.Ids.Trials, "trials-mx.bmp", false);
-            gvg = new AttendablePlace("GVG", Ids.GvG, "gvg-mx.bmp", false);
-            gauntlet = new AttendablePlace("Gauntlet", Ids.Gauntlet, "gauntlet-mx.bmp", false);
+            invasion = new AttendablePlace("Invasion", AttendablePlaces.Ids.Invasion, "invasion", false);
+            trials = new AttendablePlace("Trials", AttendablePlaces.Ids.Trials, "trials", false);
+            gvg = new AttendablePlace("GVG", Ids.GvG, "gvg", false);
+            gauntlet = new AttendablePlace("Gauntlet", Ids.Gauntlet, "gauntlet", false);
 
-            pvp = new AttendablePlace("PVP", AttendablePlaces.Ids.Pvp, "pvp-mx.bmp", true);
-            worldBoss = new AttendablePlace("World Boss", AttendablePlaces.Ids.WorldBoss, "world-boss-mx.bmp", true, 60);
-            raid = new AttendablePlace("Raid", AttendablePlaces.Ids.Raid, "raid-mx.bmp", true, 120);
+            pvp = new AttendablePlace("PVP", AttendablePlaces.Ids.Pvp, "pvp", true);
+            worldBoss = new AttendablePlace("World Boss", AttendablePlaces.Ids.WorldBoss, "world-boss", true, 60);
+            raid = new AttendablePlace("Raid", AttendablePlaces.Ids.Raid, "raid", true, 120);
         } catch (IOException e) {
             e.printStackTrace();
         }
