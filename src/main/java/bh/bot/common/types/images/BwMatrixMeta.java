@@ -587,7 +587,19 @@ public class BwMatrixMeta {
         BufferedImageInfo bii = ImageUtil.loadTpImageFromResource(path);
         try {
             Tuple2<BufferedImageInfo, Configuration.Offset> transformed = ImageUtil.transformFromTpToMxImage(bii, blackPixelRgb, tpImageOffset);
-            return new BwMatrixMeta(transformed._1, new Configuration.Offset(tpImageOffset.X + transformed._2.X, tpImageOffset.Y + transformed._2.Y), blackPixelRgb);
+            return new BwMatrixMeta(
+        		transformed._1,
+        		transformed._1.notAvailable
+        		? null
+        		: new Configuration.Offset(
+        				tpImageOffset.X + transformed._2.X, 
+        				tpImageOffset.Y + transformed._2.Y
+        		), 
+        		blackPixelRgb
+    		);
+        } catch (Exception ex) {
+        	err("Problem while loading tp image %s", path);
+        	throw ex;
         } finally {
             ImageUtil.freeMem(bii.bufferedImage);
         }
