@@ -519,7 +519,7 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetDialogStartWithoutFullTeam() {
-            return null;
+            return new Offset(287, 204);
         }
 
         @Override
@@ -544,32 +544,32 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonPlayPvpArena() {
-            return null;
+            return new Offset(512, 246);
         }
 
         @Override
         public Offset getOffsetButtonFight1PvpArena() {
-            return null;
+        	return new Offset(564, 182);
         }
 
         @Override
         public Offset getOffsetButtonAcceptPvpArena() {
-            return null;
+        	return new Offset(469, 424);
         }
 
         @Override
         public Offset getOffsetButtonBackToTownFromPvpArenaOnWin() {
-            return null;
+        	return new Offset(458, 435);
         }
 
         @Override
         public Offset getOffsetButtonBackToTownFromPvpArenaOnLose() {
-            return null;
+        	return new Offset(388, 435);
         }
 
         @Override
         public Offset getOffsetDialogNotEnoughPvpTicket() {
-            return null;
+        	return new Offset(284, 213);
         }
 
         @Override

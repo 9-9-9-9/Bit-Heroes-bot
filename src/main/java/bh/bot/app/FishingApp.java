@@ -326,7 +326,8 @@ public class FishingApp extends AbstractApplication {
     }
 
     private boolean isContains(BufferedImage sc, BwMatrixMeta im, boolean debug) {
-        im.throwIfNotAvailable();
+        if (im.throwIfNotAvailable())
+        	return false;
 
         final int offsetX = im.getCoordinateOffset().X;
         final int offsetY = im.getCoordinateOffset().Y;

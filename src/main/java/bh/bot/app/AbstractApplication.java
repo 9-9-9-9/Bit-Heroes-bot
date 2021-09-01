@@ -170,7 +170,8 @@ public abstract class AbstractApplication {
     }
 
     protected Point findImageBasedOnLastClick(BwMatrixMeta im) {
-        im.throwIfNotAvailable();
+        if (im.throwIfNotAvailable())
+        	return null;
 
         int[] lastMatch = im.getLastMatchPoint();
         if (lastMatch[0] < 0 || lastMatch[1] < 0) {
@@ -217,7 +218,8 @@ public abstract class AbstractApplication {
     }
 
     protected Point scanToFindImage(BwMatrixMeta im) {
-        im.throwIfNotAvailable();
+        if (im.throwIfNotAvailable())
+        	return null;
 
         ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
         BufferedImage sc = screenCapturedResult.image;
@@ -297,7 +299,8 @@ public abstract class AbstractApplication {
     }
 
     protected Point detectLabel(BwMatrixMeta im, int... mainColors) {
-        im.throwIfNotAvailable();
+        if (im.throwIfNotAvailable())
+        	return null;
 
         ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
         BufferedImage sc = screenCapturedResult.image;

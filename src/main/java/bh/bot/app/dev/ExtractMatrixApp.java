@@ -14,8 +14,10 @@ import java.io.InputStreamReader;
 import java.util.function.Function;
 
 import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.warn;
 
 @AppCode(code = "matrix")
+@Deprecated
 public class ExtractMatrixApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
@@ -117,6 +119,8 @@ public class ExtractMatrixApp extends AbstractApplication {
             saveImage(testTransformMxResult.tp, "a-tp");
 
             info("Done %dx%d from offset %d,%d", testTransformMxResult.mx.getWidth(), testTransformMxResult.mx.getHeight(), testTransformMxResult.mxOffset.X, testTransformMxResult.mxOffset.Y);
+            
+            warn("This function is deprecated, please use `tp` instead");
         } catch (IOException ex) {
             ex.printStackTrace();
         }

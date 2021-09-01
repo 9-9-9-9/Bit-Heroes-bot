@@ -91,11 +91,15 @@ public class BwMatrixMeta {
         }
     }
 
-    public void throwIfNotAvailable() {
+    public boolean throwIfNotAvailable() {
         if (this.notAvailable) {
             err("Image is not available: %s", this.imageNameCode);
-            throw new NotSupportedException(String.format("Image is not available for profile '--%s': %s", Configuration.profileName, this.imageNameCode));
+            // TODO always throw
+            if (!Configuration.enableDevFeatures)
+            	throw new NotSupportedException(String.format("Image is not available for profile '--%s': %s", Configuration.profileName, this.imageNameCode));
+            return true;
         }
+        return false;
     }
 
     public int[] getFirstBlackPixelOffset() {
@@ -409,12 +413,12 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.PvpArena.Buttons.townOnWin = BwMatrixMeta.from(//
-                "buttons/pvp-arena.town?",
+                "buttons/pvp-arena.town-win?",
                 Configuration.screenResolutionProfile.getOffsetButtonBackToTownFromPvpArenaOnWin(), //
                 0xFFFFFF
         );
         Metas.PvpArena.Buttons.townOnLose = BwMatrixMeta.from(//
-                "buttons/pvp-arena.town?",
+                "buttons/pvp-arena.town-defeat?",
                 Configuration.screenResolutionProfile.getOffsetButtonBackToTownFromPvpArenaOnLose(), //
                 0xFFFFFF
         );

@@ -5,6 +5,7 @@ import bh.bot.app.FishingApp;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.dev.ScreenCaptureApp;
 import bh.bot.app.dev.TestApp;
+import bh.bot.app.farming.PvpApp;
 import bh.bot.common.Configuration;
 import bh.bot.common.types.Platform;
 
@@ -33,6 +34,8 @@ public class FlagSteamResolution800x480 extends FlagResolution {
         return instance instanceof ReRunApp
                 || instance instanceof FishingApp
                 || instance instanceof ScreenCaptureApp
-                || instance instanceof TestApp;
+                || instance instanceof TestApp
+
+                || instance instanceof PvpApp;
     }
 }
