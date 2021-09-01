@@ -156,7 +156,6 @@ public class BwMatrixMeta {
         public static class Globally {
             public static class Buttons {
                 public static BwMatrixMeta talkRightArrow;
-                public static BwMatrixMeta rerun;
                 public static BwMatrixMeta reconnect;
                 public static BwMatrixMeta autoG;
                 public static BwMatrixMeta autoR;
@@ -197,6 +196,10 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta startBoss;
                 public static BwMatrixMeta regroup;
                 public static BwMatrixMeta regroupOnDefeated;
+            }
+
+            public static class Labels {
+                public static BwMatrixMeta labelInSummonDialog;
             }
 
             public static class Dialogs {
@@ -262,6 +265,15 @@ public class BwMatrixMeta {
         public static class Raid {
             public static class Buttons {
                 public static BwMatrixMeta town;
+                public static BwMatrixMeta accept;
+            }
+
+            public static class Labels {
+                public static BwMatrixMeta labelInSummonDialog;
+            }
+
+            public static class Dialogs {
+                public static BwMatrixMeta notEnoughShards;
             }
         }
     }
@@ -415,6 +427,11 @@ public class BwMatrixMeta {
                         "dialogs/world-boss.not-enough-xeals-mx.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughXeals(),
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Labels.labelInSummonDialog = BwMatrixMeta.fromTpImage(//
+                "labels/world-boss-tp.bmp", //
+                Configuration.screenResolutionProfile.getOffsetLabelWorldBossInSummonDialog(),
                 0xFFFFFF
         );
 
@@ -583,6 +600,21 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetButtonTownWhenDefeatedInRaid(),
                 0xFFFFFF
         );
+        Metas.Raid.Buttons.accept = BwMatrixMeta.fromTpImage(//
+                "buttons/raid.accept-tp.bmp", //
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptTeamOfRaid(),
+                0xFFFFFF
+        );
+        Metas.Raid.Labels.labelInSummonDialog = BwMatrixMeta.fromTpImage(//
+                "labels/raid-tp.bmp", //
+                Configuration.screenResolutionProfile.getOffsetLabelRaidInSummonDialog(),
+                0xFFFFFF
+        );
+        Metas.Raid.Dialogs.notEnoughShards = BwMatrixMeta.fromTpImage(//
+                "dialogs/raid.not-enough-shards-tp.bmp", //
+                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughShards(),
+                0xFFFFFF
+        );
 
         // test
         testImgImportedFromTp();
@@ -601,6 +633,7 @@ public class BwMatrixMeta {
                     0xFFFFFF
             );
 
+            /*
             assert g.notAvailable == false;
             assert r.notAvailable == false;
             assert Metas.Globally.Buttons.autoG.notAvailable == false;
@@ -613,6 +646,7 @@ public class BwMatrixMeta {
             assert Metas.Globally.Buttons.autoG.h == g.h;
             assert Metas.Globally.Buttons.autoR.w == r.w;
             assert Metas.Globally.Buttons.autoR.h == r.h;
+             */
         }
     }
 
@@ -620,7 +654,7 @@ public class BwMatrixMeta {
         BufferedImageInfo bii = ImageUtil.loadTpImageFromResource(path);
         try {
             Tuple2<BufferedImageInfo, Configuration.Offset> transformed = ImageUtil.transformFromTpToMxImage(bii, blackPixelRgb, tpImageOffset);
-            return new BwMatrixMeta(transformed._1, transformed._2, blackPixelRgb);
+            return new BwMatrixMeta(transformed._1, new Configuration.Offset(tpImageOffset.X + transformed._2.X, tpImageOffset.Y + transformed._2.Y), blackPixelRgb);
         } finally {
             ImageUtil.freeMem(bii.bufferedImage);
         }

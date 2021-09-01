@@ -39,6 +39,8 @@ public abstract class ScreenResolutionProfile {
 
     public abstract Offset getOffsetButtonSummonOnListingPartiesWorldBoss();
 
+    public abstract Offset getOffsetLabelWorldBossInSummonDialog();
+
     public abstract Offset getOffsetButtonSummonOnListingWorldBosses();
 
     public abstract Offset getOffsetButtonSummonOnSelectingWorldBossTierAndDifficulty();
@@ -103,7 +105,21 @@ public abstract class ScreenResolutionProfile {
 
     public abstract Offset getOffsetButtonTownWhenDefeatedInRaid();
 
-    public abstract Rectangle getRectangleRadioButtonsOfRaid();
+    public abstract Rectangle getRectangleRadioButtonsOfRaidAndWorldBoss();
+
+    public abstract Offset getOffsetLabelRaidInSummonDialog();
+
+    public abstract Offset getOffsetButtonSummonOfRaid();
+
+    public abstract Offset getOffsetButtonAcceptTeamOfRaid();
+
+    public abstract Offset getOffsetDialogNotEnoughShards();
+
+    public abstract Offset getOffsetButtonEnterNormalRaid();
+
+    public abstract Offset getOffsetButtonEnterHardRaid();
+
+    public abstract Offset getOffsetButtonEnterHeroicRaid();
 
 
     public static class WebProfile extends ScreenResolutionProfile {
@@ -186,6 +202,11 @@ public abstract class ScreenResolutionProfile {
         @Override
         public Offset getOffsetButtonSummonOnListingPartiesWorldBoss() {
             return new Offset(452, 451);
+        }
+
+        @Override
+        public Offset getOffsetLabelWorldBossInSummonDialog() {
+            return new Offset(295, 104);
         }
 
         @Override
@@ -349,8 +370,43 @@ public abstract class ScreenResolutionProfile {
         }
 
         @Override
-        public Rectangle getRectangleRadioButtonsOfRaid() {
+        public Rectangle getRectangleRadioButtonsOfRaidAndWorldBoss() {
             return new Rectangle(163, 435, 474, 15);
+        }
+
+        @Override
+        public Offset getOffsetLabelRaidInSummonDialog() {
+            return new Offset(365, 104);
+        }
+
+        @Override
+        public Offset getOffsetButtonSummonOfRaid() {
+            return new Offset(490, 365);
+        }
+
+        @Override
+        public Offset getOffsetButtonAcceptTeamOfRaid() {
+            return new Offset(474, 457);
+        }
+
+        @Override
+        public Offset getOffsetDialogNotEnoughShards() {
+            return new Offset(279, 231);
+        }
+
+        @Override
+        public Offset getOffsetButtonEnterNormalRaid() {
+            return new Offset(206, 233);
+        }
+
+        @Override
+        public Offset getOffsetButtonEnterHardRaid() {
+            return new Offset(398, 233);
+        }
+
+        @Override
+        public Offset getOffsetButtonEnterHeroicRaid() {
+            return new Offset(590, 233);
         }
     }
 
@@ -433,6 +489,11 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonSummonOnListingPartiesWorldBoss() {
+            return null;
+        }
+
+        @Override
+        public Offset getOffsetLabelWorldBossInSummonDialog() {
             return null;
         }
 
@@ -597,7 +658,42 @@ public abstract class ScreenResolutionProfile {
         }
 
         @Override
-        public Rectangle getRectangleRadioButtonsOfRaid() {
+        public Rectangle getRectangleRadioButtonsOfRaidAndWorldBoss() {
+            return null;
+        }
+
+        @Override
+        public Offset getOffsetLabelRaidInSummonDialog() {
+            return null;
+        }
+
+        @Override
+        public Offset getOffsetButtonSummonOfRaid() {
+            return null;
+        }
+
+        @Override
+        public Offset getOffsetButtonAcceptTeamOfRaid() {
+            return null;
+        }
+
+        @Override
+        public Offset getOffsetDialogNotEnoughShards() {
+            return null;
+        }
+
+        @Override
+        public Offset getOffsetButtonEnterNormalRaid() {
+            return null;
+        }
+
+        @Override
+        public Offset getOffsetButtonEnterHardRaid() {
+            return null;
+        }
+
+        @Override
+        public Offset getOffsetButtonEnterHeroicRaid() {
             return null;
         }
     }

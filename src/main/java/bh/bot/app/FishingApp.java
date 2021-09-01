@@ -139,6 +139,7 @@ public class FishingApp extends AbstractApplication {
     private final int screenCatch = 3;
 
     private void doLoopFishing(int loopCount, final AtomicBoolean masterSwitch, final Point anchorPoint, final AtomicInteger screen, final AtomicBoolean unsure, final AtomicLong unsureFrom) {
+        info("Start Fishing");
         try {
             moveCursor(new Point(950, 100));
 

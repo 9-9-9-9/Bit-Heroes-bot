@@ -13,6 +13,7 @@ import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
+import bh.bot.common.utils.InteractionUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -190,7 +191,7 @@ public abstract class AbstractApplication {
         Color c = getPixelColor(p);
         if (!im.isMatchBlackRgb(c.getRGB()))
             return null;
-        // debug("findImageBasedOnLastClick match success 1");
+        debug("findImageBasedOnLastClick match success 1 for %s", im.getImageNameCode());
 
         BufferedImage sc = captureScreen(lastMatch[0], lastMatch[1], im.getWidth(), im.getHeight());
 
@@ -231,7 +232,7 @@ public abstract class AbstractApplication {
         BufferedImage sc = screenCapturedResult.image;
 
         try {
-            saveDebugImage(sc, "scanToFindImage");
+            saveDebugImage(sc, "scanToFindImage." + im.getImageNameCode());
 
             boolean go = true;
             Point p = new Point();
@@ -646,5 +647,46 @@ public abstract class AbstractApplication {
             System.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
             return null;
         }
+    }
+
+    protected boolean tryEnterWorldBoss(boolean doWorldBoss, Configuration.UserConfig userConfig, Supplier<Boolean> isBlocked) {
+        Point coord = findImage(BwMatrixMeta.Metas.WorldBoss.Labels.labelInSummonDialog);
+        if (coord == null)
+            return false;
+        if (isBlocked.get() || !doWorldBoss) {
+            spamEscape(1);
+            return false;
+        }
+        mouseMoveAndClickAndHide(coord);
+        BwMatrixMeta.Metas.WorldBoss.Labels.labelInSummonDialog.setLastMatchPoint(coord.x, coord.y);
+        Tuple2<Point[], Byte> result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaidAndWorldBoss());
+        Point[] points = result._1;
+        int selectedLevel = result._2 + 1;
+        info("Found %d, selected %d", points.length, selectedLevel);
+        if (selectedLevel != userConfig.worldBossLevel)
+            clickRadioButton(userConfig.worldBossLevel, points, "World Boss");
+        sleep(3_000);
+        result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaidAndWorldBoss());
+        selectedLevel = result._2 + 1;
+        if (selectedLevel != userConfig.worldBossLevel) {
+            err("Failure on selecting world boss level");
+            spamEscape(1);
+            return false;
+        }
+        sleep(1_000);
+        return clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses);
+    }
+
+    protected void spamEscape(int expectedCount) {
+        int cnt = expectedCount + 4;
+        while (cnt-- > 0) {
+            sleep(1_000);
+            InteractionUtil.Keyboard.sendEscape();
+        }
+    }
+
+    protected void printRequiresSetting() {
+        err("You have to do setting before using this function");
+        err("Please launch script 'setting.%s' and follow instruction", Configuration.OS.isWin ? "bat" : "sh");
     }
 }

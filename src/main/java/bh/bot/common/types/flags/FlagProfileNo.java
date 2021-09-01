@@ -3,6 +3,7 @@ package bh.bot.common.types.flags;
 import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
 import bh.bot.app.GenMiniClient;
+import bh.bot.app.farming.WorldBossApp;
 import bh.bot.common.exceptions.InvalidFlagException;
 
 public class FlagProfileNo extends FlagPattern<Integer> {
@@ -11,9 +12,9 @@ public class FlagProfileNo extends FlagPattern<Integer> {
     protected Integer internalParseParam(String paramPart) throws InvalidFlagException {
         int profileNo = Integer.parseInt(paramPart);
         if (profileNo < minimumValue)
-            throw new InvalidFlagException(String.format("Minimum value is %d", minimumValue));
+            throw new InvalidFlagException(String.format("Minimum value of flag '--%s' is %d", getName(), minimumValue));
         if (profileNo > GenMiniClient.supportMaximumNumberOfAccounts)
-            throw new InvalidFlagException(String.format("Maximum value is %d", GenMiniClient.supportMaximumNumberOfAccounts));
+            throw new InvalidFlagException(String.format("Maximum value of flag '--%s' is %d", getName(), GenMiniClient.supportMaximumNumberOfAccounts));
         return profileNo;
     }
 
@@ -34,6 +35,11 @@ public class FlagProfileNo extends FlagPattern<Integer> {
 
     @Override
     public <TApp extends AbstractApplication> boolean isSupportedByApp(TApp instance) {
-        return instance instanceof AfkApp;
+        return instance instanceof AfkApp || instance instanceof WorldBossApp;
+    }
+
+    @Override
+    public boolean isAllowParam() {
+        return true;
     }
 }

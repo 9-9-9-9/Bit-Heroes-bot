@@ -44,27 +44,68 @@ public class Configuration {
     }
 
     public static class UserConfig {
-        private static final byte defaultValue = 0;
-
-        public static int profileNo;
-        public static byte raidLevel = defaultValue;
-        public static byte raidMode = defaultValue;
-        public static byte worldBossLevel = defaultValue;
-        public static byte worldBossMode = defaultValue;
+        public static final String raidLevelKey = "ig.user.raid.level";
+        public static final String raidModeKey = "ig.user.raid.mode";
+        public static final String worldBossLevelKey = "ig.user.world-boss.level";
 
         public static final byte modeNormal = 1;
         public static final byte modeHard = 2;
         public static final byte modeHeroic = 3;
 
-        public static String getRaidModeDesc(byte mode) {
-            return getDifficultyModeDesc(mode, "Raid");
+        private static final byte raidLevelMin = 1;
+        private static final byte raidLevelMax = 13;
+        private static final byte worldBossLevelMin = 1;
+        private static final byte worldBossLevelMax = 8;
+
+        public final int profileNo;
+        public final byte raidLevel;
+        public final byte raidMode;
+        public final byte worldBossLevel;
+
+        public UserConfig(int profileNo, byte raidLevel, byte raidMode, byte worldBossLevel) {
+            this.profileNo = profileNo;
+            this.raidLevel = raidLevel;
+            this.raidMode = raidMode;
+            this.worldBossLevel = worldBossLevel;
         }
 
-        public static String getWorldBossModeDesc(byte mode) {
-            return getDifficultyModeDesc(mode, "Raid");
+        public String getRaidLevelDesc() {
+            if (!isValidRaidLevel())
+                throw new InvalidDataException("Invalid Raid level %d. Must in range %d to %d. Level 1 stands for R1 (T4) and level %d stands for R%d (T%d)", raidLevel, raidLevelMin, raidLevelMax, raidLevelMax, raidLevelMax, raidLevelMax + 3);
+            return getRaidLevelDesc(raidLevel);
         }
 
-        private static String getDifficultyModeDesc(byte mode, String name) {
+        public String getWorldBossLevelDesc() {
+            if (!isValidWorldBossLevel())
+                throw new InvalidDataException("Invalid World Boss level %d. Must in range %d to %d", worldBossLevel, worldBossLevelMin, worldBossLevelMax);
+            return getWorldBossLevelDesc(worldBossLevel);
+        }
+
+        public String getRaidModeDesc() {
+            return getDifficultyModeDesc(raidMode, "Raid");
+        }
+
+        public boolean isValidRaidLevel() {
+            return raidLevel >= raidLevelMin && raidLevel <= raidLevelMax;
+        }
+
+        public boolean isValidWorldBossLevel() {
+            return worldBossLevel >= worldBossLevelMin && worldBossLevel <= worldBossLevelMax;
+        }
+
+        public static Tuple2<Byte, Byte> getRaidLevelRange() {
+            return new Tuple2<>(raidLevelMin, raidLevelMax);
+        }
+
+        public static Tuple2<Byte, Byte> getWorldBossLevelRange() {
+            return new Tuple2<>(worldBossLevelMin, worldBossLevelMax);
+        }
+
+        public static Tuple2<Byte, Byte> getModeRange() {
+            return new Tuple2<>(modeNormal, modeHeroic);
+        }
+
+        public static String getDifficultyModeDesc(byte mode, String name) {
             if (!isValidDifficultyMode(mode))
                 return "Not specified";
 
@@ -91,8 +132,34 @@ public class Configuration {
             }
         }
 
-        public static boolean isDefaultValue(int value) {
-            return value == defaultValue;
+        public static boolean isNormalMode(byte mode) {
+            return mode == modeNormal;
+        }
+
+        public static boolean isHardMode(byte mode) {
+            return mode == modeHard;
+        }
+
+        public static boolean isHeroicMode(byte mode) {
+            return mode == modeHeroic;
+        }
+
+        public static String getRaidLevelDesc(int level) {
+            return String.format("R%d (T%d)", level, level + 3);
+        }
+
+        public static String getWorldBossLevelDesc(int level) {
+            switch (level) {
+                case 1: return "Orlag Clan (T3-T12)";
+                case 2: return "Netherworld (T3-T13)";
+                case 3: return "Melvin Factory (T10-T11)";
+                case 4: return "3XT3RM1N4T10N (T10-T11)";
+                case 5: return "Brimstone Syndicate (T11-T12)";
+                case 6: return "Titans Attack! (T11-T16)";
+                case 7: return "The Ignited Abyss";
+                case 8: return "The Wolf's Deception (T13-T16)";
+                default: return "NEW, Unknown name (T?-T?)";
+            }
         }
     }
 
@@ -141,16 +208,15 @@ public class Configuration {
         Tolerant.colorBw = (byte) Math.max(0, readInt("tolerant.color.bw"));
     }
 
-    public static void loadUserConfig(int profileNo) throws IOException {
-        if (profileNo < 1)
-            return;
+    public static Tuple2<Boolean, UserConfig> loadUserConfig(int profileNo) throws IOException { // returns tuple of File Exists + Data
         String profileConfigFileName = getProfileConfigFileName(profileNo);
         final File fileCfg = new File(profileConfigFileName);
         if (!fileCfg.exists() || !fileCfg.isFile()) {
             debug("Unable to load user config for profile no.%d, reason: file '%s' not found", profileNo, profileConfigFileName);
-            System.exit(Main.EXIT_CODE_INCORRECT_PROFILE_NUMBER);
-            return;
+            return new Tuple2<>(false, null);
         }
+
+        byte raidLevel, raidMode, worldBossLevel;
 
         if (profileNo > 1)
             info("Going to load configuration from %s", fileCfg.getName());
@@ -160,59 +226,25 @@ public class Configuration {
             properties.load(inputStream);
         }
 
-        UserConfig.profileNo = profileNo;
-
-        String raidLevelKey = "ig.user.raid.level";
-        String raidLevel = readKey(properties, raidLevelKey, "0", "Not specified");
         try {
-            UserConfig.raidLevel = Byte.parseByte(raidLevel);
+            raidLevel = Byte.parseByte(readKey(properties, UserConfig.raidLevelKey, "0", "Not specified"));
         } catch (NumberFormatException ex) {
-            throw new InvalidDataException("Value of key '%s' is not a number", raidLevelKey);
+            throw new InvalidDataException("Value of key '%s' is not a number", UserConfig.raidLevelKey);
         }
 
-        String raidModeKey = "ig.user.raid.mode";
-        String raidMode = readKey(properties, raidModeKey, "0", "Not specified");
         try {
-            UserConfig.raidMode = Byte.parseByte(raidMode);
+            raidMode = Byte.parseByte(readKey(properties, UserConfig.raidModeKey, "0", "Not specified"));
         } catch (NumberFormatException ex) {
-            throw new InvalidDataException("Value of key '%s' is not a number", raidModeKey);
+            throw new InvalidDataException("Value of key '%s' is not a number", UserConfig.raidModeKey);
         }
 
-        String worldBossLevelKey = "ig.user.world-boss.level";
-        String worldBossLevel = readKey(properties, worldBossLevelKey, "0", "Not specified");
         try {
-            UserConfig.worldBossLevel = Byte.parseByte(worldBossLevel);
+            worldBossLevel = Byte.parseByte(readKey(properties, UserConfig.worldBossLevelKey, "0", "Not specified"));
         } catch (NumberFormatException ex) {
-            throw new InvalidDataException("Value of key '%s' is not a number", worldBossLevelKey);
+            throw new InvalidDataException("Value of key '%s' is not a number", UserConfig.worldBossLevelKey);
         }
 
-        String worldBossModeKey = "ig.user.world-boss.mode";
-        String worldBossMode = readKey(properties, worldBossModeKey, "0", "Not specified");
-        try {
-            UserConfig.worldBossMode = Byte.parseByte(worldBossMode);
-        } catch (NumberFormatException ex) {
-            throw new InvalidDataException("Value of key '%s' is not a number", worldBossModeKey);
-        }
-
-        if (UserConfig.raidLevel > 0)
-            info("Profile %d has configured Raid level = %d", profileNo, UserConfig.raidLevel);
-        else
-            info("Profile %d hasn't configured Raid level", profileNo);
-
-        if (UserConfig.isValidDifficultyMode(UserConfig.raidMode))
-            info("Profile %d has configured Raid mode = %d (%s)", profileNo, UserConfig.raidMode, UserConfig.getRaidModeDesc(UserConfig.raidMode));
-        else
-            info("Profile %d hasn't configured Raid mode", profileNo);
-
-        if (UserConfig.worldBossLevel > 0)
-            info("Profile %d has configured World Boss level = %d", profileNo, UserConfig.worldBossLevel);
-        else
-            info("Profile %d hasn't configured World Boss level", profileNo);
-
-        if (UserConfig.isValidDifficultyMode(UserConfig.worldBossMode))
-            info("Profile %d has configured World Boss mode = %d (%s)", profileNo, UserConfig.worldBossMode, UserConfig.getWorldBossModeDesc(UserConfig.worldBossMode));
-        else
-            info("Profile %d hasn't configured World Boss mode", profileNo);
+        return new Tuple2<>(true, new UserConfig(profileNo, raidLevel, raidMode, worldBossLevel));
     }
 
     private static String readKey(Properties properties, String key, String defaultValue, String defaultValueDesc) {

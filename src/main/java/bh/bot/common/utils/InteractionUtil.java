@@ -2,6 +2,7 @@ package bh.bot.common.utils;
 
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
+import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple4;
@@ -73,6 +74,17 @@ public class InteractionUtil {
 
         public static void hideCursor() {
             moveCursor(pHideCursor);
+        }
+
+        public static void clickRadioButton(int level, Point[] points, String evName) {
+            if (level < 1 || level > points.length)
+                throw new InvalidDataException("Can not select level %d of %s because it's not exists, do you setup wrongly?", level, evName);
+            Point p = points[level-1];
+            moveCursor(new Point(p.x + 7, p.y + 7));
+            sleep(500);
+            mouseClick();
+            sleep(100);
+            hideCursor();
         }
     }
 

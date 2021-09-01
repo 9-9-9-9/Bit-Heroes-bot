@@ -137,11 +137,12 @@ For: everyone
 
 Supported flags:
 - `--pvp` do PVP
-- `--boss` do world boss
+- `--boss` do world boss [(require setting)](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Select-Raid-World-Boss-level,-mode,..-using-%60setting%60-function)
 - `--gvg` do GVG
 - `--invasion` do Invasion
 - `--trials` do Trials
 - `--gauntlet` do Gauntlet
+- `--raid` do Raid [(require setting)](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Select-Raid-World-Boss-level,-mode,..-using-%60setting%60-function)
 - `--all` do everything above
 - `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./afk.sh --exit=1800` means will stop after 1800 seconds (30m)
 - [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)

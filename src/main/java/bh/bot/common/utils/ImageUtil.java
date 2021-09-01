@@ -12,6 +12,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static bh.bot.common.Log.debug;
+
 public class ImageUtil {
     public static BufferedImageInfo loadMxImageFromResource(String path) throws IOException {
         if (!path.toLowerCase().trim().endsWith("-mx.bmp"))
