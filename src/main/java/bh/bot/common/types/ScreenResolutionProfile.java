@@ -546,7 +546,7 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetDialogNotEnoughXeals() {
-            return null;
+            return new Offset(292, 213);
         }
 
         @Override
