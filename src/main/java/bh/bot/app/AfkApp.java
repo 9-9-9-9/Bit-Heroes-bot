@@ -140,6 +140,9 @@ public class AfkApp extends AbstractApplication {
             boolean doGauntlet
     ) {
         try {
+        	
+        	if ((doInvasion || doTrials) && Configuration.isSteamProfile)
+        		throw new NotSupportedException("Invasion and Trials have not been supported on Steam");
 
             info("Starting AFK");
             boolean isUnknownGvgOrInvasion = doGvg && doInvasion;
@@ -203,7 +206,7 @@ public class AfkApp extends AbstractApplication {
                     }
                 }
 
-                if (--checkAreYouStillThereAfter <= 0) {
+                if (!Configuration.isSteamProfile && --checkAreYouStillThereAfter <= 0) {
 
                     if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouStillThere)) {
                         info("Knock knock, are you still there?");

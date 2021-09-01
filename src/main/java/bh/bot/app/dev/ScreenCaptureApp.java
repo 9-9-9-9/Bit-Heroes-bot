@@ -17,7 +17,7 @@ public class ScreenCaptureApp extends AbstractApplication {
         int x = Configuration.gameScreenOffset.X;
         int y = Configuration.gameScreenOffset.Y;
         int w = 800;
-        int h = Configuration.screenResolutionProfile instanceof ScreenResolutionProfile.SteamProfile
+        int h = Configuration.isSteamProfile
                 ? 480
                 : 520;
 

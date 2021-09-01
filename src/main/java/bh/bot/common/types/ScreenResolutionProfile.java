@@ -684,17 +684,17 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetLabelRaidInSummonDialog() {
-            return null;
+            return new Offset(367, 94);
         }
 
         @Override
         public Offset getOffsetButtonSummonOfRaid() {
-            return null;
+            return new Offset(486, 340);
         }
 
         @Override
         public Offset getOffsetButtonAcceptTeamOfRaid() {
-            return null;
+            return new Offset(470, 424);
         }
 
         @Override
@@ -704,17 +704,17 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonEnterNormalRaid() {
-            return null;
+            return new Offset(218, 215);
         }
 
         @Override
         public Offset getOffsetButtonEnterHardRaid() {
-            return null;
+        	return new Offset(399, 215);
         }
 
         @Override
         public Offset getOffsetButtonEnterHeroicRaid() {
-            return null;
+        	return new Offset(579, 215);
         }
 
 		@Override

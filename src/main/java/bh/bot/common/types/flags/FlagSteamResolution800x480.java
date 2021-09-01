@@ -1,6 +1,7 @@
 package bh.bot.common.types.flags;
 
 import bh.bot.app.AbstractApplication;
+import bh.bot.app.AfkApp;
 import bh.bot.app.FishingApp;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.dev.ScreenCaptureApp;
@@ -42,6 +43,7 @@ public class FlagSteamResolution800x480 extends FlagResolution {
                 || instance instanceof PvpApp
                 || instance instanceof WorldBossApp
                 || instance instanceof GvgApp
-                || instance instanceof GauntletApp;
+                || instance instanceof GauntletApp
+                || instance instanceof AfkApp;
     }
 }
