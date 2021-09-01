@@ -93,9 +93,9 @@ public class BwMatrixMeta {
 
     public boolean throwIfNotAvailable() {
         if (this.notAvailable) {
-            err("Image is not available: %s", this.imageNameCode);
+            err("Image is not available: %s, profile %s", this.imageNameCode, Configuration.profileName);
             // TODO always throw
-            if (!Configuration.enableDevFeatures)
+            if (!Configuration.noThrowWhenImageNotAvailable)
             	throw new NotSupportedException(String.format("Image is not available for profile '--%s': %s", Configuration.profileName, this.imageNameCode));
             return true;
         }

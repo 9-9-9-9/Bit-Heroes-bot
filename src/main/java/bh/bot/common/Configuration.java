@@ -27,6 +27,7 @@ public class Configuration {
     public static String profileName = null;
     public static Offset gameScreenOffset;
     public static final boolean enableDevFeatures = new File("im.dev").exists();
+    public static boolean noThrowWhenImageNotAvailable = false;
 
     public static class Tolerant {
         public static int position;
@@ -201,6 +202,10 @@ public class Configuration {
             }
         }
 
+        String devNoThrowImgUnavailable = read("dev.no-throw-when-image-not-available");
+        devNoThrowImgUnavailable = isNotBlank(devNoThrowImgUnavailable) ? devNoThrowImgUnavailable.trim().toLowerCase() : null;
+        noThrowWhenImageNotAvailable = devNoThrowImgUnavailable.equals("true") || devNoThrowImgUnavailable.equals("yes") || devNoThrowImgUnavailable.equals("y");
+        
         gameScreenOffset = Offset.fromKeyPrefix("offset.screen");
 
         Tolerant.position = Math.max(5, readInt("tolerant.position"));
