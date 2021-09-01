@@ -376,12 +376,12 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.regroup = BwMatrixMeta.from(//
-                "buttons/world-boss.regroup?",
+                "buttons/world-boss.regroup-win?",
                 Configuration.screenResolutionProfile.getOffsetButtonRegroupWorldBoss(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.regroupOnDefeated = BwMatrixMeta.from(//
-                "buttons/world-boss.regroup?",
+                "buttons/world-boss.regroup-lose?",
                 Configuration.screenResolutionProfile.getOffsetButtonRegroupAfterDefeatByWorldBoss(), //
                 0xFFFFFF
         );

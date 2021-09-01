@@ -105,7 +105,9 @@ public abstract class ScreenResolutionProfile {
 
     public abstract Offset getOffsetButtonTownWhenDefeatedInRaid();
 
-    public abstract Rectangle getRectangleRadioButtonsOfRaidAndWorldBoss();
+    public abstract Rectangle getRectangleRadioButtonsOfRaid();
+
+    public abstract Rectangle getRectangleRadioButtonsOfWorldBoss();
 
     public abstract Offset getOffsetLabelRaidInSummonDialog();
 
@@ -370,7 +372,12 @@ public abstract class ScreenResolutionProfile {
         }
 
         @Override
-        public Rectangle getRectangleRadioButtonsOfRaidAndWorldBoss() {
+        public Rectangle getRectangleRadioButtonsOfRaid() {
+            return new Rectangle(163, 435, 474, 15);
+        }
+
+        @Override
+        public Rectangle getRectangleRadioButtonsOfWorldBoss() {
             return new Rectangle(163, 435, 474, 15);
         }
 
@@ -489,32 +496,32 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonSummonOnListingPartiesWorldBoss() {
-            return null;
+            return new Offset(449, 419);
         }
 
         @Override
         public Offset getOffsetLabelWorldBossInSummonDialog() {
-            return null;
+            return new Offset(301, 94);
         }
 
         @Override
         public Offset getOffsetButtonSummonOnListingWorldBosses() {
-            return null;
+            return new Offset(490, 342);
         }
 
         @Override
         public Offset getOffsetButtonSummonOnSelectingWorldBossTierAndDifficulty() {
-            return null;
+            return new Offset(430, 366);
         }
 
         @Override
         public Offset getOffsetButtonStartWorldBoss() {
-            return null;
+            return new Offset(346, 428);
         }
 
         @Override
         public Offset getOffsetDialogConfirmQuitBattle() {
-            return null;
+            return new Offset(296, 213);
         }
 
         @Override
@@ -529,12 +536,12 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonRegroupWorldBoss() {
-            return null;
+            return new Offset(370, 435);
         }
 
         @Override
         public Offset getOffsetButtonRegroupAfterDefeatByWorldBoss() {
-            return null;
+        	return new Offset(299, 435);
         }
 
         @Override
@@ -658,8 +665,13 @@ public abstract class ScreenResolutionProfile {
         }
 
         @Override
-        public Rectangle getRectangleRadioButtonsOfRaidAndWorldBoss() {
-            return null;
+        public Rectangle getRectangleRadioButtonsOfRaid() {
+            return new Rectangle(179, 403, 423, 13);
+        }
+
+        @Override
+        public Rectangle getRectangleRadioButtonsOfWorldBoss() {
+            return new Rectangle(197, 404, 406, 13);
         }
 
         @Override
