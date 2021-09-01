@@ -128,11 +128,6 @@ public class AfkApp extends AbstractApplication {
         Telegram.sendMessage("Stopped", false);
     }
 
-    private void printRequiresSetting() {
-        err("You have to do setting before using this function");
-        err("Please launch script 'setting.%s' and follow instruction", Configuration.OS.isWin ? "bat" : "sh");
-    }
-
     private void doLoop(
             AtomicBoolean masterSwitch,
             Configuration.UserConfig userConfig,
@@ -154,13 +149,8 @@ public class AfkApp extends AbstractApplication {
             final ArrayList<Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>>> taskList = new ArrayList<>();
             if (doPvp)
                 taskList.add(new Tuple3<>(AttendablePlaces.pvp, blockPvpUntil, PvpApp.getPredefinedImageActions()));
-            if (doWorldBoss) {
-                List<AbstractDoFarmingApp.NextAction> predefinedImageActions = WorldBossApp.getPredefinedImageActions()
-                        .stream()
-                        .filter(x -> x.image != BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses)
-                        .collect(Collectors.toList());
-                taskList.add(new Tuple3<>(AttendablePlaces.worldBoss, blockWorldBossUntil, predefinedImageActions));
-            }
+            if (doWorldBoss)
+                taskList.add(new Tuple3<>(AttendablePlaces.worldBoss, blockWorldBossUntil, WorldBossApp.getPredefinedImageActions()));
             if (doRaid)
                 taskList.add(new Tuple3<>(AttendablePlaces.raid, blockRaidUntil, getPredefinedImageActionsOfRaid()));
             if (doGvg)
@@ -196,6 +186,8 @@ public class AfkApp extends AbstractApplication {
             short checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
             final short originalSleepWhileWaitingResourceRegen = 5 * 60_000 / loopSleep;
             short sleepWhileWaitingResourceRegen = 0;
+
+            final Supplier<Boolean> isWorldBossBlocked = () -> !isNotBlocked(blockWorldBossUntil);
 
             ML:
             while (!masterSwitch.get()) {
@@ -262,7 +254,7 @@ public class AfkApp extends AbstractApplication {
                     continue ML;
                 }
 
-                if (tryEnterWorldBoss(doWorldBoss, userConfig)) {
+                if (tryEnterWorldBoss(doWorldBoss, userConfig, isWorldBossBlocked)) {
                     debug("tryEnterWorldBoss");
                     continuousNotFound = 0;
                     moveCursor(coordinateHideMouse);
@@ -506,46 +498,10 @@ public class AfkApp extends AbstractApplication {
         return true;
     }
 
-    private boolean tryEnterWorldBoss(boolean doWorldBoss, Configuration.UserConfig userConfig) {
-        Point coord = findImage(BwMatrixMeta.Metas.WorldBoss.Labels.labelInSummonDialog);
-        if (coord == null)
-            return false;
-        if (!isNotBlocked(blockWorldBossUntil) || !doWorldBoss) {
-            spamEscape(1);
-            return false;
-        }
-        mouseMoveAndClickAndHide(coord);
-        BwMatrixMeta.Metas.WorldBoss.Labels.labelInSummonDialog.setLastMatchPoint(coord.x, coord.y);
-        Tuple2<Point[], Byte> result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaidAndWorldBoss());
-        Point[] points = result._1;
-        int selectedLevel = result._2 + 1;
-        info("Found %d, selected %d", points.length, selectedLevel);
-        if (selectedLevel != userConfig.worldBossLevel)
-            clickRadioButton(userConfig.worldBossLevel, points, "World Boss");
-        sleep(3_000);
-        result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaidAndWorldBoss());
-        selectedLevel = result._2 + 1;
-        if (selectedLevel != userConfig.worldBossLevel) {
-            err("Failure on selecting world boss level");
-            spamEscape(1);
-            return false;
-        }
-        sleep(1_000);
-        return clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses);
-    }
-
     private Point fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta sampleImg, Point sampleImgCoord, Configuration.Offset targetOffset) {
         int x = sampleImgCoord.x - sampleImg.getCoordinateOffset().X;
         int y = sampleImgCoord.y - sampleImg.getCoordinateOffset().Y;
         return new Point(x + targetOffset.X, y + targetOffset.Y);
-    }
-
-    private void spamEscape(int expectedCount) {
-        int cnt = expectedCount + 4;
-        while (cnt-- > 0) {
-            sleep(1_000);
-            InteractionUtil.Keyboard.sendEscape();
-        }
     }
 
     @Override

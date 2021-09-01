@@ -33,7 +33,10 @@ public class Log {
         if (!Configuration.enableDevFeatures)
             return;
         int offsetX = actualCoordinate.x - Configuration.gameScreenOffset.X;
-        if (imCoordinateOffset.X == offsetX && imCoordinateOffset.Y == actualCoordinate.y - Configuration.gameScreenOffset.Y)
+        int offsetY = actualCoordinate.y - Configuration.gameScreenOffset.Y;
+        if (imCoordinateOffset.X == offsetX && imCoordinateOffset.Y == offsetY)
+            return;
+        if (Math.abs(imCoordinateOffset.X - offsetX) < 2 && Math.abs(imCoordinateOffset.Y - offsetY) < 2)
             return;
         try {
             throw new Exception("Un-match offset (for debugging purpose)");
@@ -43,7 +46,7 @@ public class Log {
             info(
                     "** WARNING ** Un-match offset! Defined %3d,%3d but actual %3d,%3d",
                     imCoordinateOffset.X, imCoordinateOffset.Y,
-                    offsetX, actualCoordinate.y - Configuration.gameScreenOffset.Y
+                    offsetX, offsetY
             );
         }
     }

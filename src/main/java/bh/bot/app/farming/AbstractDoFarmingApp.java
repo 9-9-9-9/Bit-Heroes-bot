@@ -14,13 +14,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
-import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
-import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
+import static bh.bot.common.utils.InteractionUtil.Mouse.*;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public abstract class AbstractDoFarmingApp extends AbstractApplication {
@@ -30,7 +30,6 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
 
     protected final AttendablePlace ap = getAttendablePlace();
     protected InteractionUtil.Screen.Game gameScreenInteractor;
-    private final java.util.List<NextAction> predefinedImageActions = new ArrayList<>();
 
     @Override
     protected void internalRun(String[] args) {
@@ -55,6 +54,8 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                     }
                 });
             }
+
+            if (!readMoreInput(br)) return;
         } catch (IOException ex) {
             ex.printStackTrace();
             System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
@@ -62,7 +63,6 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
         }
 
         final int cnt = loopCount;
-        this.predefinedImageActions.addAll(getInternalPredefinedImageActions());
         this.gameScreenInteractor = InteractionUtil.Screen.Game.of(this);
         AtomicBoolean masterSwitch = new AtomicBoolean(false);
         ThreadUtil.waitDone(
@@ -74,7 +74,12 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
         Telegram.sendMessage("Stopped", false);
     }
 
+    protected boolean readMoreInput(BufferedReader br) throws IOException {
+        return true;
+    }
+
     protected void loop(int loopCount, AtomicBoolean masterSwitch) {
+        List<NextAction> internalPredefinedImageActions = getInternalPredefinedImageActions();
         int continuousNotFound = 0;
         final Point coordinateHideMouse = new Point(0, 0);
         ML:
@@ -85,13 +90,18 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 debug("confirmStartNotFullTeam");
                 InteractionUtil.Keyboard.sendSpaceKey();
                 continuousNotFound = 0;
-
                 moveCursor(coordinateHideMouse);
-
                 continue ML;
             }
 
-            for (NextAction predefinedImageAction : predefinedImageActions) {
+            if (doCustomAction()) {
+                debug("doCustomAction");
+                continuousNotFound = 0;
+                moveCursor(coordinateHideMouse);
+                continue ML;
+            }
+
+            for (NextAction predefinedImageAction : internalPredefinedImageActions) {
                 if (clickImage(predefinedImageAction.image)) {
                     debug(predefinedImageAction.image.getImageNameCode());
                     continuousNotFound = 0;
@@ -146,6 +156,10 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
     @Override
     protected String getDescription() {
         return "Do " + getAppShortName();
+    }
+
+    protected boolean doCustomAction() {
+        return false;
     }
 
     protected abstract java.util.List<NextAction> getInternalPredefinedImageActions();
