@@ -125,6 +125,8 @@ public abstract class ScreenResolutionProfile {
 
     public abstract Offset getOffsetButtonMapOnFamiliarUi();
 
+    public abstract Offset getOffsetDialogAreYouSureWantToExit();
+
 
     public static class WebProfile extends ScreenResolutionProfile {
 
@@ -423,6 +425,11 @@ public abstract class ScreenResolutionProfile {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public Offset getOffsetDialogAreYouSureWantToExit() {
+			return null;
+		}
     }
 
     public static class SteamProfile extends ScreenResolutionProfile {
@@ -699,7 +706,7 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetDialogNotEnoughShards() {
-            return null;
+            return new Offset(286, 213);
         }
 
         @Override
@@ -720,6 +727,11 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetButtonMapOnFamiliarUi() {
 			return new Offset(86, 123);
+		}
+
+		@Override
+		public Offset getOffsetDialogAreYouSureWantToExit() {
+			return new Offset(296, 213);
 		}
     }
 }

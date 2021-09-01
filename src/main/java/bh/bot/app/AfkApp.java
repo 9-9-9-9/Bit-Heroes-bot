@@ -205,19 +205,27 @@ public class AfkApp extends AbstractApplication {
                         continue ML;
                     }
                 }
-
-                if (!Configuration.isSteamProfile && --checkAreYouStillThereAfter <= 0) {
-
-                    if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouStillThere)) {
-                        info("Knock knock, are you still there?");
-                        InteractionUtil.Keyboard.sendEnter();
-                        sleep(1_000);
+                
+                if (Configuration.isSteamProfile) {
+                	if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouSureWantToExit)) {
+                        info("areYouSureWantToExit");
                         InteractionUtil.Keyboard.sendEscape();
-                        checkAreYouStillThereAfter = 2;
-                    } else {
-                        checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
+                        continue ML;
                     }
-                    continue ML;
+                } else {
+                	if (--checkAreYouStillThereAfter <= 0) {
+
+                        if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouStillThere)) {
+                            info("Knock knock, are you still there?");
+                            InteractionUtil.Keyboard.sendEnter();
+                            sleep(1_000);
+                            InteractionUtil.Keyboard.sendEscape();
+                            checkAreYouStillThereAfter = 2;
+                        } else {
+                            checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
+                        }
+                        continue ML;
+                    }
                 }
 
                 if (sleepWhileWaitingResourceRegen > 0) {

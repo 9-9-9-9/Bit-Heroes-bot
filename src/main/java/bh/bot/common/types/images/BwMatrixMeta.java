@@ -170,6 +170,7 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta confirmQuitBattle;
                 public static BwMatrixMeta confirmStartNotFullTeam;
                 public static BwMatrixMeta areYouStillThere;
+                public static BwMatrixMeta areYouSureWantToExit;
             }
         }
 
@@ -330,6 +331,11 @@ public class BwMatrixMeta {
         Metas.Globally.Dialogs.areYouStillThere = BwMatrixMeta.from(//
                 "dialogs/globally.are-you-still-there?",
                 Configuration.screenResolutionProfile.getOffsetDialogAreYouStillThere(), //
+                0xFFFFFF
+        );
+        Metas.Globally.Dialogs.areYouSureWantToExit = BwMatrixMeta.from(//
+                "dialogs/globally.are-you-sure-want-to-exit?",
+                Configuration.screenResolutionProfile.getOffsetDialogAreYouSureWantToExit(), //
                 0xFFFFFF
         );
         Metas.Dungeons.Buttons.rerun = BwMatrixMeta.from(//
