@@ -616,7 +616,7 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetDialogNotEnoughTrialsTokens() {
-            return null;
+            return new Offset(286, 213);
         }
 
         @Override
@@ -641,17 +641,17 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonPlayGauntlet() {
-            return null;
+            return new Offset(513, 250);
         }
 
         @Override
         public Offset getOffsetButtonAcceptGauntlet() {
-            return null;
+            return new Offset(470, 424);
         }
 
         @Override
         public Offset getOffsetButtonTownAfterCompetedGauntlet() {
-            return null;
+            return new Offset(388, 435);
         }
 
         @Override
