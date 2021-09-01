@@ -141,6 +141,7 @@ Supported flags:
 - `--raid` do Raid [(require setting)](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Select-Raid-World-Boss-level,-mode,..-using-%60setting%60-function)
 - `--all` do everything above
 - `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./afk.sh --exit=1800` means will stop after 1800 seconds (30m)
+- `--profile=X` specific configuration profile (contains which Raid/World Boss to farm, which Raid mode Normal/Hard/Heroic to select)
 - [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
 
 #### Other features
@@ -151,6 +152,7 @@ Supported flags:
 - `--steam` *(Windows only)* for Bit Heroes on Steam with resolution 800x480
 - `--web` *(default, optional)* for Bit Heroes on Web or Mini-client with resolution 800x520
 - `--mute` do not push notification to Telegram
+
 
 #### Tested environments:
 Please find out on each function on [wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
