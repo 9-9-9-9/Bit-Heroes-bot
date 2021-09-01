@@ -596,7 +596,7 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetDialogNotEnoughInvasionBadges() {
-            return null;
+            return new Offset(286, 213);
         }
 
         @Override
@@ -621,22 +621,22 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonPlayGvg() {
-            return null;
+            return new Offset(514, 251);
         }
 
         @Override
         public Offset getOffsetButtonFight1Gvg() {
-            return null;
+            return new Offset(564, 182);
         }
 
         @Override
         public Offset getOffsetButtonAcceptGvg() {
-            return null;
+            return new Offset(470, 424);
         }
 
         @Override
         public Offset getOffsetButtonTownAfterCompetedGvg() {
-            return null;
+            return new Offset(388, 435);
         }
 
         @Override
