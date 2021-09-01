@@ -141,7 +141,7 @@ public class AfkApp extends AbstractApplication {
     ) {
         try {
 
-            info("Begin AFK");
+            info("Starting AFK");
             boolean isUnknownGvgOrInvasion = doGvg && doInvasion;
             boolean isUnknownTrialsOrGauntlet = doTrials && doGauntlet;
             int continuousNotFound = 0;

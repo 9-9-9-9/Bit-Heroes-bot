@@ -79,6 +79,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
     }
 
     protected void loop(int loopCount, AtomicBoolean masterSwitch) {
+        info("Starting %s", getAppShortName());
         List<NextAction> internalPredefinedImageActions = getInternalPredefinedImageActions();
         int continuousNotFound = 0;
         final Point coordinateHideMouse = new Point(0, 0);

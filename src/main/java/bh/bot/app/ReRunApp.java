@@ -66,6 +66,7 @@ public class ReRunApp extends AbstractApplication {
     }
 
     private void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
+        info("Starting ReRun");
         try {
             moveCursor(new Point(950, 100));
             long lastFound = System.currentTimeMillis();
