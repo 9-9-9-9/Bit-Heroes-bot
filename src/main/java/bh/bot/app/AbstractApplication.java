@@ -6,8 +6,7 @@ import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.annotations.AppCode;
-import bh.bot.common.types.flags.FlagPattern;
-import bh.bot.common.types.flags.Flags;
+import bh.bot.common.types.flags.*;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
@@ -134,7 +133,6 @@ public abstract class AbstractApplication {
         // Local flags
         List<FlagPattern> localFlags = flagPatterns.stream()
                 .filter(x -> !x.isGlobalFlag())
-                .filter(x -> x.isSupportedByApp(this))
                 .collect(Collectors.toList());
         if (localFlags.size() > 0) {
             sb.append("\nFlags:");
@@ -146,8 +144,13 @@ public abstract class AbstractApplication {
                 .filter(x -> x.isGlobalFlag())
                 .collect(Collectors.toList());
         sb.append("\nGlobal flags:");
-        for (FlagPattern globalFlag : globalFlags.stream().filter(x -> x.isSupportedByApp(this)).collect(Collectors.toList()))
+        for (FlagPattern globalFlag : globalFlags.stream().filter(x -> !(x instanceof FlagResolution)).collect(Collectors.toList()))
             sb.append(globalFlag);
+        List<FlagPattern> flagsResolution = globalFlags.stream().filter(x -> x instanceof FlagResolution).collect(Collectors.toList());
+        if (flagsResolution.size() > 0) {
+            for (FlagPattern globalFlag : flagsResolution)
+                sb.append(globalFlag);
+        }
         return sb.toString();
     }
 

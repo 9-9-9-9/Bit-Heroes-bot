@@ -1,6 +1,6 @@
 package bh.bot.common.types.flags;
 
-public class FlagWebResolution800x520 extends FlagPattern.NonParamFlag {
+public class FlagWebResolution800x520 extends FlagResolution {
     @Override
     public String getName() {
         return "web";
@@ -8,6 +8,6 @@ public class FlagWebResolution800x520 extends FlagPattern.NonParamFlag {
 
     @Override
     public String getDescription() {
-        return "(default) Use mode game resolution 800x520 (Bit Heroes on official website)";
+        return "(default) When game resolution 800x520 while playing on website";
     }
 }

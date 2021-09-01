@@ -7,7 +7,7 @@ import bh.bot.app.dev.ScreenCaptureApp;
 import bh.bot.common.Configuration;
 import bh.bot.common.types.Platform;
 
-public class FlagSteamResolution800x480 extends FlagPattern.NonParamFlag {
+public class FlagSteamResolution800x480 extends FlagResolution {
     @Override
     public String getName() {
         return "steam";
@@ -15,7 +15,7 @@ public class FlagSteamResolution800x480 extends FlagPattern.NonParamFlag {
 
     @Override
     public String getDescription() {
-        return "Use mode game resolution 800x480 (Bit Heroes on Steam)";
+        return "When game resolution 800x480 while playing on Steam client";
     }
 
     @Override
