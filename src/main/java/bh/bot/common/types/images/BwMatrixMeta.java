@@ -198,6 +198,10 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta regroupOnDefeated;
             }
 
+            public static class Labels {
+                public static BwMatrixMeta labelInSummonDialog;
+            }
+
             public static class Dialogs {
                 public static BwMatrixMeta notEnoughXeals;
             }
@@ -423,6 +427,11 @@ public class BwMatrixMeta {
                         "dialogs/world-boss.not-enough-xeals-mx.bmp"
                 ), //
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughXeals(),
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Labels.labelInSummonDialog = BwMatrixMeta.fromTpImage(//
+                "labels/world-boss-tp.bmp", //
+                Configuration.screenResolutionProfile.getOffsetLabelWorldBossInSummonDialog(),
                 0xFFFFFF
         );
 

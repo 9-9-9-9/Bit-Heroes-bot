@@ -39,6 +39,8 @@ public abstract class ScreenResolutionProfile {
 
     public abstract Offset getOffsetButtonSummonOnListingPartiesWorldBoss();
 
+    public abstract Offset getOffsetLabelWorldBossInSummonDialog();
+
     public abstract Offset getOffsetButtonSummonOnListingWorldBosses();
 
     public abstract Offset getOffsetButtonSummonOnSelectingWorldBossTierAndDifficulty();
@@ -200,6 +202,11 @@ public abstract class ScreenResolutionProfile {
         @Override
         public Offset getOffsetButtonSummonOnListingPartiesWorldBoss() {
             return new Offset(452, 451);
+        }
+
+        @Override
+        public Offset getOffsetLabelWorldBossInSummonDialog() {
+            return new Offset(295, 104);
         }
 
         @Override
@@ -482,6 +489,11 @@ public abstract class ScreenResolutionProfile {
 
         @Override
         public Offset getOffsetButtonSummonOnListingPartiesWorldBoss() {
+            return null;
+        }
+
+        @Override
+        public Offset getOffsetLabelWorldBossInSummonDialog() {
             return null;
         }
 

@@ -55,10 +55,12 @@ public class AfkApp extends AbstractApplication {
         ) {
             eventList = getAttendablePlaces(br);
 
-            if (eventList.contains(AttendablePlaces.raid)) {
+            boolean doRaid = eventList.contains(AttendablePlaces.raid);
+            boolean doWorldBoss = eventList.contains(AttendablePlaces.worldBoss);
+            if (doRaid || doWorldBoss) {
                 int profileNumber = this.argumentInfo.profileNumber;
                 if (profileNumber < 1) {
-                    info("You want to do Raid so you have to specific profile number first!");
+                    info("You want to do Raid/WorldBoss so you have to specific profile number first!");
                     profileNumber = readInput(br, "Select profile number", String.format("min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), new Function<String, Tuple3<Boolean, String, Integer>>() {
                         @Override
                         public Tuple3<Boolean, String, Integer> apply(String s) {
@@ -83,7 +85,14 @@ public class AfkApp extends AbstractApplication {
                 userConfig = resultLoadUserConfig._2;
 
                 try {
-                    info("You have selected %s mode of %s", userConfig.getRaidModeDesc(), userConfig.getRaidLevelDesc());
+                    if (doRaid && doWorldBoss) {
+                        info("You have selected %s mode of %s", userConfig.getRaidModeDesc(), userConfig.getRaidLevelDesc());
+                        info("and World Boss %s", userConfig.getWorldBossLevelDesc());
+                    } else if (doRaid) {
+                        info("You have selected %s mode of %s", userConfig.getRaidModeDesc(), userConfig.getRaidLevelDesc());
+                    } else if (doWorldBoss) {
+                        info("You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
+                    }
                 } catch (InvalidDataException ex2) {
                     err(ex2.getMessage());
                     printRequiresSetting();
@@ -145,8 +154,13 @@ public class AfkApp extends AbstractApplication {
             final ArrayList<Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>>> taskList = new ArrayList<>();
             if (doPvp)
                 taskList.add(new Tuple3<>(AttendablePlaces.pvp, blockPvpUntil, PvpApp.getPredefinedImageActions()));
-            if (doWorldBoss)
-                taskList.add(new Tuple3<>(AttendablePlaces.worldBoss, blockWorldBossUntil, WorldBossApp.getPredefinedImageActions()));
+            if (doWorldBoss) {
+                List<AbstractDoFarmingApp.NextAction> predefinedImageActions = WorldBossApp.getPredefinedImageActions()
+                        .stream()
+                        .filter(x -> x.image != BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses)
+                        .collect(Collectors.toList());
+                taskList.add(new Tuple3<>(AttendablePlaces.worldBoss, blockWorldBossUntil, predefinedImageActions));
+            }
             if (doRaid)
                 taskList.add(new Tuple3<>(AttendablePlaces.raid, blockRaidUntil, getPredefinedImageActionsOfRaid()));
             if (doGvg)
@@ -248,6 +262,13 @@ public class AfkApp extends AbstractApplication {
                     continue ML;
                 }
 
+                if (tryEnterWorldBoss(doWorldBoss, userConfig)) {
+                    debug("tryEnterWorldBoss");
+                    continuousNotFound = 0;
+                    moveCursor(coordinateHideMouse);
+                    continue ML;
+                }
+
                 for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tuple : taskList) {
                     if (!isNotBlocked(tuple._2))
                         continue;
@@ -275,8 +296,6 @@ public class AfkApp extends AbstractApplication {
                             sleep(1_000);
                         }
                     }
-
-                    spamEscape(1);
 
                     for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tuple : taskList) {
                         if (!isNotBlocked(tuple._2))
@@ -485,6 +504,34 @@ public class AfkApp extends AbstractApplication {
             throw new InvalidDataException("Unknown raid mode value: %d", userConfig.raidMode);
         }
         return true;
+    }
+
+    private boolean tryEnterWorldBoss(boolean doWorldBoss, Configuration.UserConfig userConfig) {
+        Point coord = findImage(BwMatrixMeta.Metas.WorldBoss.Labels.labelInSummonDialog);
+        if (coord == null)
+            return false;
+        if (!isNotBlocked(blockWorldBossUntil) || !doWorldBoss) {
+            spamEscape(1);
+            return false;
+        }
+        mouseMoveAndClickAndHide(coord);
+        BwMatrixMeta.Metas.WorldBoss.Labels.labelInSummonDialog.setLastMatchPoint(coord.x, coord.y);
+        Tuple2<Point[], Byte> result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaidAndWorldBoss());
+        Point[] points = result._1;
+        int selectedLevel = result._2 + 1;
+        info("Found %d, selected %d", points.length, selectedLevel);
+        if (selectedLevel != userConfig.worldBossLevel)
+            clickRadioButton(userConfig.worldBossLevel, points, "World Boss");
+        sleep(3_000);
+        result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaidAndWorldBoss());
+        selectedLevel = result._2 + 1;
+        if (selectedLevel != userConfig.worldBossLevel) {
+            err("Failure on selecting world boss level");
+            spamEscape(1);
+            return false;
+        }
+        sleep(1_000);
+        return clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses);
     }
 
     private Point fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta sampleImg, Point sampleImgCoord, Configuration.Offset targetOffset) {
