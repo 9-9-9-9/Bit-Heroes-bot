@@ -1,6 +1,7 @@
 package bh.bot.common.utils;
 
 import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.optionalDebug;
 import static bh.bot.common.utils.ImageUtil.freeMem;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
@@ -176,6 +177,8 @@ public class InteractionUtil {
 				minX += Configuration.gameScreenOffset.X.get();
 				maxX += Configuration.gameScreenOffset.X.get();
 				firstY += Configuration.gameScreenOffset.Y.get();
+				
+				final boolean debug = false;
 
 				final int positionTolerant = Math.abs(Math.min(Configuration.Tolerant.position, Math.abs(stepY)));
 				final int scanWidth = maxX - minX + 1 + positionTolerant * 2;
@@ -206,8 +209,7 @@ public class InteractionUtil {
 											Configuration.Tolerant.color,
 											im.getOriginalPixelPart(px[0], px[1]))) {
 										allGood = false;
-										// debug(String.format("findAttendablePlace second match failed at %d,%d
-										// (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
+										optionalDebug(debug, "findAttendablePlace first match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
 										break;
 									}
 								}
@@ -221,17 +223,16 @@ public class InteractionUtil {
 												srcRgb, //
 												Configuration.Tolerant.color)) {
 											allGood = false;
-											// debug(String.format("findAttendablePlace third match failed at %d,%d
-											// (%d,%d)", x + px[0], y + px[1], px[0], px[1]));
+											optionalDebug(debug, "findAttendablePlace second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
 											break;
 										}
 									}
 								}
 
 								if (allGood) {
-									// debug("findAttendablePlace third match passed");
 									go = false;
 									p = new Point(scanX + x, scanY + y);
+									optionalDebug(debug, "findAttendablePlace result %d, %d", p.x, p.y);
 								}
 							}
 						}

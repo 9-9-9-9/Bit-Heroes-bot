@@ -337,7 +337,8 @@ public class Configuration {
 
     private static final ArrayList<Tuple2<Class<? extends AbstractApplication>, String>> applicationClassesInfo = new ArrayList<>();
 
-    public static void registerApplicationClasses(Class<? extends AbstractApplication>... classes) {
+    @SafeVarargs
+	public static void registerApplicationClasses(Class<? extends AbstractApplication>... classes) {
         for (Class<? extends AbstractApplication> class_ : classes) {
             AppCode annotation = class_.getAnnotation(AppCode.class);
             if (annotation == null)

@@ -20,7 +20,7 @@ public class FlagAll extends FlagPattern.NonParamFlag {
     }
 
     @Override
-    public <TApp extends AbstractApplication> boolean isSupportedByApp(TApp instance) {
+    public boolean isSupportedByApp(AbstractApplication instance) {
         return instance instanceof AfkApp;
     }
 }

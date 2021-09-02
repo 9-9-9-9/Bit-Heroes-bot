@@ -211,7 +211,9 @@ public abstract class AbstractApplication {
 		Color c = getPixelColor(p);
 		if (!im.isMatchBlackRgb(c.getRGB()))
 			return null;
-		debug("findImageBasedOnLastClick match success 1 for %s", im.getImageNameCode());
+		
+		final boolean debug = false;
+		optionalDebug(debug, "findImageBasedOnLastClick match success 1 for %s", im.getImageNameCode());
 
 		BufferedImage sc = captureScreen(lastMatch[0], lastMatch[1], im.getWidth(), im.getHeight());
 
@@ -228,7 +230,7 @@ public abstract class AbstractApplication {
 				}
 			}
 
-			// debug("findImageBasedOnLastClick match success 2");
+			optionalDebug(debug, "findImageBasedOnLastClick match success 2");
 
 			for (int[] px : im.getNonBlackPixels()) {
 				if (ImageUtil.areColorsSimilar(//
@@ -239,7 +241,7 @@ public abstract class AbstractApplication {
 				}
 			}
 
-			// debug("findImageBasedOnLastClick match success (result)");
+			optionalDebug(debug, "findImageBasedOnLastClick result %d,%d", p.x, p.y);
 			return p;
 		} finally {
 			freeMem(sc);
@@ -284,7 +286,6 @@ public abstract class AbstractApplication {
 					if (!allGood)
 						continue;
 
-					debug("scanToFindImage first match passed");
 					for (int[] px : im.getNonBlackPixels()) {
 						int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
 						if (ImageUtil.areColorsSimilar(//
@@ -300,9 +301,9 @@ public abstract class AbstractApplication {
 					if (!allGood)
 						continue;
 
-					optionalDebug(debug, "scanToFindImage second match passed");
 					go = false;
 					p = new Point(screenCapturedResult.x + x, screenCapturedResult.y + y);
+					optionalDebug(debug, "scanToFindImage result %d,%d", p.x, p.y);
 				}
 			}
 
@@ -367,7 +368,6 @@ public abstract class AbstractApplication {
 						if (!allGood)
 							continue;
 
-						// debug("detectLabel second match passed");
 						for (int[] px : im.getNonBlackPixels()) {
 							int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
 							if (ImageUtil.areColorsSimilar(//
@@ -442,7 +442,7 @@ public abstract class AbstractApplication {
 								Configuration.Tolerant.color,
 								im.getOriginalPixelPart(px[0], px[1]))) {
 							allGood = false;
-							optionalDebug(debug, "detectRadioButtons second match failed at %d,%d (%d,%d), %s vs %s", x + px[0], y + px[1], px[0], px[1], String.format("%06X", blackPixelRgb), String.format("%06X", srcRgb));
+							optionalDebug(debug, "detectRadioButtons first match failed at %d,%d (%d,%d), %s vs %s", x + px[0], y + px[1], px[0], px[1], String.format("%06X", blackPixelRgb), String.format("%06X", srcRgb));
 							break;
 						}
 					}
@@ -450,7 +450,6 @@ public abstract class AbstractApplication {
 					if (!allGood)
 						continue;
 
-					optionalDebug(debug, "detectRadioButtons second match passed");
 					for (int[] px : im.getNonBlackPixels()) {
 						int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
 						if (ImageUtil.areColorsSimilar(//
@@ -458,7 +457,7 @@ public abstract class AbstractApplication {
 								srcRgb, //
 								Configuration.Tolerant.color)) {
 							allGood = false;
-							optionalDebug(debug, "detectRadioButtons third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
+							optionalDebug(debug, "detectRadioButtons second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
 							break;
 						}
 					}

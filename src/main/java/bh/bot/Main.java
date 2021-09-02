@@ -53,6 +53,7 @@ import bh.bot.common.types.flags.FlagWebResolution800x520;
 import bh.bot.common.types.flags.Flags;
 import bh.bot.common.utils.InteractionUtil;
 
+@SuppressWarnings("deprecation")
 public class Main {
 	public static void main(String[] args) {
 		try {

@@ -28,7 +28,7 @@ public class FlagSteamResolution800x480 extends FlagResolution {
     }
 
     @Override
-    public <TApp extends AbstractApplication> boolean isSupportedByApp(TApp instance) {
+    public boolean isSupportedByApp(AbstractApplication instance) {
         return instance instanceof ReRunApp
                 || instance instanceof FishingApp
                 || instance instanceof ScreenCaptureApp

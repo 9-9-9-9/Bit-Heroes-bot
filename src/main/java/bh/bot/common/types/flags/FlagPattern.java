@@ -55,13 +55,13 @@ public abstract class FlagPattern<T> {
         return true;
     }
 
-    public <TApp extends AbstractApplication> boolean isSupportedByApp(TApp instance) {
+    public boolean isSupportedByApp(AbstractApplication instance) {
         if (isGlobalFlag())
             return true;
         return internalCheckIsSupportedByApp(instance);
     }
 
-    protected <TApp extends AbstractApplication> boolean internalCheckIsSupportedByApp(TApp instance) {
+    protected boolean internalCheckIsSupportedByApp(AbstractApplication instance) {
         throw new NotImplementedException();
     }
 
