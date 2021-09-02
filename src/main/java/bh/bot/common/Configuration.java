@@ -257,6 +257,8 @@ public class Configuration {
         Tolerant.position = Math.max(5, readInt("tolerant.position"));
         Tolerant.color = Math.max(0, readInt("tolerant.color"));
         Tolerant.colorBw = (byte) Math.max(0, readInt("tolerant.color.bw"));
+        debug("Tolerant.color   = %d", Tolerant.color);
+        debug("Tolerant.colorBw = %d", Tolerant.colorBw);
 
         if (enableJna) {
             try {

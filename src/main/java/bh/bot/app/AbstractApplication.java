@@ -1,6 +1,7 @@
 package bh.bot.app;
 
 import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.optionalDebug;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.Log.printIfIncorrectImgPosition;
@@ -56,6 +57,7 @@ import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.types.tuples.Tuple4;
 import bh.bot.common.utils.ImageUtil;
+import bh.bot.common.utils.ImageUtil.DynamicRgb;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.InteractionUtil.Screen.ScreenCapturedResult;
 
@@ -248,6 +250,8 @@ public abstract class AbstractApplication {
 		if (im.throwIfNotAvailable())
 			return null;
 
+		final boolean debug = false; //= im == BwMatrixMeta.Metas.Raid.Dialogs.notEnoughShards;
+		
 		ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
 		BufferedImage sc = screenCapturedResult.image;
 
@@ -269,8 +273,7 @@ public abstract class AbstractApplication {
 								srcRgb, //
 								Configuration.Tolerant.color)) {
 							allGood = false;
-							// debug(String.format("scanToFindImage second match failed at %d,%d (%d,%d)", x
-							// + px[0], y + px[1], px[0], px[1]));
+							optionalDebug(debug, "scanToFindImage first match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
 							break;
 						}
 					}
@@ -278,7 +281,7 @@ public abstract class AbstractApplication {
 					if (!allGood)
 						continue;
 
-					// debug("scanToFindImage second match passed");
+					debug("scanToFindImage first match passed");
 					for (int[] px : im.getNonBlackPixels()) {
 						int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
 						if (ImageUtil.areColorsSimilar(//
@@ -286,8 +289,7 @@ public abstract class AbstractApplication {
 								srcRgb, //
 								Configuration.Tolerant.color)) {
 							allGood = false;
-							// debug(String.format("scanToFindImage third match failed at %d,%d (%d,%d)", x
-							// + px[0], y + px[1], px[0], px[1]));
+							optionalDebug(debug, "scanToFindImage second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
 							break;
 						}
 					}
@@ -295,7 +297,7 @@ public abstract class AbstractApplication {
 					if (!allGood)
 						continue;
 
-					// debug("scanToFindImage third match passed");
+					optionalDebug(debug, "scanToFindImage second match passed");
 					go = false;
 					p = new Point(screenCapturedResult.x + x, screenCapturedResult.y + y);
 				}

@@ -24,6 +24,12 @@ public class Log {
 		println(String.format(format, objs));
 	}
 
+	public static void optionalDebug(boolean debug, String format, Object... objs) {
+		if (!debug)
+			return;
+		debug(format, objs);
+	}
+
 	public static void dev(String format, Object... objs) {
 		if (isOnDebugMode || Configuration.enableDevFeatures)
 			println(String.format(format, objs));

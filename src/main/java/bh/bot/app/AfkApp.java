@@ -485,8 +485,10 @@ public class AfkApp extends AbstractApplication {
 
 	private boolean tryEnterRaid(boolean doRaid, Configuration.UserConfig userConfig) {
 		Point coord = findImage(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog);
-		if (coord == null)
+		if (coord == null) {
+			debug("Label raid not found");
 			return false;
+		}
 		if (!isNotBlocked(blockRaidUntil) || !doRaid) {
 			spamEscape(1);
 			return false;
