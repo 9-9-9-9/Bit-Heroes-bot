@@ -172,6 +172,11 @@ public class InteractionUtil {
 					stepY = backwardScanRightAttendablePlaces._3;
 					maxX = backwardScanRightAttendablePlaces._4;
 				}
+
+				minX += Configuration.gameScreenOffset.X.get();
+				maxX += Configuration.gameScreenOffset.X.get();
+				firstY += Configuration.gameScreenOffset.Y.get();
+
 				final int positionTolerant = Math.abs(Math.min(Configuration.Tolerant.position, Math.abs(stepY)));
 				final int scanWidth = maxX - minX + 1 + positionTolerant * 2;
 				final int scanHeight = Math.abs(stepY) + positionTolerant * 2;
