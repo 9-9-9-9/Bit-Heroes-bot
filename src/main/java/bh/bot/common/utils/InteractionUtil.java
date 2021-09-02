@@ -54,7 +54,7 @@ public class InteractionUtil {
 
 	public static class Mouse {
 		public static void moveCursor(Point p) {
-			debug("Mouse move cursor");
+			debug("Mouse move cursor %d,%d", p.x, p.y);
 			robot.mouseMove(p.x, p.y);
 			sleep(5);
 		}
