@@ -1,51 +1,23 @@
 package bh.bot.app.dev;
 
-import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.ImageUtil.freeMem;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
-import bh.bot.common.Configuration.Offset;
-import bh.bot.common.jna.IJna;
-import bh.bot.common.jna.MiniClientWindowsJna;
-import bh.bot.common.jna.SteamWindowsJna;
-import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppCode;
-import bh.bot.common.types.tuples.Tuple4;
 import bh.bot.common.utils.InteractionUtil;
 
 @AppCode(code = "sc")
 public class ScreenCaptureApp extends AbstractApplication {
 	@Override
 	protected void internalRun(String[] args) {
+		adjustScreenOffset();
 		int x = Configuration.gameScreenOffset.X.get();
 		int y = Configuration.gameScreenOffset.Y.get();
-		int w = 800;
-		int h = Configuration.isSteamProfile ? 480 : 520;
-
-		try {
-			IJna jna = getJnaInstance();
-			ScreenResolutionProfile srp = Configuration.screenResolutionProfile;
-			Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateGameScreenOffset(null, srp);
-			if (result._1) {
-				if (result._4.X != x || result._4.Y != y) {
-					x = result._4.X;
-					y = result._4.Y;
-					info("Game's screen offset has been adjusted automatically to %d,%d", x, y);
-				} else {
-					debug("screen offset not change");
-				}
-			} else {
-				err("Failure detecting screen offset: %s", result._2);
-			}
-		} catch (Exception e) {
-			err("Err detecting screen offset: %s", e.getMessage());
-		}
+		int w = Configuration.screenResolutionProfile.getSupportedGameResolutionWidth();
+		int h = Configuration.screenResolutionProfile.getSupportedGameResolutionHeight();
 
 		BufferedImage sc = InteractionUtil.Screen.captureScreen(x, y, w, h);
 		try {

@@ -33,24 +33,22 @@ public class TestApp extends AbstractApplication {
 
 	@Override
 	protected void internalRun(String[] args) {
-		User32 ins = User32.INSTANCE;
-		HWND hwnd = ins.FindWindow("UnityWndClass", "Bit Heroes");
-		//System.out.println(JnaTest.getWindowLocationAndSize(hwnd));
-		final RECT lpRectC = new RECT();
-		final RECT lpRectW = new RECT();
-		info(ins.GetClientRect(hwnd, lpRectC));
-		info(lpRectC);
-		info(ins.GetWindowRect(hwnd, lpRectW));
-		info(lpRectW);
+		adjustScreenOffset();
 		
-		IJna jna;
-		jna = new MiniClientWindowsJna();
-		hwnd = jna.getGameWindow();
-		Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateGameScreenOffset(hwnd, Configuration.screenResolutionProfile);
-		info("1 " + result._1);
-		info("2 " + result._2);
-		info("3 " + result._3);
-		info("4 " + result._4);
+		findAttendablePlaces();
+		/*
+		 * User32 ins = User32.INSTANCE; HWND hwnd = ins.FindWindow("UnityWndClass",
+		 * "Bit Heroes"); //System.out.println(JnaTest.getWindowLocationAndSize(hwnd));
+		 * final RECT lpRectC = new RECT(); final RECT lpRectW = new RECT();
+		 * info(ins.GetClientRect(hwnd, lpRectC)); info(lpRectC);
+		 * info(ins.GetWindowRect(hwnd, lpRectW)); info(lpRectW);
+		 * 
+		 * IJna jna; jna = new MiniClientWindowsJna(); hwnd = jna.getGameWindow();
+		 * Tuple4<Boolean, String, Rectangle, Offset> result =
+		 * jna.locateGameScreenOffset(hwnd, Configuration.screenResolutionProfile);
+		 * info("1 " + result._1); info("2 " + result._2); info("3 " + result._3);
+		 * info("4 " + result._4);
+		 */
 	}
 
 	public static class JnaTest {
@@ -85,12 +83,16 @@ public class TestApp extends AbstractApplication {
 
 	@SuppressWarnings("unused")
 	private void findAttendablePlaces() {
-		final List<AttendablePlace> allAttendablePlaces = Arrays.asList(
-				// AttendablePlaces.invasion,
-				// AttendablePlaces.trials,
-				AttendablePlaces.gvg, AttendablePlaces.gauntlet,
-
-				AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid);
+		final List<AttendablePlace> allAttendablePlaces = Arrays.asList(//
+				AttendablePlaces.invasion, //
+				AttendablePlaces.expedition, //
+				AttendablePlaces.trials, //
+				AttendablePlaces.gvg, //
+				AttendablePlaces.gauntlet, //
+				AttendablePlaces.pvp, //
+				AttendablePlaces.worldBoss, //
+				AttendablePlaces.raid //
+		);
 		allAttendablePlaces.forEach(ap -> {
 			Point point = this.gameScreenInteractor.findAttendablePlace(ap);
 			if (point != null) {

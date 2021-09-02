@@ -23,7 +23,7 @@ public class AttendablePlace {
         this.name = name;
         this.id = id;
         this.img = BwMatrixMeta.from(
-                String.format("labels/attendable-places/%s?", imgCode),
+        		String.format("labels/attendable-places/%s?", imgCode),
                 new Configuration.Offset(0, 0),
                 0xFFFFFF
         );

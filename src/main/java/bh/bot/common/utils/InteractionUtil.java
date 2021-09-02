@@ -215,7 +215,6 @@ public class InteractionUtil {
 								}
 
 								if (allGood) {
-									// debug("findAttendablePlace second match passed");
 									for (int[] px : im.getNonBlackPixels()) {
 										int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
 										if (ImageUtil.areColorsSimilar(//
