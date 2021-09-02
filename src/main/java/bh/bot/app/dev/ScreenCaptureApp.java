@@ -1,6 +1,7 @@
 package bh.bot.app.dev;
 
 import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.ImageUtil.freeMem;
 
@@ -38,6 +39,8 @@ public class ScreenCaptureApp extends AbstractApplication {
 			} else {
 				debug("screen offset not change");
 			}
+		} else {
+			err("Failure detecting screen offset: %s", result._2);
 		}
 
 		BufferedImage sc = InteractionUtil.Screen.captureScreen(x, y, w, h);
