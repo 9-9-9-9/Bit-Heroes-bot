@@ -240,7 +240,7 @@ public class Configuration {
         noThrowWhenImageNotAvailable = StringUtil.isTrue(read("dev.no-throw-when-image-not-available"));
         Features.disableJna = StringUtil.isTrue(read("disable.jna"));
         Configuration.Features.disableDoCheckSteamWindow =
-                Features.disableJna || StringUtil.isTrue(read("disable.doCheckSteamWindow"));
+                Features.disableJna || StringUtil.isTrue(read("disable.jna.doCheckSteamWindow"));
 
         String keyLongTimeNoSee = "timeout.minutes.long-time-no-see";
         short minLongTimeNoSee = 10;

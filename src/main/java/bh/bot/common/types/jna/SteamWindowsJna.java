@@ -23,7 +23,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 
 	@Override
 	public HWND getGameWindow(Object... args) {
-		return User32.INSTANCE.FindWindow("UnityWndClass", "Bit Heroes");
+		return user32.FindWindow("UnityWndClass", "Bit Heroes");
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 			return new Tuple4<>(false, "Can not detect Steam window", null, null);
 
 		final RECT lpRectC = new RECT();
-		if (!User32.INSTANCE.GetClientRect(hwnd, lpRectC))
+		if (!user32.GetClientRect(hwnd, lpRectC))
 			return new Tuple4<>(false, String.format("Unable to GetClientRect, err code: %d",
 					com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()), null, null);
 
@@ -54,7 +54,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 					null, null);
 
 		final RECT lpRectW = new RECT();
-		if (!User32.INSTANCE.GetWindowRect(hwnd, lpRectW))
+		if (!user32.GetWindowRect(hwnd, lpRectW))
 			return new Tuple4<>(false, String.format("Unable to GetWindowRect, err code: %d",
 					com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()), null, null);
 
