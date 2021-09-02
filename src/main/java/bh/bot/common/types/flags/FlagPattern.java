@@ -1,6 +1,7 @@
 package bh.bot.common.types.flags;
 
 import bh.bot.app.AbstractApplication;
+import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.exceptions.NotSupportedException;
@@ -100,8 +101,8 @@ public abstract class FlagPattern<T> {
 
     public abstract String getName();
     public abstract String getDescription();
-    public boolean isSupportedOnCurrentOsPlatform() {
-        return true;
+    public final boolean isSupportedOnCurrentOsPlatform() {
+        return Arrays.asList(getSupportedOsPlatforms()).contains(Configuration.OS.platform);
     }
     public Platform[] getSupportedOsPlatforms() {
         return new Platform[] { Platform.Linux, Platform.Windows, Platform.MacOS };

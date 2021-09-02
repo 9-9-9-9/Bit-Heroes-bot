@@ -37,525 +37,530 @@ import static bh.bot.common.utils.ThreadUtil.sleep;
 
 @AppCode(code = "afk")
 public class AfkApp extends AbstractApplication {
-    private InteractionUtil.Screen.Game gameScreenInteractor;
-    private final AtomicLong blockPvpUntil = new AtomicLong(0);
-    private final AtomicLong blockWorldBossUntil = new AtomicLong(0);
-    private final AtomicLong blockRaidUntil = new AtomicLong(0);
-    private final AtomicLong blockGvgAndInvasionUntil = new AtomicLong(0);
-    private final AtomicLong blockTrialsAndGauntletUntil = new AtomicLong(0);
+	private InteractionUtil.Screen.Game gameScreenInteractor;
+	private final AtomicLong blockPvpUntil = new AtomicLong(0);
+	private final AtomicLong blockWorldBossUntil = new AtomicLong(0);
+	private final AtomicLong blockRaidUntil = new AtomicLong(0);
+	private final AtomicLong blockGvgAndInvasionUntil = new AtomicLong(0);
+	private final AtomicLong blockTrialsAndGauntletUntil = new AtomicLong(0);
 
-    @Override
-    protected void internalRun(String[] args) {
-        this.gameScreenInteractor = InteractionUtil.Screen.Game.of(this);
-        ArrayList<AttendablePlace> eventList;
-        Configuration.UserConfig userConfig = null;
+	@Override
+	protected void internalRun(String[] args) {
+		this.gameScreenInteractor = InteractionUtil.Screen.Game.of(this);
+		ArrayList<AttendablePlace> eventList;
+		Configuration.UserConfig userConfig = null;
 
-        try (
-                InputStreamReader isr = new InputStreamReader(System.in);
-                BufferedReader br = new BufferedReader(isr);
-        ) {
-            eventList = getAttendablePlaces(br);
+		try (InputStreamReader isr = new InputStreamReader(System.in); BufferedReader br = new BufferedReader(isr);) {
+			eventList = getAttendablePlaces(br);
 
-            boolean doRaid = eventList.contains(AttendablePlaces.raid);
-            boolean doWorldBoss = eventList.contains(AttendablePlaces.worldBoss);
-            if (doRaid || doWorldBoss) {
-                int profileNumber = this.argumentInfo.profileNumber;
-                if (profileNumber < 1) {
-                    info("You want to do Raid/WorldBoss so you have to specific profile number first!");
-                    profileNumber = readInput(br, "Select profile number", String.format("min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), new Function<String, Tuple3<Boolean, String, Integer>>() {
-                        @Override
-                        public Tuple3<Boolean, String, Integer> apply(String s) {
-                            try {
-                                int num = Integer.parseInt(s.trim());
-                                if (num >= 1 && num <= GenMiniClient.supportMaximumNumberOfAccounts)
-                                    return new Tuple3<>(true, null, num);
-                                return new Tuple3<>(false, "Value must be in range from 1 to " + GenMiniClient.supportMaximumNumberOfAccounts, 0);
-                            } catch (NumberFormatException ex) {
-                                return new Tuple3<>(false, "Not a number", 0);
-                            }
-                        }
-                    });
-                }
-                Tuple2<Boolean, Configuration.UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(profileNumber);
-                if (!resultLoadUserConfig._1) {
-                    err("Profile number %d could not be found");
-                    printRequiresSetting();
-                    System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
-                }
+			boolean doRaid = eventList.contains(AttendablePlaces.raid);
+			boolean doWorldBoss = eventList.contains(AttendablePlaces.worldBoss);
+			if (doRaid || doWorldBoss) {
+				int profileNumber = this.argumentInfo.profileNumber;
+				if (profileNumber < 1) {
+					info("You want to do Raid/WorldBoss so you have to specific profile number first!");
+					profileNumber = readInput(br, "Select profile number",
+							String.format("min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts),
+							new Function<String, Tuple3<Boolean, String, Integer>>() {
+								@Override
+								public Tuple3<Boolean, String, Integer> apply(String s) {
+									try {
+										int num = Integer.parseInt(s.trim());
+										if (num >= 1 && num <= GenMiniClient.supportMaximumNumberOfAccounts)
+											return new Tuple3<>(true, null, num);
+										return new Tuple3<>(false, "Value must be in range from 1 to "
+												+ GenMiniClient.supportMaximumNumberOfAccounts, 0);
+									} catch (NumberFormatException ex) {
+										return new Tuple3<>(false, "Not a number", 0);
+									}
+								}
+							});
+				}
+				Tuple2<Boolean, Configuration.UserConfig> resultLoadUserConfig = Configuration
+						.loadUserConfig(profileNumber);
+				if (!resultLoadUserConfig._1) {
+					err("Profile number %d could not be found");
+					printRequiresSetting();
+					System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
+				}
 
-                userConfig = resultLoadUserConfig._2;
+				userConfig = resultLoadUserConfig._2;
 
-                try {
-                    if (doRaid && doWorldBoss) {
-                        info("You have selected %s mode of %s", userConfig.getRaidModeDesc(), userConfig.getRaidLevelDesc());
-                        info("and World Boss %s", userConfig.getWorldBossLevelDesc());
-                    } else if (doRaid) {
-                        info("You have selected %s mode of %s", userConfig.getRaidModeDesc(), userConfig.getRaidLevelDesc());
-                    } else if (doWorldBoss) {
-                        info("You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
-                    }
-                } catch (InvalidDataException ex2) {
-                    err(ex2.getMessage());
-                    printRequiresSetting();
-                    System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
-                    return;
-                }
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
-            return;
-        }
-        //
-        final AtomicBoolean masterSwitch = new AtomicBoolean(false);
-        final Configuration.UserConfig finalUserConfig = userConfig;
-        ThreadUtil.waitDone(
-                () -> doLoop(
-                        masterSwitch,
-                        finalUserConfig,
-                        eventList.contains(AttendablePlaces.pvp),
-                        eventList.contains(AttendablePlaces.worldBoss),
-                        eventList.contains(AttendablePlaces.raid),
-                        eventList.contains(AttendablePlaces.gvg),
-                        eventList.contains(AttendablePlaces.invasion),
-                        eventList.contains(AttendablePlaces.trials),
-                        eventList.contains(AttendablePlaces.gauntlet)
-                ),
-                () -> doClickTalk(masterSwitch::get),
-                () -> detectDisconnected(masterSwitch),
-                () -> autoReactiveAuto(masterSwitch),
-                () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch)
-        );
-        Telegram.sendMessage("Stopped", false);
-    }
+				try {
+					if (doRaid && doWorldBoss) {
+						info("You have selected %s mode of %s", userConfig.getRaidModeDesc(),
+								userConfig.getRaidLevelDesc());
+						info("and World Boss %s", userConfig.getWorldBossLevelDesc());
+					} else if (doRaid) {
+						info("You have selected %s mode of %s", userConfig.getRaidModeDesc(),
+								userConfig.getRaidLevelDesc());
+					} else if (doWorldBoss) {
+						info("You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
+					}
+				} catch (InvalidDataException ex2) {
+					err(ex2.getMessage());
+					printRequiresSetting();
+					System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
+					return;
+				}
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
+			return;
+		}
+		//
+		final AtomicBoolean masterSwitch = new AtomicBoolean(false);
+		final Configuration.UserConfig finalUserConfig = userConfig;
+		ThreadUtil.waitDone(
+				() -> doLoop(masterSwitch, finalUserConfig, eventList.contains(AttendablePlaces.pvp),
+						eventList.contains(AttendablePlaces.worldBoss), eventList.contains(AttendablePlaces.raid),
+						eventList.contains(AttendablePlaces.gvg), eventList.contains(AttendablePlaces.invasion),
+						eventList.contains(AttendablePlaces.trials), eventList.contains(AttendablePlaces.gauntlet)),
+				() -> doClickTalk(masterSwitch::get), () -> detectDisconnected(masterSwitch),
+				() -> autoReactiveAuto(masterSwitch), () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch));
+		Telegram.sendMessage("Stopped", false);
+	}
 
-    private void doLoop(
-            AtomicBoolean masterSwitch,
-            Configuration.UserConfig userConfig,
-            boolean doPvp,
-            boolean doWorldBoss,
-            boolean doRaid,
-            boolean doGvg,
-            boolean doInvasion,
-            boolean doTrials,
-            boolean doGauntlet
-    ) {
-        try {
-        	
-        	if ((doInvasion || doTrials) && Configuration.isSteamProfile)
-        		throw new NotSupportedException("Invasion and Trials have not been supported on Steam");
+	private void doLoop(AtomicBoolean masterSwitch, Configuration.UserConfig userConfig, boolean doPvp,
+			boolean doWorldBoss, boolean doRaid, boolean doGvg, boolean doInvasion, boolean doTrials,
+			boolean doGauntlet) {
+		try {
 
-            info("Starting AFK");
-            boolean isUnknownGvgOrInvasion = doGvg && doInvasion;
-            boolean isUnknownTrialsOrGauntlet = doTrials && doGauntlet;
-            int continuousNotFound = 0;
-            final Point coordinateHideMouse = new Point(0, 0);
-            final ArrayList<Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>>> taskList = new ArrayList<>();
-            if (doPvp)
-                taskList.add(new Tuple3<>(AttendablePlaces.pvp, blockPvpUntil, PvpApp.getPredefinedImageActions()));
-            if (doWorldBoss)
-                taskList.add(new Tuple3<>(AttendablePlaces.worldBoss, blockWorldBossUntil, WorldBossApp.getPredefinedImageActions()));
-            if (doRaid)
-                taskList.add(new Tuple3<>(AttendablePlaces.raid, blockRaidUntil, getPredefinedImageActionsOfRaid()));
-            if (doGvg)
-                taskList.add(new Tuple3<>(AttendablePlaces.gvg, blockGvgAndInvasionUntil, GvgApp.getPredefinedImageActions()));
-            if (doInvasion)
-                taskList.add(new Tuple3<>(AttendablePlaces.invasion, blockGvgAndInvasionUntil, InvasionApp.getPredefinedImageActions()));
-            if (doTrials)
-                taskList.add(new Tuple3<>(AttendablePlaces.trials, blockTrialsAndGauntletUntil, TrialsApp.getPredefinedImageActions()));
-            if (doGauntlet)
-                taskList.add(new Tuple3<>(AttendablePlaces.gauntlet, blockTrialsAndGauntletUntil, GauntletApp.getPredefinedImageActions()));
+			if ((doInvasion || doTrials) && Configuration.isSteamProfile)
+				throw new NotSupportedException("Invasion and Trials have not been supported on Steam");
 
-            for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tp : taskList) {
-                for (AbstractDoFarmingApp.NextAction na : tp._3) {
-                    if (na.image == null)
-                        throw new InvalidDataException("Null occurs at %s (reduceLoopCountOnFound %s, isOutOfTurns %s)", tp._1.name, String.valueOf(na.reduceLoopCountOnFound), String.valueOf(na.isOutOfTurns));
-                }
-            }
+			info("Starting AFK");
+			boolean isUnknownGvgOrInvasion = doGvg && doInvasion;
+			boolean isUnknownTrialsOrGauntlet = doTrials && doGauntlet;
+			int continuousNotFound = 0;
+			final Point coordinateHideMouse = new Point(0, 0);
+			final ArrayList<Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>>> taskList = new ArrayList<>();
+			if (doPvp)
+				taskList.add(new Tuple3<>(AttendablePlaces.pvp, blockPvpUntil, PvpApp.getPredefinedImageActions()));
+			if (doWorldBoss)
+				taskList.add(new Tuple3<>(AttendablePlaces.worldBoss, blockWorldBossUntil,
+						WorldBossApp.getPredefinedImageActions()));
+			if (doRaid)
+				taskList.add(new Tuple3<>(AttendablePlaces.raid, blockRaidUntil, getPredefinedImageActionsOfRaid()));
+			if (doGvg)
+				taskList.add(new Tuple3<>(AttendablePlaces.gvg, blockGvgAndInvasionUntil,
+						GvgApp.getPredefinedImageActions()));
+			if (doInvasion)
+				taskList.add(new Tuple3<>(AttendablePlaces.invasion, blockGvgAndInvasionUntil,
+						InvasionApp.getPredefinedImageActions()));
+			if (doTrials)
+				taskList.add(new Tuple3<>(AttendablePlaces.trials, blockTrialsAndGauntletUntil,
+						TrialsApp.getPredefinedImageActions()));
+			if (doGauntlet)
+				taskList.add(new Tuple3<>(AttendablePlaces.gauntlet, blockTrialsAndGauntletUntil,
+						GauntletApp.getPredefinedImageActions()));
 
-            ArrayList<AbstractDoFarmingApp.NextAction> outOfTurnNextActionList = new ArrayList<>();
-            addOutOfTurnActionsToList(outOfTurnNextActionList, PvpApp.getPredefinedImageActions());
-            addOutOfTurnActionsToList(outOfTurnNextActionList, WorldBossApp.getPredefinedImageActions());
-            addOutOfTurnActionsToList(outOfTurnNextActionList, getPredefinedImageActionsOfRaid());
-            addOutOfTurnActionsToList(outOfTurnNextActionList, GvgApp.getPredefinedImageActions());
-            addOutOfTurnActionsToList(outOfTurnNextActionList, InvasionApp.getPredefinedImageActions());
-            addOutOfTurnActionsToList(outOfTurnNextActionList, TrialsApp.getPredefinedImageActions());
-            addOutOfTurnActionsToList(outOfTurnNextActionList, GauntletApp.getPredefinedImageActions());
+			for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tp : taskList) {
+				for (AbstractDoFarmingApp.NextAction na : tp._3) {
+					if (na.image == null)
+						throw new InvalidDataException("Null occurs at %s (reduceLoopCountOnFound %s, isOutOfTurns %s)",
+								tp._1.name, String.valueOf(na.reduceLoopCountOnFound), String.valueOf(na.isOutOfTurns));
+				}
+			}
 
-            AttendablePlace toBeRemoved = null;
+			ArrayList<AbstractDoFarmingApp.NextAction> outOfTurnNextActionList = new ArrayList<>();
+			addOutOfTurnActionsToList(outOfTurnNextActionList, PvpApp.getPredefinedImageActions());
+			addOutOfTurnActionsToList(outOfTurnNextActionList, WorldBossApp.getPredefinedImageActions());
+			addOutOfTurnActionsToList(outOfTurnNextActionList, getPredefinedImageActionsOfRaid());
+			addOutOfTurnActionsToList(outOfTurnNextActionList, GvgApp.getPredefinedImageActions());
+			addOutOfTurnActionsToList(outOfTurnNextActionList, InvasionApp.getPredefinedImageActions());
+			addOutOfTurnActionsToList(outOfTurnNextActionList, TrialsApp.getPredefinedImageActions());
+			addOutOfTurnActionsToList(outOfTurnNextActionList, GauntletApp.getPredefinedImageActions());
 
-            final byte minutesSleepWaitingResourceGeneration = 5;
-            final short loopSleep = 5_000;
-            final short originalCheckAreYouStillThereAfter = 20_000 / loopSleep;
-            short checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
-            final short originalSleepWhileWaitingResourceRegen = 5 * 60_000 / loopSleep;
-            short sleepWhileWaitingResourceRegen = 0;
+			AttendablePlace toBeRemoved = null;
 
-            final Supplier<Boolean> isWorldBossBlocked = () -> !isNotBlocked(blockWorldBossUntil);
+			final byte minutesSleepWaitingResourceGeneration = 5;
+			final short loopSleep = 5_000;
+			final short originalCheckAreYouStillThereAfter = 20_000 / loopSleep;
+			short checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
+			final short originalSleepWhileWaitingResourceRegen = 5 * 60_000 / loopSleep;
+			short sleepWhileWaitingResourceRegen = 0;
 
-            ML:
-            while (!masterSwitch.get()) {
-                sleep(loopSleep);
+			final Supplier<Boolean> isWorldBossBlocked = () -> !isNotBlocked(blockWorldBossUntil);
 
-                debug("doLoop on loop");
-                if (toBeRemoved != null) {
-                    final AttendablePlace target = toBeRemoved;
-                    if (taskList.removeIf(x -> x._1 == target)) {
-                        toBeRemoved = null;
-                        debug("Removed %s from taskList", target.name);
-                        continue ML;
-                    }
-                }
-                
-                if (Configuration.isSteamProfile) {
-                	if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouSureWantToExit)) {
-                        info("areYouSureWantToExit");
-                        sendEscape();
-                        continue ML;
-                    }
-                } else {
-                	if (--checkAreYouStillThereAfter <= 0) {
-                        if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouStillThere)) {
-                            info("Knock knock, are you still there?");
-                            sendEnter();
-                            sleep(1_000);
-                            sendEscape();
-                            checkAreYouStillThereAfter = 2;
-                        } else {
-                            checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
-                        }
-                        continue ML;
-                    }
-                }
+			ML: while (!masterSwitch.get()) {
+				sleep(loopSleep);
 
-                if (sleepWhileWaitingResourceRegen > 0) {
-                    sleepWhileWaitingResourceRegen--;
-                    debug("sleepWhileWaitingResourceRegen--");
-                    continue ML;
-                }
+				debug("doLoop on loop");
+				if (toBeRemoved != null) {
+					final AttendablePlace target = toBeRemoved;
+					if (taskList.removeIf(x -> x._1 == target)) {
+						toBeRemoved = null;
+						debug("Removed %s from taskList", target.name);
+						continue ML;
+					}
+				}
 
-                if (taskList.stream().allMatch(x -> !isNotBlocked(x._2))) {
-                    info("Waiting for resource generation, sleeping %d minutes", minutesSleepWaitingResourceGeneration);
-                    sleepWhileWaitingResourceRegen = originalSleepWhileWaitingResourceRegen;
-                    continue ML;
-                }
+				if (Configuration.isSteamProfile) {
+					if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouSureWantToExit)) {
+						info("areYouSureWantToExit");
+						sendEscape();
+						continue ML;
+					}
+				}
 
-                if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmStartNotFullTeam)) {
-                    debug("confirmStartNotFullTeam");
-                    sendSpaceKey();
-                    continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
-                    continue ML;
-                }
+				if (--checkAreYouStillThereAfter <= 0) {
+					if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouStillThere)) {
+						info("Knock knock, are you still there?");
+						sendEnter();
+						sleep(1_000);
+						sendEscape();
+						checkAreYouStillThereAfter = 2;
+					} else {
+						checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
+					}
+					continue ML;
+				}
 
-                if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmQuitBattle)) {
-                    debug("confirmQuitBattle");
-                    sendEnter();
-                    sleep(1_000);
-                    spamEscape(1);
-                    continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
-                    continue ML;
-                }
+				if (sleepWhileWaitingResourceRegen > 0) {
+					sleepWhileWaitingResourceRegen--;
+					debug("sleepWhileWaitingResourceRegen--");
+					continue ML;
+				}
 
-                Point coordMap = findImage(BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi);
-                if (coordMap != null) {
-                    BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi.setLastMatchPoint(coordMap.x, coordMap.y);
-                    debug("mapButtonOnFamiliarUi");
-                    sendEscape();
-                    continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
-                    continue ML;
-                }
+				if (taskList.stream().allMatch(x -> !isNotBlocked(x._2))) {
+					info("Waiting for resource generation, sleeping %d minutes", minutesSleepWaitingResourceGeneration);
+					sleepWhileWaitingResourceRegen = originalSleepWhileWaitingResourceRegen;
+					continue ML;
+				}
 
-                if (tryEnterRaid(doRaid, userConfig)) {
-                    debug("tryEnterRaid");
-                    continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
-                    continue ML;
-                }
+				if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmStartNotFullTeam)) {
+					debug("confirmStartNotFullTeam");
+					sendSpaceKey();
+					continuousNotFound = 0;
+					moveCursor(coordinateHideMouse);
+					continue ML;
+				}
 
-                if (tryEnterWorldBoss(doWorldBoss, userConfig, isWorldBossBlocked)) {
-                    debug("tryEnterWorldBoss");
-                    continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
-                    continue ML;
-                }
+				if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmQuitBattle)) {
+					debug("confirmQuitBattle");
+					sendEnter();
+					sleep(1_000);
+					spamEscape(1);
+					continuousNotFound = 0;
+					moveCursor(coordinateHideMouse);
+					continue ML;
+				}
 
-                for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tuple : taskList) {
-                    if (!isNotBlocked(tuple._2))
-                        continue;
-                    AbstractDoFarmingApp.NextAction nextAction = tryToClickOnBatch(tuple._3);
-                    if (nextAction == null)
-                        continue;
-                    debug(nextAction.image.getImageNameCode());
-                    if (nextAction.isOutOfTurns) {
-                        spamEscape(2);
-                        tempBlock(tuple._1);
-                    }
-                    continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
-                    continue ML;
-                }
+				Point coordMap = findImage(BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi);
+				if (coordMap != null) {
+					BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi.setLastMatchPoint(coordMap.x, coordMap.y);
+					debug("mapButtonOnFamiliarUi");
+					sendEscape();
+					continuousNotFound = 0;
+					moveCursor(coordinateHideMouse);
+					continue ML;
+				}
 
-                debug("None");
-                continuousNotFound++;
-                moveCursor(coordinateHideMouse);
+				if (tryEnterRaid(doRaid, userConfig)) {
+					debug("tryEnterRaid");
+					continuousNotFound = 0;
+					moveCursor(coordinateHideMouse);
+					continue ML;
+				}
 
-                if (continuousNotFound >= 6) {
-                    for (AbstractDoFarmingApp.NextAction nextAction : outOfTurnNextActionList) {
-                        if (clickImage(nextAction.image)) {
-                            spamEscape(2);
-                            sleep(1_000);
-                        }
-                    }
+				if (tryEnterWorldBoss(doWorldBoss, userConfig, isWorldBossBlocked)) {
+					debug("tryEnterWorldBoss");
+					continuousNotFound = 0;
+					moveCursor(coordinateHideMouse);
+					continue ML;
+				}
 
-                    for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tuple : taskList) {
-                        if (!isNotBlocked(tuple._2))
-                            continue;
-                        debug("Finding %s icon", tuple._1.name);
-                        Point point = this.gameScreenInteractor.findAttendablePlace(tuple._1);
-                        if (point != null) {
-                            if (isUnknownGvgOrInvasion) {
-                                if (tuple._1 == AttendablePlaces.gvg) {
-                                    isUnknownGvgOrInvasion = false;
-                                    toBeRemoved = AttendablePlaces.invasion;
-                                }
-                                if (tuple._1 == AttendablePlaces.invasion) {
-                                    isUnknownGvgOrInvasion = false;
-                                    toBeRemoved = AttendablePlaces.gvg;
-                                }
-                            }
-                            if (isUnknownTrialsOrGauntlet) {
-                                if (tuple._1 == AttendablePlaces.trials) {
-                                    isUnknownTrialsOrGauntlet = false;
-                                    toBeRemoved = AttendablePlaces.gauntlet;
-                                }
-                                if (tuple._1 == AttendablePlaces.gauntlet) {
-                                    isUnknownTrialsOrGauntlet = false;
-                                    toBeRemoved = AttendablePlaces.trials;
-                                }
-                            }
+				for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tuple : taskList) {
+					if (!isNotBlocked(tuple._2))
+						continue;
+					AbstractDoFarmingApp.NextAction nextAction = tryToClickOnBatch(tuple._3);
+					if (nextAction == null)
+						continue;
+					debug(nextAction.image.getImageNameCode());
+					if (nextAction.isOutOfTurns) {
+						spamEscape(2);
+						tempBlock(tuple._1);
+					}
+					continuousNotFound = 0;
+					moveCursor(coordinateHideMouse);
+					continue ML;
+				}
 
-                            moveCursor(point);
-                            mouseClick();
-                            sleep(100);
-                            moveCursor(coordinateHideMouse);
-                            continuousNotFound = 0;
-                            continue ML;
-                        }
-                    }
-                }
-            }
-            debug("end of doLoop");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            err("doLoop encountered error!");
-        } finally {
-            masterSwitch.set(true);
-        }
-    }
+				debug("None");
+				continuousNotFound++;
+				moveCursor(coordinateHideMouse);
 
-    private void addOutOfTurnActionsToList(ArrayList<AbstractDoFarmingApp.NextAction> list, List<AbstractDoFarmingApp.NextAction> predefinedNextActions) {
-        list.addAll(predefinedNextActions.stream().filter(x -> x.isOutOfTurns).collect(Collectors.toList()));
-    }
+				if (continuousNotFound >= 6) {
+					for (AbstractDoFarmingApp.NextAction nextAction : outOfTurnNextActionList) {
+						if (clickImage(nextAction.image)) {
+							spamEscape(2);
+							sleep(1_000);
+						}
+					}
 
-    private AbstractDoFarmingApp.NextAction tryToClickOnBatch(List<AbstractDoFarmingApp.NextAction> predefinedImageActions) {
-        for (AbstractDoFarmingApp.NextAction predefinedImageAction : predefinedImageActions)
-            if (clickImage(predefinedImageAction.image))
-                return predefinedImageAction;
-        return null;
-    }
+					for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tuple : taskList) {
+						if (!isNotBlocked(tuple._2))
+							continue;
+						debug("Finding %s icon", tuple._1.name);
+						Point point = this.gameScreenInteractor.findAttendablePlace(tuple._1);
+						if (point != null) {
+							if (isUnknownGvgOrInvasion) {
+								if (tuple._1 == AttendablePlaces.gvg) {
+									isUnknownGvgOrInvasion = false;
+									toBeRemoved = AttendablePlaces.invasion;
+								}
+								if (tuple._1 == AttendablePlaces.invasion) {
+									isUnknownGvgOrInvasion = false;
+									toBeRemoved = AttendablePlaces.gvg;
+								}
+							}
+							if (isUnknownTrialsOrGauntlet) {
+								if (tuple._1 == AttendablePlaces.trials) {
+									isUnknownTrialsOrGauntlet = false;
+									toBeRemoved = AttendablePlaces.gauntlet;
+								}
+								if (tuple._1 == AttendablePlaces.gauntlet) {
+									isUnknownTrialsOrGauntlet = false;
+									toBeRemoved = AttendablePlaces.trials;
+								}
+							}
 
-    private boolean isNotBlocked(AtomicLong blockUntil) {
-        return blockUntil.get() < System.currentTimeMillis();
-    }
+							moveCursor(point);
+							mouseClick();
+							sleep(100);
+							moveCursor(coordinateHideMouse);
+							continuousNotFound = 0;
+							continue ML;
+						}
+					}
+				}
+			}
+			debug("end of doLoop");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			err("doLoop encountered error!");
+		} finally {
+			masterSwitch.set(true);
+		}
+	}
 
-    private void tempBlock(AttendablePlace attendablePlace) {
-        AtomicLong x;
-        if (attendablePlace == AttendablePlaces.pvp)
-            x = blockPvpUntil;
-        else if (attendablePlace == AttendablePlaces.worldBoss)
-            x = blockWorldBossUntil;
-        else if (attendablePlace == AttendablePlaces.raid)
-            x = blockRaidUntil;
-        else if (attendablePlace == AttendablePlaces.gvg || attendablePlace == AttendablePlaces.invasion)
-            x = blockGvgAndInvasionUntil;
-        else if (attendablePlace == AttendablePlaces.trials || attendablePlace == AttendablePlaces.gauntlet)
-            x = blockTrialsAndGauntletUntil;
-        else
-            throw new NotSupportedException(String.format("Not supported AttendablePlace.%s", attendablePlace.name));
-        x.set(System.currentTimeMillis() + attendablePlace.procedureTicketMinutes * 60_000);
-    }
+	private void addOutOfTurnActionsToList(ArrayList<AbstractDoFarmingApp.NextAction> list,
+			List<AbstractDoFarmingApp.NextAction> predefinedNextActions) {
+		list.addAll(predefinedNextActions.stream().filter(x -> x.isOutOfTurns).collect(Collectors.toList()));
+	}
 
-    private ArrayList<AttendablePlace> getAttendablePlaces(BufferedReader br) {
-        ArrayList<AttendablePlace> eventList = new ArrayList<>();
-        final List<AttendablePlace> allAttendablePlaces = Arrays.asList(
-                AttendablePlaces.invasion,
-                AttendablePlaces.trials,
-                AttendablePlaces.gvg,
-                AttendablePlaces.gauntlet,
+	private AbstractDoFarmingApp.NextAction tryToClickOnBatch(
+			List<AbstractDoFarmingApp.NextAction> predefinedImageActions) {
+		for (AbstractDoFarmingApp.NextAction predefinedImageAction : predefinedImageActions)
+			if (clickImage(predefinedImageAction.image))
+				return predefinedImageAction;
+		return null;
+	}
 
-                AttendablePlaces.pvp,
-                AttendablePlaces.worldBoss,
-                AttendablePlaces.raid
-        );
-        if (argumentInfo.hasFlagAll)
-            eventList.addAll(allAttendablePlaces);
-        //
-        if (argumentInfo.eInvasion)
-            eventList.add(AttendablePlaces.invasion);
-        if (argumentInfo.eTrials)
-            eventList.add(AttendablePlaces.trials);
+	private boolean isNotBlocked(AtomicLong blockUntil) {
+		return blockUntil.get() < System.currentTimeMillis();
+	}
 
-        if (argumentInfo.ePvp)
-            eventList.add(AttendablePlaces.pvp);
-        if (argumentInfo.eWorldBoss)
-            eventList.add(AttendablePlaces.worldBoss);
-        if (argumentInfo.eRaid)
-            eventList.add(AttendablePlaces.raid);
-        //
-        if (eventList.size() == 0) {
+	private void tempBlock(AttendablePlace attendablePlace) {
+		AtomicLong x;
+		if (attendablePlace == AttendablePlaces.pvp)
+			x = blockPvpUntil;
+		else if (attendablePlace == AttendablePlaces.worldBoss)
+			x = blockWorldBossUntil;
+		else if (attendablePlace == AttendablePlaces.raid)
+			x = blockRaidUntil;
+		else if (attendablePlace == AttendablePlaces.gvg || attendablePlace == AttendablePlaces.invasion)
+			x = blockGvgAndInvasionUntil;
+		else if (attendablePlace == AttendablePlaces.trials || attendablePlace == AttendablePlaces.gauntlet)
+			x = blockTrialsAndGauntletUntil;
+		else
+			throw new NotSupportedException(String.format("Not supported AttendablePlace.%s", attendablePlace.name));
+		x.set(System.currentTimeMillis() + attendablePlace.procedureTicketMinutes * 60_000);
+	}
 
-            final List<MenuItem> menuItems = Stream.concat(
-                    allAttendablePlaces.stream().map(x -> MenuItem.from(x)),
-                    Arrays.asList(
-                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss),
-                            MenuItem.from(AttendablePlaces.invasion, AttendablePlaces.trials),
-                            MenuItem.from(AttendablePlaces.gvg, AttendablePlaces.gauntlet),
-                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg, AttendablePlaces.gauntlet, AttendablePlaces.invasion, AttendablePlaces.trials),
-                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.invasion, AttendablePlaces.trials),
-                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg, AttendablePlaces.gauntlet),
-                            MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg, AttendablePlaces.gauntlet, AttendablePlaces.invasion, AttendablePlaces.trials),
-                            MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.invasion, AttendablePlaces.trials),
-                            MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg, AttendablePlaces.gauntlet)
-                    ).stream()
-            ).collect(Collectors.toList());
+	private ArrayList<AttendablePlace> getAttendablePlaces(BufferedReader br) {
+		ArrayList<AttendablePlace> eventList = new ArrayList<>();
+		final List<AttendablePlace> allAttendablePlaces = Arrays.asList(AttendablePlaces.invasion,
+				AttendablePlaces.trials, AttendablePlaces.gvg, AttendablePlaces.gauntlet,
 
-            String menuItem = String
-                    .join("\n", menuItems.stream().map(x -> String.format("  %3d. %s", x.num, x.name))
-                            .collect(Collectors.toList()));
+				AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid);
+		if (argumentInfo.hasFlagAll)
+			eventList.addAll(allAttendablePlaces);
+		//
+		if (argumentInfo.eInvasion)
+			eventList.add(AttendablePlaces.invasion);
+		if (argumentInfo.eTrials)
+			eventList.add(AttendablePlaces.trials);
 
-            final ArrayList<AttendablePlace> selectedOptions = new ArrayList<>();
-            final Supplier<List<String>> selectedOptionsInfoProvider = () -> selectedOptions.stream().map(x -> x.name).collect(Collectors.toList());
+		if (argumentInfo.ePvp)
+			eventList.add(AttendablePlaces.pvp);
+		if (argumentInfo.eWorldBoss)
+			eventList.add(AttendablePlaces.worldBoss);
+		if (argumentInfo.eRaid)
+			eventList.add(AttendablePlaces.raid);
+		//
+		if (eventList.size() == 0) {
 
-            String ask = "Select events you want to do:\n" + menuItem;
-            while (true) {
-                List<AttendablePlace> events = readInput(br, ask, "To select an event, press the number then press Enter. To finish input, just enter without supply a number", selectedOptionsInfoProvider, new Function<String, Tuple3<Boolean, String, List<AttendablePlace>>>() {
-                    @Override
-                    public Tuple3<Boolean, String, List<AttendablePlace>> apply(String s) {
-                        try {
-                            int result = Integer.parseInt(s);
-                            List<AttendablePlace> events = allAttendablePlaces.stream().filter(x -> (result & x.id) == x.id).collect(Collectors.toList());
-                            if (events.size() == 0)
-                                return new Tuple3<>(false, "Incorrect value", null);
-                            return new Tuple3<>(true, null, events);
-                        } catch (Exception ex2) {
-                            return new Tuple3<>(false, "Unable to parse your input, error: " + ex2.getMessage(), null);
-                        }
-                    }
-                }, true);
+			final List<MenuItem> menuItems = Stream
+					.concat(allAttendablePlaces.stream().map(x -> MenuItem.from(x)), Arrays.asList(
+							MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss),
+							MenuItem.from(AttendablePlaces.invasion, AttendablePlaces.trials),
+							MenuItem.from(AttendablePlaces.gvg, AttendablePlaces.gauntlet),
+							MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg,
+									AttendablePlaces.gauntlet, AttendablePlaces.invasion, AttendablePlaces.trials),
+							MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.invasion,
+									AttendablePlaces.trials),
+							MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg,
+									AttendablePlaces.gauntlet),
+							MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss,
+									AttendablePlaces.gvg, AttendablePlaces.gauntlet, AttendablePlaces.invasion,
+									AttendablePlaces.trials),
+							MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss,
+									AttendablePlaces.invasion, AttendablePlaces.trials),
+							MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss,
+									AttendablePlaces.gvg, AttendablePlaces.gauntlet))
+							.stream())
+					.collect(Collectors.toList());
 
-                if (events == null)
-                    break;
-                eventList.addAll(events);
-                eventList = new ArrayList<>(eventList.stream().distinct().collect(Collectors.toList()));
-                selectedOptions.clear();
-                selectedOptions.addAll(eventList);
-            }
+			String menuItem = String.join("\n", menuItems.stream().map(x -> String.format("  %3d. %s", x.num, x.name))
+					.collect(Collectors.toList()));
 
-            if (eventList.size() == 0) {
-                info("None option was selected, exit now");
-                System.exit(0);
-            }
-        }
+			final ArrayList<AttendablePlace> selectedOptions = new ArrayList<>();
+			final Supplier<List<String>> selectedOptionsInfoProvider = () -> selectedOptions.stream().map(x -> x.name)
+					.collect(Collectors.toList());
 
-        eventList = new ArrayList<>(eventList.stream().distinct().collect(Collectors.toList()));
+			String ask = "Select events you want to do:\n" + menuItem;
+			while (true) {
+				List<AttendablePlace> events = readInput(br, ask,
+						"To select an event, press the number then press Enter. To finish input, just enter without supply a number",
+						selectedOptionsInfoProvider,
+						new Function<String, Tuple3<Boolean, String, List<AttendablePlace>>>() {
+							@Override
+							public Tuple3<Boolean, String, List<AttendablePlace>> apply(String s) {
+								try {
+									int result = Integer.parseInt(s);
+									List<AttendablePlace> events = allAttendablePlaces.stream()
+											.filter(x -> (result & x.id) == x.id).collect(Collectors.toList());
+									if (events.size() == 0)
+										return new Tuple3<>(false, "Incorrect value", null);
+									return new Tuple3<>(true, null, events);
+								} catch (Exception ex2) {
+									return new Tuple3<>(false, "Unable to parse your input, error: " + ex2.getMessage(),
+											null);
+								}
+							}
+						}, true);
 
-        info("Selected:");
-        for (AttendablePlace event : eventList) {
-            info("  <%2d> %s", event.id, event.name);
-        }
+				if (events == null)
+					break;
+				eventList.addAll(events);
+				eventList = new ArrayList<>(eventList.stream().distinct().collect(Collectors.toList()));
+				selectedOptions.clear();
+				selectedOptions.addAll(eventList);
+			}
 
-        return eventList;
-    }
+			if (eventList.size() == 0) {
+				info("None option was selected, exit now");
+				System.exit(0);
+			}
+		}
 
-    private boolean tryEnterRaid(boolean doRaid, Configuration.UserConfig userConfig) {
-        Point coord = findImage(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog);
-        if (coord == null)
-            return false;
-        if (!isNotBlocked(blockRaidUntil) || !doRaid) {
-            spamEscape(1);
-            return false;
-        }
-        mouseMoveAndClickAndHide(coord);
-        BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog.setLastMatchPoint(coord.x, coord.y);
-        Tuple2<Point[], Byte> result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
-        Point[] points = result._1;
-        int selectedLevel = result._2 + 1;
-        info("Found %d, selected %d", points.length, selectedLevel);
-        if (selectedLevel != userConfig.raidLevel)
-            clickRadioButton(userConfig.raidLevel, points, "Raid");
-        sleep(3_000);
-        result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
-        selectedLevel = result._2 + 1;
-        if (selectedLevel != userConfig.raidLevel) {
-            err("Failure on selecting raid level");
-            spamEscape(1);
-            return false;
-        }
-        sleep(1_000);
-        mouseMoveAndClickAndHide(fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord, Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid()));
-        sleep(5_000);
-        if (Configuration.UserConfig.isNormalMode(userConfig.raidMode)) {
-            mouseMoveAndClickAndHide(fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord, Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()));
-        } else if (Configuration.UserConfig.isHardMode(userConfig.raidMode)) {
-            mouseMoveAndClickAndHide(fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHardRaid()));
-        } else if (Configuration.UserConfig.isHeroicMode(userConfig.raidMode)) {
-            mouseMoveAndClickAndHide(fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicRaid()));
-        } else {
-            throw new InvalidDataException("Unknown raid mode value: %d", userConfig.raidMode);
-        }
-        return true;
-    }
+		eventList = new ArrayList<>(eventList.stream().distinct().collect(Collectors.toList()));
 
-    private Point fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta sampleImg, Point sampleImgCoord, Configuration.Offset targetOffset) {
-        int x = sampleImgCoord.x - sampleImg.getCoordinateOffset().X;
-        int y = sampleImgCoord.y - sampleImg.getCoordinateOffset().Y;
-        return new Point(x + targetOffset.X, y + targetOffset.Y);
-    }
+		info("Selected:");
+		for (AttendablePlace event : eventList) {
+			info("  <%2d> %s", event.id, event.name);
+		}
 
-    @Override
-    protected String getAppName() {
-        return "BH-AFK";
-    }
+		return eventList;
+	}
 
-    @Override
-    protected String getScriptFileName() {
-        return "afk";
-    }
+	private boolean tryEnterRaid(boolean doRaid, Configuration.UserConfig userConfig) {
+		Point coord = findImage(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog);
+		if (coord == null)
+			return false;
+		if (!isNotBlocked(blockRaidUntil) || !doRaid) {
+			spamEscape(1);
+			return false;
+		}
+		mouseMoveAndClickAndHide(coord);
+		BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog.setLastMatchPoint(coord.x, coord.y);
+		Tuple2<Point[], Byte> result = detectRadioButtons(
+				Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
+		Point[] points = result._1;
+		int selectedLevel = result._2 + 1;
+		info("Found %d, selected %d", points.length, selectedLevel);
+		if (selectedLevel != userConfig.raidLevel)
+			clickRadioButton(userConfig.raidLevel, points, "Raid");
+		sleep(3_000);
+		result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
+		selectedLevel = result._2 + 1;
+		if (selectedLevel != userConfig.raidLevel) {
+			err("Failure on selecting raid level");
+			spamEscape(1);
+			return false;
+		}
+		sleep(1_000);
+		mouseMoveAndClickAndHide(
+				fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord,
+						Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid()));
+		sleep(5_000);
+		if (Configuration.UserConfig.isNormalMode(userConfig.raidMode)) {
+			mouseMoveAndClickAndHide(
+					fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
+							coord, Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()));
+		} else if (Configuration.UserConfig.isHardMode(userConfig.raidMode)) {
+			mouseMoveAndClickAndHide(
+					fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
+							coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHardRaid()));
+		} else if (Configuration.UserConfig.isHeroicMode(userConfig.raidMode)) {
+			mouseMoveAndClickAndHide(
+					fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
+							coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicRaid()));
+		} else {
+			throw new InvalidDataException("Unknown raid mode value: %d", userConfig.raidMode);
+		}
+		return true;
+	}
 
-    @Override
-    protected String getUsage() {
-        return null;
-    }
+	private Point fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta sampleImg, Point sampleImgCoord,
+			Configuration.Offset targetOffset) {
+		int x = sampleImgCoord.x - sampleImg.getCoordinateOffset().X;
+		int y = sampleImgCoord.y - sampleImg.getCoordinateOffset().Y;
+		return new Point(x + targetOffset.X, y + targetOffset.Y);
+	}
 
-    @Override
-    protected String getDescription() {
-        return "It helps you AFK by automatically consume PVP/World Boss/GVG/Invasion/Trials/Gauntlet turns";
-    }
+	@Override
+	protected String getAppName() {
+		return "BH-AFK";
+	}
 
-    @Override
-    protected String getLimitationExplain() {
-        return "This function does not support select level/mode, how many badge/ticket/... to consumes and can only everything by default so please chose everything first manually then use this";
-    }
+	@Override
+	protected String getScriptFileName() {
+		return "afk";
+	}
 
-    private List<AbstractDoFarmingApp.NextAction> getPredefinedImageActionsOfRaid() {
-        return Arrays.asList(
-                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.town, true, false),
-                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Dungeons.Buttons.rerun, true, false),
-                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.accept, false, false),
-                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Dialogs.notEnoughShards, false, true)
-        );
-    }
+	@Override
+	protected String getUsage() {
+		return null;
+	}
+
+	@Override
+	protected String getDescription() {
+		return "It helps you AFK by automatically consume PVP/World Boss/GVG/Invasion/Trials/Gauntlet turns";
+	}
+
+	@Override
+	protected String getLimitationExplain() {
+		return "This function does not support select level/mode, how many badge/ticket/... to consumes and can only everything by default so please chose everything first manually then use this";
+	}
+
+	private List<AbstractDoFarmingApp.NextAction> getPredefinedImageActionsOfRaid() {
+		return Arrays.asList(new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.town, true, false),
+				new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Dungeons.Buttons.rerun, true, false),
+				new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.accept, false, false),
+				new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Dialogs.notEnoughShards, false, true));
+	}
 }

@@ -24,11 +24,6 @@ public class FlagSteamResolution800x480 extends FlagResolution {
         return "When game resolution 800x480 while playing on Steam client";
     }
 
-    @Override
-    public boolean isSupportedOnCurrentOsPlatform() {
-        return Configuration.OS.platform == Platform.Windows;
-    }
-
     public Platform[] getSupportedOsPlatforms() {
         return new Platform[] { Platform.Windows };
     }

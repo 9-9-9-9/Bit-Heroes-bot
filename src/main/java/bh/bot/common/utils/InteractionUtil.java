@@ -2,6 +2,7 @@ package bh.bot.common.utils;
 
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
+import bh.bot.common.Configuration.Offset;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.images.BwMatrixMeta;
@@ -11,6 +12,11 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.Win32Exception;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.RECT;
 
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.utils.ImageUtil.freeMem;
@@ -224,5 +230,16 @@ public class InteractionUtil {
                 return null;
             }
         }
+    }
+    
+    public static class Jna {
+    	public static Rectangle detectSteamWindow() {
+    		HWND hwnd = User32.INSTANCE.FindWindow("UnityWndClass", "Bit Heroes");
+    		final RECT lpRect = new RECT();
+			if (!User32.INSTANCE.GetWindowRect(hwnd, lpRect))
+				throw new Win32Exception(com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError());
+			return new Rectangle(lpRect.left, lpRect.top, Math.abs(lpRect.right - lpRect.left),
+					Math.abs(lpRect.bottom - lpRect.top));
+    	}
     }
 }

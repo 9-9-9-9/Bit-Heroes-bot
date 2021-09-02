@@ -1,16 +1,11 @@
 package bh.bot.common;
 
-import bh.bot.Main;
-import bh.bot.app.AbstractApplication;
-import bh.bot.common.exceptions.InvalidDataException;
-import bh.bot.common.exceptions.NotImplementedException;
-import bh.bot.common.types.Platform;
-import bh.bot.common.types.ScreenResolutionProfile;
-import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
-import bh.bot.common.types.ScreenResolutionProfile.WebProfile;
-import bh.bot.common.types.annotations.AppCode;
-import bh.bot.common.types.tuples.Tuple2;
-import bh.bot.common.utils.StringUtil;
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.err;
+import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.warn;
+import static bh.bot.common.utils.StringUtil.isBlank;
+import static bh.bot.common.utils.StringUtil.isNotBlank;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,9 +15,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import static bh.bot.common.Log.*;
-import static bh.bot.common.utils.StringUtil.isBlank;
-import static bh.bot.common.utils.StringUtil.isNotBlank;
+import bh.bot.Main;
+import bh.bot.app.AbstractApplication;
+import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.exceptions.NotImplementedException;
+import bh.bot.common.exceptions.NotSupportedException;
+import bh.bot.common.types.ParseArgumentsResult;
+import bh.bot.common.types.Platform;
+import bh.bot.common.types.ScreenResolutionProfile;
+import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
+import bh.bot.common.types.ScreenResolutionProfile.WebProfile;
+import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.tuples.Tuple2;
+import bh.bot.common.utils.StringUtil;
 
 public class Configuration {
     public static ScreenResolutionProfile screenResolutionProfile = null;
@@ -184,7 +189,9 @@ public class Configuration {
 
     private static Properties properties = new Properties();
 
-    public static void loadSystemConfig(ScreenResolutionProfile screenResolutionProfile) throws IOException {
+    public static void loadSystemConfig(final ParseArgumentsResult parseArgumentsResult) throws IOException {
+    	final ScreenResolutionProfile screenResolutionProfile = parseArgumentsResult.screenResolutionProfile; 
+    	final boolean enableJna = parseArgumentsResult.enableJna;
         info(
                 "Using '%s' profile which supports %dx%d game resolution",
                 screenResolutionProfile.getName(),
@@ -239,6 +246,22 @@ public class Configuration {
         Tolerant.position = Math.max(5, readInt("tolerant.position"));
         Tolerant.color = Math.max(0, readInt("tolerant.color"));
         Tolerant.colorBw = (byte) Math.max(0, readInt("tolerant.color.bw"));
+        
+        if (enableJna) {
+        	try {
+            	if (isSteamProfile) {
+            		
+            	} else {
+            		throw new NotSupportedException("enableJna & non isSteamProfile");
+            	}
+        	} catch (NotSupportedException ex1) {
+        		throw ex1;
+        	} catch (Exception ex2) {
+        		ex2.printStackTrace();
+        		err("Unable to init JNA interaction, ignore this flag");
+        		parseArgumentsResult.enableJna = false;
+        	}
+        }
     }
 
     public static Tuple2<Boolean, UserConfig> loadUserConfig(int profileNo) throws IOException { // returns tuple of File Exists + Data
@@ -347,6 +370,11 @@ public class Configuration {
         public Offset(int x, int y) {
             this.X = x;
             this.Y = y;
+        }
+        
+        @Override
+        public String toString() {
+        	return String.format("%s[x=%d,y=%d]", this.getClass().getName(), X, Y);
         }
 
         public static Offset fromKeyPrefix(String keyPrefix) {

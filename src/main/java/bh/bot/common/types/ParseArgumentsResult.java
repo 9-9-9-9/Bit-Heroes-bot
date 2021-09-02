@@ -15,6 +15,7 @@ public class ParseArgumentsResult {
     public boolean displayHelp;
     public boolean enableSavingDebugImages;
     public boolean hasFlagAll;
+    public boolean enableJna;
     public boolean eInvasion;
     public boolean eTrials;
     public boolean ePvp;

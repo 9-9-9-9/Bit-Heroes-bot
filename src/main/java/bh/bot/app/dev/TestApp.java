@@ -2,10 +2,14 @@ package bh.bot.app.dev;
 
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
+import bh.bot.common.Configuration.Offset;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.jna.IJna;
+import bh.bot.common.types.jna.SteamWindowsJna;
 import bh.bot.common.types.tuples.Tuple2;
+import bh.bot.common.types.tuples.Tuple4;
 import bh.bot.common.utils.InteractionUtil;
 
 import java.awt.*;
@@ -28,8 +32,24 @@ public class TestApp extends AbstractApplication {
 
 	@Override
 	protected void internalRun(String[] args) {
-		HWND hwnd = User32.INSTANCE.FindWindow("UnityWndClass", "Bit Heroes");
-		System.out.println(JnaTest.getWindowLocationAndSize(hwnd));
+		User32 ins = User32.INSTANCE;
+		HWND hwnd = ins.FindWindow("UnityWndClass", "Bit Heroes");
+		//System.out.println(JnaTest.getWindowLocationAndSize(hwnd));
+		final RECT lpRectC = new RECT();
+		final RECT lpRectW = new RECT();
+		info(ins.GetClientRect(hwnd, lpRectC));
+		info(lpRectC);
+		info(ins.GetWindowRect(hwnd, lpRectW));
+		info(lpRectW);
+		
+		IJna jna = new SteamWindowsJna();
+		hwnd = jna.getGameWindow();
+		Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateSteamGameWindow(hwnd, Configuration.screenResolutionProfile);
+		info(result._1);
+		info(result._2);
+		info(result._3);
+		info(result._4);
+		
 	}
 
 	public static class JnaTest {
