@@ -39,6 +39,10 @@ public class Configuration {
 	public static AtomicOffset gameScreenOffset;
 	public static final boolean enableDevFeatures = new File("im.dev").exists();
 	public static boolean noThrowWhenImageNotAvailable = false;
+	
+	public static class Features {
+		public static boolean disableDoCheckSteamWindow = false;
+	}
 
 	public static class Tolerant {
 		public static int position;
@@ -232,11 +236,8 @@ public class Configuration {
 			}
 		}
 
-		String devNoThrowImgUnavailable = read("dev.no-throw-when-image-not-available");
-		devNoThrowImgUnavailable = isNotBlank(devNoThrowImgUnavailable) ? devNoThrowImgUnavailable.trim().toLowerCase()
-				: null;
-		noThrowWhenImageNotAvailable = devNoThrowImgUnavailable != null && (devNoThrowImgUnavailable.equals("true")
-				|| devNoThrowImgUnavailable.equals("yes") || devNoThrowImgUnavailable.equals("y"));
+		noThrowWhenImageNotAvailable = StringUtil.isTrue(read("dev.no-throw-when-image-not-available"));
+		Configuration.Features.disableDoCheckSteamWindow = StringUtil.isTrue(read("disable.doCheckSteamWindow"));
 
 		String keyLongTimeNoSee = "timeout.minutes.long-time-no-see";
 		short minLongTimeNoSee = 10;

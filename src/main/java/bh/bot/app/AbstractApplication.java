@@ -726,6 +726,10 @@ public abstract class AbstractApplication {
 				debug("exit doCheckSteamWindow due to not a steam profile");
 				return;
 			}
+			if (Configuration.Features.disableDoCheckSteamWindow) {
+				info("Feature doCheckSteamWindow has been disabled by configuration");
+				return;
+			}
 			int x = Configuration.gameScreenOffset.X.get();
 			int y = Configuration.gameScreenOffset.Y.get();
 			final IJna jna = new SteamWindowsJna();
