@@ -393,8 +393,12 @@ public class AfkApp extends AbstractApplication {
 		//
 		if (argumentInfo.eInvasion)
 			eventList.add(AttendablePlaces.invasion);
+		if (argumentInfo.eGvg)
+			eventList.add(AttendablePlaces.gvg);
 		if (argumentInfo.eTrials)
 			eventList.add(AttendablePlaces.trials);
+		if (argumentInfo.eGauntlet)
+			eventList.add(AttendablePlaces.gauntlet);
 
 		if (argumentInfo.ePvp)
 			eventList.add(AttendablePlaces.pvp);
