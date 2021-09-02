@@ -4,6 +4,7 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.Configuration.Offset;
 import bh.bot.common.jna.IJna;
+import bh.bot.common.jna.MiniClientWindowsJna;
 import bh.bot.common.jna.SteamWindowsJna;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
@@ -42,14 +43,14 @@ public class TestApp extends AbstractApplication {
 		info(ins.GetWindowRect(hwnd, lpRectW));
 		info(lpRectW);
 		
-		IJna jna = new SteamWindowsJna();
+		IJna jna;
+		jna = new MiniClientWindowsJna();
 		hwnd = jna.getGameWindow();
-		Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateSteamGameWindow(hwnd, Configuration.screenResolutionProfile);
-		info(result._1);
-		info(result._2);
-		info(result._3);
-		info(result._4);
-		
+		Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateGameScreenOffset(hwnd, Configuration.screenResolutionProfile);
+		info("1 " + result._1);
+		info("2 " + result._2);
+		info("3 " + result._3);
+		info("4 " + result._4);
 	}
 
 	public static class JnaTest {

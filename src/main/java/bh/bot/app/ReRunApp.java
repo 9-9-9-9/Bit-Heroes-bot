@@ -64,7 +64,7 @@ public class ReRunApp extends AbstractApplication {
                 () -> detectDefeatedOnRaid(masterSwitch),
                 () -> autoReactiveAuto(masterSwitch),
                 () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch),
-                () -> doCheckSteamWindow(masterSwitch)
+                () -> doCheckGameScreenOffset(masterSwitch)
         );
         Telegram.sendMessage("Stopped", false);
     }

@@ -10,5 +10,6 @@ import bh.bot.common.types.tuples.*;
 
 public interface IJna {
 	HWND getGameWindow(Object...args);
-	Tuple4<Boolean, String, Rectangle, Offset> locateSteamGameWindow(HWND hwnd, ScreenResolutionProfile screenResolutionProfile);
+	Rectangle getRectangle(HWND hwnd);
+	Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(HWND hwnd, ScreenResolutionProfile screenResolutionProfile);
 }

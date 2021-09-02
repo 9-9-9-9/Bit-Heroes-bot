@@ -42,7 +42,7 @@ public class Configuration {
 
     public static class Features {
         public static boolean disableJna = false;
-        public static boolean disableDoCheckSteamWindow = false;
+        public static boolean disableDoCheckGameScreenOffset = false;
     }
 
     public static class Tolerant {
@@ -239,8 +239,8 @@ public class Configuration {
 
         noThrowWhenImageNotAvailable = StringUtil.isTrue(read("dev.no-throw-when-image-not-available"));
         Features.disableJna = StringUtil.isTrue(read("disable.jna"));
-        Configuration.Features.disableDoCheckSteamWindow =
-                Features.disableJna || StringUtil.isTrue(read("disable.jna.doCheckSteamWindow"));
+        Configuration.Features.disableDoCheckGameScreenOffset =
+                Features.disableJna || StringUtil.isTrue(read("disable.jna.disableDoCheckGameScreenOffset"));
 
         String keyLongTimeNoSee = "timeout.minutes.long-time-no-see";
         short minLongTimeNoSee = 10;

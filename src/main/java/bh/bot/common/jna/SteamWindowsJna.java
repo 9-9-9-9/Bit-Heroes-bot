@@ -26,13 +26,16 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 	}
 
 	@Override
-	public Tuple4<Boolean, String, Rectangle, Offset> locateSteamGameWindow(HWND hwnd,
+	public Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(HWND hwnd,
 			ScreenResolutionProfile screenResolutionProfile) {
 		if (!(screenResolutionProfile instanceof SteamProfile))
 			throw new IllegalArgumentException("Not steam profile");
 
-		if (hwnd == null)
-			return new Tuple4<>(false, "Can not detect Steam window", null, null);
+		if (hwnd == null) {
+			hwnd = getGameWindow();
+			if (hwnd == null)
+				return new Tuple4<>(false, "Can not detect Steam window", null, null);
+		}
 
 		final RECT lpRectC = new RECT();
 		if (!user32.GetClientRect(hwnd, lpRectC))
@@ -52,13 +55,11 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 							eh, cw, ch),
 					null, null);
 
-		final RECT lpRectW = new RECT();
-		if (!user32.GetWindowRect(hwnd, lpRectW))
+		Rectangle rect = getRectangle(hwnd);
+		if (rect == null)
 			return new Tuple4<>(false, String.format("Unable to GetWindowRect, err code: %d",
 					com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()), null, null);
-
-		Rectangle rect = new Rectangle(lpRectW.left, lpRectW.top, Math.abs(lpRectW.right - lpRectW.left),
-				Math.abs(lpRectW.bottom - lpRectW.top));
+		
 		if (rect.width <= 0 || rect.height <= 0)
 			return new Tuple4<>(false, "Window has minimized", null, null);
 		if (rect.width < ew || rect.height < eh)

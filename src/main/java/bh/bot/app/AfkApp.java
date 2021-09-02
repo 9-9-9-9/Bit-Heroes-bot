@@ -119,7 +119,7 @@ public class AfkApp extends AbstractApplication {
 						eventList.contains(AttendablePlaces.trials), eventList.contains(AttendablePlaces.gauntlet)),
 				() -> doClickTalk(masterSwitch::get), () -> detectDisconnected(masterSwitch),
 				() -> autoReactiveAuto(masterSwitch), () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch),
-				() -> doCheckSteamWindow(masterSwitch)
+				() -> doCheckGameScreenOffset(masterSwitch)
 		);
 		Telegram.sendMessage("Stopped", false);
 	}

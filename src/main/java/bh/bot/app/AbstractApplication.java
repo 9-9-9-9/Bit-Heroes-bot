@@ -43,6 +43,7 @@ import bh.bot.common.Configuration.Offset;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.jna.IJna;
+import bh.bot.common.jna.MiniClientWindowsJna;
 import bh.bot.common.jna.SteamWindowsJna;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
@@ -717,35 +718,31 @@ public abstract class AbstractApplication {
 		err("Please launch script 'setting.%s' and follow instruction", Configuration.OS.isWin ? "bat" : "sh");
 	}
 
-	private HWND steamWindowHwnd = null;
+	private HWND gameWindowHwndByJna = null;
 
-	protected void doCheckSteamWindow(AtomicBoolean masterSwicth) {
-		debug("doCheckSteamWindow");
+	protected void doCheckGameScreenOffset(AtomicBoolean masterSwicth) {
+		debug("doCheckGameScreenOffset");
 		try {
-			if (!Configuration.isSteamProfile) {
-				debug("exit doCheckSteamWindow due to not a steam profile");
-				return;
-			}
-			if (Configuration.Features.disableDoCheckSteamWindow) {
-				info("Feature doCheckSteamWindow has been disabled by configuration");
+			if (Configuration.Features.disableDoCheckGameScreenOffset) {
+				info("Feature doCheckGameScreenOffset has been disabled by configuration");
 				return;
 			}
 			int x = Configuration.gameScreenOffset.X.get();
 			int y = Configuration.gameScreenOffset.Y.get();
-			final IJna jna = new SteamWindowsJna();
+			final IJna jna = Configuration.isSteamProfile ? new SteamWindowsJna() : new MiniClientWindowsJna();
 			ScreenResolutionProfile srp = Configuration.screenResolutionProfile;
-			debug("Active doCheckSteamWindow");
+			debug("Active doCheckGameScreenOffset");
 			while (!masterSwicth.get()) {
-				debug("on loop of doCheckSteamWindow");
+				debug("on loop of doCheckGameScreenOffset");
 				try {
-					if (steamWindowHwnd == null) {
-						steamWindowHwnd = jna.getGameWindow();
-						if (steamWindowHwnd == null) {
-							debug("Steam client could not be found");
+					if (gameWindowHwndByJna == null) {
+						gameWindowHwndByJna = jna.getGameWindow();
+						if (gameWindowHwndByJna == null) {
+							debug("Game window could not be found");
 							continue;
 						}
 					}
-					Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateSteamGameWindow(steamWindowHwnd, srp);
+					Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateGameScreenOffset(gameWindowHwndByJna, srp);
 					if (!result._1) {
 						err(result._2);
 						continue;
@@ -766,7 +763,7 @@ public abstract class AbstractApplication {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			err("Error occured during doCheckSteamWindow");
+			err("Error occured during doCheckGameScreenOffset");
 		}
 	}
 }

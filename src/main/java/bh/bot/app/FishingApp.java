@@ -96,7 +96,7 @@ public class FishingApp extends AbstractApplication {
                 () -> detectScreen(masterSwitch, anchorPoint, screen, unsure, unsureFrom, seeBtnStartFrom),
                 () -> detectDisconnected(masterSwitch),
                 () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch),
-                () -> doCheckSteamWindow(masterSwitch)
+                () -> doCheckGameScreenOffset(masterSwitch)
         );
         Telegram.sendMessage("Stopped", false);
     }
