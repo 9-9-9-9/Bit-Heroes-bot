@@ -22,11 +22,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.warn;
 
 @AppCode(code = "tp")
 public class ImportTpImageApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
+    	Configuration.Tolerant.colorBw = 60;
+    	warn("Forced value of Configuration.Tolerant.colorBw to %d", Configuration.Tolerant.colorBw);
+    	
         int rgb = Integer.parseInt(args[0], 16) & 0xFFFFFF;
         int tolerant = Configuration.Tolerant.colorBw;
 
