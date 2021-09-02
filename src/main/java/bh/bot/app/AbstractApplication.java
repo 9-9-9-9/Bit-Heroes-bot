@@ -720,20 +720,26 @@ public abstract class AbstractApplication {
 	private HWND steamWindowHwnd = null;
 
 	protected void doCheckSteamWindow(AtomicBoolean masterSwicth) {
+		debug("doCheckSteamWindow");
 		try {
-			if (!Configuration.isSteamProfile)
+			if (!Configuration.isSteamProfile) {
+				debug("exit doCheckSteamWindow due to not a steam profile");
 				return;
+			}
 			int x = Configuration.gameScreenOffset.X.get();
 			int y = Configuration.gameScreenOffset.Y.get();
 			final IJna jna = new SteamWindowsJna();
 			ScreenResolutionProfile srp = Configuration.screenResolutionProfile;
 			debug("Active doCheckSteamWindow");
 			while (!masterSwicth.get()) {
+				debug("on loop of doCheckSteamWindow");
 				try {
 					if (steamWindowHwnd == null) {
 						steamWindowHwnd = jna.getGameWindow();
-						if (steamWindowHwnd == null)
+						if (steamWindowHwnd == null) {
+							debug("Steam client could not be found");
 							continue;
+						}
 					}
 					Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateSteamGameWindow(steamWindowHwnd, srp);
 					if (!result._1) {
@@ -742,9 +748,11 @@ public abstract class AbstractApplication {
 					}
 					if (result._4.X != x || result._4.Y != y) {
 						Configuration.gameScreenOffset.set(result._4);
-						x = Configuration.gameScreenOffset.X.get();
-						y = Configuration.gameScreenOffset.Y.get();
+						x = result._4.X;
+						y = result._4.Y;
 						info("Game's screen offset has been adjusted automatically to %d,%d", x, y);
+					} else {
+						debug("screen offset not change");
 					}
 				} catch (Exception e2) {
 					err(e2.getMessage());
