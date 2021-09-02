@@ -203,7 +203,8 @@ public class InteractionUtil {
 									if (!ImageUtil.areColorsSimilar(//
 											blackPixelDRgb, //
 											srcRgb, //
-											Configuration.Tolerant.color)) {
+											Configuration.Tolerant.color,
+											im.getOriginalPixelPart(px[0], px[1]))) {
 										allGood = false;
 										// debug(String.format("findAttendablePlace second match failed at %d,%d
 										// (%d,%d)", x + px[0], y + px[1], px[0], px[1]));

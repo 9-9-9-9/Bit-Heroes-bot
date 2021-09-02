@@ -29,9 +29,10 @@ public class BwMatrixMeta {
     private final byte tolerant;
     private final String imageNameCode;
     private final boolean notAvailable;
+    private final Short[][] originalTpPixelPart;
 
-    public BwMatrixMeta(BufferedImageInfo bii, Configuration.Offset coordinateOffset, int blackPixelRgb) {
-        if (bii.notAvailable) {
+    public BwMatrixMeta(BufferedImageInfo mxbi, Configuration.Offset coordinateOffset, int blackPixelRgb, BufferedImage tpBi) {
+        if (mxbi.notAvailable) {
             this.firstBlackPixelOffset = null;
             this.blackPixels = null;
             this.nonBlackPixels = null;
@@ -41,10 +42,11 @@ public class BwMatrixMeta {
             this.blackPixelDRgb = null;
             this.coordinateOffset = null;
             this.tolerant = -1;
-            this.imageNameCode = bii.code;
+            this.imageNameCode = mxbi.code;
             this.notAvailable = true;
+            this.originalTpPixelPart = null;
         } else {
-            String customTolerantKey = "tolerant.color.bw|" + bii.code;
+            String customTolerantKey = "tolerant.color.bw|" + mxbi.code;
             try {
                 byte tolerant = Configuration.Tolerant.colorBw;
                 String value = Configuration.read(customTolerantKey);
@@ -64,7 +66,7 @@ public class BwMatrixMeta {
 
             final int matrixPointColorPixelRgb = 0x000000;
             final int anyColorPixelRgb = 0xFFFFFF;
-            BufferedImage img = bii.bufferedImage;
+            BufferedImage img = mxbi.bufferedImage;
             try {
                 this.coordinateOffset = coordinateOffset;
                 this.blackPixelRgb = blackPixelRgb & 0xFFFFFF;
@@ -87,8 +89,26 @@ public class BwMatrixMeta {
                 freeMem(img);
             }
 
-            this.imageNameCode = bii.code;
+            this.imageNameCode = mxbi.code;
             this.notAvailable = false;
+            
+            if (tpBi == null) {
+            	this.originalTpPixelPart = null;
+            } else {
+                this.originalTpPixelPart = new Short[tpBi.getWidth()][tpBi.getHeight()];
+                for (int x = 0; x < tpBi.getWidth(); x++) {
+					for (int y = 0; y < tpBi.getHeight(); y++) {
+						Short value = null;
+						final int rgb = tpBi.getRGB(x, y) & 0xFFFFFF;
+						final int r = ImageUtil.getRed(rgb);
+						final int g = ImageUtil.getGreen(rgb);
+						final int b = ImageUtil.getBlue(rgb);
+						if (r == g && g == b)
+							value = (short)r;
+						this.originalTpPixelPart[x][y] = value;
+					}
+				}
+            }
         }
     }
 
@@ -107,7 +127,7 @@ public class BwMatrixMeta {
     }
 
     public boolean isMatchBlackRgb(int rgb) {
-        return ImageUtil.areColorsSimilar(blackPixelDRgb, rgb, Configuration.Tolerant.color);
+        return ImageUtil.areColorsSimilar(blackPixelDRgb, rgb, Configuration.Tolerant.color, getOriginalPixelPart(firstBlackPixelOffset[0], firstBlackPixelOffset[1]));
     }
 
     public int getWidth() {
@@ -153,6 +173,12 @@ public class BwMatrixMeta {
 
     public String getImageNameCode() {
         return imageNameCode;
+    }
+    
+    public Short getOriginalPixelPart(int x, int y) {
+    	if (this.originalTpPixelPart == null)
+    		return null;
+    	return this.originalTpPixelPart[x][y];
     }
 
     public static class Metas {
@@ -550,7 +576,7 @@ public class BwMatrixMeta {
         String normalized = path.trim().toLowerCase();
         if (normalized.endsWith("?")) {
             String prefix = path.substring(0, path.length() - 1);
-            BwMatrixMeta bwMatrixMeta = new BwMatrixMeta(ImageUtil.loadMxImageFromResource(prefix + "-mx.bmp"), imageOffset, blackPixelRgb);
+            BwMatrixMeta bwMatrixMeta = new BwMatrixMeta(ImageUtil.loadMxImageFromResource(prefix + "-mx.bmp"), imageOffset, blackPixelRgb, null);
             if (bwMatrixMeta.notAvailable == false)
                 return bwMatrixMeta;
             debug("MX type of %s is not available, going to load TP", path);
@@ -561,7 +587,7 @@ public class BwMatrixMeta {
             bwMatrixMeta = fromTpImage(prefix + "-tp.bmp", imageOffset, blackPixelRgb);
             return bwMatrixMeta;
         } else if (normalized.endsWith("-mx.bmp"))
-            return new BwMatrixMeta(ImageUtil.loadMxImageFromResource(path), imageOffset, blackPixelRgb);
+            return new BwMatrixMeta(ImageUtil.loadMxImageFromResource(path), imageOffset, blackPixelRgb, null);
         else if (normalized.endsWith("-tp.bmp"))
             return fromTpImage(path, imageOffset, blackPixelRgb);
         else
@@ -569,9 +595,9 @@ public class BwMatrixMeta {
     }
 
     public static BwMatrixMeta fromTpImage(String path, Configuration.Offset tpImageOffset, int blackPixelRgb) throws IOException {
-        BufferedImageInfo bii = ImageUtil.loadTpImageFromResource(path);
+        BufferedImageInfo tpbi = ImageUtil.loadTpImageFromResource(path);
         try {
-            Tuple2<BufferedImageInfo, Configuration.Offset> transformed = ImageUtil.transformFromTpToMxImage(bii, blackPixelRgb, tpImageOffset);
+            Tuple2<BufferedImageInfo, Configuration.Offset> transformed = ImageUtil.transformFromTpToMxImage(tpbi, blackPixelRgb, tpImageOffset);
             return new BwMatrixMeta(
         		transformed._1,
         		transformed._1.notAvailable
@@ -580,13 +606,14 @@ public class BwMatrixMeta {
         				tpImageOffset.X + transformed._2.X, 
         				tpImageOffset.Y + transformed._2.Y
         		), 
-        		blackPixelRgb
+        		blackPixelRgb,
+        		tpbi.bufferedImage
     		);
         } catch (Exception ex) {
         	err("Problem while loading tp image %s", path);
         	throw ex;
         } finally {
-            ImageUtil.freeMem(bii.bufferedImage);
+            ImageUtil.freeMem(tpbi.bufferedImage);
         }
     }
 }

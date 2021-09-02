@@ -49,6 +49,7 @@ public class Configuration {
         public static int position;
         public static int color;
         public static byte colorBw;
+        public static byte colorBwL2;
     }
 
     public static class OS {
@@ -257,8 +258,10 @@ public class Configuration {
         Tolerant.position = Math.max(5, readInt("tolerant.position"));
         Tolerant.color = Math.max(0, readInt("tolerant.color"));
         Tolerant.colorBw = (byte) Math.max(0, readInt("tolerant.color.bw"));
-        debug("Tolerant.color   = %d", Tolerant.color);
-        debug("Tolerant.colorBw = %d", Tolerant.colorBw);
+        Tolerant.colorBwL2 = (byte) Math.max(0, readInt("tolerant.color.bw.l2"));
+        debug("Tolerant.color     = %d", Tolerant.color);
+        debug("Tolerant.colorBw   = %d", Tolerant.colorBw);
+        debug("Tolerant.colorBwL2 = %d", Tolerant.colorBwL2);
 
         if (enableJna) {
             try {

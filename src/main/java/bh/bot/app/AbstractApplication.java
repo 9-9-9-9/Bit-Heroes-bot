@@ -1,9 +1,9 @@
 package bh.bot.app;
 
 import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.optionalDebug;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.optionalDebug;
 import static bh.bot.common.Log.printIfIncorrectImgPosition;
 import static bh.bot.common.Log.warn;
 import static bh.bot.common.utils.ImageUtil.freeMem;
@@ -57,7 +57,6 @@ import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.types.tuples.Tuple4;
 import bh.bot.common.utils.ImageUtil;
-import bh.bot.common.utils.ImageUtil.DynamicRgb;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.InteractionUtil.Screen.ScreenCapturedResult;
 
@@ -223,7 +222,8 @@ public abstract class AbstractApplication {
 				if (!ImageUtil.areColorsSimilar(//
 						blackPixelDRgb, //
 						sc.getRGB(px[0], px[1]) & 0xFFFFFF, //
-						Configuration.Tolerant.color)) {
+						Configuration.Tolerant.color,
+						im.getOriginalPixelPart(px[0], px[1]))) {
 					return null;
 				}
 			}
@@ -250,7 +250,8 @@ public abstract class AbstractApplication {
 		if (im.throwIfNotAvailable())
 			return null;
 
-		final boolean debug = false; //= im == BwMatrixMeta.Metas.Raid.Dialogs.notEnoughShards;
+		// final boolean debug = im == BwMatrixMeta.Metas.Raid.Buttons.accept;
+		final boolean debug = false;
 		
 		ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
 		BufferedImage sc = screenCapturedResult.image;
@@ -268,12 +269,14 @@ public abstract class AbstractApplication {
 
 					for (int[] px : im.getBlackPixels()) {
 						int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
+						Short originalPixelPart = im.getOriginalPixelPart(px[0], px[1]);
 						if (!ImageUtil.areColorsSimilar(//
 								blackPixelDRgb, //
 								srcRgb, //
-								Configuration.Tolerant.color)) {
+								Configuration.Tolerant.color,
+								originalPixelPart)) {
 							allGood = false;
-							optionalDebug(debug, "scanToFindImage first match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
+							optionalDebug(debug, "scanToFindImage first match failed at %d,%d (%d,%d) and original = %s", x + px[0], y + px[1], px[0], px[1], originalPixelPart == null ? "null" : String.valueOf(originalPixelPart.byteValue()));
 							break;
 						}
 					}
@@ -332,6 +335,8 @@ public abstract class AbstractApplication {
 	protected Point detectLabel(BwMatrixMeta im, int... mainColors) {
 		if (im.throwIfNotAvailable())
 			return null;
+		
+		final boolean debug = false;
 
 		ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
 		BufferedImage sc = screenCapturedResult.image;
@@ -351,11 +356,10 @@ public abstract class AbstractApplication {
 							if (!ImageUtil.areColorsSimilar(//
 									cDRgb, //
 									srcRgb, //
-									Configuration.Tolerant.color)) {
+									Configuration.Tolerant.color,
+									im.getOriginalPixelPart(px[0], px[1]))) {
 								allGood = false;
-								// debug(String.format("detectLabel second match failed at %d,%d (%d,%d), %s vs
-								// %s", x + px[0], y + px[1], px[0], px[1], String.format("%06X", c),
-								// String.format("%06X", srcRgb)));
+								optionalDebug(debug, "detectLabel second match failed at %d,%d (%d,%d), %s vs %s", x + px[0], y + px[1], px[0], px[1], String.format("%06X", c), String.format("%06X", srcRgb));
 								break;
 							}
 						}
@@ -371,8 +375,7 @@ public abstract class AbstractApplication {
 									srcRgb, //
 									Configuration.Tolerant.color)) {
 								allGood = false;
-								// debug(String.format("detectLabel third match failed at %d,%d (%d,%d)", x +
-								// px[0], y + px[1], px[0], px[1]));
+								optionalDebug(debug, "detectLabel third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
 								break;
 							}
 						}
@@ -380,7 +383,7 @@ public abstract class AbstractApplication {
 						if (!allGood)
 							continue;
 
-						debug("detectLabel captured at %3d,%3d with size %3dx%3d, match at %3d,%3d",
+						optionalDebug(debug, "detectLabel captured at %3d,%3d with size %3dx%3d, match at %3d,%3d",
 								screenCapturedResult.x, screenCapturedResult.y, screenCapturedResult.w,
 								screenCapturedResult.h, x, y);
 						Point result = new Point(screenCapturedResult.x + x, screenCapturedResult.y + y);
@@ -405,6 +408,8 @@ public abstract class AbstractApplication {
 	protected Tuple2<Point[], Byte> detectRadioButtons(Rectangle scanRect) {
 		final BwMatrixMeta im = BwMatrixMeta.Metas.Globally.Buttons.radioButton;
 		im.throwIfNotAvailable();
+		
+		final boolean debug = false;
 
 		int positionTolerant = Math.min(10, Configuration.Tolerant.position);
 		ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(
@@ -434,11 +439,10 @@ public abstract class AbstractApplication {
 						if (!ImageUtil.areColorsSimilar(//
 								blackPixelDRgb, //
 								srcRgb, //
-								Configuration.Tolerant.color)) {
+								Configuration.Tolerant.color,
+								im.getOriginalPixelPart(px[0], px[1]))) {
 							allGood = false;
-							// debug(String.format("detectRadioButtons second match failed at %d,%d (%d,%d),
-							// %s vs %s", x + px[0], y + px[1], px[0], px[1], String.format("%06X",
-							// blackPixelRgb), String.format("%06X", srcRgb)));
+							optionalDebug(debug, "detectRadioButtons second match failed at %d,%d (%d,%d), %s vs %s", x + px[0], y + px[1], px[0], px[1], String.format("%06X", blackPixelRgb), String.format("%06X", srcRgb));
 							break;
 						}
 					}
@@ -446,7 +450,7 @@ public abstract class AbstractApplication {
 					if (!allGood)
 						continue;
 
-					// debug("detectRadioButtons second match passed");
+					optionalDebug(debug, "detectRadioButtons second match passed");
 					for (int[] px : im.getNonBlackPixels()) {
 						int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
 						if (ImageUtil.areColorsSimilar(//
@@ -454,8 +458,7 @@ public abstract class AbstractApplication {
 								srcRgb, //
 								Configuration.Tolerant.color)) {
 							allGood = false;
-							// debug(String.format("detectRadioButtons third match failed at %d,%d (%d,%d)",
-							// x + px[0], y + px[1], px[0], px[1]));
+							optionalDebug(debug, "detectRadioButtons third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
 							break;
 						}
 					}
@@ -487,9 +490,7 @@ public abstract class AbstractApplication {
 						break;
 					}
 
-					// debug("detectRadioButtons captured at %3d,%3d with size %3dx%3d, match at
-					// %3d,%3d", screenCapturedResult.x, screenCapturedResult.y,
-					// screenCapturedResult.w, screenCapturedResult.h, x, y);
+					optionalDebug(debug, "detectRadioButtons captured at %3d,%3d with size %3dx%3d, match at %3d,%3d", screenCapturedResult.x, screenCapturedResult.y, screenCapturedResult.w, screenCapturedResult.h, x, y);
 					// im.setLastMatchPoint(startingCoord.x, startingCoord.y);
 					startingCoords.add(new Point(x, y));
 				}

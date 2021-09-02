@@ -63,7 +63,7 @@ public class ImageUtil {
         for (int y = 0; y < bi.getHeight(); y++) {
             for (int x = 0; x < bi.getWidth(); x++) {
                 int posRgb = bi.getRGB(x, y) & 0xFFFFFF;
-                if (!ImageUtil.areColorsSimilar(dRgb, posRgb, Configuration.Tolerant.color)) {
+                if (!ImageUtil.areColorsSimilar(dRgb, posRgb, Configuration.Tolerant.color, null)) {
                     continue;
                 }
                 pos.add(new int[]{x, y});
@@ -139,7 +139,7 @@ public class ImageUtil {
                 && isMatch(getBlue(rgb1), getBlue(rgb2), tolerance);
     }
 
-    public static boolean areColorsSimilar(DynamicRgb dRgb1, int rgb2, int tolerance) {
+    public static boolean areColorsSimilar(DynamicRgb dRgb1, int rgb2, int tolerance, Short originalPixelPart) {
         if (isMatch(getRed(rgb2), dRgb1.red, tolerance)
                 && isMatch(getGreen(rgb2), dRgb1.green, tolerance)
                 && isMatch(getBlue(rgb2), dRgb1.blue, tolerance))
@@ -149,7 +149,11 @@ public class ImageUtil {
         DynamicRgb dRgb2 = new DynamicRgb(rgb2, dRgb1.acceptedTolerant);
         if (!dRgb2.isSame)
             return false;
-        return isMatch(dRgb2.red, dRgb1.red, dRgb1.acceptedTolerant);
+        if (isMatch(dRgb2.red, dRgb1.red, dRgb1.acceptedTolerant))
+        	return true;
+        if (originalPixelPart == null)
+        	return false;
+        return isMatch(originalPixelPart.shortValue(), getRed(rgb2), Configuration.Tolerant.colorBwL2);
     }
 
     private static boolean isMatch(int c1, int c2, int tolerant) {
