@@ -731,7 +731,7 @@ public abstract class AbstractApplication {
 			}
 			int x = Configuration.gameScreenOffset.X.get();
 			int y = Configuration.gameScreenOffset.Y.get();
-			final IJna jna = Configuration.isSteamProfile ? new SteamWindowsJna() : new MiniClientWindowsJna();
+			IJna jna = Configuration.isSteamProfile ? new SteamWindowsJna() : new MiniClientWindowsJna();
 			ScreenResolutionProfile srp = Configuration.screenResolutionProfile;
 			debug("Active doCheckGameScreenOffset");
 			while (!masterSwicth.get()) {
