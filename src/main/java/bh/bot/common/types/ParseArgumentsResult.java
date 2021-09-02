@@ -17,7 +17,9 @@ public class ParseArgumentsResult {
     public boolean hasFlagAll;
     public boolean enableJna;
     public boolean eInvasion;
+    public boolean eGvg;
     public boolean eTrials;
+    public boolean eGauntlet;
     public boolean ePvp;
     public boolean eWorldBoss;
     public boolean eRaid;
