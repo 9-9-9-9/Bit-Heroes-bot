@@ -1,4 +1,4 @@
-package bh.bot.common.types.jna;
+package bh.bot.common.jna;
 
 public abstract class AbstractJna implements IJna {
 }
