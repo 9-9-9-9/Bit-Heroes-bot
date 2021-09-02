@@ -28,19 +28,23 @@ public class ScreenCaptureApp extends AbstractApplication {
 		int w = 800;
 		int h = Configuration.isSteamProfile ? 480 : 520;
 
-		IJna jna = Configuration.isSteamProfile ? new SteamWindowsJna() : new MiniClientWindowsJna();
-		ScreenResolutionProfile srp = Configuration.screenResolutionProfile;
-		Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateGameScreenOffset(null, srp);
-		if (result._1) {
-			if (result._4.X != x || result._4.Y != y) {
-				x = result._4.X;
-				y = result._4.Y;
-				info("Game's screen offset has been adjusted automatically to %d,%d", x, y);
+		try {
+			IJna jna = getJnaInstance();
+			ScreenResolutionProfile srp = Configuration.screenResolutionProfile;
+			Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateGameScreenOffset(null, srp);
+			if (result._1) {
+				if (result._4.X != x || result._4.Y != y) {
+					x = result._4.X;
+					y = result._4.Y;
+					info("Game's screen offset has been adjusted automatically to %d,%d", x, y);
+				} else {
+					debug("screen offset not change");
+				}
 			} else {
-				debug("screen offset not change");
+				err("Failure detecting screen offset: %s", result._2);
 			}
-		} else {
-			err("Failure detecting screen offset: %s", result._2);
+		} catch (Exception e) {
+			err("Err detecting screen offset: %s", e.getMessage());
 		}
 
 		BufferedImage sc = InteractionUtil.Screen.captureScreen(x, y, w, h);

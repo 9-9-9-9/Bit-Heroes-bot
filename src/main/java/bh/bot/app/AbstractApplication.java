@@ -43,7 +43,10 @@ import bh.bot.common.Configuration;
 import bh.bot.common.Configuration.Offset;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.jna.IJna;
+import bh.bot.common.jna.MiniClientLinuxJna;
+import bh.bot.common.jna.MiniClientMacOsJna;
 import bh.bot.common.jna.MiniClientWindowsJna;
 import bh.bot.common.jna.SteamWindowsJna;
 import bh.bot.common.types.ParseArgumentsResult;
@@ -731,7 +734,7 @@ public abstract class AbstractApplication {
 			}
 			int x = Configuration.gameScreenOffset.X.get();
 			int y = Configuration.gameScreenOffset.Y.get();
-			IJna jna = Configuration.isSteamProfile ? new SteamWindowsJna() : new MiniClientWindowsJna();
+			IJna jna = getJnaInstance();
 			ScreenResolutionProfile srp = Configuration.screenResolutionProfile;
 			debug("Active doCheckGameScreenOffset");
 			while (!masterSwicth.get()) {
@@ -767,5 +770,17 @@ public abstract class AbstractApplication {
 			e.printStackTrace();
 			err("Error occured during doCheckGameScreenOffset");
 		}
+	}
+	
+	protected IJna getJnaInstance() {
+		if (Configuration.isSteamProfile)
+			return new SteamWindowsJna();
+		if (Configuration.OS.isWin)
+			return new MiniClientWindowsJna();
+		if (Configuration.OS.isLinux)
+			return new MiniClientLinuxJna();
+		if (Configuration.OS.isWin)
+			return new MiniClientMacOsJna();
+		throw new NotSupportedException(Configuration.OS.name);
 	}
 }
