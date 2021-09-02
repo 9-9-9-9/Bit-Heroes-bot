@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.types.AttendablePlace.MenuItem;
 import static bh.bot.common.utils.InteractionUtil.Mouse.*;
+import static bh.bot.common.utils.InteractionUtil.Keyboard.*;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 @AppCode(code = "afk")
@@ -209,17 +210,16 @@ public class AfkApp extends AbstractApplication {
                 if (Configuration.isSteamProfile) {
                 	if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouSureWantToExit)) {
                         info("areYouSureWantToExit");
-                        InteractionUtil.Keyboard.sendEscape();
+                        sendEscape();
                         continue ML;
                     }
                 } else {
                 	if (--checkAreYouStillThereAfter <= 0) {
-
                         if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouStillThere)) {
                             info("Knock knock, are you still there?");
-                            InteractionUtil.Keyboard.sendEnter();
+                            sendEnter();
                             sleep(1_000);
-                            InteractionUtil.Keyboard.sendEscape();
+                            sendEscape();
                             checkAreYouStillThereAfter = 2;
                         } else {
                             checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
@@ -242,7 +242,7 @@ public class AfkApp extends AbstractApplication {
 
                 if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmStartNotFullTeam)) {
                     debug("confirmStartNotFullTeam");
-                    InteractionUtil.Keyboard.sendSpaceKey();
+                    sendSpaceKey();
                     continuousNotFound = 0;
                     moveCursor(coordinateHideMouse);
                     continue ML;
@@ -250,7 +250,7 @@ public class AfkApp extends AbstractApplication {
 
                 if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmQuitBattle)) {
                     debug("confirmQuitBattle");
-                    InteractionUtil.Keyboard.sendEnter();
+                    sendEnter();
                     sleep(1_000);
                     spamEscape(1);
                     continuousNotFound = 0;
@@ -262,7 +262,7 @@ public class AfkApp extends AbstractApplication {
                 if (coordMap != null) {
                     BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi.setLastMatchPoint(coordMap.x, coordMap.y);
                     debug("mapButtonOnFamiliarUi");
-                    InteractionUtil.Keyboard.sendEscape();
+                    sendEscape();
                     continuousNotFound = 0;
                     moveCursor(coordinateHideMouse);
                     continue ML;

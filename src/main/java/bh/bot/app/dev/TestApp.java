@@ -24,13 +24,25 @@ public class TestApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
     	
+    }
+    
+    private void detectRaidRadioButtons() {
         Tuple2<Point[], Byte> result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
         Point[] points = result._1;
         byte selectedIndex = result._2;
         info("Found %d, selected %d", points.length, selectedIndex + 1);
         clickRadioButton(3, points, "Raid");
-
-        /*
+    }
+    
+    private void detectWorldBossRadioButtons() {
+        Tuple2<Point[], Byte> result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfWorldBoss());
+        Point[] points = result._1;
+        byte selectedIndex = result._2;
+        info("Found %d, selected %d", points.length, selectedIndex + 1);
+        clickRadioButton(3, points, "World Boss");
+    }
+    
+    private void findAttendablePlaces() {
     	final List<AttendablePlace> allAttendablePlaces = Arrays.asList(
                 //AttendablePlaces.invasion,
                 //AttendablePlaces.trials,
@@ -49,7 +61,6 @@ public class TestApp extends AbstractApplication {
             	info("Not found %s", ap.name);
             }
     	});
-    	*/
     }
 
     @Override
