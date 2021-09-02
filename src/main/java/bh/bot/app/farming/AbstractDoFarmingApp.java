@@ -1,5 +1,19 @@
 package bh.bot.app.farming;
 
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.info;
+import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
+import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
+import static bh.bot.common.utils.ThreadUtil.sleep;
+
+import java.awt.Point;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+
 import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Telegram;
@@ -8,20 +22,6 @@ import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.ThreadUtil;
-
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
-
-import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.info;
-import static bh.bot.common.utils.InteractionUtil.Mouse.*;
-import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public abstract class AbstractDoFarmingApp extends AbstractApplication {
     protected abstract String getAppShortName();

@@ -10,7 +10,6 @@ import bh.bot.app.farming.GauntletApp;
 import bh.bot.app.farming.GvgApp;
 import bh.bot.app.farming.PvpApp;
 import bh.bot.app.farming.WorldBossApp;
-import bh.bot.common.Configuration;
 import bh.bot.common.types.Platform;
 
 public class FlagSteamResolution800x480 extends FlagResolution {

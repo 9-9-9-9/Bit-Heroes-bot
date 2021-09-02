@@ -142,20 +142,20 @@ public class InteractionUtil {
 			}
 		}
 
-		public static class Game<T extends AbstractApplication> {
-			private final T instance;
+		public static class Game {
+			private final AbstractApplication instance;
 
 			private final int numberOfAttendablePlacesPerColumn = 5;
 
-			private Game(T instance) {
+			private Game(AbstractApplication instance) {
 				this.instance = instance;
 			}
 
-			public static <T extends AbstractApplication> Game of(T instance) {
+			public static Game of(AbstractApplication instance) {
 				return new Game(instance);
 			}
 
-			public <T extends AbstractApplication> Point findAttendablePlace(AttendablePlace event) {
+			public Point findAttendablePlace(AttendablePlace event) {
 				int minX, maxX, stepY, firstY;
 				if (event.left) {
 					Tuple4<Integer, Integer, Integer, Integer> backwardScanLeftAttendablePlaces = Configuration.screenResolutionProfile

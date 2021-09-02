@@ -1,18 +1,17 @@
 package bh.bot.common.utils;
 
-import bh.bot.common.Configuration;
-import bh.bot.common.types.images.BufferedImageInfo;
-import bh.bot.common.types.tuples.Tuple2;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static bh.bot.common.Log.debug;
+import javax.imageio.ImageIO;
+
+import bh.bot.common.Configuration;
+import bh.bot.common.types.images.BufferedImageInfo;
+import bh.bot.common.types.tuples.Tuple2;
 
 public class ImageUtil {
     public static BufferedImageInfo loadMxImageFromResource(String path) throws IOException {

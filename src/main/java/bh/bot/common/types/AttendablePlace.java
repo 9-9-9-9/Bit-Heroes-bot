@@ -1,13 +1,12 @@
 package bh.bot.common.types;
 
-import bh.bot.common.Configuration;
-import bh.bot.common.types.images.BwMatrixMeta;
-import bh.bot.common.utils.ImageUtil;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import bh.bot.common.Configuration;
+import bh.bot.common.types.images.BwMatrixMeta;
 
 public class AttendablePlace {
     public final String name;

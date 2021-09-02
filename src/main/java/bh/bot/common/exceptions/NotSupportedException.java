@@ -1,7 +1,12 @@
 package bh.bot.common.exceptions;
 
 public class NotSupportedException extends RuntimeException {
-    public NotSupportedException(String msg) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8411478604990797549L;
+
+	public NotSupportedException(String msg) {
         super(msg);
     }
 

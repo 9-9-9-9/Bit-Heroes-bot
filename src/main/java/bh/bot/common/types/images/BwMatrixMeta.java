@@ -1,19 +1,20 @@
 package bh.bot.common.types.images;
 
-import bh.bot.common.Configuration;
-import bh.bot.common.exceptions.InvalidDataException;
-import bh.bot.common.exceptions.NotSupportedException;
-import bh.bot.common.types.ScreenResolutionProfile;
-import bh.bot.common.types.tuples.Tuple2;
-import bh.bot.common.utils.ImageUtil;
-import bh.bot.common.utils.StringUtil;
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.dev;
+import static bh.bot.common.Log.err;
+import static bh.bot.common.utils.ImageUtil.freeMem;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static bh.bot.common.Log.*;
-import static bh.bot.common.utils.ImageUtil.freeMem;
+import bh.bot.common.Configuration;
+import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.exceptions.NotSupportedException;
+import bh.bot.common.types.tuples.Tuple2;
+import bh.bot.common.utils.ImageUtil;
+import bh.bot.common.utils.StringUtil;
 
 public class BwMatrixMeta {
     private final int[] firstBlackPixelOffset;
@@ -543,39 +544,6 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughShards(), //
                 0xFFFFFF
         );
-
-        // test
-        testImgImportedFromTp();
-    }
-
-    private static void testImgImportedFromTp() throws IOException {
-        if (Configuration.screenResolutionProfile instanceof ScreenResolutionProfile.WebProfile) {
-            BwMatrixMeta g = BwMatrixMeta.from(//
-                    "buttons/globally.auto-green-tp.bmp", //
-                    new Configuration.Offset(Configuration.screenResolutionProfile.getOffsetButtonAuto().X - 2, Configuration.screenResolutionProfile.getOffsetButtonAuto().Y - 2),
-                    0xFFFFFF
-            );
-            BwMatrixMeta r = BwMatrixMeta.from(//
-                    "buttons/globally.auto-red-tp.bmp", //
-                    new Configuration.Offset(Configuration.screenResolutionProfile.getOffsetButtonAuto().X - 2, Configuration.screenResolutionProfile.getOffsetButtonAuto().Y - 2),
-                    0xFFFFFF
-            );
-
-            /*
-            assert g.notAvailable == false;
-            assert r.notAvailable == false;
-            assert Metas.Globally.Buttons.autoG.notAvailable == false;
-            assert Metas.Globally.Buttons.autoR.notAvailable == false;
-            assert Metas.Globally.Buttons.autoG.coordinateOffset.X == g.coordinateOffset.X;
-            assert Metas.Globally.Buttons.autoG.coordinateOffset.Y == g.coordinateOffset.Y;
-            assert Metas.Globally.Buttons.autoR.coordinateOffset.X == r.coordinateOffset.X;
-            assert Metas.Globally.Buttons.autoR.coordinateOffset.Y == r.coordinateOffset.Y;
-            assert Metas.Globally.Buttons.autoG.w == g.w;
-            assert Metas.Globally.Buttons.autoG.h == g.h;
-            assert Metas.Globally.Buttons.autoR.w == r.w;
-            assert Metas.Globally.Buttons.autoR.h == r.h;
-             */
-        }
     }
 
     public static BwMatrixMeta from(String path, Configuration.Offset imageOffset, int blackPixelRgb) throws IOException {

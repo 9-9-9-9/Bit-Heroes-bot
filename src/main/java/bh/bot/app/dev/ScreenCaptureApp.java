@@ -1,14 +1,13 @@
 package bh.bot.app.dev;
 
-import bh.bot.app.AbstractApplication;
-import bh.bot.common.Configuration;
-import bh.bot.common.types.ScreenResolutionProfile;
-import bh.bot.common.types.annotations.AppCode;
-import bh.bot.common.utils.InteractionUtil;
+import static bh.bot.common.utils.ImageUtil.freeMem;
 
 import java.awt.image.BufferedImage;
 
-import static bh.bot.common.utils.ImageUtil.freeMem;
+import bh.bot.app.AbstractApplication;
+import bh.bot.common.Configuration;
+import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.utils.InteractionUtil;
 
 @AppCode(code = "sc")
 public class ScreenCaptureApp extends AbstractApplication {

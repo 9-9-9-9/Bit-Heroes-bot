@@ -33,23 +33,52 @@ import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
-import bh.bot.common.types.flags.*;
+import bh.bot.common.types.flags.FlagAll;
+import bh.bot.common.types.flags.FlagDoGauntlet;
+import bh.bot.common.types.flags.FlagDoGvG;
+import bh.bot.common.types.flags.FlagDoInvasion;
+import bh.bot.common.types.flags.FlagDoPvp;
+import bh.bot.common.types.flags.FlagDoRaid;
+import bh.bot.common.types.flags.FlagDoTrials;
+import bh.bot.common.types.flags.FlagDoWorldBoss;
+import bh.bot.common.types.flags.FlagExitAfterAmountOfSeconds;
+import bh.bot.common.types.flags.FlagMuteNoti;
+import bh.bot.common.types.flags.FlagPattern;
+import bh.bot.common.types.flags.FlagPrintHelpMessage;
+import bh.bot.common.types.flags.FlagProfileNo;
+import bh.bot.common.types.flags.FlagSaveDebugImages;
+import bh.bot.common.types.flags.FlagShowDebugMessages;
+import bh.bot.common.types.flags.FlagSteamResolution800x480;
+import bh.bot.common.types.flags.FlagWebResolution800x520;
+import bh.bot.common.types.flags.Flags;
 import bh.bot.common.utils.InteractionUtil;
 
 public class Main {
 	public static void main(String[] args) {
 		try {
 
-			Configuration.registerApplicationInstances(SettingApp.class,
+			Configuration.registerApplicationClasses( //
+					SettingApp.class, //
 //
-					ReRunApp.class, FishingApp.class, AfkApp.class, WorldBossApp.class, PvpApp.class, InvasionApp.class,
-					TrialsApp.class, GvgApp.class, GauntletApp.class, GenMiniClient.class,
+					ReRunApp.class, //
+					FishingApp.class, //
+					AfkApp.class, //
+					WorldBossApp.class, //
+					PvpApp.class, //
+					InvasionApp.class, //
+					TrialsApp.class, //
+					GvgApp.class, //
+					GauntletApp.class, //
+					GenMiniClient.class,
 //
 					// KeepPixApp.class,
 					// SamePixApp.class,
-					ExtractMatrixApp.class, ImportTpImageApp.class,
+					ExtractMatrixApp.class, //
+					ImportTpImageApp.class, //
 //
-					ScreenCaptureApp.class, TestApp.class);
+					ScreenCaptureApp.class, //
+					TestApp.class//
+			);
 
 			ParseArgumentsResult parseArgumentsResult = parseArguments(args);
 
