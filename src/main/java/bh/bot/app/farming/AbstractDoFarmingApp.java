@@ -69,7 +69,8 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 () -> loop(cnt, masterSwitch),
                 () -> detectDisconnected(masterSwitch),
                 () -> autoReactiveAuto(masterSwitch),
-                () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch)
+                () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch),
+                () -> doCheckSteamWindow(masterSwitch)
         );
         Telegram.sendMessage("Stopped", false);
     }

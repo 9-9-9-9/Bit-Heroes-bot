@@ -1,28 +1,25 @@
 package bh.bot.app;
 
-import bh.bot.Main;
-import bh.bot.common.Configuration;
-import bh.bot.common.Configuration.Offset;
-import bh.bot.common.Telegram;
-import bh.bot.common.exceptions.InvalidDataException;
-import bh.bot.common.types.ParseArgumentsResult;
-import bh.bot.common.types.ScreenResolutionProfile;
-import bh.bot.common.types.annotations.AppCode;
-import bh.bot.common.types.flags.*;
-import bh.bot.common.types.images.BwMatrixMeta;
-import bh.bot.common.types.jna.IJna;
-import bh.bot.common.types.jna.SteamWindowsJna;
-import bh.bot.common.types.tuples.Tuple2;
-import bh.bot.common.types.tuples.Tuple3;
-import bh.bot.common.types.tuples.Tuple4;
-import bh.bot.common.utils.ImageUtil;
-import bh.bot.common.utils.InteractionUtil;
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.err;
+import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.printIfIncorrectImgPosition;
+import static bh.bot.common.Log.warn;
+import static bh.bot.common.utils.ImageUtil.freeMem;
+import static bh.bot.common.utils.InteractionUtil.Mouse.clickRadioButton;
+import static bh.bot.common.utils.InteractionUtil.Mouse.hideCursor;
+import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
+import static bh.bot.common.utils.InteractionUtil.Mouse.mouseMoveAndClickAndHide;
+import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
+import static bh.bot.common.utils.InteractionUtil.Screen.captureElementInEstimatedArea;
+import static bh.bot.common.utils.InteractionUtil.Screen.captureScreen;
+import static bh.bot.common.utils.InteractionUtil.Screen.getPixelColor;
+import static bh.bot.common.utils.StringUtil.isBlank;
+import static bh.bot.common.utils.ThreadUtil.sleep;
 
-import javax.imageio.ImageIO;
-
-import com.sun.jna.platform.win32.WinDef.HWND;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,12 +33,30 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static bh.bot.common.Log.*;
-import static bh.bot.common.utils.ImageUtil.freeMem;
-import static bh.bot.common.utils.InteractionUtil.Mouse.*;
-import static bh.bot.common.utils.InteractionUtil.Screen.*;
-import static bh.bot.common.utils.StringUtil.isBlank;
-import static bh.bot.common.utils.ThreadUtil.sleep;
+import javax.imageio.ImageIO;
+
+import com.sun.jna.platform.win32.WinDef.HWND;
+
+import bh.bot.Main;
+import bh.bot.common.Configuration;
+import bh.bot.common.Configuration.Offset;
+import bh.bot.common.Telegram;
+import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.types.ParseArgumentsResult;
+import bh.bot.common.types.ScreenResolutionProfile;
+import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.flags.FlagPattern;
+import bh.bot.common.types.flags.FlagResolution;
+import bh.bot.common.types.flags.Flags;
+import bh.bot.common.types.images.BwMatrixMeta;
+import bh.bot.common.types.jna.IJna;
+import bh.bot.common.types.jna.SteamWindowsJna;
+import bh.bot.common.types.tuples.Tuple2;
+import bh.bot.common.types.tuples.Tuple3;
+import bh.bot.common.types.tuples.Tuple4;
+import bh.bot.common.utils.ImageUtil;
+import bh.bot.common.utils.InteractionUtil;
+import bh.bot.common.utils.InteractionUtil.Screen.ScreenCapturedResult;
 
 public abstract class AbstractApplication {
 	protected ParseArgumentsResult argumentInfo;
@@ -708,8 +723,8 @@ public abstract class AbstractApplication {
 		try {
 			if (!Configuration.isSteamProfile)
 				return;
-			int x = Configuration.gameScreenOffset.X;
-			int y = Configuration.gameScreenOffset.Y;
+			int x = Configuration.gameScreenOffset.X.get();
+			int y = Configuration.gameScreenOffset.Y.get();
 			final IJna jna = new SteamWindowsJna();
 			ScreenResolutionProfile srp = Configuration.screenResolutionProfile;
 			debug("Active doCheckSteamWindow");
@@ -726,9 +741,9 @@ public abstract class AbstractApplication {
 						continue;
 					}
 					if (result._4.X != x || result._4.Y != y) {
-						Configuration.gameScreenOffset = result._4;
-						x = Configuration.gameScreenOffset.X;
-						y = Configuration.gameScreenOffset.Y;
+						Configuration.gameScreenOffset.set(result._4);
+						x = Configuration.gameScreenOffset.X.get();
+						y = Configuration.gameScreenOffset.Y.get();
 						info("Game's screen offset has been adjusted automatically to %d,%d", x, y);
 					}
 				} catch (Exception e2) {

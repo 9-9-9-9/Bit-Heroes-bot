@@ -52,181 +52,167 @@ import bh.bot.common.types.flags.Flags;
 import bh.bot.common.utils.InteractionUtil;
 
 public class Main {
-    public static void main(String[] args) {
-        try {
+	public static void main(String[] args) {
+		try {
 
-            Configuration.registerApplicationInstances(
-                    SettingApp.class,
+			Configuration.registerApplicationInstances(SettingApp.class,
 //
-                    ReRunApp.class,
-                    FishingApp.class,
-                    AfkApp.class,
-                    WorldBossApp.class,
-                    PvpApp.class,
-                    InvasionApp.class,
-                    TrialsApp.class,
-                    GvgApp.class,
-                    GauntletApp.class,
-                    GenMiniClient.class,
+					ReRunApp.class, FishingApp.class, AfkApp.class, WorldBossApp.class, PvpApp.class, InvasionApp.class,
+					TrialsApp.class, GvgApp.class, GauntletApp.class, GenMiniClient.class,
 //
-                    // KeepPixApp.class,
-                    // SamePixApp.class,
-                    ExtractMatrixApp.class,
-                    ImportTpImageApp.class,
+					// KeepPixApp.class,
+					// SamePixApp.class,
+					ExtractMatrixApp.class, ImportTpImageApp.class,
 //
-                    ScreenCaptureApp.class,
-                    TestApp.class
-            );
+					ScreenCaptureApp.class, TestApp.class);
 
-            ParseArgumentsResult parseArgumentsResult = parseArguments(args);
+			ParseArgumentsResult parseArgumentsResult = parseArguments(args);
 
-            if (parseArgumentsResult.enableDebugMessages)
-                Log.enableDebug();
-            if (parseArgumentsResult.disableTelegramNoti)
-                Telegram.disable();
+			if (parseArgumentsResult.enableDebugMessages)
+				Log.enableDebug();
+			if (parseArgumentsResult.disableTelegramNoti)
+				Telegram.disable();
 
-            Configuration.loadSystemConfig(parseArgumentsResult);
-            InteractionUtil.init();
+			Configuration.loadSystemConfig(parseArgumentsResult);
+			InteractionUtil.init();
 
-            Constructor<?> cons = parseArgumentsResult.applicationClass.getConstructors()[0];
-            AbstractApplication instance = (AbstractApplication) cons.newInstance();
+			Constructor<?> cons = parseArgumentsResult.applicationClass.getConstructors()[0];
+			AbstractApplication instance = (AbstractApplication) cons.newInstance();
 
-            if (parseArgumentsResult.displayHelp) {
-                System.out.println(instance.getHelp());
-                info("With flag '--help' provided, application will exit immediately");
-                return;
-            }
+			if (parseArgumentsResult.displayHelp) {
+				System.out.println(instance.getHelp());
+				info("With flag '--help' provided, application will exit immediately");
+				return;
+			}
 
-            for (FlagPattern flagPattern : parseArgumentsResult.usingFlags)
-                if (!flagPattern.isSupportedByApp(instance)) {
-                    System.out.println(instance.getHelp());
-                    throw new InvalidFlagException(String.format("Flag '--%s' does not supported by '%s'", flagPattern.getName(), instance.getAppCode()));
-                }
+			for (FlagPattern flagPattern : parseArgumentsResult.usingFlags)
+				if (!flagPattern.isSupportedByApp(instance)) {
+					System.out.println(instance.getHelp());
+					throw new InvalidFlagException(String.format("Flag '--%s' does not supported by '%s'",
+							flagPattern.getName(), instance.getAppCode()));
+				}
 
-            instance.run(parseArgumentsResult);
-        } catch (InvalidFlagException ex) {
-            err(ex.getMessage());
-            System.exit(EXIT_CODE_INVALID_FLAG);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            err(ex.getMessage());
-            System.exit(EXIT_CODE_UNHANDLED_EXCEPTION);
-        }
-    }
+			instance.run(parseArgumentsResult);
+		} catch (InvalidFlagException ex) {
+			err(ex.getMessage());
+			System.exit(EXIT_CODE_INVALID_FLAG);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			err(ex.getMessage());
+			System.exit(EXIT_CODE_UNHANDLED_EXCEPTION);
+		}
+	}
 
-    private static ParseArgumentsResult parseArguments(String[] args) throws InvalidFlagException, IllegalAccessException, InstantiationException, InvocationTargetException {
-        String appCode = args[0];
+	private static ParseArgumentsResult parseArguments(String[] args)
+			throws InvalidFlagException, IllegalAccessException, InstantiationException, InvocationTargetException {
+		String appCode = args[0];
 
-        List<FlagPattern> flagPatterns = Arrays.asList(Flags.allFlags);
+		List<FlagPattern> flagPatterns = Arrays.asList(Flags.allFlags);
 
-        List<String> rawFlags = Arrays
-                .stream(args)
-                .map(x -> x.trim())
-                .filter(x -> x.startsWith("--"))
-                .collect(Collectors.toList());
+		List<String> rawFlags = Arrays.stream(args).map(x -> x.trim()).filter(x -> x.startsWith("--"))
+				.collect(Collectors.toList());
 
-        ArrayList<FlagPattern> usingFlagPatterns = new ArrayList<>();
+		ArrayList<FlagPattern> usingFlagPatterns = new ArrayList<>();
 
-        // Check flags
-        for (String rawFlag : rawFlags) {
-            boolean isAFlagPattern = false;
-            for (FlagPattern flagPattern : flagPatterns) {
-                if (flagPattern.isThisFlag(rawFlag)) {
-                    flagPattern.pushRaw(rawFlag);
-                    usingFlagPatterns.add(flagPattern);
-                    isAFlagPattern = true;
-                }
-            }
-            if (!isAFlagPattern)
-                throw new InvalidFlagException(String.format("Flag '%s' can not be recognized", rawFlag));
-        }
+		// Check flags
+		for (String rawFlag : rawFlags) {
+			boolean isAFlagPattern = false;
+			for (FlagPattern flagPattern : flagPatterns) {
+				if (flagPattern.isThisFlag(rawFlag)) {
+					flagPattern.pushRaw(rawFlag);
+					usingFlagPatterns.add(flagPattern);
+					isAFlagPattern = true;
+				}
+			}
+			if (!isAFlagPattern)
+				throw new InvalidFlagException(String.format("Flag '%s' can not be recognized", rawFlag));
+		}
 
-        // Parse param
-        int exitAfter = 0;
-        int profileNumber = -1;
-        for (FlagPattern flagPattern : usingFlagPatterns) {
-            if (!flagPattern.isAllowParam())
-                continue;
+		// Parse param
+		int exitAfter = 0;
+		int profileNumber = -1;
+		for (FlagPattern flagPattern : usingFlagPatterns) {
+			if (!flagPattern.isAllowParam())
+				continue;
 
-            if (flagPattern instanceof FlagExitAfterAmountOfSeconds) {
-                exitAfter = ((FlagExitAfterAmountOfSeconds) flagPattern).parseParams().get(0);
-                continue;
-            }
+			if (flagPattern instanceof FlagExitAfterAmountOfSeconds) {
+				exitAfter = ((FlagExitAfterAmountOfSeconds) flagPattern).parseParams().get(0);
+				continue;
+			}
 
-            if (flagPattern instanceof FlagProfileNo) {
-                profileNumber = ((FlagProfileNo) flagPattern).parseParams().get(0);
-                continue;
-            }
+			if (flagPattern instanceof FlagProfileNo) {
+				profileNumber = ((FlagProfileNo) flagPattern).parseParams().get(0);
+				continue;
+			}
 
-            throw new NotImplementedException(String.format("Not implemented extracting param for flag '--%s' (Class: %s)", flagPattern.getName(), flagPattern.getClass().getSimpleName()));
-        }
+			throw new NotImplementedException(
+					String.format("Not implemented extracting param for flag '--%s' (Class: %s)", flagPattern.getName(),
+							flagPattern.getClass().getSimpleName()));
+		}
 
-        if (exitAfter >= 3600) {
-            int h = exitAfter / 3600;
-            int m = (exitAfter - h * 3600) / 60;
-            info("Application will exit after %d hours and %d minutes", h, m);
-        }
+		if (exitAfter >= 3600) {
+			int h = exitAfter / 3600;
+			int m = (exitAfter - h * 3600) / 60;
+			info("Application will exit after %d hours and %d minutes", h, m);
+		}
 
-        // Validate flags
-        for (FlagPattern flagPattern : usingFlagPatterns)
-            if (!flagPattern.isSupportedOnCurrentOsPlatform())
-                throw new InvalidFlagException(String.format("Flag '--%s' is not supported on %s", flagPattern.getName(), Configuration.OS.name));
+		// Validate flags
+		for (FlagPattern flagPattern : usingFlagPatterns)
+			if (!flagPattern.isSupportedOnCurrentOsPlatform())
+				throw new InvalidFlagException(String.format("Flag '--%s' is not supported on %s",
+						flagPattern.getName(), Configuration.OS.name));
 
-        ScreenResolutionProfile screenResolutionProfile;
-        boolean is800x480Resolution = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSteamResolution800x480);
-        boolean is800x520Resolution = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagWebResolution800x520);
-        if (is800x480Resolution && is800x520Resolution) {
-            err("Ambiguous profile, must specify only one of 2 profiles:");
-            err("  '--web' which supports game resolution 800x520");
-            err("  '--steam' which supports game resolution 800x480");
-            System.exit(EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
-        }
+		ScreenResolutionProfile screenResolutionProfile;
+		boolean is800x480Resolution = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSteamResolution800x480);
+		boolean is800x520Resolution = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagWebResolution800x520);
+		if (is800x480Resolution && is800x520Resolution) {
+			err("Ambiguous profile, must specify only one of 2 profiles:");
+			err("  '--web' which supports game resolution 800x520");
+			err("  '--steam' which supports game resolution 800x480");
+			System.exit(EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
+		}
 
-        if (!is800x480Resolution && !is800x520Resolution) {
-            info("No screen profile specified, `--web` profile has been chosen by default");
-            screenResolutionProfile = new ScreenResolutionProfile.WebProfile();
-        } else {
-            screenResolutionProfile = is800x480Resolution
-                    ? new ScreenResolutionProfile.SteamProfile()
-                    : new ScreenResolutionProfile.WebProfile();
-        }
+		if (!is800x480Resolution && !is800x520Resolution) {
+			info("No screen profile specified, `--web` profile has been chosen by default");
+			screenResolutionProfile = new ScreenResolutionProfile.WebProfile();
+		} else {
+			screenResolutionProfile = is800x480Resolution ? new ScreenResolutionProfile.SteamProfile()
+					: new ScreenResolutionProfile.WebProfile();
+		}
 
-        args = Arrays
-                .stream(args)
-                .skip(1)
-                .filter(x -> !x.startsWith("--"))
-                .toArray(String[]::new);
+		args = Arrays.stream(args).skip(1).filter(x -> !x.startsWith("--")).toArray(String[]::new);
 
-        Class<? extends AbstractApplication> applicationClassFromAppCode = Configuration.getApplicationClassFromAppCode(appCode);
+		Class<? extends AbstractApplication> applicationClassFromAppCode = Configuration
+				.getApplicationClassFromAppCode(appCode);
 
-        if (applicationClassFromAppCode == null)
-            throw new IllegalArgumentException("First argument must be a valid app code");
+		if (applicationClassFromAppCode == null)
+			throw new IllegalArgumentException("First argument must be a valid app code");
 
-        ParseArgumentsResult li = new ParseArgumentsResult(applicationClassFromAppCode, args, usingFlagPatterns);
-        li.exitAfterXSecs = exitAfter;
-        li.displayHelp = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagPrintHelpMessage);
-        li.enableSavingDebugImages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSaveDebugImages);
-        li.enableDebugMessages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShowDebugMessages);
-        li.disableTelegramNoti = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagMuteNoti);
-        li.screenResolutionProfile = screenResolutionProfile;
-        li.profileNumber = profileNumber;
-        li.hasFlagAll = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagAll);
-        // events
-        li.eWorldBoss = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);
-        li.ePvp = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoPvp);
-        li.eInvasion = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoInvasion);
-        li.eTrials = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoTrials);
-        li.eRaid = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoRaid);
-        // end events
-        return li;
-    }
+		ParseArgumentsResult li = new ParseArgumentsResult(applicationClassFromAppCode, args, usingFlagPatterns);
+		li.exitAfterXSecs = exitAfter;
+		li.displayHelp = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagPrintHelpMessage);
+		li.enableSavingDebugImages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSaveDebugImages);
+		li.enableDebugMessages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShowDebugMessages);
+		li.disableTelegramNoti = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagMuteNoti);
+		li.screenResolutionProfile = screenResolutionProfile;
+		li.profileNumber = profileNumber;
+		li.hasFlagAll = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagAll);
+		// events
+		li.eWorldBoss = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);
+		li.ePvp = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoPvp);
+		li.eInvasion = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoInvasion);
+		li.eTrials = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoTrials);
+		li.eRaid = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoRaid);
+		// end events
+		return li;
+	}
 
-    public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;
-    public static final int EXIT_CODE_FAILURE_READING_INPUT = 5;
-    public static final int EXIT_CODE_INVALID_NUMBER_OF_ARGUMENTS = 6;
-    public static final int EXIT_CODE_EXTERNAL_REASON = 7;
-    public static final int EXIT_CODE_INVALID_FLAG = 8;
-    public static final int EXIT_CODE_UNABLE_DETECTING_FISHING_ANCHOR = 9;
-    public static final int EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION = 11;
-    public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
+	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;
+	public static final int EXIT_CODE_FAILURE_READING_INPUT = 5;
+	public static final int EXIT_CODE_INVALID_NUMBER_OF_ARGUMENTS = 6;
+	public static final int EXIT_CODE_EXTERNAL_REASON = 7;
+	public static final int EXIT_CODE_INVALID_FLAG = 8;
+	public static final int EXIT_CODE_UNABLE_DETECTING_FISHING_ANCHOR = 9;
+	public static final int EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION = 11;
+	public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }

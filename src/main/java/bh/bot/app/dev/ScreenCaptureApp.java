@@ -14,8 +14,8 @@ import static bh.bot.common.utils.ImageUtil.freeMem;
 public class ScreenCaptureApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
-        int x = Configuration.gameScreenOffset.X;
-        int y = Configuration.gameScreenOffset.Y;
+        int x = Configuration.gameScreenOffset.X.get();
+        int y = Configuration.gameScreenOffset.Y.get();
         int w = 800;
         int h = Configuration.isSteamProfile
                 ? 480

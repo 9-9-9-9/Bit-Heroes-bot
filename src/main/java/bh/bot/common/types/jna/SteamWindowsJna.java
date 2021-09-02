@@ -71,7 +71,12 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 		final int wh = rect.height;
 		final int borderLeftSize = (ww - cw) / 2;
 		final int borderTopSize = wh - ch - borderLeftSize;
+		Offset offset = new Offset(rect.x + borderLeftSize, rect.y + borderTopSize);
+		if (offset.X < 0 || offset.Y < 0)
+			return new Tuple4<>(false,
+					String.format("Window may have been partially hiden (x=%d, y=%d)", offset.X, offset.Y), rect,
+					offset);
 
-		return new Tuple4<>(true, null, rect, new Offset(rect.x + borderLeftSize, rect.y + borderTopSize));
+		return new Tuple4<>(true, null, rect, offset);
 	}
 }
