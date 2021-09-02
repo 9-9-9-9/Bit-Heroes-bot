@@ -1,6 +1,7 @@
 package bh.bot.app;
 
 import bh.bot.Main;
+import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.annotations.AppCode;
@@ -22,8 +23,10 @@ import static bh.bot.common.utils.ThreadUtil.sleep;
 @AppCode(code = "rerun")
 public class ReRunApp extends AbstractApplication {
 
+    private int longTimeNoSee = Configuration.Timeout.defaultLongTimeNoSeeInMinutes * 60_000;
     @Override
     protected void internalRun(String[] args) {
+        longTimeNoSee = Configuration.Timeout.longTimeNoSeeInMinutes * 60_000;
         int arg;
         try (
                 InputStreamReader isr = new InputStreamReader(System.in);
@@ -79,7 +82,7 @@ public class ReRunApp extends AbstractApplication {
                     info("%d loop left", loopCount);
                     clickedOnPreviousRound = true;
                 } else {
-                    if (System.currentTimeMillis() - lastFound > 900000) {
+                    if (System.currentTimeMillis() - lastFound > longTimeNoSee) {
                         info("Long time no see => Stop");
                         Telegram.sendMessage("long time no see button", true);
                         break;

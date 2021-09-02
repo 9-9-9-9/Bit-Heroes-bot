@@ -45,7 +45,12 @@ public class Configuration {
         public static final boolean isMac = normalizedName.indexOf("mac") >= 0 || normalizedName.indexOf("darwin") >= 0;
         public static final boolean isWin = !isMac && normalizedName.indexOf("win") >= 0;
         public static final boolean isLinux = !isMac && !isWin;
-        public static Platform platform = isWin ? Platform.Windows : isMac ? Platform.MacOS :  isLinux ? Platform.Linux : Platform.Unknown;
+        public static Platform platform = isWin ? Platform.Windows : isMac ? Platform.MacOS : isLinux ? Platform.Linux : Platform.Unknown;
+    }
+
+    public static class Timeout {
+        public static short longTimeNoSeeInMinutes = 0;
+        public static final byte defaultLongTimeNoSeeInMinutes = 15;
     }
 
     public static class UserConfig {
@@ -155,15 +160,24 @@ public class Configuration {
 
         public static String getWorldBossLevelDesc(int level) {
             switch (level) {
-                case 1: return "Orlag Clan (T3-T12)";
-                case 2: return "Netherworld (T3-T13)";
-                case 3: return "Melvin Factory (T10-T11)";
-                case 4: return "3XT3RM1N4T10N (T10-T11)";
-                case 5: return "Brimstone Syndicate (T11-T12)";
-                case 6: return "Titans Attack! (T11-T16)";
-                case 7: return "The Ignited Abyss";
-                case 8: return "The Wolf's Deception (T13-T16)";
-                default: return "NEW, Unknown name (T?-T?)";
+                case 1:
+                    return "Orlag Clan (T3-T12)";
+                case 2:
+                    return "Netherworld (T3-T13)";
+                case 3:
+                    return "Melvin Factory (T10-T11)";
+                case 4:
+                    return "3XT3RM1N4T10N (T10-T11)";
+                case 5:
+                    return "Brimstone Syndicate (T11-T12)";
+                case 6:
+                    return "Titans Attack! (T11-T16)";
+                case 7:
+                    return "The Ignited Abyss";
+                case 8:
+                    return "The Wolf's Deception (T13-T16)";
+                default:
+                    return "NEW, Unknown name (T?-T?)";
             }
         }
     }
@@ -211,7 +225,15 @@ public class Configuration {
         String devNoThrowImgUnavailable = read("dev.no-throw-when-image-not-available");
         devNoThrowImgUnavailable = isNotBlank(devNoThrowImgUnavailable) ? devNoThrowImgUnavailable.trim().toLowerCase() : null;
         noThrowWhenImageNotAvailable = devNoThrowImgUnavailable != null && (devNoThrowImgUnavailable.equals("true") || devNoThrowImgUnavailable.equals("yes") || devNoThrowImgUnavailable.equals("y"));
-        
+
+        String keyLongTimeNoSee = "timeout.minutes.long-time-no-see";
+        short minLongTimeNoSee = 10;
+        try {
+            Timeout.longTimeNoSeeInMinutes = (short) Math.max(minLongTimeNoSee, readInt(keyLongTimeNoSee));
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Value of key '%s' must be a number, minimum value accepted is %d, default value is %d", keyLongTimeNoSee, minLongTimeNoSee, Timeout.defaultLongTimeNoSeeInMinutes);
+        }
+
         gameScreenOffset = Offset.fromKeyPrefix("offset.screen");
 
         Tolerant.position = Math.max(5, readInt("tolerant.position"));
