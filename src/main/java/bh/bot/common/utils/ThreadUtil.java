@@ -18,7 +18,6 @@ public class ThreadUtil {
             sleep(3000);
         }
         info("waitDone finished");
-        completableFutures.forEach(x -> x.join());
     }
 
     public static void sleep(int ms) {
