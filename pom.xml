@@ -9,6 +9,11 @@
     <version>1.3.2</version>
 
     <dependencies>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.9.0</version>
+        </dependency>
     </dependencies>
 
     <build>
