@@ -2,6 +2,7 @@ package bh.bot.app;
 
 import bh.bot.Main;
 import bh.bot.app.farming.*;
+import bh.bot.app.farming.ExpeditionApp.ExpeditionPlace;
 import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidDataException;
@@ -41,8 +42,9 @@ public class AfkApp extends AbstractApplication {
 	private final AtomicLong blockPvpUntil = new AtomicLong(0);
 	private final AtomicLong blockWorldBossUntil = new AtomicLong(0);
 	private final AtomicLong blockRaidUntil = new AtomicLong(0);
-	private final AtomicLong blockGvgAndInvasionUntil = new AtomicLong(0);
+	private final AtomicLong blockGvgAndInvasionAndExpeditionUntil = new AtomicLong(0);
 	private final AtomicLong blockTrialsAndGauntletUntil = new AtomicLong(0);
+	private ExpeditionPlace place = ExpeditionPlace.Astamus;
 
 	@Override
 	protected void internalRun(String[] args) {
@@ -55,6 +57,7 @@ public class AfkApp extends AbstractApplication {
 
 			boolean doRaid = eventList.contains(AttendablePlaces.raid);
 			boolean doWorldBoss = eventList.contains(AttendablePlaces.worldBoss);
+			boolean doExpedition = eventList.contains(AttendablePlaces.expedition);
 			if (doRaid || doWorldBoss) {
 				int profileNumber = this.argumentInfo.profileNumber;
 				if (profileNumber < 1) {
@@ -104,6 +107,11 @@ public class AfkApp extends AbstractApplication {
 					return;
 				}
 			}
+
+			if (doExpedition) {
+				info("You want to do Expedition so you have to specific target place first!");
+				this.place = selectExpeditionPlace(br);
+			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
@@ -112,28 +120,40 @@ public class AfkApp extends AbstractApplication {
 		//
 		final AtomicBoolean masterSwitch = new AtomicBoolean(false);
 		final Configuration.UserConfig finalUserConfig = userConfig;
-		ThreadUtil.waitDone(
-				() -> doLoop(masterSwitch, finalUserConfig, eventList.contains(AttendablePlaces.pvp),
-						eventList.contains(AttendablePlaces.worldBoss), eventList.contains(AttendablePlaces.raid),
-						eventList.contains(AttendablePlaces.gvg), eventList.contains(AttendablePlaces.invasion),
-						eventList.contains(AttendablePlaces.trials), eventList.contains(AttendablePlaces.gauntlet)),
-				() -> doClickTalk(masterSwitch::get), () -> detectDisconnected(masterSwitch),
+		ThreadUtil.waitDone(() -> doLoop(masterSwitch, finalUserConfig, //
+				eventList.contains(AttendablePlaces.pvp), //
+				eventList.contains(AttendablePlaces.worldBoss), //
+				eventList.contains(AttendablePlaces.raid), //
+				eventList.contains(AttendablePlaces.gvg), //
+				eventList.contains(AttendablePlaces.invasion), //
+				eventList.contains(AttendablePlaces.expedition), //
+				eventList.contains(AttendablePlaces.trials), //
+				eventList.contains(AttendablePlaces.gauntlet) //
+		), () -> doClickTalk(masterSwitch::get), () -> detectDisconnected(masterSwitch),
 				() -> autoReactiveAuto(masterSwitch), () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch),
-				() -> doCheckGameScreenOffset(masterSwitch)
-		);
+				() -> doCheckGameScreenOffset(masterSwitch));
 		Telegram.sendMessage("Stopped", false);
 	}
 
-	private void doLoop(AtomicBoolean masterSwitch, Configuration.UserConfig userConfig, boolean doPvp,
-			boolean doWorldBoss, boolean doRaid, boolean doGvg, boolean doInvasion, boolean doTrials,
-			boolean doGauntlet) {
+	private void doLoop(//
+			AtomicBoolean masterSwitch, Configuration.UserConfig userConfig, //
+			boolean doPvp, //
+			boolean doWorldBoss, //
+			boolean doRaid, //
+			boolean doGvg, //
+			boolean doInvasion, //
+			boolean doExpedition, //
+			boolean doTrials, //
+			boolean doGauntlet //
+	) {
 		try {
 
-			if ((doInvasion || doTrials) && Configuration.isSteamProfile)
-				throw new NotSupportedException("Invasion and Trials have not been supported on Steam");
+			if ((doInvasion || doTrials || doExpedition) && Configuration.isSteamProfile)
+				throw new NotSupportedException("Invasion/Expedition and Trials have not been supported on Steam");
 
 			info("Starting AFK");
-			boolean isUnknownGvgOrInvasion = doGvg && doInvasion;
+			boolean isUnknownGvgOrInvasionOrExpedition = (doGvg && doInvasion) || (doGvg && doExpedition)
+					|| (doInvasion && doExpedition);
 			boolean isUnknownTrialsOrGauntlet = doTrials && doGauntlet;
 			int continuousNotFound = 0;
 			final Point coordinateHideMouse = new Point(0, 0);
@@ -146,11 +166,14 @@ public class AfkApp extends AbstractApplication {
 			if (doRaid)
 				taskList.add(new Tuple3<>(AttendablePlaces.raid, blockRaidUntil, getPredefinedImageActionsOfRaid()));
 			if (doGvg)
-				taskList.add(new Tuple3<>(AttendablePlaces.gvg, blockGvgAndInvasionUntil,
+				taskList.add(new Tuple3<>(AttendablePlaces.gvg, blockGvgAndInvasionAndExpeditionUntil,
 						GvgApp.getPredefinedImageActions()));
 			if (doInvasion)
-				taskList.add(new Tuple3<>(AttendablePlaces.invasion, blockGvgAndInvasionUntil,
+				taskList.add(new Tuple3<>(AttendablePlaces.invasion, blockGvgAndInvasionAndExpeditionUntil,
 						InvasionApp.getPredefinedImageActions()));
+			if (doExpedition)
+				taskList.add(new Tuple3<>(AttendablePlaces.invasion, blockGvgAndInvasionAndExpeditionUntil,
+						ExpeditionApp.getPredefinedImageActions()));
 			if (doTrials)
 				taskList.add(new Tuple3<>(AttendablePlaces.trials, blockTrialsAndGauntletUntil,
 						TrialsApp.getPredefinedImageActions()));
@@ -172,10 +195,11 @@ public class AfkApp extends AbstractApplication {
 			addOutOfTurnActionsToList(outOfTurnNextActionList, getPredefinedImageActionsOfRaid());
 			addOutOfTurnActionsToList(outOfTurnNextActionList, GvgApp.getPredefinedImageActions());
 			addOutOfTurnActionsToList(outOfTurnNextActionList, InvasionApp.getPredefinedImageActions());
+			addOutOfTurnActionsToList(outOfTurnNextActionList, ExpeditionApp.getPredefinedImageActions());
 			addOutOfTurnActionsToList(outOfTurnNextActionList, TrialsApp.getPredefinedImageActions());
 			addOutOfTurnActionsToList(outOfTurnNextActionList, GauntletApp.getPredefinedImageActions());
 
-			AttendablePlace toBeRemoved = null;
+			final ArrayList<AttendablePlace> toBeRemoved = new ArrayList<>();
 
 			final byte minutesSleepWaitingResourceGeneration = 5;
 			final short loopSleep = 5_000;
@@ -190,11 +214,9 @@ public class AfkApp extends AbstractApplication {
 				sleep(loopSleep);
 
 				debug("doLoop on loop");
-				if (toBeRemoved != null) {
-					final AttendablePlace target = toBeRemoved;
-					if (taskList.removeIf(x -> x._1 == target)) {
-						toBeRemoved = null;
-						debug("Removed %s from taskList", target.name);
+				if (toBeRemoved.size() > 0) {
+					if (taskList.removeIf(x -> toBeRemoved.contains(x._1))) {
+						toBeRemoved.clear();
 						continue ML;
 					}
 				}
@@ -274,6 +296,13 @@ public class AfkApp extends AbstractApplication {
 					continue ML;
 				}
 
+				if (tryEnterExpedition(doExpedition, this.place)) {
+					debug("tryEnterExpedition");
+					continuousNotFound = 0;
+					moveCursor(coordinateHideMouse);
+					continue ML;
+				}
+
 				for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tuple : taskList) {
 					if (!isNotBlocked(tuple._2))
 						continue;
@@ -308,24 +337,31 @@ public class AfkApp extends AbstractApplication {
 						debug("Finding %s icon", tuple._1.name);
 						Point point = this.gameScreenInteractor.findAttendablePlace(tuple._1);
 						if (point != null) {
-							if (isUnknownGvgOrInvasion) {
+							if (isUnknownGvgOrInvasionOrExpedition) {
 								if (tuple._1 == AttendablePlaces.gvg) {
-									isUnknownGvgOrInvasion = false;
-									toBeRemoved = AttendablePlaces.invasion;
+									isUnknownGvgOrInvasionOrExpedition = false;
+									toBeRemoved.add(AttendablePlaces.invasion);
+									toBeRemoved.add(AttendablePlaces.expedition);
 								}
 								if (tuple._1 == AttendablePlaces.invasion) {
-									isUnknownGvgOrInvasion = false;
-									toBeRemoved = AttendablePlaces.gvg;
+									isUnknownGvgOrInvasionOrExpedition = false;
+									toBeRemoved.add(AttendablePlaces.gvg);
+									toBeRemoved.add(AttendablePlaces.expedition);
+								}
+								if (tuple._1 == AttendablePlaces.expedition) {
+									isUnknownGvgOrInvasionOrExpedition = false;
+									toBeRemoved.add(AttendablePlaces.gvg);
+									toBeRemoved.add(AttendablePlaces.invasion);
 								}
 							}
 							if (isUnknownTrialsOrGauntlet) {
 								if (tuple._1 == AttendablePlaces.trials) {
 									isUnknownTrialsOrGauntlet = false;
-									toBeRemoved = AttendablePlaces.gauntlet;
+									toBeRemoved.add(AttendablePlaces.gauntlet);
 								}
 								if (tuple._1 == AttendablePlaces.gauntlet) {
 									isUnknownTrialsOrGauntlet = false;
-									toBeRemoved = AttendablePlaces.trials;
+									toBeRemoved.add(AttendablePlaces.trials);
 								}
 							}
 
@@ -373,8 +409,9 @@ public class AfkApp extends AbstractApplication {
 			x = blockWorldBossUntil;
 		else if (attendablePlace == AttendablePlaces.raid)
 			x = blockRaidUntil;
-		else if (attendablePlace == AttendablePlaces.gvg || attendablePlace == AttendablePlaces.invasion)
-			x = blockGvgAndInvasionUntil;
+		else if (attendablePlace == AttendablePlaces.gvg || attendablePlace == AttendablePlaces.invasion
+				|| attendablePlace == AttendablePlaces.expedition)
+			x = blockGvgAndInvasionAndExpeditionUntil;
 		else if (attendablePlace == AttendablePlaces.trials || attendablePlace == AttendablePlaces.gauntlet)
 			x = blockTrialsAndGauntletUntil;
 		else
@@ -384,15 +421,24 @@ public class AfkApp extends AbstractApplication {
 
 	private ArrayList<AttendablePlace> getAttendablePlaces(BufferedReader br) {
 		ArrayList<AttendablePlace> eventList = new ArrayList<>();
-		final List<AttendablePlace> allAttendablePlaces = Arrays.asList(AttendablePlaces.invasion,
-				AttendablePlaces.trials, AttendablePlaces.gvg, AttendablePlaces.gauntlet,
+		final List<AttendablePlace> allAttendablePlaces = Arrays.asList(//
+				AttendablePlaces.invasion, //
+				AttendablePlaces.expedition, //
+				AttendablePlaces.trials, //
+				AttendablePlaces.gvg, //
+				AttendablePlaces.gauntlet, //
 
-				AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid);
+				AttendablePlaces.pvp, //
+				AttendablePlaces.worldBoss, //
+				AttendablePlaces.raid //
+		);
 		if (argumentInfo.hasFlagAll)
 			eventList.addAll(allAttendablePlaces);
 		//
 		if (argumentInfo.eInvasion)
 			eventList.add(AttendablePlaces.invasion);
+		if (argumentInfo.eExpedition)
+			eventList.add(AttendablePlaces.expedition);
 		if (argumentInfo.eGvg)
 			eventList.add(AttendablePlaces.gvg);
 		if (argumentInfo.eTrials)
@@ -411,22 +457,12 @@ public class AfkApp extends AbstractApplication {
 
 			final List<MenuItem> menuItems = Stream
 					.concat(allAttendablePlaces.stream().map(x -> MenuItem.from(x)), Arrays.asList(
-							MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss),
 							MenuItem.from(AttendablePlaces.invasion, AttendablePlaces.trials),
+							MenuItem.from(AttendablePlaces.expedition, AttendablePlaces.trials),
 							MenuItem.from(AttendablePlaces.gvg, AttendablePlaces.gauntlet),
-							MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg,
-									AttendablePlaces.gauntlet, AttendablePlaces.invasion, AttendablePlaces.trials),
-							MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.invasion,
-									AttendablePlaces.trials),
-							MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.gvg,
-									AttendablePlaces.gauntlet),
-							MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss,
-									AttendablePlaces.gvg, AttendablePlaces.gauntlet, AttendablePlaces.invasion,
-									AttendablePlaces.trials),
-							MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss,
-									AttendablePlaces.invasion, AttendablePlaces.trials),
-							MenuItem.from(AttendablePlaces.raid, AttendablePlaces.pvp, AttendablePlaces.worldBoss,
-									AttendablePlaces.gvg, AttendablePlaces.gauntlet))
+							MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid),
+							MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid,
+									AttendablePlaces.expedition, AttendablePlaces.trials))
 							.stream())
 					.collect(Collectors.toList());
 

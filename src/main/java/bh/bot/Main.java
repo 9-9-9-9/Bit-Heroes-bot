@@ -35,6 +35,7 @@ import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.flags.FlagAll;
+import bh.bot.common.types.flags.FlagDoExpedition;
 import bh.bot.common.types.flags.FlagDoGauntlet;
 import bh.bot.common.types.flags.FlagDoGvG;
 import bh.bot.common.types.flags.FlagDoInvasion;
@@ -218,6 +219,7 @@ public class Main {
 		li.eWorldBoss = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);
 		li.ePvp = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoPvp);
 		li.eInvasion = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoInvasion);
+		li.eExpedition = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoExpedition);
 		li.eGvg = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoGvG);
 		li.eTrials = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoTrials);
 		li.eGauntlet = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoGauntlet);

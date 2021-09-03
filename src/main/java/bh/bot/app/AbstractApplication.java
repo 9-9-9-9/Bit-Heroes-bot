@@ -39,6 +39,7 @@ import javax.imageio.ImageIO;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
 import bh.bot.Main;
+import bh.bot.app.farming.ExpeditionApp.ExpeditionPlace;
 import bh.bot.common.Configuration;
 import bh.bot.common.Configuration.Offset;
 import bh.bot.common.Telegram;
@@ -678,6 +679,31 @@ public abstract class AbstractApplication {
 			return null;
 		}
 	}
+	
+	protected boolean tryEnterExpedition(boolean doExpedition, ExpeditionPlace place) {
+		if (doExpedition && clickImage(BwMatrixMeta.Metas.Expedition.Labels.idolDimension)) {
+			Point p;
+			switch (place) {
+			case BlubLix:
+				p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionBlubLix().toScreenCoordinate();
+				break;
+			case Mowhi:
+				p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionMowhi().toScreenCoordinate();
+				break;
+			case WizBot:
+				p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionWizBot().toScreenCoordinate();
+				break;
+			case Astamus:
+				p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionAstamus().toScreenCoordinate();
+				break;
+			default:
+				return false;
+			}
+			mouseMoveAndClickAndHide(p);
+			return true;
+		}
+		return false;
+	}
 
 	protected boolean tryEnterWorldBoss(boolean doWorldBoss, Configuration.UserConfig userConfig,
 			Supplier<Boolean> isBlocked) {
@@ -708,6 +734,35 @@ public abstract class AbstractApplication {
 		}
 		sleep(1_000);
 		return clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses);
+	}
+	
+	protected ExpeditionPlace selectExpeditionPlace(BufferedReader br) {
+		info("1. %s", ExpeditionPlace.BlubLix);
+		info("2. %s", ExpeditionPlace.Mowhi);
+		info("3. %s", ExpeditionPlace.WizBot);
+		info("4. %s", ExpeditionPlace.Astamus);
+		ExpeditionPlace place = readInput(br, "Select place to farm", "See above",
+				new Function<String, Tuple3<Boolean, String, ExpeditionPlace>>() {
+					@Override
+					public Tuple3<Boolean, String, ExpeditionPlace> apply(String s) {
+						try {
+							int num = Integer.parseInt(s.trim());
+							if (num == 1)
+								return new Tuple3<>(true, null, ExpeditionPlace.BlubLix);
+							if (num == 2)
+								return new Tuple3<>(true, null, ExpeditionPlace.Mowhi);
+							if (num == 3)
+								return new Tuple3<>(true, null, ExpeditionPlace.WizBot);
+							if (num == 4)
+								return new Tuple3<>(true, null, ExpeditionPlace.Astamus);
+							return new Tuple3<>(false, "Not a valid option", ExpeditionPlace.Astamus);
+						} catch (NumberFormatException ex) {
+							return new Tuple3<>(false, "Not a number", ExpeditionPlace.Astamus);
+						}
+					}
+				});
+		info("You have selected to farm %s on expedition", place.toString().toUpperCase());
+		return place;
 	}
 
 	protected void spamEscape(int expectedCount) {
