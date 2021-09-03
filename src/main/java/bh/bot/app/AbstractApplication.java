@@ -700,6 +700,8 @@ public abstract class AbstractApplication {
 				return false;
 			}
 			mouseMoveAndClickAndHide(p);
+			sleep(5_000);
+			hideCursor();
 			return true;
 		}
 		return false;
