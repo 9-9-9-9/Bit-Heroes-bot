@@ -148,8 +148,8 @@ public class AfkApp extends AbstractApplication {
 	) {
 		try {
 
-			if ((doInvasion || doTrials || doExpedition) && Configuration.isSteamProfile)
-				throw new NotSupportedException("Invasion/Expedition and Trials have not been supported on Steam");
+			if (doInvasion && Configuration.isSteamProfile)
+				throw new NotSupportedException("Invasion has not been supported on Steam mode");
 
 			info("Starting AFK");
 			boolean isUnknownGvgOrInvasionOrExpedition = (doGvg && doInvasion) || (doGvg && doExpedition)

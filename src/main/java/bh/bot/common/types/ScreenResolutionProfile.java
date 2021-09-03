@@ -683,17 +683,17 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetButtonPlayTrials() {
-			return null;
+			return new Offset(510, 250);
 		}
 
 		@Override
 		public Offset getOffsetButtonAcceptTrials() {
-			return null;
+			return new Offset(470, 424);
 		}
 
 		@Override
 		public Offset getOffsetButtonTownAfterCompetedTrials() {
-			return null;
+			return new Offset(388, 435);
 		}
 
 		@Override
@@ -803,47 +803,47 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetButtonPlayExpedition() {
-			return null;
+			return new Offset(514, 249);
 		}
 
 		@Override
 		public Offset getOffsetButtonEnterExpedition() {
-			return null;
+			return new Offset(364, 420);
 		}
 
 		@Override
 		public Offset getOffsetButtonTownAfterCompetedExpedition() {
-			return null;
+			return new Offset(388, 435);
 		}
 
 		@Override
 		public Offset getOffsetLabelIdolDimension() {
-			return null;
+			return new Offset(251, 49);
 		}
 
 		@Override
 		public Offset getOffsetEnterIdolDimensionBlubLix() {
-			return null;
+			return new Offset(400, 169);
 		}
 
 		@Override
 		public Offset getOffsetEnterIdolDimensionMowhi() {
-			return null;
+			return new Offset(250, 363);
 		}
 
 		@Override
 		public Offset getOffsetEnterIdolDimensionWizBot() {
-			return null;
+			return new Offset(551, 363);
 		}
 
 		@Override
 		public Offset getOffsetEnterIdolDimensionAstamus() {
-			return null;
+			return new Offset(400, 286);
 		}
 
 		@Override
 		public Offset getOffsetButtonAcceptExpedition() {
-			return null;
+			return new Offset(469, 424);
 		}
 	}
 }

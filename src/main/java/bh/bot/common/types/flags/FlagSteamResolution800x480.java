@@ -6,9 +6,11 @@ import bh.bot.app.FishingApp;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.dev.ScreenCaptureApp;
 import bh.bot.app.dev.TestApp;
+import bh.bot.app.farming.ExpeditionApp;
 import bh.bot.app.farming.GauntletApp;
 import bh.bot.app.farming.GvgApp;
 import bh.bot.app.farming.PvpApp;
+import bh.bot.app.farming.TrialsApp;
 import bh.bot.app.farming.WorldBossApp;
 import bh.bot.common.types.Platform;
 
@@ -37,6 +39,8 @@ public class FlagSteamResolution800x480 extends FlagResolution {
                 || instance instanceof PvpApp
                 || instance instanceof WorldBossApp
                 || instance instanceof GvgApp
+                || instance instanceof ExpeditionApp
+                || instance instanceof TrialsApp
                 || instance instanceof GauntletApp
                 || instance instanceof AfkApp;
     }

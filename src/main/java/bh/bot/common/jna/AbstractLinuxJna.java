@@ -1,22 +1,28 @@
 package bh.bot.common.jna;
 
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.err;
+import static bh.bot.common.Log.optionalDebug;
+
+import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import com.sun.jna.platform.win32.WinDef;
+
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple4;
 import bh.bot.common.utils.StringUtil;
-import com.sun.jna.platform.win32.WinDef;
-
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static bh.bot.common.Log.*;
 
 public abstract class AbstractLinuxJna extends AbstractJna {
     @Override
@@ -132,13 +138,6 @@ public abstract class AbstractLinuxJna extends AbstractJna {
                 ex2.printStackTrace();
             }
         }
-    }
-
-    private String readOutput(File file) throws IOException {
-        List<String> output = readOutputLines(file);
-        if (output.size() > 1)
-            throw new InvalidDataException("More than one line on %s", file.getName());
-        return output.get(0);
     }
 
     private List<String> readOutputLines(File file) throws IOException {
