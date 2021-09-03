@@ -42,7 +42,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 loopCount = Integer.parseInt(args[0]);
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
                 info(getHelp());
-                loopCount = readInput(br, "Loop count:", "How many time do you want to do " + getAppShortName(), new Function<String, Tuple3<Boolean, String, Integer>>() {
+                loopCount = readInput(br, "Loop count:", "how many time do you want to do " + getAppShortName(), new Function<String, Tuple3<Boolean, String, Integer>>() {
                     @Override
                     public Tuple3<Boolean, String, Integer> apply(String s) {
                         try {

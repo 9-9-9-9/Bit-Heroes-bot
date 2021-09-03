@@ -211,7 +211,7 @@ public abstract class AbstractApplication {
 		Color c = getPixelColor(p);
 		if (!im.isMatchBlackRgb(c.getRGB()))
 			return null;
-		
+
 		final boolean debug = false;
 		optionalDebug(debug, "findImageBasedOnLastClick match success 1 for %s", im.getImageNameCode());
 
@@ -224,8 +224,7 @@ public abstract class AbstractApplication {
 				if (!ImageUtil.areColorsSimilar(//
 						blackPixelDRgb, //
 						sc.getRGB(px[0], px[1]) & 0xFFFFFF, //
-						Configuration.Tolerant.color,
-						im.getOriginalPixelPart(px[0], px[1]))) {
+						Configuration.Tolerant.color, im.getOriginalPixelPart(px[0], px[1]))) {
 					return null;
 				}
 			}
@@ -254,7 +253,7 @@ public abstract class AbstractApplication {
 
 		// final boolean debug = im == BwMatrixMeta.Metas.Raid.Buttons.accept;
 		final boolean debug = false;
-		
+
 		ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
 		BufferedImage sc = screenCapturedResult.image;
 
@@ -275,10 +274,12 @@ public abstract class AbstractApplication {
 						if (!ImageUtil.areColorsSimilar(//
 								blackPixelDRgb, //
 								srcRgb, //
-								Configuration.Tolerant.color,
-								originalPixelPart)) {
+								Configuration.Tolerant.color, originalPixelPart)) {
 							allGood = false;
-							optionalDebug(debug, "scanToFindImage first match failed at %d,%d (%d,%d) and original = %s", x + px[0], y + px[1], px[0], px[1], originalPixelPart == null ? "null" : String.valueOf(originalPixelPart.byteValue()));
+							optionalDebug(debug,
+									"scanToFindImage first match failed at %d,%d (%d,%d) and original = %s", x + px[0],
+									y + px[1], px[0], px[1],
+									originalPixelPart == null ? "null" : String.valueOf(originalPixelPart.byteValue()));
 							break;
 						}
 					}
@@ -293,7 +294,8 @@ public abstract class AbstractApplication {
 								srcRgb, //
 								Configuration.Tolerant.color)) {
 							allGood = false;
-							optionalDebug(debug, "scanToFindImage second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
+							optionalDebug(debug, "scanToFindImage second match failed at %d,%d (%d,%d)", x + px[0],
+									y + px[1], px[0], px[1]);
 							break;
 						}
 					}
@@ -336,7 +338,7 @@ public abstract class AbstractApplication {
 	protected Point detectLabel(BwMatrixMeta im, int... mainColors) {
 		if (im.throwIfNotAvailable())
 			return null;
-		
+
 		final boolean debug = false;
 
 		ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
@@ -357,10 +359,11 @@ public abstract class AbstractApplication {
 							if (!ImageUtil.areColorsSimilar(//
 									cDRgb, //
 									srcRgb, //
-									Configuration.Tolerant.color,
-									im.getOriginalPixelPart(px[0], px[1]))) {
+									Configuration.Tolerant.color, im.getOriginalPixelPart(px[0], px[1]))) {
 								allGood = false;
-								optionalDebug(debug, "detectLabel second match failed at %d,%d (%d,%d), %s vs %s", x + px[0], y + px[1], px[0], px[1], String.format("%06X", c), String.format("%06X", srcRgb));
+								optionalDebug(debug, "detectLabel second match failed at %d,%d (%d,%d), %s vs %s",
+										x + px[0], y + px[1], px[0], px[1], String.format("%06X", c),
+										String.format("%06X", srcRgb));
 								break;
 							}
 						}
@@ -375,7 +378,8 @@ public abstract class AbstractApplication {
 									srcRgb, //
 									Configuration.Tolerant.color)) {
 								allGood = false;
-								optionalDebug(debug, "detectLabel third match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
+								optionalDebug(debug, "detectLabel third match failed at %d,%d (%d,%d)", x + px[0],
+										y + px[1], px[0], px[1]);
 								break;
 							}
 						}
@@ -408,7 +412,7 @@ public abstract class AbstractApplication {
 	protected Tuple2<Point[], Byte> detectRadioButtons(Rectangle scanRect) {
 		final BwMatrixMeta im = BwMatrixMeta.Metas.Globally.Buttons.radioButton;
 		im.throwIfNotAvailable();
-		
+
 		final boolean debug = false;
 
 		int positionTolerant = Math.min(10, Configuration.Tolerant.position);
@@ -439,10 +443,11 @@ public abstract class AbstractApplication {
 						if (!ImageUtil.areColorsSimilar(//
 								blackPixelDRgb, //
 								srcRgb, //
-								Configuration.Tolerant.color,
-								im.getOriginalPixelPart(px[0], px[1]))) {
+								Configuration.Tolerant.color, im.getOriginalPixelPart(px[0], px[1]))) {
 							allGood = false;
-							optionalDebug(debug, "detectRadioButtons first match failed at %d,%d (%d,%d), %s vs %s", x + px[0], y + px[1], px[0], px[1], String.format("%06X", blackPixelRgb), String.format("%06X", srcRgb));
+							optionalDebug(debug, "detectRadioButtons first match failed at %d,%d (%d,%d), %s vs %s",
+									x + px[0], y + px[1], px[0], px[1], String.format("%06X", blackPixelRgb),
+									String.format("%06X", srcRgb));
 							break;
 						}
 					}
@@ -457,7 +462,8 @@ public abstract class AbstractApplication {
 								srcRgb, //
 								Configuration.Tolerant.color)) {
 							allGood = false;
-							optionalDebug(debug, "detectRadioButtons second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
+							optionalDebug(debug, "detectRadioButtons second match failed at %d,%d (%d,%d)", x + px[0],
+									y + px[1], px[0], px[1]);
 							break;
 						}
 					}
@@ -489,7 +495,9 @@ public abstract class AbstractApplication {
 						break;
 					}
 
-					optionalDebug(debug, "detectRadioButtons captured at %3d,%3d with size %3dx%3d, match at %3d,%3d", screenCapturedResult.x, screenCapturedResult.y, screenCapturedResult.w, screenCapturedResult.h, x, y);
+					optionalDebug(debug, "detectRadioButtons captured at %3d,%3d with size %3dx%3d, match at %3d,%3d",
+							screenCapturedResult.x, screenCapturedResult.y, screenCapturedResult.w,
+							screenCapturedResult.h, x, y);
 					// im.setLastMatchPoint(startingCoord.x, startingCoord.y);
 					startingCoords.add(new Point(x, y));
 				}
@@ -641,6 +649,7 @@ public abstract class AbstractApplication {
 		try {
 			String input;
 			while (true) {
+				info("\n\n\n\n==========================");
 				info(ask);
 				if (selectedOptionsInfoProvider != null) {
 					List<String> selectedOptions = selectedOptionsInfoProvider.get();
@@ -675,7 +684,7 @@ public abstract class AbstractApplication {
 			return null;
 		}
 	}
-	
+
 	protected boolean tryEnterExpedition(boolean doExpedition, ExpeditionPlace place) {
 		if (doExpedition && clickImage(BwMatrixMeta.Metas.Expedition.Labels.idolDimension)) {
 			Point p;
@@ -733,13 +742,15 @@ public abstract class AbstractApplication {
 		sleep(1_000);
 		return clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses);
 	}
-	
+
 	protected ExpeditionPlace selectExpeditionPlace(BufferedReader br) {
-		info("1. %s", ExpeditionPlace.BlubLix);
-		info("2. %s", ExpeditionPlace.Mowhi);
-		info("3. %s", ExpeditionPlace.WizBot);
-		info("4. %s", ExpeditionPlace.Astamus);
-		ExpeditionPlace place = readInput(br, "Select place to farm", "See above",
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("  1. %s\n", ExpeditionPlace.BlubLix));
+		sb.append(String.format("  2. %s\n", ExpeditionPlace.Mowhi));
+		sb.append(String.format("  3. %s\n", ExpeditionPlace.WizBot));
+		sb.append(String.format("  4. %s\n", ExpeditionPlace.Astamus));
+		sb.append("Select place to farm:");
+		ExpeditionPlace place = readInput(br, sb.toString(), "See above",
 				new Function<String, Tuple3<Boolean, String, ExpeditionPlace>>() {
 					@Override
 					public Tuple3<Boolean, String, ExpeditionPlace> apply(String s) {
@@ -789,7 +800,8 @@ public abstract class AbstractApplication {
 				Process which = Runtime.getRuntime().exec("which xwininfo xdotool ps");
 				int exitCode = which.waitFor();
 				if (exitCode != 0) {
-					err("Unable to adjust game screen offset automatically: exit code of which command is %d. Require the following tools to be installed: xwininfo, xdotool, ps", exitCode);
+					err("Unable to adjust game screen offset automatically: exit code of which command is %d. Require the following tools to be installed: xwininfo, xdotool, ps",
+							exitCode);
 					return;
 				}
 			}
@@ -811,7 +823,8 @@ public abstract class AbstractApplication {
 							}
 						}
 					}
-					Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateGameScreenOffset(gameWindowHwndByJna, srp);
+					Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateGameScreenOffset(gameWindowHwndByJna,
+							srp);
 					if (!result._1) {
 						err(result._2);
 						continue;
@@ -835,7 +848,7 @@ public abstract class AbstractApplication {
 			err("Error occured during doCheckGameScreenOffset");
 		}
 	}
-	
+
 	protected IJna getJnaInstance() {
 		if (Configuration.isSteamProfile)
 			return new SteamWindowsJna();
@@ -847,7 +860,7 @@ public abstract class AbstractApplication {
 			return new MiniClientMacOsJna();
 		throw new NotSupportedException(Configuration.OS.name);
 	}
-	
+
 	protected void adjustScreenOffset() {
 		int x = Configuration.gameScreenOffset.X.get();
 		int y = Configuration.gameScreenOffset.Y.get();
@@ -860,7 +873,7 @@ public abstract class AbstractApplication {
 					Configuration.gameScreenOffset.set(result._4);
 					x = result._4.X;
 					y = result._4.Y;
-					
+
 					info("Game's screen offset has been adjusted automatically to %d,%d", x, y);
 				} else {
 					debug("screen offset not change");

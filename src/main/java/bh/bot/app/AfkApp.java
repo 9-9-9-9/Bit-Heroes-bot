@@ -61,8 +61,7 @@ public class AfkApp extends AbstractApplication {
 			if (doRaid || doWorldBoss) {
 				int profileNumber = this.argumentInfo.profileNumber;
 				if (profileNumber < 1) {
-					info("You want to do Raid/WorldBoss so you have to specific profile number first!");
-					profileNumber = readInput(br, "Select profile number",
+					profileNumber = readInput(br, "You want to do Raid/WorldBoss so you have to specific profile number first!\nSelect profile number",
 							String.format("min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts),
 							new Function<String, Tuple3<Boolean, String, Integer>>() {
 								@Override

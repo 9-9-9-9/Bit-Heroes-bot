@@ -25,7 +25,7 @@ public class SettingApp extends AbstractApplication {
                 InputStreamReader isr = new InputStreamReader(System.in);
                 BufferedReader br = new BufferedReader(isr);
         ) {
-            int profileNumber = readInput(br, "Select profile number", String.format("min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), new Function<String, Tuple3<Boolean, String, Integer>>() {
+            int profileNumber = readInput(br, "Which profile do you want to edit?", String.format("select a number, min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), new Function<String, Tuple3<Boolean, String, Integer>>() {
                 @Override
                 public Tuple3<Boolean, String, Integer> apply(String s) {
                     try {
@@ -72,10 +72,12 @@ public class SettingApp extends AbstractApplication {
 
             //
             final Tuple2<Byte, Byte> raidLevelRange = Configuration.UserConfig.getRaidLevelRange();
-            info("All Raid levels:");
+            StringBuilder sb = new StringBuilder();
+            sb.append("All Raid levels:\n");
             for (int rl = raidLevelRange._1; rl <= raidLevelRange._2; rl++)
-                info("%2d. %s", rl, Configuration.UserConfig.getRaidLevelDesc(rl));
-            Integer tmp = readInput(br, "Specific Raid level?", "See the list above. To skip and keep the current value, just leave this empty and press Enter", new Function<String, Tuple3<Boolean, String, Integer>>() {
+                sb.append(String.format("  %2d. %s\n", rl, Configuration.UserConfig.getRaidLevelDesc(rl)));
+            sb.append("Specific Raid level?");
+            Integer tmp = readInput(br, sb.toString(), "See the list above. To skip and keep the current value, just leave this empty and press Enter", new Function<String, Tuple3<Boolean, String, Integer>>() {
                 @Override
                 public Tuple3<Boolean, String, Integer> apply(String s) {
                     try {
@@ -130,12 +132,10 @@ public class SettingApp extends AbstractApplication {
             worldBossLevel = tmp == null ? worldBossLevel : tmp.intValue();
             //
 
-            StringBuilder sb = new StringBuilder();
-            sb.append(String.format("%s=%d", Configuration.UserConfig.raidLevelKey, raidLevel));
-            sb.append('\n');
-            sb.append(String.format("%s=%d", Configuration.UserConfig.raidModeKey, raidMode));
-            sb.append('\n');
-            sb.append(String.format("%s=%d", Configuration.UserConfig.worldBossLevelKey, worldBossLevel));
+            sb = new StringBuilder();
+            sb.append(String.format("%s=%d\n", Configuration.UserConfig.raidLevelKey, raidLevel));
+            sb.append(String.format("%s=%d\n", Configuration.UserConfig.raidModeKey, raidMode));
+            sb.append(String.format("%s=%d\n", Configuration.UserConfig.worldBossLevelKey, worldBossLevel));
 
             info("You have selected:");
             info("  %s mode of raid %s", Configuration.UserConfig.getDifficultyModeDesc((byte)raidMode, "Raid"), Configuration.UserConfig.getRaidLevelDesc((byte)raidLevel));
