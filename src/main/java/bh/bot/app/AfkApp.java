@@ -171,7 +171,7 @@ public class AfkApp extends AbstractApplication {
 				taskList.add(new Tuple3<>(AttendablePlaces.invasion, blockGvgAndInvasionAndExpeditionUntil,
 						InvasionApp.getPredefinedImageActions()));
 			if (doExpedition)
-				taskList.add(new Tuple3<>(AttendablePlaces.invasion, blockGvgAndInvasionAndExpeditionUntil,
+				taskList.add(new Tuple3<>(AttendablePlaces.expedition, blockGvgAndInvasionAndExpeditionUntil,
 						ExpeditionApp.getPredefinedImageActions()));
 			if (doTrials)
 				taskList.add(new Tuple3<>(AttendablePlaces.trials, blockTrialsAndGauntletUntil,
