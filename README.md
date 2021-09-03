@@ -142,6 +142,7 @@ Supported flags:
 - `--boss` do world boss [(require setting)](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Select-Raid-World-Boss-level,-mode,..-using-%60setting%60-function)
 - `--gvg` do GVG
 - `--invasion` do Invasion
+- `--expedition` do Expedition
 - `--trials` do Trials
 - `--gauntlet` do Gauntlet
 - `--raid` do Raid [(require setting)](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Select-Raid-World-Boss-level,-mode,..-using-%60setting%60-function)
