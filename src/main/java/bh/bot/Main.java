@@ -20,6 +20,7 @@ import bh.bot.app.dev.ExtractMatrixApp;
 import bh.bot.app.dev.ImportTpImageApp;
 import bh.bot.app.dev.ScreenCaptureApp;
 import bh.bot.app.dev.TestApp;
+import bh.bot.app.farming.ExpeditionApp;
 import bh.bot.app.farming.GauntletApp;
 import bh.bot.app.farming.GvgApp;
 import bh.bot.app.farming.InvasionApp;
@@ -67,6 +68,7 @@ public class Main {
 					WorldBossApp.class, //
 					PvpApp.class, //
 					InvasionApp.class, //
+					ExpeditionApp.class, //
 					TrialsApp.class, //
 					GvgApp.class, //
 					GauntletApp.class, //

@@ -7,6 +7,7 @@ import static bh.bot.common.Log.warn;
 import static bh.bot.common.utils.StringUtil.isBlank;
 import static bh.bot.common.utils.StringUtil.isNotBlank;
 
+import java.awt.Point;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -394,6 +395,10 @@ public class Configuration {
         public Offset(int x, int y) {
             this.X = x;
             this.Y = y;
+        }
+        
+        public Point toScreenCoordinate() {
+        	return new Point(Configuration.gameScreenOffset.X.get() + X, Configuration.gameScreenOffset.Y.get() + Y);
         }
 
         @Override

@@ -264,6 +264,19 @@ public class BwMatrixMeta {
             }
         }
 
+        public static class Expedition {
+            public static class Buttons {
+                public static BwMatrixMeta play;
+                public static BwMatrixMeta enter;
+                public static BwMatrixMeta accept;
+                public static BwMatrixMeta town;
+            }
+
+            public static class Labels {
+                public static BwMatrixMeta idolDimension;
+            }
+        }
+
         public static class Trials {
             public static class Buttons {
                 public static BwMatrixMeta play;
@@ -485,6 +498,33 @@ public class BwMatrixMeta {
         Metas.Invasion.Dialogs.notEnoughBadges = BwMatrixMeta.from(//
                 "dialogs/invasion.not-enough-badges?",
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughInvasionBadges(), //
+                0xFFFFFF
+        );
+
+        // Expedition
+        Metas.Expedition.Buttons.play = BwMatrixMeta.from(//
+                "buttons/expedition.play?",
+                Configuration.screenResolutionProfile.getOffsetButtonPlayExpedition(), //
+                0xFFFFFF
+        );
+        Metas.Expedition.Buttons.enter = BwMatrixMeta.from(//
+                "buttons/expedition.enter?",
+                Configuration.screenResolutionProfile.getOffsetButtonEnterExpedition(), //
+                0xFFFFFF
+        );
+        Metas.Expedition.Buttons.accept = BwMatrixMeta.from(//
+                "buttons/expedition.accept?",
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptExpedition(), //
+                0xFFFFFF
+        );
+        Metas.Expedition.Buttons.town = BwMatrixMeta.from(//
+                "buttons/expedition.town?",
+                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedExpedition(), //
+                0xFFFFFF
+        );
+        Metas.Expedition.Labels.idolDimension = BwMatrixMeta.from(//
+                "labels/expedition.idol-dimension?",
+                Configuration.screenResolutionProfile.getOffsetLabelIdolDimension(), //
                 0xFFFFFF
         );
 
