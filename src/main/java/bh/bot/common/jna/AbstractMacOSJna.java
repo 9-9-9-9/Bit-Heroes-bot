@@ -1,4 +1,4 @@
 package bh.bot.common.jna;
 
-public abstract class AbstractMacOSJna extends AbstractJna {
+public abstract class AbstractMacOSJna extends AbstractLinuxJna {
 }

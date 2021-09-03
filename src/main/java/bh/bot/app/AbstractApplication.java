@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
+import bh.bot.common.jna.*;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
 import bh.bot.Main;
@@ -45,11 +46,6 @@ import bh.bot.common.Configuration.Offset;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
-import bh.bot.common.jna.IJna;
-import bh.bot.common.jna.MiniClientLinuxJna;
-import bh.bot.common.jna.MiniClientMacOsJna;
-import bh.bot.common.jna.MiniClientWindowsJna;
-import bh.bot.common.jna.SteamWindowsJna;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppCode;
@@ -789,6 +785,15 @@ public abstract class AbstractApplication {
 				info("Feature doCheckGameScreenOffset has been disabled by configuration");
 				return;
 			}
+			if (!Configuration.OS.isWin) {
+				Process which = Runtime.getRuntime().exec("which xwininfo xdotool ps");
+				int exitCode = which.waitFor();
+				if (exitCode != 0) {
+					err("Unable to adjust game screen offset automatically: exit code of which command is %d. Require the following tools to be installed: xwininfo, xdotool, ps", exitCode);
+					return;
+				}
+			}
+
 			int x = Configuration.gameScreenOffset.X.get();
 			int y = Configuration.gameScreenOffset.Y.get();
 			IJna jna = getJnaInstance();
@@ -797,11 +802,13 @@ public abstract class AbstractApplication {
 			while (!masterSwicth.get()) {
 				debug("on loop of doCheckGameScreenOffset");
 				try {
-					if (gameWindowHwndByJna == null) {
-						gameWindowHwndByJna = jna.getGameWindow();
+					if (!(jna instanceof AbstractLinuxJna)) {
 						if (gameWindowHwndByJna == null) {
-							debug("Game window could not be found");
-							continue;
+							gameWindowHwndByJna = jna.getGameWindow();
+							if (gameWindowHwndByJna == null) {
+								debug("Game window could not be found");
+								continue;
+							}
 						}
 					}
 					Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateGameScreenOffset(gameWindowHwndByJna, srp);
