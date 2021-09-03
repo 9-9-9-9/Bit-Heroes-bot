@@ -1,9 +1,29 @@
 package bh.bot.common;
 
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.err;
+import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.warn;
+import static bh.bot.common.utils.StringUtil.isBlank;
+import static bh.bot.common.utils.StringUtil.isNotBlank;
+
+import java.awt.Point;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
+import bh.bot.common.Configuration.Offset.AtomicOffset;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotImplementedException;
+import bh.bot.common.exceptions.NotSupportedException;
+import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.Platform;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
@@ -12,31 +32,25 @@ import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.utils.StringUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Properties;
-
-import static bh.bot.common.Log.*;
-import static bh.bot.common.utils.StringUtil.isBlank;
-import static bh.bot.common.utils.StringUtil.isNotBlank;
-
 public class Configuration {
     public static ScreenResolutionProfile screenResolutionProfile = null;
     public static String profileName = null;
     public static boolean isSteamProfile = false;
     public static boolean isWebProfile = false;
-    public static Offset gameScreenOffset;
+    public static AtomicOffset gameScreenOffset;
     public static final boolean enableDevFeatures = new File("im.dev").exists();
     public static boolean noThrowWhenImageNotAvailable = false;
+
+    public static class Features {
+        public static boolean disableJna = false;
+        public static boolean disableDoCheckGameScreenOffset = false;
+    }
 
     public static class Tolerant {
         public static int position;
         public static int color;
         public static byte colorBw;
+        public static byte colorBwL2;
     }
 
     public static class OS {
@@ -45,7 +59,8 @@ public class Configuration {
         public static final boolean isMac = normalizedName.indexOf("mac") >= 0 || normalizedName.indexOf("darwin") >= 0;
         public static final boolean isWin = !isMac && normalizedName.indexOf("win") >= 0;
         public static final boolean isLinux = !isMac && !isWin;
-        public static Platform platform = isWin ? Platform.Windows : isMac ? Platform.MacOS : isLinux ? Platform.Linux : Platform.Unknown;
+        public static Platform platform = isWin ? Platform.Windows
+                : isMac ? Platform.MacOS : isLinux ? Platform.Linux : Platform.Unknown;
     }
 
     public static class Timeout {
@@ -81,13 +96,16 @@ public class Configuration {
 
         public String getRaidLevelDesc() {
             if (!isValidRaidLevel())
-                throw new InvalidDataException("Invalid Raid level %d. Must in range %d to %d. Level 1 stands for R1 (T4) and level %d stands for R%d (T%d)", raidLevel, raidLevelMin, raidLevelMax, raidLevelMax, raidLevelMax, raidLevelMax + 3);
+                throw new InvalidDataException(
+                        "Invalid Raid level %d. Must in range %d to %d. Level 1 stands for R1 (T4) and level %d stands for R%d (T%d)",
+                        raidLevel, raidLevelMin, raidLevelMax, raidLevelMax, raidLevelMax, raidLevelMax + 3);
             return getRaidLevelDesc(raidLevel);
         }
 
         public String getWorldBossLevelDesc() {
             if (!isValidWorldBossLevel())
-                throw new InvalidDataException("Invalid World Boss level %d. Must in range %d to %d", worldBossLevel, worldBossLevelMin, worldBossLevelMax);
+                throw new InvalidDataException("Invalid World Boss level %d. Must in range %d to %d", worldBossLevel,
+                        worldBossLevelMin, worldBossLevelMax);
             return getWorldBossLevelDesc(worldBossLevel);
         }
 
@@ -184,13 +202,12 @@ public class Configuration {
 
     private static Properties properties = new Properties();
 
-    public static void loadSystemConfig(ScreenResolutionProfile screenResolutionProfile) throws IOException {
-        info(
-                "Using '%s' profile which supports %dx%d game resolution",
-                screenResolutionProfile.getName(),
+    public static void loadSystemConfig(final ParseArgumentsResult parseArgumentsResult) throws IOException {
+        final ScreenResolutionProfile screenResolutionProfile = parseArgumentsResult.screenResolutionProfile;
+        final boolean enableJna = parseArgumentsResult.enableJna;
+        info("Using '%s' profile which supports %dx%d game resolution", screenResolutionProfile.getName(),
                 screenResolutionProfile.getSupportedGameResolutionWidth(),
-                screenResolutionProfile.getSupportedGameResolutionHeight()
-        );
+                screenResolutionProfile.getSupportedGameResolutionHeight());
 
         Configuration.screenResolutionProfile = screenResolutionProfile;
         Configuration.isSteamProfile = screenResolutionProfile instanceof SteamProfile;
@@ -222,30 +239,56 @@ public class Configuration {
             }
         }
 
-        String devNoThrowImgUnavailable = read("dev.no-throw-when-image-not-available");
-        devNoThrowImgUnavailable = isNotBlank(devNoThrowImgUnavailable) ? devNoThrowImgUnavailable.trim().toLowerCase() : null;
-        noThrowWhenImageNotAvailable = devNoThrowImgUnavailable != null && (devNoThrowImgUnavailable.equals("true") || devNoThrowImgUnavailable.equals("yes") || devNoThrowImgUnavailable.equals("y"));
+        noThrowWhenImageNotAvailable = StringUtil.isTrue(read("dev.no-throw-when-image-not-available"));
+        Features.disableJna = StringUtil.isTrue(read("disable.jna"));
+        Configuration.Features.disableDoCheckGameScreenOffset =
+                Features.disableJna || StringUtil.isTrue(read("disable.jna.disableDoCheckGameScreenOffset"));
 
         String keyLongTimeNoSee = "timeout.minutes.long-time-no-see";
         short minLongTimeNoSee = 10;
         try {
             Timeout.longTimeNoSeeInMinutes = (short) Math.max(minLongTimeNoSee, readInt(keyLongTimeNoSee));
         } catch (NumberFormatException ex) {
-            throw new InvalidDataException("Value of key '%s' must be a number, minimum value accepted is %d, default value is %d", keyLongTimeNoSee, minLongTimeNoSee, Timeout.defaultLongTimeNoSeeInMinutes);
+            throw new InvalidDataException(
+                    "Value of key '%s' must be a number, minimum value accepted is %d, default value is %d",
+                    keyLongTimeNoSee, minLongTimeNoSee, Timeout.defaultLongTimeNoSeeInMinutes);
         }
 
-        gameScreenOffset = Offset.fromKeyPrefix("offset.screen");
+        gameScreenOffset = new AtomicOffset(Offset.fromKeyPrefix("offset.screen"));
 
         Tolerant.position = Math.max(5, readInt("tolerant.position"));
         Tolerant.color = Math.max(0, readInt("tolerant.color"));
         Tolerant.colorBw = (byte) Math.max(0, readInt("tolerant.color.bw"));
+        Tolerant.colorBwL2 = (byte) Math.max(0, readInt("tolerant.color.bw.l2"));
+        debug("Tolerant.color     = %d", Tolerant.color);
+        debug("Tolerant.colorBw   = %d", Tolerant.colorBw);
+        debug("Tolerant.colorBwL2 = %d", Tolerant.colorBwL2);
+
+        if (enableJna) {
+            try {
+                if (isSteamProfile) {
+
+                } else {
+                    throw new NotSupportedException("enableJna & non isSteamProfile");
+                }
+            } catch (NotSupportedException ex1) {
+                throw ex1;
+            } catch (Exception ex2) {
+                ex2.printStackTrace();
+                err("Unable to init JNA interaction, ignore this flag");
+                parseArgumentsResult.enableJna = false;
+            }
+        }
     }
 
-    public static Tuple2<Boolean, UserConfig> loadUserConfig(int profileNo) throws IOException { // returns tuple of File Exists + Data
+    public static Tuple2<Boolean, UserConfig> loadUserConfig(int profileNo) throws IOException { // returns tuple of
+        // File Exists +
+        // Data
         String profileConfigFileName = getProfileConfigFileName(profileNo);
         final File fileCfg = new File(profileConfigFileName);
         if (!fileCfg.exists() || !fileCfg.isFile()) {
-            debug("Unable to load user config for profile no.%d, reason: file '%s' not found", profileNo, profileConfigFileName);
+            debug("Unable to load user config for profile no.%d, reason: file '%s' not found", profileNo,
+                    profileConfigFileName);
             return new Tuple2<>(false, null);
         }
 
@@ -295,21 +338,26 @@ public class Configuration {
 
     private static final ArrayList<Tuple2<Class<? extends AbstractApplication>, String>> applicationClassesInfo = new ArrayList<>();
 
-    public static void registerApplicationInstances(Class<? extends AbstractApplication>... classes) {
+    @SafeVarargs
+	public static void registerApplicationClasses(Class<? extends AbstractApplication>... classes) {
         for (Class<? extends AbstractApplication> class_ : classes) {
             AppCode annotation = class_.getAnnotation(AppCode.class);
             if (annotation == null)
-                throw new NotImplementedException(String.format("App '%s' missing @%s annotation", class_.getSimpleName(), AppCode.class.getSimpleName()));
+                throw new NotImplementedException(String.format("App '%s' missing @%s annotation",
+                        class_.getSimpleName(), AppCode.class.getSimpleName()));
             String appCode = annotation.code();
             if (StringUtil.isBlank(appCode))
-                throw new NotImplementedException(String.format("App '%s' missing app code in @%s annotation", class_.getSimpleName(), AppCode.class.getSimpleName()));
+                throw new NotImplementedException(String.format("App '%s' missing app code in @%s annotation",
+                        class_.getSimpleName(), AppCode.class.getSimpleName()));
             if (!appCode.equals(appCode.trim().toLowerCase()))
-                throw new RuntimeException(String.format("App code of app '%s' has to be normalized", class_.getSimpleName()));
+                throw new RuntimeException(
+                        String.format("App code of app '%s' has to be normalized", class_.getSimpleName()));
             applicationClassesInfo.add(new Tuple2<>(class_, appCode));
         }
     }
 
-    public static Class<? extends AbstractApplication> getApplicationClassFromAppCode(String code) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    public static Class<? extends AbstractApplication> getApplicationClassFromAppCode(String code)
+            throws IllegalAccessException, InvocationTargetException, InstantiationException {
         code = code.toLowerCase().trim();
         for (Tuple2<Class<? extends AbstractApplication>, String> applicationClassInfo : applicationClassesInfo) {
             if (!code.equals(applicationClassInfo._2))
@@ -348,19 +396,53 @@ public class Configuration {
             this.X = x;
             this.Y = y;
         }
+        
+        public Point toScreenCoordinate() {
+        	return new Point(Configuration.gameScreenOffset.X.get() + X, Configuration.gameScreenOffset.Y.get() + Y);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s[x=%d,y=%d]", this.getClass().getName(), X, Y);
+        }
 
         public static Offset fromKeyPrefix(String keyPrefix) {
             int x = Configuration.readInt(keyPrefix + ".x");
             int y = Configuration.readInt(keyPrefix + ".y");
             if (x < 0)
-                throw new IllegalArgumentException(String.format("Value of offset %s.x can not be a negative number: %d", keyPrefix, x));
+                throw new IllegalArgumentException(
+                        String.format("Value of offset %s.x can not be a negative number: %d", keyPrefix, x));
             if (y < 0)
-                throw new IllegalArgumentException(String.format("Value of offset %s.y can not be a negative number: %d", keyPrefix, y));
+                throw new IllegalArgumentException(
+                        String.format("Value of offset %s.y can not be a negative number: %d", keyPrefix, y));
             return new Offset(x, y);
         }
 
         public static Offset none() {
             return new Offset(-1, -1);
+        }
+
+        public static class AtomicOffset {
+            public final AtomicInteger X;
+            public final AtomicInteger Y;
+
+            public AtomicOffset(int x, int y) {
+                this.X = new AtomicInteger(x);
+                this.Y = new AtomicInteger(y);
+            }
+
+            public AtomicOffset(Offset offset) {
+                this(offset.X, offset.Y);
+            }
+
+            public void set(int x, int y) {
+                this.X.set(x);
+                this.Y.set(y);
+            }
+
+            public void set(Offset offset) {
+                this.set(offset.X, offset.Y);
+            }
         }
     }
 

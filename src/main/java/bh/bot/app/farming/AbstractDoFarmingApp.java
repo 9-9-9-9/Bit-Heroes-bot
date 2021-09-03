@@ -1,5 +1,19 @@
 package bh.bot.app.farming;
 
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.info;
+import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
+import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
+import static bh.bot.common.utils.ThreadUtil.sleep;
+
+import java.awt.Point;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+
 import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Telegram;
@@ -8,20 +22,6 @@ import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.ThreadUtil;
-
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
-
-import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.info;
-import static bh.bot.common.utils.InteractionUtil.Mouse.*;
-import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public abstract class AbstractDoFarmingApp extends AbstractApplication {
     protected abstract String getAppShortName();
@@ -42,7 +42,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 loopCount = Integer.parseInt(args[0]);
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
                 info(getHelp());
-                loopCount = readInput(br, "Loop count:", "How many time do you want to do " + getAppShortName(), new Function<String, Tuple3<Boolean, String, Integer>>() {
+                loopCount = readInput(br, "Loop count:", "how many time do you want to do " + getAppShortName(), new Function<String, Tuple3<Boolean, String, Integer>>() {
                     @Override
                     public Tuple3<Boolean, String, Integer> apply(String s) {
                         try {
@@ -69,7 +69,8 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 () -> loop(cnt, masterSwitch),
                 () -> detectDisconnected(masterSwitch),
                 () -> autoReactiveAuto(masterSwitch),
-                () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch)
+                () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch),
+                () -> doCheckGameScreenOffset(masterSwitch)
         );
         Telegram.sendMessage("Stopped", false);
     }
@@ -133,7 +134,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
             continuousNotFound++;
             moveCursor(coordinateHideMouse);
 
-            if (continuousNotFound >= 12) {
+            if (continuousNotFound >= 6) {
                 debug("Finding %s icon", getAppShortName());
                 Point point = this.gameScreenInteractor.findAttendablePlace(ap);
                 if (point != null) {

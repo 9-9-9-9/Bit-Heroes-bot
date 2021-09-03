@@ -9,13 +9,15 @@ public class AttendablePlaces {
         public static final int Trials      = 0b00000010;
         public static final int GvG         = 0b00000100;
         public static final int Gauntlet    = 0b00001000;
+        public static final int Expedition  = 0b00010000;
         // Left
-        public static final int Pvp         = 0b00010000;
-        public static final int WorldBoss   = 0b00100000;
-        public static final int Raid        = 0b01000000;
+        public static final int Pvp         = 0b00100000;
+        public static final int WorldBoss   = 0b01000000;
+        public static final int Raid        = 0b10000000;
     }
 
     public static AttendablePlace invasion = null;
+    public static AttendablePlace expedition = null;
     public static AttendablePlace trials = null;
     public static AttendablePlace gvg = null;
     public static AttendablePlace gauntlet = null;
@@ -27,6 +29,7 @@ public class AttendablePlaces {
     static {
         try {
             invasion = new AttendablePlace("Invasion", AttendablePlaces.Ids.Invasion, "invasion", false);
+            expedition = new AttendablePlace("Expedition", AttendablePlaces.Ids.Expedition, "expedition", false);
             trials = new AttendablePlace("Trials", AttendablePlaces.Ids.Trials, "trials", false);
             gvg = new AttendablePlace("GVG", Ids.GvG, "gvg", false);
             gauntlet = new AttendablePlace("Gauntlet", Ids.Gauntlet, "gauntlet", false);

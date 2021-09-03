@@ -65,7 +65,7 @@ public class ExtractMatrixApp extends AbstractApplication {
                 } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
                     info(getHelp());
                     isDisplayedHelp = true;
-                    tolerant = readInput(br, "Tolerant", "Tolerant when color contains same R & G & B value", new Function<String, Tuple3<Boolean, String, Integer>>() {
+                    tolerant = readInput(br, "Tolerant:", "Tolerant when color contains same R & G & B value", new Function<String, Tuple3<Boolean, String, Integer>>() {
                         @Override
                         public Tuple3<Boolean, String, Integer> apply(String s) {
                             String normalized = s.trim().toUpperCase();

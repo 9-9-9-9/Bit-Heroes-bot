@@ -1,19 +1,20 @@
 package bh.bot.common.types.images;
 
-import bh.bot.common.Configuration;
-import bh.bot.common.exceptions.InvalidDataException;
-import bh.bot.common.exceptions.NotSupportedException;
-import bh.bot.common.types.ScreenResolutionProfile;
-import bh.bot.common.types.tuples.Tuple2;
-import bh.bot.common.utils.ImageUtil;
-import bh.bot.common.utils.StringUtil;
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.dev;
+import static bh.bot.common.Log.err;
+import static bh.bot.common.utils.ImageUtil.freeMem;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static bh.bot.common.Log.*;
-import static bh.bot.common.utils.ImageUtil.freeMem;
+import bh.bot.common.Configuration;
+import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.exceptions.NotSupportedException;
+import bh.bot.common.types.tuples.Tuple2;
+import bh.bot.common.utils.ImageUtil;
+import bh.bot.common.utils.StringUtil;
 
 public class BwMatrixMeta {
     private final int[] firstBlackPixelOffset;
@@ -28,9 +29,10 @@ public class BwMatrixMeta {
     private final byte tolerant;
     private final String imageNameCode;
     private final boolean notAvailable;
+    private final Short[][] originalTpPixelPart;
 
-    public BwMatrixMeta(BufferedImageInfo bii, Configuration.Offset coordinateOffset, int blackPixelRgb) {
-        if (bii.notAvailable) {
+    public BwMatrixMeta(BufferedImageInfo mxbi, Configuration.Offset coordinateOffset, int blackPixelRgb, BufferedImage tpBi) {
+        if (mxbi.notAvailable) {
             this.firstBlackPixelOffset = null;
             this.blackPixels = null;
             this.nonBlackPixels = null;
@@ -40,10 +42,11 @@ public class BwMatrixMeta {
             this.blackPixelDRgb = null;
             this.coordinateOffset = null;
             this.tolerant = -1;
-            this.imageNameCode = bii.code;
+            this.imageNameCode = mxbi.code;
             this.notAvailable = true;
+            this.originalTpPixelPart = null;
         } else {
-            String customTolerantKey = "tolerant.color.bw|" + bii.code;
+            String customTolerantKey = "tolerant.color.bw|" + mxbi.code;
             try {
                 byte tolerant = Configuration.Tolerant.colorBw;
                 String value = Configuration.read(customTolerantKey);
@@ -63,7 +66,7 @@ public class BwMatrixMeta {
 
             final int matrixPointColorPixelRgb = 0x000000;
             final int anyColorPixelRgb = 0xFFFFFF;
-            BufferedImage img = bii.bufferedImage;
+            BufferedImage img = mxbi.bufferedImage;
             try {
                 this.coordinateOffset = coordinateOffset;
                 this.blackPixelRgb = blackPixelRgb & 0xFFFFFF;
@@ -86,8 +89,26 @@ public class BwMatrixMeta {
                 freeMem(img);
             }
 
-            this.imageNameCode = bii.code;
+            this.imageNameCode = mxbi.code;
             this.notAvailable = false;
+            
+            if (tpBi == null) {
+            	this.originalTpPixelPart = null;
+            } else {
+                this.originalTpPixelPart = new Short[tpBi.getWidth()][tpBi.getHeight()];
+                for (int x = 0; x < tpBi.getWidth(); x++) {
+					for (int y = 0; y < tpBi.getHeight(); y++) {
+						Short value = null;
+						final int rgb = tpBi.getRGB(x, y) & 0xFFFFFF;
+						final int r = ImageUtil.getRed(rgb);
+						final int g = ImageUtil.getGreen(rgb);
+						final int b = ImageUtil.getBlue(rgb);
+						if (r == g && g == b)
+							value = (short)r;
+						this.originalTpPixelPart[x][y] = value;
+					}
+				}
+            }
         }
     }
 
@@ -106,7 +127,7 @@ public class BwMatrixMeta {
     }
 
     public boolean isMatchBlackRgb(int rgb) {
-        return ImageUtil.areColorsSimilar(blackPixelDRgb, rgb, Configuration.Tolerant.color);
+        return ImageUtil.areColorsSimilar(blackPixelDRgb, rgb, Configuration.Tolerant.color, getOriginalPixelPart(firstBlackPixelOffset[0], firstBlackPixelOffset[1]));
     }
 
     public int getWidth() {
@@ -152,6 +173,12 @@ public class BwMatrixMeta {
 
     public String getImageNameCode() {
         return imageNameCode;
+    }
+    
+    public Short getOriginalPixelPart(int x, int y) {
+    	if (this.originalTpPixelPart == null)
+    		return null;
+    	return this.originalTpPixelPart[x][y];
     }
 
     public static class Metas {
@@ -234,6 +261,19 @@ public class BwMatrixMeta {
 
             public static class Dialogs {
                 public static BwMatrixMeta notEnoughBadges;
+            }
+        }
+
+        public static class Expedition {
+            public static class Buttons {
+                public static BwMatrixMeta play;
+                public static BwMatrixMeta enter;
+                public static BwMatrixMeta accept;
+                public static BwMatrixMeta town;
+            }
+
+            public static class Labels {
+                public static BwMatrixMeta idolDimension;
             }
         }
 
@@ -461,6 +501,33 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
 
+        // Expedition
+        Metas.Expedition.Buttons.play = BwMatrixMeta.from(//
+                "buttons/expedition.play?",
+                Configuration.screenResolutionProfile.getOffsetButtonPlayExpedition(), //
+                0xFFFFFF
+        );
+        Metas.Expedition.Buttons.enter = BwMatrixMeta.from(//
+                "buttons/expedition.enter?",
+                Configuration.screenResolutionProfile.getOffsetButtonEnterExpedition(), //
+                0xFFFFFF
+        );
+        Metas.Expedition.Buttons.accept = BwMatrixMeta.from(//
+                "buttons/expedition.accept?",
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptExpedition(), //
+                0xFFFFFF
+        );
+        Metas.Expedition.Buttons.town = BwMatrixMeta.from(//
+                "buttons/expedition.town?",
+                Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedExpedition(), //
+                0xFFFFFF
+        );
+        Metas.Expedition.Labels.idolDimension = BwMatrixMeta.from(//
+                "labels/expedition.idol-dimension?",
+                Configuration.screenResolutionProfile.getOffsetLabelIdolDimension(), //
+                0xFFFFFF
+        );
+
         // Trials
         Metas.Trials.Buttons.play = BwMatrixMeta.from(//
                 "buttons/trials.play?",
@@ -543,46 +610,13 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughShards(), //
                 0xFFFFFF
         );
-
-        // test
-        testImgImportedFromTp();
-    }
-
-    private static void testImgImportedFromTp() throws IOException {
-        if (Configuration.screenResolutionProfile instanceof ScreenResolutionProfile.WebProfile) {
-            BwMatrixMeta g = BwMatrixMeta.from(//
-                    "buttons/globally.auto-green-tp.bmp", //
-                    new Configuration.Offset(Configuration.screenResolutionProfile.getOffsetButtonAuto().X - 2, Configuration.screenResolutionProfile.getOffsetButtonAuto().Y - 2),
-                    0xFFFFFF
-            );
-            BwMatrixMeta r = BwMatrixMeta.from(//
-                    "buttons/globally.auto-red-tp.bmp", //
-                    new Configuration.Offset(Configuration.screenResolutionProfile.getOffsetButtonAuto().X - 2, Configuration.screenResolutionProfile.getOffsetButtonAuto().Y - 2),
-                    0xFFFFFF
-            );
-
-            /*
-            assert g.notAvailable == false;
-            assert r.notAvailable == false;
-            assert Metas.Globally.Buttons.autoG.notAvailable == false;
-            assert Metas.Globally.Buttons.autoR.notAvailable == false;
-            assert Metas.Globally.Buttons.autoG.coordinateOffset.X == g.coordinateOffset.X;
-            assert Metas.Globally.Buttons.autoG.coordinateOffset.Y == g.coordinateOffset.Y;
-            assert Metas.Globally.Buttons.autoR.coordinateOffset.X == r.coordinateOffset.X;
-            assert Metas.Globally.Buttons.autoR.coordinateOffset.Y == r.coordinateOffset.Y;
-            assert Metas.Globally.Buttons.autoG.w == g.w;
-            assert Metas.Globally.Buttons.autoG.h == g.h;
-            assert Metas.Globally.Buttons.autoR.w == r.w;
-            assert Metas.Globally.Buttons.autoR.h == r.h;
-             */
-        }
     }
 
     public static BwMatrixMeta from(String path, Configuration.Offset imageOffset, int blackPixelRgb) throws IOException {
         String normalized = path.trim().toLowerCase();
         if (normalized.endsWith("?")) {
             String prefix = path.substring(0, path.length() - 1);
-            BwMatrixMeta bwMatrixMeta = new BwMatrixMeta(ImageUtil.loadMxImageFromResource(prefix + "-mx.bmp"), imageOffset, blackPixelRgb);
+            BwMatrixMeta bwMatrixMeta = new BwMatrixMeta(ImageUtil.loadMxImageFromResource(prefix + "-mx.bmp"), imageOffset, blackPixelRgb, null);
             if (bwMatrixMeta.notAvailable == false)
                 return bwMatrixMeta;
             debug("MX type of %s is not available, going to load TP", path);
@@ -593,7 +627,7 @@ public class BwMatrixMeta {
             bwMatrixMeta = fromTpImage(prefix + "-tp.bmp", imageOffset, blackPixelRgb);
             return bwMatrixMeta;
         } else if (normalized.endsWith("-mx.bmp"))
-            return new BwMatrixMeta(ImageUtil.loadMxImageFromResource(path), imageOffset, blackPixelRgb);
+            return new BwMatrixMeta(ImageUtil.loadMxImageFromResource(path), imageOffset, blackPixelRgb, null);
         else if (normalized.endsWith("-tp.bmp"))
             return fromTpImage(path, imageOffset, blackPixelRgb);
         else
@@ -601,9 +635,9 @@ public class BwMatrixMeta {
     }
 
     public static BwMatrixMeta fromTpImage(String path, Configuration.Offset tpImageOffset, int blackPixelRgb) throws IOException {
-        BufferedImageInfo bii = ImageUtil.loadTpImageFromResource(path);
+        BufferedImageInfo tpbi = ImageUtil.loadTpImageFromResource(path);
         try {
-            Tuple2<BufferedImageInfo, Configuration.Offset> transformed = ImageUtil.transformFromTpToMxImage(bii, blackPixelRgb, tpImageOffset);
+            Tuple2<BufferedImageInfo, Configuration.Offset> transformed = ImageUtil.transformFromTpToMxImage(tpbi, blackPixelRgb, tpImageOffset);
             return new BwMatrixMeta(
         		transformed._1,
         		transformed._1.notAvailable
@@ -612,13 +646,14 @@ public class BwMatrixMeta {
         				tpImageOffset.X + transformed._2.X, 
         				tpImageOffset.Y + transformed._2.Y
         		), 
-        		blackPixelRgb
+        		blackPixelRgb,
+        		tpbi.bufferedImage
     		);
         } catch (Exception ex) {
         	err("Problem while loading tp image %s", path);
         	throw ex;
         } finally {
-            ImageUtil.freeMem(bii.bufferedImage);
+            ImageUtil.freeMem(tpbi.bufferedImage);
         }
     }
 }

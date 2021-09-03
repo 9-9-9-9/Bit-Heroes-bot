@@ -1,13 +1,12 @@
 package bh.bot.common.types;
 
-import bh.bot.common.Configuration;
-import bh.bot.common.types.images.BwMatrixMeta;
-import bh.bot.common.utils.ImageUtil;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import bh.bot.common.Configuration;
+import bh.bot.common.types.images.BwMatrixMeta;
 
 public class AttendablePlace {
     public final String name;
@@ -24,7 +23,7 @@ public class AttendablePlace {
         this.name = name;
         this.id = id;
         this.img = BwMatrixMeta.from(
-                String.format("labels/attendable-places/%s?", imgCode),
+        		String.format("labels/attendable-places/%s?", imgCode),
                 new Configuration.Offset(0, 0),
                 0xFFFFFF
         );

@@ -1,18 +1,17 @@
 package bh.bot.common.utils;
 
-import bh.bot.common.Configuration;
-import bh.bot.common.types.images.BufferedImageInfo;
-import bh.bot.common.types.tuples.Tuple2;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static bh.bot.common.Log.debug;
+import javax.imageio.ImageIO;
+
+import bh.bot.common.Configuration;
+import bh.bot.common.types.images.BufferedImageInfo;
+import bh.bot.common.types.tuples.Tuple2;
 
 public class ImageUtil {
     public static BufferedImageInfo loadMxImageFromResource(String path) throws IOException {
@@ -64,7 +63,7 @@ public class ImageUtil {
         for (int y = 0; y < bi.getHeight(); y++) {
             for (int x = 0; x < bi.getWidth(); x++) {
                 int posRgb = bi.getRGB(x, y) & 0xFFFFFF;
-                if (!ImageUtil.areColorsSimilar(dRgb, posRgb, Configuration.Tolerant.color)) {
+                if (!ImageUtil.areColorsSimilar(dRgb, posRgb, Configuration.Tolerant.color, null)) {
                     continue;
                 }
                 pos.add(new int[]{x, y});
@@ -140,7 +139,7 @@ public class ImageUtil {
                 && isMatch(getBlue(rgb1), getBlue(rgb2), tolerance);
     }
 
-    public static boolean areColorsSimilar(DynamicRgb dRgb1, int rgb2, int tolerance) {
+    public static boolean areColorsSimilar(DynamicRgb dRgb1, int rgb2, int tolerance, Short originalPixelPart) {
         if (isMatch(getRed(rgb2), dRgb1.red, tolerance)
                 && isMatch(getGreen(rgb2), dRgb1.green, tolerance)
                 && isMatch(getBlue(rgb2), dRgb1.blue, tolerance))
@@ -150,7 +149,11 @@ public class ImageUtil {
         DynamicRgb dRgb2 = new DynamicRgb(rgb2, dRgb1.acceptedTolerant);
         if (!dRgb2.isSame)
             return false;
-        return isMatch(dRgb2.red, dRgb1.red, dRgb1.acceptedTolerant);
+        if (isMatch(dRgb2.red, dRgb1.red, dRgb1.acceptedTolerant))
+        	return true;
+        if (originalPixelPart == null)
+        	return false;
+        return isMatch(originalPixelPart.shortValue(), getRed(rgb2), Configuration.Tolerant.colorBwL2);
     }
 
     private static boolean isMatch(int c1, int c2, int tolerant) {

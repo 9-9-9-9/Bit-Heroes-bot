@@ -20,7 +20,7 @@ public class FlagDoTrials extends FlagPattern.NonParamFlag {
     }
 
     @Override
-    public <TApp extends AbstractApplication> boolean internalCheckIsSupportedByApp(TApp instance) {
+    public boolean internalCheckIsSupportedByApp(AbstractApplication instance) {
         return instance instanceof AfkApp;
     }
 }

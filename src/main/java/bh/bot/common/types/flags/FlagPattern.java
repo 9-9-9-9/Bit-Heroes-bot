@@ -1,6 +1,7 @@
 package bh.bot.common.types.flags;
 
 import bh.bot.app.AbstractApplication;
+import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.exceptions.NotSupportedException;
@@ -54,13 +55,13 @@ public abstract class FlagPattern<T> {
         return true;
     }
 
-    public <TApp extends AbstractApplication> boolean isSupportedByApp(TApp instance) {
+    public boolean isSupportedByApp(AbstractApplication instance) {
         if (isGlobalFlag())
             return true;
         return internalCheckIsSupportedByApp(instance);
     }
 
-    protected <TApp extends AbstractApplication> boolean internalCheckIsSupportedByApp(TApp instance) {
+    protected boolean internalCheckIsSupportedByApp(AbstractApplication instance) {
         throw new NotImplementedException();
     }
 
@@ -100,8 +101,8 @@ public abstract class FlagPattern<T> {
 
     public abstract String getName();
     public abstract String getDescription();
-    public boolean isSupportedOnCurrentOsPlatform() {
-        return true;
+    public final boolean isSupportedOnCurrentOsPlatform() {
+        return Arrays.asList(getSupportedOsPlatforms()).contains(Configuration.OS.platform);
     }
     public Platform[] getSupportedOsPlatforms() {
         return new Platform[] { Platform.Linux, Platform.Windows, Platform.MacOS };

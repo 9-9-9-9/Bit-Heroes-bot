@@ -1,7 +1,12 @@
 package bh.bot.common.exceptions;
 
 public class NotImplementedException extends RuntimeException {
-    public NotImplementedException() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -9204175175045334856L;
+
+	public NotImplementedException() {
     }
 
     public NotImplementedException(String message) {

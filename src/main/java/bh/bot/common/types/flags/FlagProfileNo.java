@@ -34,7 +34,7 @@ public class FlagProfileNo extends FlagPattern<Integer> {
     }
 
     @Override
-    public <TApp extends AbstractApplication> boolean isSupportedByApp(TApp instance) {
+    public boolean isSupportedByApp(AbstractApplication instance) {
         return instance instanceof AfkApp || instance instanceof WorldBossApp;
     }
 
