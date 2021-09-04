@@ -633,20 +633,21 @@ public abstract class AbstractApplication {
 		}
 	}
 
-	protected <T> T readInput(BufferedReader br, String ask, String desc,
+	protected <T> T readInput(String ask, String desc,
 			Function<String, Tuple3<Boolean, String, T>> transform) {
-		return readInput(br, ask, desc, transform, false);
+		return readInput(ask, desc, transform, false);
 	}
 
-	protected <T> T readInput(BufferedReader br, String ask, String desc,
+	protected <T> T readInput(String ask, String desc,
 			Function<String, Tuple3<Boolean, String, T>> transform, boolean allowBlankAndIfBlankThenReturnNull) {
-		return readInput(br, ask, desc, null, transform, allowBlankAndIfBlankThenReturnNull);
+		return readInput(ask, desc, null, transform, allowBlankAndIfBlankThenReturnNull);
 	}
 
-	protected <T> T readInput(BufferedReader br, String ask, String desc,
+	protected <T> T readInput(String ask, String desc,
 			Supplier<List<String>> selectedOptionsInfoProvider, Function<String, Tuple3<Boolean, String, T>> transform,
 			boolean allowBlankAndIfBlankThenReturnNull) {
 		try {
+			BufferedReader br = Main.getBufferedReader();
 			String input;
 			while (true) {
 				info("\n\n\n\n==========================");
@@ -743,14 +744,14 @@ public abstract class AbstractApplication {
 		return clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses);
 	}
 
-	protected ExpeditionPlace selectExpeditionPlace(BufferedReader br) {
+	protected ExpeditionPlace selectExpeditionPlace() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Select a place to do Expedition:\n");
 		sb.append(String.format("  1. %s\n", ExpeditionPlace.BlubLix));
 		sb.append(String.format("  2. %s\n", ExpeditionPlace.Mowhi));
 		sb.append(String.format("  3. %s\n", ExpeditionPlace.WizBot));
 		sb.append(String.format("  4. %s\n", ExpeditionPlace.Astamus));
-		ExpeditionPlace place = readInput(br, sb.toString(), null,
+		ExpeditionPlace place = readInput(sb.toString(), null,
 				s -> {
 					try {
 						int num = Integer.parseInt(s.trim());

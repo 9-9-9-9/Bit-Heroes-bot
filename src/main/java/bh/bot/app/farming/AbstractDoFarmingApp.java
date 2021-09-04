@@ -1,19 +1,5 @@
 package bh.bot.app.farming;
 
-import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.info;
-import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
-import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
-import static bh.bot.common.utils.ThreadUtil.sleep;
-
-import java.awt.Point;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
-
 import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Telegram;
@@ -22,6 +8,18 @@ import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.ThreadUtil;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.info;
+import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
+import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
+import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public abstract class AbstractDoFarmingApp extends AbstractApplication {
     protected abstract String getAppShortName();
@@ -34,15 +32,12 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
         int loopCount;
-        try (
-                InputStreamReader isr = new InputStreamReader(System.in);
-                BufferedReader br = new BufferedReader(isr);
-        ) {
+        try {
             try {
                 loopCount = Integer.parseInt(args[0]);
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
                 info(getHelp());
-                loopCount = readInput(br, "Loop count:", "how many time do you want to do " + getAppShortName(), new Function<String, Tuple3<Boolean, String, Integer>>() {
+                loopCount = readInput("Loop count:", "how many time do you want to do " + getAppShortName(), new Function<String, Tuple3<Boolean, String, Integer>>() {
                     @Override
                     public Tuple3<Boolean, String, Integer> apply(String s) {
                         try {
@@ -55,7 +50,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 });
             }
 
-            if (!readMoreInput(br)) return;
+            if (!readMoreInput()) return;
         } catch (IOException ex) {
             ex.printStackTrace();
             System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
@@ -75,7 +70,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
         Telegram.sendMessage("Stopped", false);
     }
 
-    protected boolean readMoreInput(BufferedReader br) throws IOException {
+    protected boolean readMoreInput() throws IOException {
         return true;
     }
 
@@ -122,7 +117,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
 
             Point coordMap = findImage(BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi);
             if (coordMap != null) {
-            	BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi.setLastMatchPoint(coordMap.x, coordMap.y);
+                BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi.setLastMatchPoint(coordMap.x, coordMap.y);
                 debug("mapButtonOnFamiliarUi");
                 InteractionUtil.Keyboard.sendEscape();
                 continuousNotFound = 0;

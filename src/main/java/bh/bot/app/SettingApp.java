@@ -7,10 +7,8 @@ import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.function.Function;
@@ -21,11 +19,8 @@ import static bh.bot.common.Log.info;
 public class SettingApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
-        try (
-                InputStreamReader isr = new InputStreamReader(System.in);
-                BufferedReader br = new BufferedReader(isr);
-        ) {
-            int profileNumber = readInput(br, "Which profile do you want to edit?", String.format("select a number, min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), new Function<String, Tuple3<Boolean, String, Integer>>() {
+        try {
+            int profileNumber = readInput("Which profile do you want to edit?", String.format("select a number, min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), new Function<String, Tuple3<Boolean, String, Integer>>() {
                 @Override
                 public Tuple3<Boolean, String, Integer> apply(String s) {
                     try {
@@ -77,7 +72,7 @@ public class SettingApp extends AbstractApplication {
             for (int rl = raidLevelRange._1; rl <= raidLevelRange._2; rl++)
                 sb.append(String.format("  %2d. %s\n", rl, Configuration.UserConfig.getRaidLevelDesc(rl)));
             sb.append("Specific Raid level?");
-            Integer tmp = readInput(br, sb.toString(), "See the list above. To skip and keep the current value, just leave this empty and press Enter", new Function<String, Tuple3<Boolean, String, Integer>>() {
+            Integer tmp = readInput(sb.toString(), "See the list above. To skip and keep the current value, just leave this empty and press Enter", new Function<String, Tuple3<Boolean, String, Integer>>() {
                 @Override
                 public Tuple3<Boolean, String, Integer> apply(String s) {
                     try {
@@ -96,7 +91,7 @@ public class SettingApp extends AbstractApplication {
             info("All Raid's difficulty mode:");
             for (byte rl = modeRange._1; rl <= modeRange._2; rl++)
                 info("%2d. %s", rl, Configuration.UserConfig.getDifficultyModeDesc(rl, "Raid"));
-            tmp = readInput(br, "Specific Raid mode?", "See the list above. To skip and keep the current value, just leave this empty and press Enter", new Function<String, Tuple3<Boolean, String, Integer>>() {
+            tmp = readInput("Specific Raid mode?", "See the list above. To skip and keep the current value, just leave this empty and press Enter", new Function<String, Tuple3<Boolean, String, Integer>>() {
                 @Override
                 public Tuple3<Boolean, String, Integer> apply(String s) {
                     try {
@@ -116,7 +111,7 @@ public class SettingApp extends AbstractApplication {
             info("All World Boss levels:");
             for (int rl = woldBossLevelRange._1; rl <= woldBossLevelRange._2; rl++)
                 info("%2d. %s", rl, Configuration.UserConfig.getWorldBossLevelDesc(rl));
-            tmp = readInput(br, "Specific World Boss level?", "See the list above. To skip and keep the current value, just leave this empty and press Enter", new Function<String, Tuple3<Boolean, String, Integer>>() {
+            tmp = readInput("Specific World Boss level?", "See the list above. To skip and keep the current value, just leave this empty and press Enter", new Function<String, Tuple3<Boolean, String, Integer>>() {
                 @Override
                 public Tuple3<Boolean, String, Integer> apply(String s) {
                     try {
@@ -138,9 +133,9 @@ public class SettingApp extends AbstractApplication {
             sb.append(String.format("%s=%d\n", Configuration.UserConfig.worldBossLevelKey, worldBossLevel));
 
             info("You have selected:");
-            info("  %s mode of raid %s", Configuration.UserConfig.getDifficultyModeDesc((byte)raidMode, "Raid"), Configuration.UserConfig.getRaidLevelDesc((byte)raidLevel));
-            info("  world boss %s", Configuration.UserConfig.getWorldBossLevelDesc((byte)worldBossLevel));
-            boolean save = readInput(br, "Do you want to save the above setting into profile number " + profileNumber + "?", "Press Y/N then enter", new Function<String, Tuple3<Boolean, String, Boolean>>() {
+            info("  %s mode of raid %s", Configuration.UserConfig.getDifficultyModeDesc((byte) raidMode, "Raid"), Configuration.UserConfig.getRaidLevelDesc((byte) raidLevel));
+            info("  world boss %s", Configuration.UserConfig.getWorldBossLevelDesc((byte) worldBossLevel));
+            boolean save = readInput("Do you want to save the above setting into profile number " + profileNumber + "?", "Press Y/N then enter", new Function<String, Tuple3<Boolean, String, Boolean>>() {
                 @Override
                 public Tuple3<Boolean, String, Boolean> apply(String s) {
                     s = s.trim().toLowerCase();

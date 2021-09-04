@@ -11,7 +11,6 @@ import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -27,11 +26,11 @@ public class WorldBossApp extends AbstractDoFarmingApp {
     private Configuration.UserConfig userConfig;
 
     @Override
-    protected boolean readMoreInput(BufferedReader br) throws IOException {
+    protected boolean readMoreInput() throws IOException {
         int profileNumber = this.argumentInfo.profileNumber;
         if (profileNumber < 1) {
             info("You want to do WorldBoss so you have to specific profile number first!");
-            profileNumber = readInput(br, "Select profile number", String.format("min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), new Function<String, Tuple3<Boolean, String, Integer>>() {
+            profileNumber = readInput("Select profile number", String.format("min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), new Function<String, Tuple3<Boolean, String, Integer>>() {
                 @Override
                 public Tuple3<Boolean, String, Integer> apply(String s) {
                     try {
