@@ -17,6 +17,7 @@ import static bh.bot.common.utils.InteractionUtil.Screen.captureScreen;
 import static bh.bot.common.utils.InteractionUtil.Screen.getPixelColor;
 import static bh.bot.common.utils.StringUtil.isBlank;
 import static bh.bot.common.utils.ThreadUtil.sleep;
+import static com.diogonunes.jcolor.Attribute.*;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
 import bh.bot.common.jna.*;
+import com.diogonunes.jcolor.AnsiFormat;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
 import bh.bot.Main;
@@ -634,6 +636,7 @@ public abstract class AbstractApplication {
 		return readInput(ask, desc, null, transform, allowBlankAndIfBlankThenReturnNull);
 	}
 
+	private static final AnsiFormat fAsk = new AnsiFormat(BRIGHT_CYAN_TEXT(), BOLD());
 	protected <T> T readInput(String ask, String desc,
 			Supplier<List<String>> selectedOptionsInfoProvider, Function<String, Tuple3<Boolean, String, T>> transform,
 			boolean allowBlankAndIfBlankThenReturnNull) {
@@ -642,7 +645,7 @@ public abstract class AbstractApplication {
 			String input;
 			while (true) {
 				info("\n\n\n\n==========================");
-				info(ask);
+				info(fAsk, ask);
 				if (selectedOptionsInfoProvider != null) {
 					List<String> selectedOptions = selectedOptionsInfoProvider.get();
 					if (selectedOptions.size() > 0)
@@ -650,7 +653,7 @@ public abstract class AbstractApplication {
 				}
 				if (desc != null)
 					info("(%s)", desc);
-				info("** Notice ** Please complete the above question first, otherwise bot will be hanged here!!!");
+				warn("Please complete the above question first, otherwise bot will be hanged here!!!");
 				input = br.readLine();
 
 				if (isBlank(input)) {

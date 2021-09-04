@@ -19,7 +19,7 @@ import java.io.BufferedReader;
 import java.util.Arrays;
 import java.util.List;
 
-import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.InteractionUtil.Mouse.clickRadioButton;
 
 @SuppressWarnings("unused")
@@ -31,6 +31,8 @@ public class TestApp extends AbstractApplication {
     protected void internalRun(String[] args) {
         adjustScreenOffset();
 
+        warn("Hello darkness my old friend");
+        err("Something wrong here %d", 1);
         String str1, str2;
         BufferedReader br = Main.getBufferedReader();
         str1 = readInput("ask1", null, s -> new Tuple3<>(true, null, "1"));

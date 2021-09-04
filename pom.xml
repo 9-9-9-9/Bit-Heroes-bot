@@ -19,6 +19,11 @@
             <artifactId>jna-platform</artifactId>
             <version>5.9.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.diogonunes</groupId>
+            <artifactId>JColor</artifactId>
+            <version>5.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>
