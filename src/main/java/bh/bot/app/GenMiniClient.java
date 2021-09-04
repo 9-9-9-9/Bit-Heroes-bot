@@ -5,6 +5,7 @@ import bh.bot.common.Configuration;
 import bh.bot.common.OS;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.utils.Extensions;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -46,7 +47,7 @@ public class GenMiniClient extends AbstractApplication {
             info(" 4. Go to Console tab");
             info(" 5. Paste the content of file 'prepare-mini-chrome-client.txt' into console tab");
             info(" 6. Copy the output lines and override corresponding values in user-config.properties");
-            info(" 7. Run the script 'build.%s'  again", OS.isWin ? "bat" : "sh");
+            info(" 7. Run the script '%s'  again", Extensions.scriptFileName("client"));
             info(colorFormatInfo, "Notes: it's able to generate more than one client, just by modify the '1.' prefix of the keys, support up to maximum %d accounts", supportMaximumNumberOfAccounts);
             System.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
             return;
