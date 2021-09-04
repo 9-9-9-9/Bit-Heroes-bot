@@ -3,6 +3,8 @@ package bh.bot;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -226,6 +228,14 @@ public class Main {
 		li.eRaid = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoRaid);
 		// end events
 		return li;
+	}
+
+	private static BufferedReader bufferedReader = null;
+
+	public static synchronized BufferedReader getBufferedReader() {
+		if (bufferedReader == null)
+			bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+		return bufferedReader;
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;

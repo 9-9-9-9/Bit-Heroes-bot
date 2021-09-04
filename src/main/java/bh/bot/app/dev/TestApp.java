@@ -1,5 +1,6 @@
 package bh.bot.app.dev;
 
+import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.Configuration.Offset;
@@ -10,12 +11,17 @@ import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple2;
+import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.types.tuples.Tuple4;
 import bh.bot.common.utils.InteractionUtil;
 
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Win32Exception;
@@ -34,21 +40,11 @@ public class TestApp extends AbstractApplication {
 	@Override
 	protected void internalRun(String[] args) {
 		adjustScreenOffset();
-		
-		findAttendablePlaces();
-		/*
-		 * User32 ins = User32.INSTANCE; HWND hwnd = ins.FindWindow("UnityWndClass",
-		 * "Bit Heroes"); //System.out.println(JnaTest.getWindowLocationAndSize(hwnd));
-		 * final RECT lpRectC = new RECT(); final RECT lpRectW = new RECT();
-		 * info(ins.GetClientRect(hwnd, lpRectC)); info(lpRectC);
-		 * info(ins.GetWindowRect(hwnd, lpRectW)); info(lpRectW);
-		 * 
-		 * IJna jna; jna = new MiniClientWindowsJna(); hwnd = jna.getGameWindow();
-		 * Tuple4<Boolean, String, Rectangle, Offset> result =
-		 * jna.locateGameScreenOffset(hwnd, Configuration.screenResolutionProfile);
-		 * info("1 " + result._1); info("2 " + result._2); info("3 " + result._3);
-		 * info("4 " + result._4);
-		 */
+
+		String str1, str2;
+		BufferedReader br = Main.getBufferedReader();
+		str1 = readInput(br, "ask1", null, s -> new Tuple3<>(true, null, "1"));
+		str2 = readInput(br, "ask2", null, s -> new Tuple3<>(true, null, "2"));
 	}
 
 	public static class JnaTest {
