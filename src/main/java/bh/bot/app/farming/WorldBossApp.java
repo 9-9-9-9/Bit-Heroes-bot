@@ -79,6 +79,6 @@ public class WorldBossApp extends AbstractDoFarmingApp {
 
     @Override
     protected String getLimitationExplain() {
-        return "This function is solo only and does not support select level or type of World Boss, only select by default So which boss do you want to hit? Choose it before turn this on";
+        return "This function is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on";
     }
 }

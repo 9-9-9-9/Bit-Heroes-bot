@@ -78,13 +78,15 @@ public class AfkApp extends AbstractApplication {
                         info(colorFormatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
                                 userConfig.getRaidLevelDesc());
                         info(colorFormatInfo, "and World Boss %s", userConfig.getWorldBossLevelDesc());
+                        warn("This function is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on");
                     } else if (doRaid) {
                         info(colorFormatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
                                 userConfig.getRaidLevelDesc());
                     } else //noinspection ConstantConditions
                         if (doWorldBoss) {
-                        info(colorFormatInfo, "You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
-                    }
+                            info(colorFormatInfo, "You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
+                            warn("This function is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on");
+                        }
                 } catch (InvalidDataException ex2) {
                     err(ex2.getMessage());
                     printRequiresSetting();
