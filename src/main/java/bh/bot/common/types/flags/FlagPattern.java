@@ -104,13 +104,18 @@ public abstract class FlagPattern<T> {
     public final boolean isSupportedOnCurrentOsPlatform() {
         return Arrays.asList(getSupportedOsPlatforms()).contains(Configuration.OS.platform);
     }
+
     public Platform[] getSupportedOsPlatforms() {
         return new Platform[] { Platform.Linux, Platform.Windows, Platform.MacOS };
     }
 
+    public String getCode() {
+        return "--" + getName();
+    }
+
     @Override
     public String toString() {
-        String text = String.format("\n  --%s%s : %s%s", getName(), isAllowParam() ? "=?" : "", isDevelopersOnly() ? "(developers only) " : "", getDescription());
+        String text = String.format("\n  %s%s : %s%s", getCode(), isAllowParam() ? "=?" : "", isDevelopersOnly() ? "(developers only) " : "", getDescription());
         if (!isSupportedOnCurrentOsPlatform())
             text += ". Only available on " + String.join(", ", Arrays.asList(getSupportedOsPlatforms()).stream().map(x -> x.toString()).collect(Collectors.toList())) + " OS";
         return text;

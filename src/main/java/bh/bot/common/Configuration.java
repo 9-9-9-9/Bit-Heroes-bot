@@ -9,7 +9,7 @@ import bh.bot.common.types.Platform;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.ScreenResolutionProfile.WebProfile;
-import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.utils.StringUtil;
 
@@ -18,10 +18,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
@@ -39,7 +40,7 @@ public class Configuration {
     public static class Features {
         public static boolean disableJna = false;
         public static boolean disableDoCheckGameScreenOffset = false;
-        public static boolean disableColorizeTerminal = false;
+        public static boolean disableColorizeTerminal = "windows 7".equals(OS.normalizedName.trim());
     }
 
     public static class Tolerant {
@@ -309,36 +310,45 @@ public class Configuration {
         return String.format("readonly.%d.user-config.properties", profileNo);
     }
 
-    private static final ArrayList<Tuple2<Class<? extends AbstractApplication>, String>> applicationClassesInfo = new ArrayList<>();
+    private static final ArrayList<Tuple2<Class<? extends AbstractApplication>, AppMeta>> applicationClassesInfo = new ArrayList<>();
 
     @SafeVarargs
     public static void registerApplicationClasses(Class<? extends AbstractApplication>... classes) {
         for (Class<? extends AbstractApplication> class_ : classes) {
-            AppCode annotation = class_.getAnnotation(AppCode.class);
+            AppMeta annotation = class_.getAnnotation(AppMeta.class);
             if (annotation == null)
                 throw new NotImplementedException(String.format("App '%s' missing @%s annotation",
-                        class_.getSimpleName(), AppCode.class.getSimpleName()));
+                        class_.getSimpleName(), AppMeta.class.getSimpleName()));
             String appCode = annotation.code();
             if (StringUtil.isBlank(appCode))
                 throw new NotImplementedException(String.format("App '%s' missing app code in @%s annotation",
-                        class_.getSimpleName(), AppCode.class.getSimpleName()));
+                        class_.getSimpleName(), AppMeta.class.getSimpleName()));
             if (!appCode.equals(appCode.trim().toLowerCase()))
                 throw new RuntimeException(
                         String.format("App code of app '%s' has to be normalized", class_.getSimpleName()));
-            applicationClassesInfo.add(new Tuple2<>(class_, appCode));
+            if (StringUtil.isBlank(annotation.name()))
+                throw new NotImplementedException(String.format("App '%s' missing name in @%s annotation",
+                        class_.getSimpleName(), AppMeta.class.getSimpleName()));
+            applicationClassesInfo.add(new Tuple2<>(class_, annotation));
         }
     }
 
-    public static Class<? extends AbstractApplication> getApplicationClassFromAppCode(String code)
-            throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    public static Class<? extends AbstractApplication> getApplicationClassFromAppCode(String code) {
         code = code.toLowerCase().trim();
-        for (Tuple2<Class<? extends AbstractApplication>, String> applicationClassInfo : applicationClassesInfo) {
-            if (!code.equals(applicationClassInfo._2))
+        for (Tuple2<Class<? extends AbstractApplication>, AppMeta> applicationClassInfo : applicationClassesInfo) {
+            if (!code.equals(applicationClassInfo._2.code()))
                 continue;
             return applicationClassInfo._1;
         }
         err("Not match any app code");
         return null;
+    }
+
+    public static java.util.List<Tuple2<Class<? extends AbstractApplication>, AppMeta>> getApplicationClasses(boolean includeDevApps) {
+        return applicationClassesInfo.stream()
+                .filter(x -> includeDevApps ? true : !x._2.dev())
+                .sorted(Comparator.comparingDouble((Tuple2<Class<? extends AbstractApplication>, AppMeta> o) -> new Double(o._2.displayOrder())).thenComparing(o -> o._2.name()))
+                .collect(Collectors.toList());
     }
 
     public static String read(String key) {

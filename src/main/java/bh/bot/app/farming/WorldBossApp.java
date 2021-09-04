@@ -5,7 +5,7 @@ import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
-import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
 
@@ -18,7 +18,7 @@ import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 
-@AppCode(code = "world-boss")
+@AppMeta(code = "world-boss", name = "World Boss", displayOrder = 6)
 public class WorldBossApp extends AbstractDoFarmingApp {
     private final Supplier<Boolean> isWorldBossBlocked = () -> false;
     private Configuration.UserConfig userConfig;
@@ -47,11 +47,6 @@ public class WorldBossApp extends AbstractDoFarmingApp {
             System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
             return false;
         }
-    }
-
-    @Override
-    protected String getAppShortName() {
-        return "World Boss";
     }
 
     @Override

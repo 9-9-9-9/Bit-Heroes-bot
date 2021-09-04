@@ -30,9 +30,7 @@ Only support English user interface
 4. [Launch game in mini client using Google Chrome](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
 5. [Do stuffs while AFK](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22afk%22)
 
-And some extra functions support developers on developing this bot:
-- Matrix: read an image, keep only pixels which has color (eg. FF0000 is red) as the same as input. Used to produce picture for BwMatrixMeta objects
-- ...
+And some extra functions support developers on developing this bot
 
 [Also supports pushing messages to Telegram for notification purpose](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
 
@@ -47,165 +45,29 @@ And some extra functions support developers on developing this bot:
     - Windows: click and run the file `build.bat`
     - Linux/MacOS: run the following command `./build.sh` on terminal
 
-#### How to use:
-### Configuration
-Have to configure the `config.properties` (or `user-config.properties`) file first
-
-Watch out the following keys:
-- `offset.screen.x`
-- `offset.screen.y`
-
-They are the coordinate where your game screen starts. 
-How to fill it correctly? [Read me](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Basic-setup)
-
-To enable Telegram notification (require technical skill)
-- Set the bot private key to `telegram.token`
-- Set the channel id to `telegram.channel-id`
-
-### ReRun
-For: everyone
-
-[Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22rerun%22)
-
-*This function only supports clicking the ReRun button, that means you have to enter Dungeon/Raid manually, turn on the Auto and when the ReRun button appears, it will be automatically clicked*
-
-- Mini-client or Web:
-  - Windows:
-    - click and run `rerun.bat`
-    - or run from command line: `java -jar BitHeroes.jar rerun <loop_count>`
-  - Linux/Mac:
-    - run `./rerun.sh` from terminal
-    - or command `java -jar BitHeroes.jar rerun <loop_count>`
-- Steam:
-  - Click and run: `steam.rerun.bat`
-  - Run from commandline: `java -jar BitHeroes.jar rerun <loop_count> --steam`
-
-Arguments:
-> accept first argument as `loop count` is how many time to click ReRun button before exit
-
-Supported flags:
-- `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./rerun.sh 100 --exit=3600` means will stop ReRun after clicked ReRun buttons 100 times or after 3600 seconds (1 hours), depends which condition completed first
-- [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
-
-Notes:
-- Automatically exit if can not detect the ReRun button within 15 minutes
-- Automatically exit after detected the Reconnect button
-- Automatically re-active the Auto button if it been red for 60s
-- Support click the arrow button when having a conversation
-- Push notification to Telegram when detect Reconnect button (critical), not see ReRun within 15m (critical), exit (normal). But only works if you correctly configured Telegram
-
-### Fishing
-For: everyone
-
-[Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22fishing%22)
-
-*To use this function, you the to be ready on fishing state, and the Start button is visible clearly on the screen*
-
-- Mini-client or Web:
-  - Windows:
-    - click and run `fishing.bat`
-    - or run from command line: `java -jar BitHeroes.jar fishing <hook_count>`
-  - Linux/Mac: 
-    - run `./fishing.sh` from terminal
-    - or command `java -jar BitHeroes.jar fishing <hook_count>`
-- Steam:
-  - Click and run: `steam.fishing.bat`
-  - Run from commandline: `java -jar BitHeroes.jar fishing <hook_count> --steam`
+#### Easy to use:
+1. Configure follow [instruction on Wiki (click me)](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Basic-setup)
+2. Launch bot:
+  - Steam on Windows: `steam.bot.bat`
+  - Mini-client/Web on Windows: `bot.bat`
+  - Linux/MacOS: `./bot.sh`
   
-Arguments:
-> accept first argument as `hook count` is how many times to hook (material consumes) before exit
+Tips 1: you can launch app with flags directly via command-line after got familiar with it:
+> java -jar BitHeroes.jar "function_name" "param1" ["param2"] [--flags]
 
-Supported flags:
-- `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./fishing.sh 20 --exit=1800` means will stop fishing after fishing 20 times or after 1800 seconds (30m), depends which condition completed first
-- [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
+Tips 2: see help
+- Windows: run file `help.bat`
+- Linux/MacOS: run script `./help.sh`
 
-### AFK
-For: everyone
 
-[Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22afk%22)
-
-*This function does not support select level/mode, how many badge/ticket/... to consumes and can only everything by default so please chose everything first manually then use this*
-
-- Mini-client or Web:
-  - Windows:
-    - click and run `afk.bat`
-    - or run from command line: `java -jar BitHeroes.jar afk`
-  - Linux/Mac: 
-    - run `./afk.sh` from terminal
-    - or command `java -jar BitHeroes.jar afk`
-- Steam **(not yet supported Invasion & Trials):**
-  - Click and run: `steam.afk.bat`
-  - Run from commandline: `java -jar BitHeroes.jar afk --steam`
-
-Supported flags:
-- `--pvp` do PVP
-- `--boss` do world boss [(require setting)](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Select-Raid-World-Boss-level,-mode,..-using-%60setting%60-function)
-- `--gvg` do GVG
-- `--invasion` do Invasion
-- `--expedition` do Expedition
-- `--trials` do Trials
-- `--gauntlet` do Gauntlet
-- `--raid` do Raid [(require setting)](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Select-Raid-World-Boss-level,-mode,..-using-%60setting%60-function)
-- `--all` do everything above
-- `--exit=X` means will exit after X secs if not completed, no matter how many loop remaining. Usage: `./afk.sh --exit=1800` means will stop after 1800 seconds (30m)
-- `--profile=X` specific configuration profile (contains which Raid/World Boss to farm, which Raid mode Normal/Hard/Heroic to select)
-- [Global flags](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Application-flags)
-
-### Mini client using Google Chrome
-For: everyone
-
-[Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
-
-Steps:
-1. Make sure you can play game on Google Chrome web browser at https://www.kongregate.com/games/Juppiomenz/bit-heroes
-2. Press F12 to open Dev Tools
-3. Go to Console tab of Dev Tools
-4. Open file `prepare-mini-chrome-client.txt`
-5. Paste the content into the Console tab
-6. Copy the output into `user-config.properties` file, make sure to override the correct properties
-7. Generate mini client using:
-- Windows: click and run file `client.bat`
-- Linux/Mac: run file `./client.sh` from terminal
-
-Enjoy it
-- Windows: click and run file `mini-game-on-chrome*.bat`
-- Linux/Mac: run file `./mini` or `./mini-game-on-chrome*.sh` from terminal
-
-### Matrix
-For: developers only
-
-`./matrix.sh <KeepHexColor> <ColorTolerant> <image> [additional flags]`
-
-Read image, keep only pixels which has color (eg. FF0000 is red) as the same as input. Used to produce picture for BwMatrixMeta objects
-
-[Those output image can be used to scan buttons on screen with minimal fault and work gracefully across OS and devices because it maybe not have to facing with "Gamma correction" issue](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/How-can-this-bot-works-cross-platform%3F)
-
-#### Other features
-[find out at our Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
-
-#### Global flags
-- `--help` show help for specific application, for example: `./rerun.sh --help`
-- `--steam` *(Windows only)* for Bit Heroes on Steam with resolution 800x480
-- `--web` *(default, optional)* for Bit Heroes on Web or Mini-client with resolution 800x520
-- `--debug` print debug messages, for developers only
-- `--img` save screenshot into `./out/images/<app>` directory, only use for debugging purpose
-- `--mute` do not push notification to Telegram
+##### Optional configuration:
+- Configure Raid/World Boss:
+  - Windows: run file `setting.bat`
+  - Linux/MacOS: run script `./setting.sh`
+- [push notification via Telegram](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
 
 #### Tested environments:
 Please find out on each function on [wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
-
-### Windows users
-If you want to pass parameters/flags to program, you have to edit the `*.bat` files manually
-
-For example if you want to use the feature `--exit=X` on the ReRun function, you have to edit the `rerun.bat` file, modify content
-- from `java -jar BitHeroes rerun`
-- to `java -jar BitHeroes rerun --exit=1800` if you want to stop after 1800 seconds
-- or to `java -jar BitHeroes rerun 30 --exit=1800` if you want to stop after 30 times ReRun or 1800 seconds, depends on what condition completed first
-
-and then save the file
-
-Otherwise you can run app directly from commandline
-> java -jar BitHeroes.jar "function_name" "param1" ["param2"] [--flags]
 
 ### MacOS users
 1. From MacOS 10.13+, java.awt.Robot class of Java can not do mouse and keyboard interaction, thus none of bot functions will work

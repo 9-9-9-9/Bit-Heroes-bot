@@ -2,7 +2,7 @@ package bh.bot.app.dev;
 
 import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
-import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
 
@@ -11,10 +11,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.function.Function;
 
+import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.Log.warn;
 
-@AppCode(code = "matrix")
+@AppMeta(code = "matrix", name = "Matrix", dev = true)
 @Deprecated
 public class ExtractMatrixApp extends AbstractApplication {
     @Override
@@ -113,16 +114,6 @@ public class ExtractMatrixApp extends AbstractApplication {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-    }
-
-    @Override
-    protected String getAppName() {
-        return "BH-Extract Matrix";
-    }
-
-    @Override
-    protected String getScriptFileName() {
-        return "matrix";
     }
 
     @Override

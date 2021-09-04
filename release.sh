@@ -56,32 +56,16 @@ EOF
 cp ./prepare-mini-chrome-client.txt ./release/
 
 # Copy launch scripts for Linux/Mac
-cp ./fishing.sh ./release/
-cp ./rerun.sh ./release/
+cp ./bot.sh ./release/
 cp ./client.sh ./release/
-cp ./world-boss.sh ./release/
-cp ./pvp.sh ./release/
-cp ./invasion.sh ./release/
-cp ./trials.sh ./release/
-cp ./gvg.sh ./release/
-cp ./gauntlet.sh ./release/
-cp ./afk.sh ./release/
+cp ./help.sh ./release/
 cp ./setting.sh ./release/
-cp ./expedition.sh ./release/
 
 # Copy launch scripts for Windows
-cp ./fishing.bat ./release/
-cp ./rerun.bat ./release/
+cp ./bot.bat ./release/
 cp ./client.bat ./release/
-cp ./world-boss.bat ./release/
-cp ./pvp.bat ./release/
-cp ./invasion.bat ./release/
-cp ./trials.bat ./release/
-cp ./gvg.bat ./release/
-cp ./gauntlet.bat ./release/
-cp ./afk.bat ./release/
+cp ./help.bat ./release/
 cp ./setting.bat ./release/
-cp ./expedition.bat ./release/
 
 # Copy steam scripts
 cp ./steam.*.bat ./release/

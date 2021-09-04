@@ -3,7 +3,7 @@ package bh.bot.app;
 import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
-import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ThreadUtil;
@@ -11,12 +11,13 @@ import bh.bot.common.utils.ThreadUtil;
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
-@AppCode(code = "rerun")
+@AppMeta(code = "rerun", name = "ReRun", displayOrder = 2)
 public class ReRunApp extends AbstractApplication {
 
     private int longTimeNoSee = Configuration.Timeout.defaultLongTimeNoSeeInMinutes * 60_000;
@@ -116,16 +117,6 @@ public class ReRunApp extends AbstractApplication {
             Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
             masterSwitch.set(true);
         }
-    }
-
-    @Override
-    protected String getAppName() {
-        return "BH-ReRun";
-    }
-
-    @Override
-    protected String getScriptFileName() {
-        return "rerun";
     }
 
     @Override

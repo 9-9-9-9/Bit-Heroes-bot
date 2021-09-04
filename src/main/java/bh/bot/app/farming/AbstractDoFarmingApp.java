@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
+import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
@@ -22,8 +23,6 @@ import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public abstract class AbstractDoFarmingApp extends AbstractApplication {
-    protected abstract String getAppShortName();
-
     protected abstract AttendablePlace getAttendablePlace();
 
     protected final AttendablePlace ap = getAttendablePlace();
@@ -37,7 +36,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 loopCount = Integer.parseInt(args[0]);
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
                 info(getHelp());
-                loopCount = readInput("Loop count:", "how many time do you want to do " + getAppShortName(), new Function<String, Tuple3<Boolean, String, Integer>>() {
+                loopCount = readInput("Loop count:", "how many time do you want to do " + getAppName(), new Function<String, Tuple3<Boolean, String, Integer>>() {
                     @Override
                     public Tuple3<Boolean, String, Integer> apply(String s) {
                         try {
@@ -75,7 +74,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
     }
 
     protected void loop(int loopCount, AtomicBoolean masterSwitch) {
-        info("Starting %s", getAppShortName());
+        info("Starting %s", getAppName());
         List<NextAction> internalPredefinedImageActions = getInternalPredefinedImageActions();
         int continuousNotFound = 0;
         final Point coordinateHideMouse = new Point(0, 0);
@@ -130,7 +129,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
             moveCursor(coordinateHideMouse);
 
             if (continuousNotFound >= 6) {
-                debug("Finding %s icon", getAppShortName());
+                debug("Finding %s icon", getAppName());
                 Point point = this.gameScreenInteractor.findAttendablePlace(ap);
                 if (point != null) {
                     moveCursor(point);
@@ -146,23 +145,13 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
     }
 
     @Override
-    protected String getAppName() {
-        return "BH-" + getAppShortName();
-    }
-
-    @Override
-    protected String getScriptFileName() {
-        return getAppCode();
-    }
-
-    @Override
     protected String getUsage() {
         return "<count>";
     }
 
     @Override
     protected String getDescription() {
-        return "Do " + getAppShortName();
+        return "Do " + getAppName();
     }
 
     protected boolean doCustomAction() {

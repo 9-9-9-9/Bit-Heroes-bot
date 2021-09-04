@@ -3,7 +3,7 @@ package bh.bot.app;
 import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
-import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 
@@ -13,9 +13,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static bh.bot.Main.colorFormatInfo;
+import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.info;
 
-@AppCode(code = "setting")
+@AppMeta(code = "setting", name = "Setting", displayOrder = 5)
 public class SettingApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
@@ -63,7 +64,7 @@ public class SettingApp extends AbstractApplication {
             for (int rl = raidLevelRange._1; rl <= raidLevelRange._2; rl++)
                 sb.append(String.format("  %2d. %s\n", rl, Configuration.UserConfig.getRaidLevelDesc(rl)));
             sb.append("Specific Raid level?");
-            Integer tmp = readInput(sb.toString(), raidLevelRange._1, raidLevelRange._2);
+            Integer tmp = readIntInput(sb.toString(), raidLevelRange._1, raidLevelRange._2);
             raidLevel = tmp == null ? raidLevel : tmp.intValue();
             //
             Tuple2<Byte, Byte> modeRange = Configuration.UserConfig.getModeRange();
@@ -71,7 +72,7 @@ public class SettingApp extends AbstractApplication {
             for (byte rl = modeRange._1; rl <= modeRange._2; rl++)
                 sb.append(String.format("  %2d. %s\n", rl, Configuration.UserConfig.getDifficultyModeDesc(rl, "Raid")));
             sb.append("Specific Raid mode?");
-            tmp = readInput(sb.toString(), modeRange._1, modeRange._2);
+            tmp = readIntInput(sb.toString(), modeRange._1, modeRange._2);
             raidMode = tmp == null ? raidMode : tmp.intValue();
 
             //
@@ -80,7 +81,7 @@ public class SettingApp extends AbstractApplication {
             for (int rl = woldBossLevelRange._1; rl <= woldBossLevelRange._2; rl++)
                 sb.append(String.format("  %2d. %s\n", rl, Configuration.UserConfig.getWorldBossLevelDesc(rl)));
             sb.append("Specific World Boss level?");
-            tmp = readInput(sb.toString(), woldBossLevelRange._1, woldBossLevelRange._2);
+            tmp = readIntInput(sb.toString(), woldBossLevelRange._1, woldBossLevelRange._2);
             worldBossLevel = tmp == null ? worldBossLevel : tmp.intValue();
             //
 
@@ -124,7 +125,7 @@ public class SettingApp extends AbstractApplication {
         }
     }
 
-    private Integer readInput(String ask, int min, int max) {
+    private Integer readIntInput(String ask, int min, int max) {
         return readInput(ask, "See the list above. To skip and keep the current value, just leave this empty and press Enter", s -> {
             try {
                 int num = Integer.parseInt(s);
@@ -135,16 +136,6 @@ public class SettingApp extends AbstractApplication {
                 return new Tuple3<>(false, String.format("Must be a number in range from %d to %d", min, max), 0);
             }
         }, true);
-    }
-
-    @Override
-    protected String getAppName() {
-        return "Setting";
-    }
-
-    @Override
-    protected String getScriptFileName() {
-        return "setting";
     }
 
     @Override
