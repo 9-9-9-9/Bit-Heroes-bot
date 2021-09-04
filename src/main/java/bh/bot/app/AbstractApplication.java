@@ -877,4 +877,17 @@ public abstract class AbstractApplication {
 			err("Err detecting screen offset: %s", e.getMessage());
 		}
 	}
+
+	protected int readProfileNumber(String ask) {
+		return readInput(ask, String.format("select a number, min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), s -> {
+			try {
+				int num = Integer.parseInt(s.trim());
+				if (num >= 1 && num <= GenMiniClient.supportMaximumNumberOfAccounts)
+					return new Tuple3<>(true, null, num);
+				return new Tuple3<>(false, "Value must be in range from 1 to " + GenMiniClient.supportMaximumNumberOfAccounts, 0);
+			} catch (NumberFormatException ex) {
+				return new Tuple3<>(false, "Not a number", 0);
+			}
+		});
+	}
 }

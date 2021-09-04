@@ -195,7 +195,7 @@ public class Configuration {
                 case 8:
                     return "The Wolf's Deception (T13-T16)";
                 default:
-                    return "NEW, Unknown name (T?-T?)";
+                    return "Unknown (T?-T?)";
             }
         }
     }

@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.types.AttendablePlace.MenuItem;
 import static bh.bot.common.utils.InteractionUtil.Keyboard.*;
@@ -58,25 +59,12 @@ public class AfkApp extends AbstractApplication {
             boolean doExpedition = eventList.contains(AttendablePlaces.expedition);
             if (doRaid || doWorldBoss) {
                 int profileNumber = this.argumentInfo.profileNumber;
-                if (profileNumber < 1) {
-                    profileNumber = readInput("You want to do Raid/WorldBoss so you have to specific profile number first!\nSelect profile number",
-                            String.format("min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts),
-                            s -> {
-                                try {
-                                    int num = Integer.parseInt(s.trim());
-                                    if (num >= 1 && num <= GenMiniClient.supportMaximumNumberOfAccounts)
-                                        return new Tuple3<>(true, null, num);
-                                    return new Tuple3<>(false, "Value must be in range from 1 to "
-                                            + GenMiniClient.supportMaximumNumberOfAccounts, 0);
-                                } catch (NumberFormatException ex) {
-                                    return new Tuple3<>(false, "Not a number", 0);
-                                }
-                            });
-                }
+                if (profileNumber < 1)
+                    profileNumber = readProfileNumber("You want to do Raid/World Boss so you have to specific profile number first!\nSelect profile number");
                 Tuple2<Boolean, Configuration.UserConfig> resultLoadUserConfig = Configuration
                         .loadUserConfig(profileNumber);
                 if (!resultLoadUserConfig._1) {
-                    err("Profile number %d could not be found");
+                    err("Profile number %d could not be found", profileNumber);
                     printRequiresSetting();
                     System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
                 }
@@ -85,14 +73,14 @@ public class AfkApp extends AbstractApplication {
 
                 try {
                     if (doRaid && doWorldBoss) {
-                        info("You have selected %s mode of %s", userConfig.getRaidModeDesc(),
+                        info(colorFormatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
                                 userConfig.getRaidLevelDesc());
-                        info("and World Boss %s", userConfig.getWorldBossLevelDesc());
+                        info(colorFormatInfo, "and World Boss %s", userConfig.getWorldBossLevelDesc());
                     } else if (doRaid) {
-                        info("You have selected %s mode of %s", userConfig.getRaidModeDesc(),
+                        info(colorFormatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
                                 userConfig.getRaidLevelDesc());
                     } else if (doWorldBoss) {
-                        info("You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
+                        info(colorFormatInfo, "You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
                     }
                 } catch (InvalidDataException ex2) {
                     err(ex2.getMessage());

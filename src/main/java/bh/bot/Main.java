@@ -2,6 +2,7 @@ package bh.bot;
 
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
+import static com.diogonunes.jcolor.Attribute.BOLD;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -56,9 +57,12 @@ import bh.bot.common.types.flags.FlagSteamResolution800x480;
 import bh.bot.common.types.flags.FlagWebResolution800x520;
 import bh.bot.common.types.flags.Flags;
 import bh.bot.common.utils.InteractionUtil;
+import com.diogonunes.jcolor.AnsiFormat;
 
 @SuppressWarnings("deprecation")
 public class Main {
+	public static final AnsiFormat colorFormatInfo = new AnsiFormat(com.diogonunes.jcolor.Attribute.BRIGHT_BLUE_TEXT(), BOLD());
+
 	public static void main(String[] args) {
 		try {
 
