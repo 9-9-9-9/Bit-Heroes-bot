@@ -4,6 +4,9 @@ import java.lang.annotation.*;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AppCode {
+public @interface AppMeta {
     String code();
+    String name();
+    boolean dev() default false;
+    double displayOrder() default Double.MAX_VALUE;
 }

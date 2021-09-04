@@ -1,7 +1,7 @@
 package bh.bot.app.dev;
 
 import bh.bot.app.AbstractApplication;
-import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple3;
 
 import java.awt.image.BufferedImage;
@@ -9,10 +9,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.function.Function;
 
+import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 
-@AppCode(code = "samepix")
+@AppMeta(code = "samepix", name = "SamePix", dev = true)
 @Deprecated
 public class SamePixApp extends AbstractApplication {
     @Override
@@ -95,16 +96,6 @@ public class SamePixApp extends AbstractApplication {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    protected String getAppName() {
-        return "BH-SamePix";
-    }
-
-    @Override
-    protected String getScriptFileName() {
-        return "samepix";
     }
 
     @Override

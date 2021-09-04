@@ -5,7 +5,7 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
-import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
@@ -19,11 +19,12 @@ import java.io.BufferedReader;
 import java.util.Arrays;
 import java.util.List;
 
+import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.InteractionUtil.Mouse.clickRadioButton;
 
 @SuppressWarnings("unused")
-@AppCode(code = "test")
+@AppMeta(code = "test", name = "Test Code", dev = true)
 public class TestApp extends AbstractApplication {
     protected InteractionUtil.Screen.Game gameScreenInteractor = InteractionUtil.Screen.Game.of(this);
 
@@ -89,16 +90,6 @@ public class TestApp extends AbstractApplication {
                 info("Not found %s", ap.name);
             }
         });
-    }
-
-    @Override
-    protected String getAppName() {
-        return "BH-Test code";
-    }
-
-    @Override
-    protected String getScriptFileName() {
-        return "test";
     }
 
     @Override

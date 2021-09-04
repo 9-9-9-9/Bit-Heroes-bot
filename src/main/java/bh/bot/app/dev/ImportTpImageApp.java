@@ -3,7 +3,7 @@ package bh.bot.app.dev;
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
-import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.utils.StringUtil;
@@ -18,10 +18,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.Log.warn;
 
-@AppCode(code = "tp")
+@AppMeta(code = "tp", name = "Import Tolerant-Pixel", dev = true, displayOrder = 100)
 public class ImportTpImageApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
@@ -122,23 +123,13 @@ public class ImportTpImageApp extends AbstractApplication {
     }
 
     @Override
-    protected String getAppName() {
-        return "BH-Import TP Image";
-    }
-
-    @Override
-    protected String getScriptFileName() {
-        return "tp";
-    }
-
-    @Override
     protected String getUsage() {
         return "<KeepHexColor> <image>";
     }
 
     @Override
     protected String getDescription() {
-        return "(developers only) Import tp image";
+        return "(developers only) Import tolerant pixel image";
     }
 
     @Override

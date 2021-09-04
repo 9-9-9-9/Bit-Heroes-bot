@@ -3,7 +3,7 @@ package bh.bot.app.dev;
 import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Log;
-import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple3;
 
 import java.awt.image.BufferedImage;
@@ -14,9 +14,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
+import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.info;
 
-@AppCode(code = "keeppix")
+@AppMeta(code = "keeppix", name = "KeepPix", dev = true)
 @Deprecated
 public class KeepPixApp extends AbstractApplication {
     @Override
@@ -105,16 +106,6 @@ public class KeepPixApp extends AbstractApplication {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    protected String getAppName() {
-        return "BH-KeepPix";
-    }
-
-    @Override
-    protected String getScriptFileName() {
-        return "keeppix";
     }
 
     @Override

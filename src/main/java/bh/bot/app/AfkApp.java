@@ -9,7 +9,7 @@ import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
-import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
@@ -29,13 +29,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static bh.bot.Main.colorFormatInfo;
+import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.types.AttendablePlace.MenuItem;
 import static bh.bot.common.utils.InteractionUtil.Keyboard.*;
 import static bh.bot.common.utils.InteractionUtil.Mouse.*;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
-@AppCode(code = "afk")
+@AppMeta(code = "afk", name = "AFK", displayOrder = 1)
 public class AfkApp extends AbstractApplication {
     private InteractionUtil.Screen.Game gameScreenInteractor;
     private final AtomicLong blockPvpUntil = new AtomicLong(0);
@@ -459,20 +460,17 @@ public class AfkApp extends AbstractApplication {
                 List<AttendablePlace> events = readInput(ask,
                         "To select an event, press the number then press Enter. To finish input, just enter without supply a number",
                         selectedOptionsInfoProvider,
-                        new Function<String, Tuple3<Boolean, String, List<AttendablePlace>>>() {
-                            @Override
-                            public Tuple3<Boolean, String, List<AttendablePlace>> apply(String s) {
-                                try {
-                                    int result = Integer.parseInt(s);
-                                    List<AttendablePlace> events = allAttendablePlaces.stream()
-                                            .filter(x -> (result & x.id) == x.id).collect(Collectors.toList());
-                                    if (events.size() == 0)
-                                        return new Tuple3<>(false, "Incorrect value", null);
-                                    return new Tuple3<>(true, null, events);
-                                } catch (Exception ex2) {
-                                    return new Tuple3<>(false, "Unable to parse your input, error: " + ex2.getMessage(),
-                                            null);
-                                }
+                        s -> {
+                            try {
+                                int result = Integer.parseInt(s);
+                                List<AttendablePlace> events1 = allAttendablePlaces.stream()
+                                        .filter(x -> (result & x.id) == x.id).collect(Collectors.toList());
+                                if (events1.size() == 0)
+                                    return new Tuple3<>(false, "Incorrect value", null);
+                                return new Tuple3<>(true, null, events1);
+                            } catch (Exception ex2) {
+                                return new Tuple3<>(false, "Unable to parse your input, error: " + ex2.getMessage(),
+                                        null);
                             }
                         }, true);
 
@@ -555,16 +553,6 @@ public class AfkApp extends AbstractApplication {
         int x = sampleImgCoord.x - sampleImg.getCoordinateOffset().X;
         int y = sampleImgCoord.y - sampleImg.getCoordinateOffset().Y;
         return new Point(x + targetOffset.X, y + targetOffset.Y);
-    }
-
-    @Override
-    protected String getAppName() {
-        return "BH-AFK";
-    }
-
-    @Override
-    protected String getScriptFileName() {
-        return "afk";
     }
 
     @Override

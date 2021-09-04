@@ -3,7 +3,7 @@ package bh.bot.app;
 import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
-import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.annotations.AppMeta;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -17,7 +17,7 @@ import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.StringUtil.isBlank;
 import static bh.bot.common.utils.StringUtil.isNotBlank;
 
-@AppCode(code = "client")
+@AppMeta(code = "client", name = "Generate mini-client", displayOrder = 4)
 public class GenMiniClient extends AbstractApplication {
     private static final File chromeUserDir = new File("chrome-user-dir");
 
@@ -229,16 +229,6 @@ public class GenMiniClient extends AbstractApplication {
             this.kongUserName = kongUserName;
             this.authToken = authToken;
         }
-    }
-
-    @Override
-    protected String getAppName() {
-        return "Bit Heroes on Chrome client";
-    }
-
-    @Override
-    protected String getScriptFileName() {
-        return "client";
     }
 
     @Override

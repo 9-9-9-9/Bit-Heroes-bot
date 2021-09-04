@@ -6,10 +6,10 @@ import java.awt.image.BufferedImage;
 
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
-import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.utils.InteractionUtil;
 
-@AppCode(code = "sc")
+@AppMeta(code = "sc", name = "Screen Shot", dev = true)
 public class ScreenCaptureApp extends AbstractApplication {
 	@Override
 	protected void internalRun(String[] args) {
@@ -25,16 +25,6 @@ public class ScreenCaptureApp extends AbstractApplication {
 		} finally {
 			freeMem(sc);
 		}
-	}
-
-	@Override
-	protected String getAppName() {
-		return "Screen Shot";
-	}
-
-	@Override
-	protected String getScriptFileName() {
-		return "sc";
 	}
 
 	@Override

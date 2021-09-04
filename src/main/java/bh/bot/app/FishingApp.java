@@ -3,7 +3,7 @@ package bh.bot.app;
 import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
-import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.ImageUtil.freeMem;
 import static bh.bot.common.utils.InteractionUtil.Keyboard.sendSpaceKey;
@@ -24,7 +25,7 @@ import static bh.bot.common.utils.InteractionUtil.Screen.getPixelColor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 import static bh.bot.common.utils.ThreadUtil.waitDone;
 
-@AppCode(code = "fishing")
+@AppMeta(code = "fishing", name = "Fishing", displayOrder = 3)
 public class FishingApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
@@ -345,16 +346,6 @@ public class FishingApp extends AbstractApplication {
         }
 
         return true;
-    }
-
-    @Override
-    protected String getAppName() {
-        return "BH-Fishing";
-    }
-
-    @Override
-    protected String getScriptFileName() {
-        return "fishing";
     }
 
     @Override

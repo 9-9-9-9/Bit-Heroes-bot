@@ -2,19 +2,14 @@ package bh.bot.app.farming;
 
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
-import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
 
 import java.util.Arrays;
 import java.util.List;
 
-@AppCode(code = "gauntlet")
+@AppMeta(code = "gauntlet", name = "Gauntlet", displayOrder = 13)
 public class GauntletApp extends TrialsApp {
-    @Override
-    protected String getAppShortName() {
-        return "Gauntlet";
-    }
-
     @Override
     protected AttendablePlace getAttendablePlace() {
         return AttendablePlaces.gauntlet;
