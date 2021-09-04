@@ -745,11 +745,11 @@ public abstract class AbstractApplication {
 
 	protected ExpeditionPlace selectExpeditionPlace(BufferedReader br) {
 		StringBuilder sb = new StringBuilder();
+		sb.append("Select a place to do Expedition:\n");
 		sb.append(String.format("  1. %s\n", ExpeditionPlace.BlubLix));
 		sb.append(String.format("  2. %s\n", ExpeditionPlace.Mowhi));
 		sb.append(String.format("  3. %s\n", ExpeditionPlace.WizBot));
 		sb.append(String.format("  4. %s\n", ExpeditionPlace.Astamus));
-		sb.append("Select a place to do Expedition:");
 		ExpeditionPlace place = readInput(br, sb.toString(), null,
 				s -> {
 					try {

@@ -510,7 +510,7 @@ public class AfkApp extends AbstractApplication {
 
 		info("Selected:");
 		for (AttendablePlace event : eventList) {
-			info("  <%2d> %s", event.id, event.name);
+			info("  <%3d> %s", event.id, event.name);
 		}
 
 		return eventList;
