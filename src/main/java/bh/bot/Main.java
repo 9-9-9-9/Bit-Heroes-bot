@@ -118,7 +118,7 @@ public class Main {
             }
         }
 
-        boolean addMoreFlags = readYesNoInput("(optional) Do you want to add some add some flags?", String.format("You can pass flags like '--exit=3600'/'--steam'/'--all'/'--help'... here. For list of supported flags available for each function, please run file 'help.%s'", Configuration.OS.isWin ? "bat" : "sh"));
+        boolean addMoreFlags = readYesNoInput("(optional) Do you want to add some add some flags? (Yes/No)", String.format("You can pass flags like '--exit=3600'/'--steam'/'--all'/'--help'... here. For list of supported flags available for each function, please run file 'help.%s'", Configuration.OS.isWin ? "bat" : "sh"));
         if (addMoreFlags) {
             final Supplier<List<String>> selectedFlagsInfoProvider = () -> lArgs.stream().filter(x -> x.startsWith("--")).collect(Collectors.toList());
             while (true) {
