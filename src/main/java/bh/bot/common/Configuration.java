@@ -39,6 +39,7 @@ public class Configuration {
     public static class Features {
         public static boolean disableJna = false;
         public static boolean disableDoCheckGameScreenOffset = false;
+        public static boolean disableColorizeTerminal = false;
     }
 
     public static class Tolerant {
@@ -228,8 +229,9 @@ public class Configuration {
 
         noThrowWhenImageNotAvailable = StringUtil.isTrue(read("dev.no-throw-when-image-not-available"));
         Features.disableJna = StringUtil.isTrue(read("disable.jna"));
-        Configuration.Features.disableDoCheckGameScreenOffset =
+        Features.disableDoCheckGameScreenOffset =
                 Features.disableJna || StringUtil.isTrue(read("disable.jna.disableDoCheckGameScreenOffset"));
+        Features.disableColorizeTerminal = StringUtil.isTrue(read("disable.colorize-terminal"));
 
         String keyLongTimeNoSee = "timeout.minutes.long-time-no-see";
         short minLongTimeNoSee = 10;

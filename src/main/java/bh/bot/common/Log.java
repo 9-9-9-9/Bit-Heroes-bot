@@ -1,9 +1,9 @@
 package bh.bot.common;
 
-import java.awt.Point;
-
 import bh.bot.common.utils.StringUtil;
 import com.diogonunes.jcolor.AnsiFormat;
+
+import java.awt.*;
 
 import static com.diogonunes.jcolor.Ansi.colorize;
 import static com.diogonunes.jcolor.Attribute.*;
@@ -77,9 +77,8 @@ public class Log {
     }
 
     public static void info(AnsiFormat cFormat, String format, Object... objs) {
-        println(colorize(String.format(format, objs), cFormat));
+        println(color(String.format(format, objs), cFormat));
     }
-
 
     private static final AnsiFormat fWarning = new AnsiFormat(YELLOW_TEXT(), BOLD());
 
@@ -87,7 +86,7 @@ public class Log {
         if (StringUtil.isBlank(format))
             return;
         String text = String.format(format, objs);
-        println(colorize(String.format("** WARNING ** %s", text), fWarning));
+        println(color(String.format("** WARNING ** %s", text), fWarning));
     }
 
     private static final AnsiFormat fError = new AnsiFormat(RED_TEXT(), BOLD());
@@ -99,16 +98,22 @@ public class Log {
         }
         if (obj == null)
             return;
-        System.err.println(colorize(String.format("** ERR ** %s", obj.toString()), fError));
+        System.err.println(color(String.format("** ERR ** %s", obj.toString()), fError));
     }
 
     public static void err(String format, Object... objs) {
-        System.err.println(colorize(String.format("** ERR ** %s", String.format(format, objs)), fError));
+        System.err.println(color(String.format("** ERR ** %s", String.format(format, objs)), fError));
     }
 
     private static void println(Object obj) {
         if (obj == null)
             return;
         System.out.println(obj.toString());
+    }
+
+    private static String color(String text, AnsiFormat attributes) {
+        if (Configuration.Features.disableColorizeTerminal)
+            return text;
+        return colorize(text, attributes);
     }
 }
