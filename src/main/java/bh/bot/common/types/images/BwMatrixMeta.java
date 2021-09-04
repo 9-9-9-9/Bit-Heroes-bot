@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
+import bh.bot.common.types.Offset;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.utils.StringUtil;
@@ -24,14 +25,14 @@ public class BwMatrixMeta {
     private final int h;
     private final int blackPixelRgb;
     private final ImageUtil.DynamicRgb blackPixelDRgb;
-    private final Configuration.Offset coordinateOffset;
+    private final Offset coordinateOffset;
     private final int[] lastMatch = new int[]{-1, -1};
     private final byte tolerant;
     private final String imageNameCode;
     private final boolean notAvailable;
     private final Short[][] originalTpPixelPart;
 
-    public BwMatrixMeta(BufferedImageInfo mxbi, Configuration.Offset coordinateOffset, int blackPixelRgb, BufferedImage tpBi) {
+    public BwMatrixMeta(BufferedImageInfo mxbi, Offset coordinateOffset, int blackPixelRgb, BufferedImage tpBi) {
         if (mxbi.notAvailable) {
             this.firstBlackPixelOffset = null;
             this.blackPixels = null;
@@ -167,7 +168,7 @@ public class BwMatrixMeta {
         return tolerant;
     }
 
-    public Configuration.Offset getCoordinateOffset() {
+    public Offset getCoordinateOffset() {
         return coordinateOffset;
     }
 
@@ -345,12 +346,12 @@ public class BwMatrixMeta {
         );
         Metas.Globally.Buttons.radioButton = BwMatrixMeta.from(//
                 "buttons/globally.radio-button?",
-                Configuration.Offset.none(), //
+                Offset.none(), //
                 0x000000
         );
         Metas.Globally.Buttons.close = BwMatrixMeta.from(//
                 "buttons/globally.close?",
-                Configuration.Offset.none(), //
+                Offset.none(), //
                 0x000000
         );
         Metas.Globally.Buttons.mapButtonOnFamiliarUi = BwMatrixMeta.from(//
@@ -612,7 +613,7 @@ public class BwMatrixMeta {
         );
     }
 
-    public static BwMatrixMeta from(String path, Configuration.Offset imageOffset, int blackPixelRgb) throws IOException {
+    public static BwMatrixMeta from(String path, Offset imageOffset, int blackPixelRgb) throws IOException {
         String normalized = path.trim().toLowerCase();
         if (normalized.endsWith("?")) {
             String prefix = path.substring(0, path.length() - 1);
@@ -634,15 +635,15 @@ public class BwMatrixMeta {
             throw new NotSupportedException("Un-recognized format");
     }
 
-    public static BwMatrixMeta fromTpImage(String path, Configuration.Offset tpImageOffset, int blackPixelRgb) throws IOException {
+    public static BwMatrixMeta fromTpImage(String path, Offset tpImageOffset, int blackPixelRgb) throws IOException {
         BufferedImageInfo tpbi = ImageUtil.loadTpImageFromResource(path);
         try {
-            Tuple2<BufferedImageInfo, Configuration.Offset> transformed = ImageUtil.transformFromTpToMxImage(tpbi, blackPixelRgb, tpImageOffset);
+            Tuple2<BufferedImageInfo, Offset> transformed = ImageUtil.transformFromTpToMxImage(tpbi, blackPixelRgb, tpImageOffset);
             return new BwMatrixMeta(
         		transformed._1,
         		transformed._1.notAvailable
         		? null
-        		: new Configuration.Offset(
+        		: new Offset(
         				tpImageOffset.X + transformed._2.X, 
         				tpImageOffset.Y + transformed._2.Y
         		), 

@@ -1,9 +1,10 @@
 package bh.bot.common;
 
 import bh.bot.app.AbstractApplication;
-import bh.bot.common.Configuration.Offset.AtomicOffset;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotImplementedException;
+import bh.bot.common.types.AtomicOffset;
+import bh.bot.common.types.Offset;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
@@ -12,7 +13,6 @@ import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.utils.StringUtil;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static bh.bot.common.Log.*;
@@ -358,73 +357,5 @@ public class Configuration {
             return env.trim();
 
         return null;
-    }
-
-    public static class Offset {
-        public final int X;
-        public final int Y;
-
-        public Offset(int x, int y) {
-            this.X = x;
-            this.Y = y;
-        }
-
-        public Point toScreenCoordinate() {
-            return new Point(Configuration.gameScreenOffset.X.get() + X, Configuration.gameScreenOffset.Y.get() + Y);
-        }
-
-        @Override
-        public String toString() {
-            return String.format("%s[x=%d,y=%d]", this.getClass().getName(), X, Y);
-        }
-
-        public static Offset fromKeyPrefix(String keyPrefix) {
-            int x = Configuration.readInt(keyPrefix + ".x");
-            int y = Configuration.readInt(keyPrefix + ".y");
-            if (x < 0)
-                throw new IllegalArgumentException(
-                        String.format("Value of offset %s.x can not be a negative number: %d", keyPrefix, x));
-            if (y < 0)
-                throw new IllegalArgumentException(
-                        String.format("Value of offset %s.y can not be a negative number: %d", keyPrefix, y));
-            return new Offset(x, y);
-        }
-
-        public static Offset none() {
-            return new Offset(-1, -1);
-        }
-
-        public static class AtomicOffset {
-            public final AtomicInteger X;
-            public final AtomicInteger Y;
-
-            public AtomicOffset(int x, int y) {
-                this.X = new AtomicInteger(x);
-                this.Y = new AtomicInteger(y);
-            }
-
-            public AtomicOffset(Offset offset) {
-                this(offset.X, offset.Y);
-            }
-
-            public void set(int x, int y) {
-                this.X.set(x);
-                this.Y.set(y);
-            }
-
-            public void set(Offset offset) {
-                this.set(offset.X, offset.Y);
-            }
-        }
-    }
-
-    public static class Size {
-        public final int W;
-        public final int H;
-
-        public Size(int w, int h) {
-            this.W = w;
-            this.H = h;
-        }
     }
 }

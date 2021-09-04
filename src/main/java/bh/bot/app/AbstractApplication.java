@@ -2,7 +2,9 @@ package bh.bot.app;
 
 import bh.bot.app.farming.ExpeditionApp.ExpeditionPlace;
 import bh.bot.common.Configuration;
-import bh.bot.common.Configuration.Offset;
+import bh.bot.common.types.Offset;
+import bh.bot.common.types.AtomicOffset;
+import bh.bot.common.types.Size;
 import bh.bot.common.OS;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidDataException;
@@ -399,7 +401,7 @@ public abstract class AbstractApplication {
         int positionTolerant = Math.min(10, Configuration.Tolerant.position);
 
         try (ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(
-                new Configuration.Offset(Math.max(0, scanRect.x - positionTolerant),
+                new Offset(Math.max(0, scanRect.x - positionTolerant),
                         Math.max(0, scanRect.y - positionTolerant)),
                 scanRect.width + positionTolerant * 2, scanRect.height + positionTolerant * 2)) {
             BufferedImage sc = screenCapturedResult.image;

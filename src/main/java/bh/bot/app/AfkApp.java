@@ -9,6 +9,7 @@ import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
+import bh.bot.common.types.Offset;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
@@ -549,7 +550,7 @@ public class AfkApp extends AbstractApplication {
     }
 
     private Point fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta sampleImg, Point sampleImgCoord,
-                                                              Configuration.Offset targetOffset) {
+                                                              Offset targetOffset) {
         int x = sampleImgCoord.x - sampleImg.getCoordinateOffset().X;
         int y = sampleImgCoord.y - sampleImg.getCoordinateOffset().Y;
         return new Point(x + targetOffset.X, y + targetOffset.Y);

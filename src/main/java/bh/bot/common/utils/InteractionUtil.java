@@ -14,6 +14,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
+import bh.bot.common.types.Offset;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinDef.HWND;
@@ -104,8 +105,8 @@ public class InteractionUtil {
 			return captureElementInEstimatedArea(im.getCoordinateOffset(), im.getWidth(), im.getHeight());
 		}
 
-		public static ScreenCapturedResult captureElementInEstimatedArea(Configuration.Offset coordinate, int w,
-				int h) {
+		public static ScreenCapturedResult captureElementInEstimatedArea(Offset coordinate, int w,
+																		 int h) {
 			int xS = Math.max(0,
 					Configuration.gameScreenOffset.X.get() + coordinate.X - Configuration.Tolerant.position);
 			int yS = Math.max(0,

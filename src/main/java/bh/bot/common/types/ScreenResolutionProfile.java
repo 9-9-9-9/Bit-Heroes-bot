@@ -1,7 +1,5 @@
 package bh.bot.common.types;
 
-import bh.bot.common.Configuration.Offset;
-import bh.bot.common.Configuration.Size;
 import bh.bot.common.types.tuples.Tuple4;
 
 import java.awt.*;

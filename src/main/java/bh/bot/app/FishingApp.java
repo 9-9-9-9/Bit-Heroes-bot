@@ -3,6 +3,8 @@ package bh.bot.app;
 import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
+import bh.bot.common.types.Offset;
+import bh.bot.common.types.Size;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
@@ -66,7 +68,7 @@ public class FishingApp extends AbstractApplication {
 
         debug("labelFishingCord: %3d, %3d", labelFishingCord.x, labelFishingCord.y);
 
-        Configuration.Offset offsetLabelFishing = Configuration.screenResolutionProfile.getOffsetLabelFishing();
+        Offset offsetLabelFishing = Configuration.screenResolutionProfile.getOffsetLabelFishing();
         final Point anchorPoint = new Point(labelFishingCord.x - offsetLabelFishing.X,
                 labelFishingCord.y - offsetLabelFishing.Y);
 
@@ -157,7 +159,7 @@ public class FishingApp extends AbstractApplication {
                 if (curScreen == screenCatch) {
                     debug("On screen CATCH");
 
-                    Configuration.Offset offsetDetect100PcCatchingFish = Configuration.screenResolutionProfile
+                    Offset offsetDetect100PcCatchingFish = Configuration.screenResolutionProfile
                             .getOffsetDetect100PcCatchingFish();
                     Color color = getPixelColor(anchorPoint.x + offsetDetect100PcCatchingFish.X,
                             anchorPoint.y + offsetDetect100PcCatchingFish.Y);
@@ -183,9 +185,9 @@ public class FishingApp extends AbstractApplication {
                 } else if (curScreen == screenCast) {
                     debug("On screen CAST");
 
-                    Configuration.Offset offsetScanCastingFish = Configuration.screenResolutionProfile
+                    Offset offsetScanCastingFish = Configuration.screenResolutionProfile
                             .getOffsetScanCastingFish();
-                    Configuration.Size scanSizeCastingFish = Configuration.screenResolutionProfile
+                    Size scanSizeCastingFish = Configuration.screenResolutionProfile
                             .getScanSizeCastingFish();
                     BufferedImage sc = captureScreen(anchorPoint.x + offsetScanCastingFish.X,
                             anchorPoint.y + offsetScanCastingFish.Y, scanSizeCastingFish.W, scanSizeCastingFish.H);

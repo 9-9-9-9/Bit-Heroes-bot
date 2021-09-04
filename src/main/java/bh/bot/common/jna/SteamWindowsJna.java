@@ -1,8 +1,8 @@
 package bh.bot.common.jna;
 
-import bh.bot.common.Configuration.Offset;
 import bh.bot.common.OS;
 import bh.bot.common.exceptions.NotSupportedException;
+import bh.bot.common.types.Offset;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.tuples.Tuple4;
@@ -26,7 +26,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 
 	@Override
 	public Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(HWND hwnd,
-			ScreenResolutionProfile screenResolutionProfile) {
+																			 ScreenResolutionProfile screenResolutionProfile) {
 		if (!(screenResolutionProfile instanceof SteamProfile))
 			throw new IllegalArgumentException("Not steam profile");
 
