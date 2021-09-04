@@ -748,7 +748,7 @@ public abstract class AbstractApplication {
                     Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateGameScreenOffset(gameWindowHwndByJna,
                             srp);
                     if (!result._1) {
-                        err(result._2);
+                        err("Unable to perform auto adjust game screen offset due to error: %s", result._2);
                         continue;
                     }
                     if (result._4.X != x || result._4.Y != y) {

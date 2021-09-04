@@ -35,7 +35,7 @@ public class Configuration {
     public static class Features {
         public static boolean disableJna = false;
         public static boolean disableDoCheckGameScreenOffset = false;
-        public static boolean disableColorizeTerminal = "windows 7".equals(OS.normalizedName.trim());
+        public static boolean disableColorizeTerminal = "windows 7".equals(OS.name.trim().toLowerCase());
     }
 
     public static class Tolerant {
