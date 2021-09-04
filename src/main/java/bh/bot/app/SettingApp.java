@@ -89,9 +89,16 @@ public class SettingApp extends AbstractApplication {
             sb.append(String.format("%s=%d\n", Configuration.UserConfig.raidModeKey, raidMode));
             sb.append(String.format("%s=%d\n", Configuration.UserConfig.worldBossLevelKey, worldBossLevel));
 
-            info(colorFormatInfo, "You have selected:");
-            info(colorFormatInfo, "  %s mode of raid %s", Configuration.UserConfig.getDifficultyModeDesc((byte) raidMode, "Raid"), Configuration.UserConfig.getRaidLevelDesc((byte) raidLevel));
-            info(colorFormatInfo, "  world boss %s", Configuration.UserConfig.getWorldBossLevelDesc((byte) worldBossLevel));
+            Configuration.UserConfig newCfg = new Configuration.UserConfig(profileNumber, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel);
+            info(colorFormatInfo, "Your setting:");
+            if (newCfg.isValidRaidLevel() && newCfg.isValidDifficultyMode(newCfg.raidMode))
+                info(colorFormatInfo, "  %s mode of raid %s", Configuration.UserConfig.getDifficultyModeDesc((byte) raidMode, "Raid"), Configuration.UserConfig.getRaidLevelDesc((byte) raidLevel));
+            else
+                info(colorFormatInfo, "  raid has not been set");
+            if (newCfg.isValidWorldBossLevel() && newCfg.isValidDifficultyMode(newCfg.raidMode))
+                info(colorFormatInfo, "  world boss %s", Configuration.UserConfig.getWorldBossLevelDesc((byte) worldBossLevel));
+            else
+                info(colorFormatInfo, "  world boss has not been set");
             boolean save = readInput("Do you want to save the above setting into profile number " + profileNumber + "?", "Press Y/N then enter", s -> {
                 s = s.trim().toLowerCase();
                 if (s.equals("y"))
