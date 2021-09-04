@@ -90,16 +90,20 @@ public class SettingApp extends AbstractApplication {
             sb.append(String.format("%s=%d\n", Configuration.UserConfig.worldBossLevelKey, worldBossLevel));
 
             Configuration.UserConfig newCfg = new Configuration.UserConfig(profileNumber, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel);
-            info(colorFormatInfo, "Your setting:");
+
+            sb = new StringBuilder("Your setting:\n");
             if (newCfg.isValidRaidLevel() && newCfg.isValidDifficultyMode(newCfg.raidMode))
-                info(colorFormatInfo, "  %s mode of raid %s", Configuration.UserConfig.getDifficultyModeDesc((byte) raidMode, "Raid"), Configuration.UserConfig.getRaidLevelDesc((byte) raidLevel));
+                sb.append(String.format("  %s mode of raid %s", Configuration.UserConfig.getDifficultyModeDesc((byte) raidMode, "Raid"), Configuration.UserConfig.getRaidLevelDesc((byte) raidLevel)));
             else
-                info(colorFormatInfo, "  raid has not been set");
-            if (newCfg.isValidWorldBossLevel() && newCfg.isValidDifficultyMode(newCfg.raidMode))
-                info(colorFormatInfo, "  world boss %s", Configuration.UserConfig.getWorldBossLevelDesc((byte) worldBossLevel));
+                sb.append("  raid has not been set");
+            sb.append('\n');
+            if (newCfg.isValidWorldBossLevel())
+                sb.append(String.format("  world boss %s", Configuration.UserConfig.getWorldBossLevelDesc((byte) worldBossLevel)));
             else
-                info(colorFormatInfo, "  world boss has not been set");
-            boolean save = readInput("Do you want to save the above setting into profile number " + profileNumber + "?", "Press Y/N then enter", s -> {
+                sb.append("  world boss has not been set");
+            sb.append('\n');
+            sb.append(String.format("Do you want to save the above setting into profile number %d ?", profileNumber));
+            boolean save = readInput(sb.toString(), "Press Y/N then enter", s -> {
                 s = s.trim().toLowerCase();
                 if (s.equals("y"))
                     return new Tuple3<>(true, null, true);

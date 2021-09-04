@@ -644,7 +644,7 @@ public abstract class AbstractApplication {
 			BufferedReader br = Main.getBufferedReader();
 			String input;
 			while (true) {
-				info("\n\n\n\n==========================");
+				info("\n\n==================================");
 				info(fAsk, ask);
 				if (selectedOptionsInfoProvider != null) {
 					List<String> selectedOptions = selectedOptionsInfoProvider.get();
