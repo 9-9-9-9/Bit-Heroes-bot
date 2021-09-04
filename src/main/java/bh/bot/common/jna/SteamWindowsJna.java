@@ -1,23 +1,22 @@
 package bh.bot.common.jna;
 
-import java.awt.Rectangle;
-
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinDef.RECT;
-
-import bh.bot.common.Configuration;
-import bh.bot.common.Configuration.Offset;
+import bh.bot.common.OS;
 import bh.bot.common.exceptions.NotSupportedException;
+import bh.bot.common.types.Offset;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.tuples.Tuple4;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.RECT;
+
+import java.awt.*;
 
 public class SteamWindowsJna extends AbstractWindowsJna {
 	public SteamWindowsJna() {
 		super();
-		if (!Configuration.OS.isWin)
+		if (!OS.isWin)
 			throw new NotSupportedException(String.format("Class %s does not support %s OS",
-					this.getClass().getSimpleName(), Configuration.OS.name));
+					this.getClass().getSimpleName(), OS.name));
 	}
 
 	@Override
@@ -27,7 +26,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 
 	@Override
 	public Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(HWND hwnd,
-			ScreenResolutionProfile screenResolutionProfile) {
+																			 ScreenResolutionProfile screenResolutionProfile) {
 		if (!(screenResolutionProfile instanceof SteamProfile))
 			throw new IllegalArgumentException("Not steam profile");
 
@@ -65,7 +64,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 		if (rect.width < ew || rect.height < eh)
 			return new Tuple4<>(false,
 					String.format("JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d", ew,
-							eh, cw, ch),
+							eh, rect.width, rect.height),
 					null, null);
 		final int ww = rect.width;
 		final int wh = rect.height;

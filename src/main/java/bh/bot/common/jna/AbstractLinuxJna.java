@@ -1,28 +1,22 @@
 package bh.bot.common.jna;
 
-import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.optionalDebug;
-
-import java.awt.Rectangle;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import com.sun.jna.platform.win32.WinDef;
-
-import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.types.Offset;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple4;
 import bh.bot.common.utils.StringUtil;
+import com.sun.jna.platform.win32.WinDef;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static bh.bot.common.Log.*;
 
 public abstract class AbstractLinuxJna extends AbstractJna {
     @Override
@@ -31,7 +25,7 @@ public abstract class AbstractLinuxJna extends AbstractJna {
     }
 
     @Override
-    public Tuple4<Boolean, String, Rectangle, Configuration.Offset> locateGameScreenOffset(
+    public Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(
             WinDef.HWND hwnd, ScreenResolutionProfile screenResolutionProfile) {
         if (hwnd != null)
             throw new IllegalArgumentException("hwnd");
@@ -53,7 +47,7 @@ public abstract class AbstractLinuxJna extends AbstractJna {
             } catch (NumberFormatException ex3) {
                 throw new InvalidDataException("Failure on parsing PID from ps command: %s", psOutput);
             }
-            prcResult = startProcess("xdotool", "search",  "--pid", String.valueOf(pid), "getwindowgeometry");
+            prcResult = startProcess("xdotool", "search", "--pid", String.valueOf(pid), "getwindowgeometry");
             if (!prcResult._1)
                 return new Tuple4<>(false, "Failure at grep window id of chrome processes from xdotool", null, null);
             if (prcResult._2.size() < 1) {
@@ -76,7 +70,7 @@ public abstract class AbstractLinuxJna extends AbstractJna {
                 }
 
                 List<String> xwiOutput = prcResult._2;
-                if (!xwiOutput.stream().anyMatch(x -> x.contains("Bit Heroes"))) {
+                if (xwiOutput.stream().noneMatch(x -> x.contains("Bit Heroes"))) {
                     debug("%d is not mini-client", windowId);
                     continue;
                 }
@@ -94,7 +88,7 @@ public abstract class AbstractLinuxJna extends AbstractJna {
                     return new Tuple4<>(false, ex4.getMessage(), null, null);
                 }
 
-                return new Tuple4<>(true, null, null, new Configuration.Offset(x, y));
+                return new Tuple4<>(true, null, null, new Offset(x, y));
             }
 
             return new Tuple4<>(false, "Failure at grep window info from xwininfo", null, null);
@@ -118,8 +112,9 @@ public abstract class AbstractLinuxJna extends AbstractJna {
     private Tuple2<Boolean, List<String>> startProcess(String app, String... args) throws InterruptedException, IOException {
         debug("App: %s, commands: %s", app, String.join(", ", args));
         File fileTmpOutput = new File(String.format("/tmp/bh-tmp.%s.out", UUID.randomUUID().toString()));
-        try{
-            fileTmpOutput.createNewFile();
+        try {
+            if (fileTmpOutput.createNewFile())
+                return new Tuple2<>(false, null);
             ArrayList<String> nArgs = new ArrayList<>();
             nArgs.add(app);
             nArgs.addAll(Arrays.asList(args));
@@ -133,6 +128,7 @@ public abstract class AbstractLinuxJna extends AbstractJna {
             return new Tuple2<>(true, readOutputLines(fileTmpOutput));
         } finally {
             try {
+                //noinspection ResultOfMethodCallIgnored
                 fileTmpOutput.delete();
             } catch (Exception ex2) {
                 ex2.printStackTrace();
@@ -141,7 +137,7 @@ public abstract class AbstractLinuxJna extends AbstractJna {
     }
 
     private List<String> readOutputLines(File file) throws IOException {
-        List<String> output = Files.readAllLines(file.toPath()).stream().filter(x -> StringUtil.isNotBlank(x)).collect(Collectors.toList());
+        List<String> output = Files.readAllLines(file.toPath()).stream().filter(StringUtil::isNotBlank).collect(Collectors.toList());
         if (output.size() == 0)
             throw new InvalidDataException("File %s contains no data", file.getName());
         return output;

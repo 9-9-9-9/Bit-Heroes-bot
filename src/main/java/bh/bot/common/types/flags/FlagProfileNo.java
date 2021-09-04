@@ -7,10 +7,10 @@ import bh.bot.app.farming.WorldBossApp;
 import bh.bot.common.exceptions.InvalidFlagException;
 
 public class FlagProfileNo extends FlagPattern<Integer> {
-    private final int minimumValue = 1;
     @Override
     protected Integer internalParseParam(String paramPart) throws InvalidFlagException {
         int profileNo = Integer.parseInt(paramPart);
+        int minimumValue = 1;
         if (profileNo < minimumValue)
             throw new InvalidFlagException(String.format("Minimum value of flag '--%s' is %d", getName(), minimumValue));
         if (profileNo > GenMiniClient.supportMaximumNumberOfAccounts)

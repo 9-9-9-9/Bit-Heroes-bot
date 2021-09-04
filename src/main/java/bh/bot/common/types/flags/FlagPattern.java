@@ -1,7 +1,7 @@
 package bh.bot.common.types.flags;
 
 import bh.bot.app.AbstractApplication;
-import bh.bot.common.Configuration;
+import bh.bot.common.OS;
 import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.exceptions.NotSupportedException;
@@ -28,12 +28,12 @@ public abstract class FlagPattern<T> {
 
     public T parseParam(String raw) throws InvalidFlagException {
         if (!isAllowParam())
-            throw new NotSupportedException(String.format("Flag '--%s' does not support parameter", getName()));
+            throw new NotSupportedException(String.format("Flag '%s' does not support parameter", getCode()));
 
         if (!raw.contains("="))
-            throw new InvalidFlagException(String.format("Flag '--%s=?' expected parameter but doesn't contains parameter"));
+            throw new InvalidFlagException(String.format("Flag '%s=?' expected parameter but doesn't contains parameter", getCode()));
 
-        if (!raw.startsWith(String.format("--%s=", getName())))
+        if (!raw.startsWith(String.format("%s=", getCode())))
             throw new InvalidFlagException("Invalid flag header (passing wrong flag?)");
 
         String paramPart = raw.split("=", 2)[1];
@@ -91,6 +91,7 @@ public abstract class FlagPattern<T> {
         return false;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected boolean isAllowMultiple() {
         return false;
     }
@@ -102,7 +103,7 @@ public abstract class FlagPattern<T> {
     public abstract String getName();
     public abstract String getDescription();
     public final boolean isSupportedOnCurrentOsPlatform() {
-        return Arrays.asList(getSupportedOsPlatforms()).contains(Configuration.OS.platform);
+        return Arrays.asList(getSupportedOsPlatforms()).contains(OS.platform);
     }
 
     public Platform[] getSupportedOsPlatforms() {
@@ -117,7 +118,7 @@ public abstract class FlagPattern<T> {
     public String toString() {
         String text = String.format("\n  %s%s : %s%s", getCode(), isAllowParam() ? "=?" : "", isDevelopersOnly() ? "(developers only) " : "", getDescription());
         if (!isSupportedOnCurrentOsPlatform())
-            text += ". Only available on " + String.join(", ", Arrays.asList(getSupportedOsPlatforms()).stream().map(x -> x.toString()).collect(Collectors.toList())) + " OS";
+            text += ". Only available on " + Arrays.stream(getSupportedOsPlatforms()).map(Enum::toString).collect(Collectors.joining(", ")) + " OS";
         return text;
     }
 

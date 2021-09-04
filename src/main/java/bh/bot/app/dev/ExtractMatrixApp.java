@@ -15,8 +15,12 @@ import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.Log.warn;
 
+@SuppressWarnings("DeprecatedIsStillUsed")
 @AppMeta(code = "matrix", name = "Matrix", dev = true)
 @Deprecated
+/*
+  Please use class ImportTpImageApp (app code: `tp`)
+ */
 public class ExtractMatrixApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
@@ -36,21 +40,18 @@ public class ExtractMatrixApp extends AbstractApplication {
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
                 info(getHelp());
                 isDisplayedHelp = true;
-                rgb = readInput("Color to keep:", "6 characters, in hex format, without prefix '0x', for example: FFFFFF is white, or FFC0CB is pink", new Function<String, Tuple3<Boolean, String, Integer>>() {
-                    @Override
-                    public Tuple3<Boolean, String, Integer> apply(String s) {
-                        final String normalized = s.trim().toUpperCase();
-                        if (normalized.length() != 6)
-                            return new Tuple3<>(false, "Must be 6 characters in length", 0);
-                        for (char c : normalized.toCharArray())
-                            if (c < 48 || (c > 57 && c < 65) || c > 70)
-                                return new Tuple3<>(false, "Contains invalid Hexadecimal character, must be 0-9 A-F", 0);
-                        try {
-                            int result = Integer.parseInt(normalized, 16) & 0xFFFFFF;
-                            return new Tuple3<>(true, null, result);
-                        } catch (Exception ex2) {
-                            return new Tuple3<>(false, "Unable to parse, error: " + ex.getMessage(), 0);
-                        }
+                rgb = readInput("Color to keep:", "6 characters, in hex format, without prefix '0x', for example: FFFFFF is white, or FFC0CB is pink", s -> {
+                    final String normalized = s.trim().toUpperCase();
+                    if (normalized.length() != 6)
+                        return new Tuple3<>(false, "Must be 6 characters in length", 0);
+                    for (char c : normalized.toCharArray())
+                        if (c < 48 || (c > 57 && c < 65) || c > 70)
+                            return new Tuple3<>(false, "Contains invalid Hexadecimal character, must be 0-9 A-F", 0);
+                    try {
+                        int result = Integer.parseInt(normalized, 16) & 0xFFFFFF;
+                        return new Tuple3<>(true, null, result);
+                    } catch (Exception ex2) {
+                        return new Tuple3<>(false, "Unable to parse, error: " + ex.getMessage(), 0);
                     }
                 });
             }
@@ -60,23 +61,16 @@ public class ExtractMatrixApp extends AbstractApplication {
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
                 info(getHelp());
                 isDisplayedHelp = true;
-                tolerant = readInput("Tolerant:", "Tolerant when color contains same R & G & B value", new Function<String, Tuple3<Boolean, String, Integer>>() {
-                    @Override
-                    public Tuple3<Boolean, String, Integer> apply(String s) {
-                        String normalized = s.trim().toUpperCase();
-                        if (normalized.length() != 6)
-                            return new Tuple3<>(false, "Must be 6 characters in length", 0);
-                        for (char c : normalized.toCharArray())
-                            if (c < 48 || (c > 57 && c < 65) || c > 70)
-                                return new Tuple3<>(false, "Contains invalid Hexadecimal character, must be 0-9 A-F", 0);
-                        try {
-                            int result = Integer.parseInt(normalized);
-                            if (result < 0)
-                                return new Tuple3<>(false, "Must be equals or greater than 0", 0);
-                            return new Tuple3<>(true, null, result);
-                        } catch (Exception ex2) {
-                            return new Tuple3<>(false, "Unable to parse, error: " + ex.getMessage(), 0);
-                        }
+                tolerant = readInput("Tolerant:", "Tolerant when color contains same R & G & B value", s -> {
+                    try {
+                        int result = Integer.parseInt(s.trim());
+                        if (result < 0)
+                            return new Tuple3<>(false, "Must be equals or greater than 0", 0);
+                        if (result > 100)
+                            return new Tuple3<>(false, "Must be equals or lower than 100", 0);
+                        return new Tuple3<>(true, null, result);
+                    } catch (Exception ex2) {
+                        return new Tuple3<>(false, "Unable to parse, error: " + ex.getMessage(), 0);
                     }
                 });
             }

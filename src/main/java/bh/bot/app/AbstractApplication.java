@@ -2,13 +2,12 @@ package bh.bot.app;
 
 import bh.bot.app.farming.ExpeditionApp.ExpeditionPlace;
 import bh.bot.common.Configuration;
-import bh.bot.common.Configuration.Offset;
+import bh.bot.common.types.*;
+import bh.bot.common.OS;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.jna.*;
-import bh.bot.common.types.ParseArgumentsResult;
-import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.flags.FlagPattern;
 import bh.bot.common.types.flags.FlagResolution;
@@ -67,9 +66,11 @@ public abstract class AbstractApplication {
         mkdir("out", "images", getAppCode());
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void mkdir(String path, String... paths) {
         File file = Paths.get(path, paths).toFile();
         if (!file.exists())
+            //noinspection ResultOfMethodCallIgnored
             file.mkdir();
     }
 
@@ -118,7 +119,7 @@ public abstract class AbstractApplication {
     }
 
     protected String getScriptName() {
-        if (Configuration.OS.isWin)
+        if (OS.isWin)
             return ".\\" + getScriptFileName() + ".bat";
         return "./" + getScriptFileName() + ".sh";
     }
@@ -127,12 +128,13 @@ public abstract class AbstractApplication {
 
     protected abstract String getDescription();
 
+    @SuppressWarnings("rawtypes")
     public String getHelp() {
         StringBuilder sb = new StringBuilder(getAppName());
         sb.append("\n  Description: ");
         sb.append(getDescription());
         sb.append("\nUsage:\n");
-        if (Configuration.OS.isWin) {
+        if (OS.isWin) {
             sb.append("java -jar BitHeroes.jar ");
             sb.append(getAppCode());
         } else
@@ -154,7 +156,7 @@ public abstract class AbstractApplication {
                 sb.append(localFlag);
         }
         // Global flags:
-        List<FlagPattern> globalFlags = flagPatterns.stream().filter(x -> x.isGlobalFlag())
+        List<FlagPattern> globalFlags = flagPatterns.stream().filter(FlagPattern::isGlobalFlag)
                 .collect(Collectors.toList());
         sb.append("\nGlobal flags:");
         for (FlagPattern globalFlag : globalFlags.stream().filter(x -> !(x instanceof FlagResolution))
@@ -387,8 +389,6 @@ public abstract class AbstractApplication {
         return detectLabel(BwMatrixMeta.Metas.Fishing.Labels.fishing, 0xFFFFFF, 0x7F7F7F);
     }
 
-    private final byte greenMinDiff = 70;
-
     protected Tuple2<Point[], Byte> detectRadioButtons(Rectangle scanRect) {
         final BwMatrixMeta im = BwMatrixMeta.Metas.Globally.Buttons.radioButton;
         im.throwIfNotAvailable();
@@ -396,9 +396,10 @@ public abstract class AbstractApplication {
         final boolean debug = false;
 
         int positionTolerant = Math.min(10, Configuration.Tolerant.position);
+        final byte greenMinDiff = 70;
 
         try (ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(
-                new Configuration.Offset(Math.max(0, scanRect.x - positionTolerant),
+                new Offset(Math.max(0, scanRect.x - positionTolerant),
                         Math.max(0, scanRect.y - positionTolerant)),
                 scanRect.width + positionTolerant * 2, scanRect.height + positionTolerant * 2)) {
             BufferedImage sc = screenCapturedResult.image;
@@ -478,7 +479,6 @@ public abstract class AbstractApplication {
                     optionalDebug(debug, "detectRadioButtons captured at %3d,%3d with size %3dx%3d, match at %3d,%3d",
                             screenCapturedResult.x, screenCapturedResult.y, screenCapturedResult.w,
                             screenCapturedResult.h, x, y);
-                    // im.setLastMatchPoint(startingCoord.x, startingCoord.y);
                     startingCoords.add(new Point(x, y));
                 }
             }
@@ -487,9 +487,11 @@ public abstract class AbstractApplication {
                 throw new InvalidDataException("Unable to detect index of selected radio button among %d results",
                         startingCoords.size());
 
-            return new Tuple2<>(startingCoords.stream()
-                    .map(c -> new Point(screenCapturedResult.x + c.x, screenCapturedResult.y + c.y))
-                    .collect(Collectors.toList()).toArray(new Point[0]), (byte) selectedRadioButtonIndex);
+            return new Tuple2<>(
+                    startingCoords.stream()
+                    .map(c -> new Point(screenCapturedResult.x + c.x, screenCapturedResult.y + c.y)).toArray(Point[]::new),
+                    (byte) selectedRadioButtonIndex
+            );
         }
     }
 
@@ -638,7 +640,7 @@ public abstract class AbstractApplication {
         return false;
     }
 
-    protected boolean tryEnterWorldBoss(boolean doWorldBoss, Configuration.UserConfig userConfig,
+    protected boolean tryEnterWorldBoss(boolean doWorldBoss, UserConfig userConfig,
                                         Supplier<Boolean> isBlocked) {
         Point coord = findImage(BwMatrixMeta.Metas.WorldBoss.Labels.labelInSummonDialog);
         if (coord == null)
@@ -670,8 +672,8 @@ public abstract class AbstractApplication {
     }
 
     protected ExpeditionPlace selectExpeditionPlace() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Select a place to do Expedition:\n");
+        //noinspection StringBufferReplaceableByString
+        StringBuilder sb = new StringBuilder("Select a place to do Expedition:\n");
         sb.append(String.format("  1. %s\n", ExpeditionPlace.BlubLix));
         sb.append(String.format("  2. %s\n", ExpeditionPlace.Mowhi));
         sb.append(String.format("  3. %s\n", ExpeditionPlace.WizBot));
@@ -693,7 +695,7 @@ public abstract class AbstractApplication {
                         return new Tuple3<>(false, "Not a number", ExpeditionPlace.Astamus);
                     }
                 });
-        info("You have selected to farm %s on expedition", place.toString().toUpperCase());
+        info("Going to farm %s in Expedition", place.toString().toUpperCase());
         return place;
     }
 
@@ -707,7 +709,7 @@ public abstract class AbstractApplication {
 
     protected void printRequiresSetting() {
         err("You have to do setting before using this function");
-        err("Please launch script 'setting.%s' and follow instruction", Configuration.OS.isWin ? "bat" : "sh");
+        err("Please launch script 'setting.%s' and follow instruction", OS.isWin ? "bat" : "sh");
     }
 
     private HWND gameWindowHwndByJna = null;
@@ -719,12 +721,11 @@ public abstract class AbstractApplication {
                 info("Feature doCheckGameScreenOffset has been disabled by configuration");
                 return;
             }
-            if (!Configuration.OS.isWin) {
+            if (OS.isLinux || OS.isMac) {
                 Process which = Runtime.getRuntime().exec("which xwininfo xdotool ps");
                 int exitCode = which.waitFor();
                 if (exitCode != 0) {
-                    err("Unable to adjust game screen offset automatically: exit code of which command is %d. Require the following tools to be installed: xwininfo, xdotool, ps",
-                            exitCode);
+                    warn("Unable to adjust game screen offset automatically. Require the following tools to be installed: xwininfo, xdotool, ps");
                     return;
                 }
             }
@@ -749,7 +750,7 @@ public abstract class AbstractApplication {
                     Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateGameScreenOffset(gameWindowHwndByJna,
                             srp);
                     if (!result._1) {
-                        err(result._2);
+                        warn("Unable to perform auto adjust game screen offset due to error: %s", result._2);
                         continue;
                     }
                     if (result._4.X != x || result._4.Y != y) {
@@ -760,28 +761,28 @@ public abstract class AbstractApplication {
                     } else {
                         debug("screen offset not change");
                     }
-                } catch (Exception e2) {
-                    err(e2.getMessage());
+                } catch (Exception ex2) {
+                    warn("Unable to perform auto adjust game screen offset due to error: %s", ex2.getMessage());
                 } finally {
                     sleep(60_000);
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            err("Error occurs during doCheckGameScreenOffset");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            warn("Error occurs during doCheckGameScreenOffset");
         }
     }
 
     protected IJna getJnaInstance() {
         if (Configuration.isSteamProfile)
             return new SteamWindowsJna();
-        if (Configuration.OS.isWin)
+        if (OS.isWin)
             return new MiniClientWindowsJna();
-        if (Configuration.OS.isLinux)
+        if (OS.isLinux)
             return new MiniClientLinuxJna();
-        if (Configuration.OS.isWin)
+        if (OS.isMac)
             return new MiniClientMacOsJna();
-        throw new NotSupportedException(Configuration.OS.name);
+        throw new NotSupportedException(OS.name);
     }
 
     protected void adjustScreenOffset() {
@@ -818,6 +819,20 @@ public abstract class AbstractApplication {
                 return new Tuple3<>(false, "Value must be in range from 1 to " + GenMiniClient.supportMaximumNumberOfAccounts, 0);
             } catch (NumberFormatException ex) {
                 return new Tuple3<>(false, "Not a number", 0);
+            }
+        });
+    }
+
+    protected int readInputLoopCount(String ask) {
+        return readInput(ask, "Numeric only", s -> {
+            try {
+                int num = Integer.parseInt(s);
+                if (num < 1) {
+                    return new Tuple3<>(false, "Must greater than 0", 0);
+                }
+                return new Tuple3<>(true, null, num);
+            } catch (NumberFormatException ex1) {
+                return new Tuple3<>(false, "The value you inputted is not a number", 0);
             }
         });
     }

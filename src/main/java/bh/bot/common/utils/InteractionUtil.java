@@ -1,30 +1,22 @@
 package bh.bot.common.utils;
 
-import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.optionalDebug;
-import static bh.bot.common.utils.ImageUtil.freeMem;
-import static bh.bot.common.utils.ThreadUtil.sleep;
-
-import java.awt.AWTException;
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.Win32Exception;
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinDef.RECT;
-
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.AttendablePlace;
+import bh.bot.common.types.Offset;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple4;
+
+import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.optionalDebug;
+import static bh.bot.common.utils.ImageUtil.freeMem;
+import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public class InteractionUtil {
 	private static Robot robot;
@@ -104,8 +96,8 @@ public class InteractionUtil {
 			return captureElementInEstimatedArea(im.getCoordinateOffset(), im.getWidth(), im.getHeight());
 		}
 
-		public static ScreenCapturedResult captureElementInEstimatedArea(Configuration.Offset coordinate, int w,
-				int h) {
+		public static ScreenCapturedResult captureElementInEstimatedArea(Offset coordinate, int w,
+																		 int h) {
 			int xS = Math.max(0,
 					Configuration.gameScreenOffset.X.get() + coordinate.X - Configuration.Tolerant.position);
 			int yS = Math.max(0,
@@ -151,8 +143,6 @@ public class InteractionUtil {
 		public static class Game {
 			private final AbstractApplication instance;
 
-			private final int numberOfAttendablePlacesPerColumn = 5;
-
 			private Game(AbstractApplication instance) {
 				this.instance = instance;
 			}
@@ -189,6 +179,7 @@ public class InteractionUtil {
 				final int scanWidth = maxX - minX + 1 + positionTolerant * 2;
 				final int scanHeight = Math.abs(stepY) + positionTolerant * 2;
 				final int scanX = Math.max(0, minX - positionTolerant);
+				final int numberOfAttendablePlacesPerColumn = 5;
 				for (int i = 0; i < numberOfAttendablePlacesPerColumn; i++) {
 					final int scanY = Math.max(0, firstY + stepY * i - positionTolerant);
 					BufferedImage sc = captureScreen(scanX, scanY, scanWidth, scanHeight);
@@ -251,17 +242,6 @@ public class InteractionUtil {
 				}
 				return null;
 			}
-		}
-	}
-
-	public static class Jna {
-		public static Rectangle detectSteamWindow() {
-			HWND hwnd = User32.INSTANCE.FindWindow("UnityWndClass", "Bit Heroes");
-			final RECT lpRect = new RECT();
-			if (!User32.INSTANCE.GetWindowRect(hwnd, lpRect))
-				throw new Win32Exception(com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError());
-			return new Rectangle(lpRect.left, lpRect.top, Math.abs(lpRect.right - lpRect.left),
-					Math.abs(lpRect.bottom - lpRect.top));
 		}
 	}
 }

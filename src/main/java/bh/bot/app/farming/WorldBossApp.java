@@ -5,6 +5,7 @@ import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
+import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
@@ -21,14 +22,14 @@ import static bh.bot.common.Log.info;
 @AppMeta(code = "world-boss", name = "World Boss", displayOrder = 6)
 public class WorldBossApp extends AbstractDoFarmingApp {
     private final Supplier<Boolean> isWorldBossBlocked = () -> false;
-    private Configuration.UserConfig userConfig;
+    private UserConfig userConfig;
 
     @Override
     protected boolean readMoreInput() throws IOException {
         int profileNumber = this.argumentInfo.profileNumber;
         if (profileNumber < 1)
             profileNumber = readProfileNumber("You want to do World Boss so you have to specific profile number first!\nSelect profile number");
-        Tuple2<Boolean, Configuration.UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(profileNumber);
+        Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(profileNumber);
         if (!resultLoadUserConfig._1) {
             err("Profile number %d could not be found");
             printRequiresSetting();
@@ -78,6 +79,6 @@ public class WorldBossApp extends AbstractDoFarmingApp {
 
     @Override
     protected String getLimitationExplain() {
-        return "This function is solo only and does not support select level or type of World Boss, only select by default So which boss do you want to hit? Choose it before turn this on";
+        return "This function is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on";
     }
 }

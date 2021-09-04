@@ -1,16 +1,13 @@
 package bh.bot.common.jna;
 
-import java.awt.Rectangle;
-import java.util.concurrent.atomic.AtomicReference;
-
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinUser;
-
-import bh.bot.common.Configuration.Offset;
+import bh.bot.common.types.Offset;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.tuples.Tuple4;
+import com.sun.jna.platform.win32.WinDef.HWND;
+
+import java.awt.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MiniClientWindowsJna extends AbstractWindowsJna {
 
@@ -18,24 +15,22 @@ public class MiniClientWindowsJna extends AbstractWindowsJna {
 	public HWND getGameWindow(Object... args) {
 		HWND hwnd = user32.FindWindow("Chrome_WidgetWin_1", "Bit Heroes");
 		final AtomicReference<HWND> result = new AtomicReference<>();
-		boolean success = user32.EnumChildWindows(hwnd, new WinUser.WNDENUMPROC() {
-			@Override
-			public boolean callback(HWND hWnd, Pointer data) {
-				char[] textBuffer = new char[1000];
-				user32.GetClassName(hWnd, textBuffer, textBuffer.length);
-				String className = new String(textBuffer).trim();
-				if ("Chrome_RenderWidgetHostHWND".equals(className)) {
-					result.set(hWnd);
-					return true;
-				}
-				return false;
-			}}, null);
+		boolean success = user32.EnumChildWindows(hwnd, (hWnd, data) -> {
+			char[] textBuffer = new char[1000];
+			user32.GetClassName(hWnd, textBuffer, textBuffer.length);
+			String className = new String(textBuffer).trim();
+			if ("Chrome_RenderWidgetHostHWND".equals(className)) {
+				result.set(hWnd);
+				return true;
+			}
+			return false;
+		}, null);
 		return success ? result.get() : null;
 	}
 
 	@Override
 	public Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(HWND hwnd,
-			ScreenResolutionProfile screenResolutionProfile) {
+																			 ScreenResolutionProfile screenResolutionProfile) {
 		if (screenResolutionProfile instanceof SteamProfile)
 			throw new IllegalArgumentException("Does not support steam profile");
 

@@ -1,13 +1,13 @@
 package bh.bot.app.dev;
 
-import static bh.bot.common.utils.ImageUtil.freeMem;
-
-import java.awt.image.BufferedImage;
-
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.utils.InteractionUtil;
+
+import java.awt.image.BufferedImage;
+
+import static bh.bot.common.utils.ImageUtil.freeMem;
 
 @AppMeta(code = "sc", name = "Screen Shot", dev = true)
 public class ScreenCaptureApp extends AbstractApplication {

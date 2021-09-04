@@ -1,17 +1,17 @@
 package bh.bot.common.utils;
 
-import java.awt.Color;
+import bh.bot.common.Configuration;
+import bh.bot.common.types.Offset;
+import bh.bot.common.types.images.BufferedImageInfo;
+import bh.bot.common.types.tuples.Tuple2;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
-
-import bh.bot.common.Configuration;
-import bh.bot.common.types.images.BufferedImageInfo;
-import bh.bot.common.types.tuples.Tuple2;
 
 public class ImageUtil {
     public static BufferedImageInfo loadMxImageFromResource(String path) throws IOException {
@@ -38,7 +38,7 @@ public class ImageUtil {
         return new BufferedImageInfo(bi, fileName);
     }
 
-    public static Tuple2<BufferedImageInfo, Configuration.Offset> transformFromTpToMxImage(BufferedImageInfo bii, int blackPixelRgb, Configuration.Offset originalOffset) {
+    public static Tuple2<BufferedImageInfo, Offset> transformFromTpToMxImage(BufferedImageInfo bii, int blackPixelRgb, Offset originalOffset) {
         if (bii.notAvailable)
             return new Tuple2<>(bii, originalOffset);
 
@@ -127,7 +127,7 @@ public class ImageUtil {
                 for (int x = 0; x < tp.getWidth(); x++)
                     tp.setRGB(x, y, bi.getRGB(x + minX, y + minY));
 
-            return new TestTransformMxResult(bi, mx, tp, new Configuration.Offset(minX, minY));
+            return new TestTransformMxResult(bi, mx, tp, new Offset(minX, minY));
         } finally {
             freeMem(biSample);
         }
@@ -150,10 +150,10 @@ public class ImageUtil {
         if (!dRgb2.isSame)
             return false;
         if (isMatch(dRgb2.red, dRgb1.red, dRgb1.acceptedTolerant))
-        	return true;
+            return true;
         if (originalPixelPart == null)
-        	return false;
-        return isMatch(originalPixelPart.shortValue(), getRed(rgb2), Configuration.Tolerant.colorBwL2);
+            return false;
+        return isMatch(originalPixelPart, getRed(rgb2), Configuration.Tolerant.colorBwL2);
     }
 
     private static boolean isMatch(int c1, int c2, int tolerant) {
@@ -187,7 +187,8 @@ public class ImageUtil {
             return;
         try {
             bi.flush();
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
+            //
         }
     }
 
@@ -211,9 +212,9 @@ public class ImageUtil {
         public final BufferedImage original;
         public final BufferedImage mx;
         public final BufferedImage tp;
-        public final Configuration.Offset mxOffset;
+        public final Offset mxOffset;
 
-        public TestTransformMxResult(BufferedImage original, BufferedImage mx, BufferedImage tp, Configuration.Offset mxOffset) {
+        public TestTransformMxResult(BufferedImage original, BufferedImage mx, BufferedImage tp, Offset mxOffset) {
             this.original = original;
             this.mx = mx;
             this.tp = tp;

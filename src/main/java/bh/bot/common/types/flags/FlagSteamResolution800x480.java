@@ -31,6 +31,7 @@ public class FlagSteamResolution800x480 extends FlagResolution {
 
     @Override
     public boolean isSupportedByApp(AbstractApplication instance) {
+        //noinspection ConstantConditions
         return instance instanceof ReRunApp
                 || instance instanceof FishingApp
                 || instance instanceof ScreenCaptureApp

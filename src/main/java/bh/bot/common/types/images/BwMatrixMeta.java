@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
+import bh.bot.common.types.Offset;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.utils.StringUtil;
@@ -24,15 +25,15 @@ public class BwMatrixMeta {
     private final int h;
     private final int blackPixelRgb;
     private final ImageUtil.DynamicRgb blackPixelDRgb;
-    private final Configuration.Offset coordinateOffset;
+    private final Offset coordinateOffset;
     private final int[] lastMatch = new int[]{-1, -1};
     private final byte tolerant;
     private final String imageNameCode;
     private final boolean notAvailable;
     private final Short[][] originalTpPixelPart;
 
-    public BwMatrixMeta(BufferedImageInfo mxbi, Configuration.Offset coordinateOffset, int blackPixelRgb, BufferedImage tpBi) {
-        if (mxbi.notAvailable) {
+    public BwMatrixMeta(BufferedImageInfo mxBii, Offset coordinateOffset, int blackPixelRgb, BufferedImage tpBi) {
+        if (mxBii.notAvailable) {
             this.firstBlackPixelOffset = null;
             this.blackPixels = null;
             this.nonBlackPixels = null;
@@ -42,11 +43,11 @@ public class BwMatrixMeta {
             this.blackPixelDRgb = null;
             this.coordinateOffset = null;
             this.tolerant = -1;
-            this.imageNameCode = mxbi.code;
+            this.imageNameCode = mxBii.code;
             this.notAvailable = true;
             this.originalTpPixelPart = null;
         } else {
-            String customTolerantKey = "tolerant.color.bw|" + mxbi.code;
+            String customTolerantKey = "tolerant.color.bw|" + mxBii.code;
             try {
                 byte tolerant = Configuration.Tolerant.colorBw;
                 String value = Configuration.read(customTolerantKey);
@@ -66,7 +67,7 @@ public class BwMatrixMeta {
 
             final int matrixPointColorPixelRgb = 0x000000;
             final int anyColorPixelRgb = 0xFFFFFF;
-            BufferedImage img = mxbi.bufferedImage;
+            BufferedImage img = mxBii.bufferedImage;
             try {
                 this.coordinateOffset = coordinateOffset;
                 this.blackPixelRgb = blackPixelRgb & 0xFFFFFF;
@@ -89,7 +90,7 @@ public class BwMatrixMeta {
                 freeMem(img);
             }
 
-            this.imageNameCode = mxbi.code;
+            this.imageNameCode = mxBii.code;
             this.notAvailable = false;
             
             if (tpBi == null) {
@@ -167,7 +168,7 @@ public class BwMatrixMeta {
         return tolerant;
     }
 
-    public Configuration.Offset getCoordinateOffset() {
+    public Offset getCoordinateOffset() {
         return coordinateOffset;
     }
 
@@ -345,12 +346,12 @@ public class BwMatrixMeta {
         );
         Metas.Globally.Buttons.radioButton = BwMatrixMeta.from(//
                 "buttons/globally.radio-button?",
-                Configuration.Offset.none(), //
+                Offset.none(), //
                 0x000000
         );
         Metas.Globally.Buttons.close = BwMatrixMeta.from(//
                 "buttons/globally.close?",
-                Configuration.Offset.none(), //
+                Offset.none(), //
                 0x000000
         );
         Metas.Globally.Buttons.mapButtonOnFamiliarUi = BwMatrixMeta.from(//
@@ -612,19 +613,19 @@ public class BwMatrixMeta {
         );
     }
 
-    public static BwMatrixMeta from(String path, Configuration.Offset imageOffset, int blackPixelRgb) throws IOException {
+    public static BwMatrixMeta from(String path, Offset imageOffset, int blackPixelRgb) throws IOException {
         String normalized = path.trim().toLowerCase();
         if (normalized.endsWith("?")) {
             String prefix = path.substring(0, path.length() - 1);
             BwMatrixMeta bwMatrixMeta = new BwMatrixMeta(ImageUtil.loadMxImageFromResource(prefix + "-mx.bmp"), imageOffset, blackPixelRgb, null);
-            if (bwMatrixMeta.notAvailable == false)
+            if (!bwMatrixMeta.notAvailable)
                 return bwMatrixMeta;
             debug("MX type of %s is not available, going to load TP", path);
-            if (bwMatrixMeta.notAvailable == false)
+            bwMatrixMeta = fromTpImage(prefix + "-tp.bmp", imageOffset, blackPixelRgb);
+            if (!bwMatrixMeta.notAvailable)
                 debug("TP type of %s is not available either", path);
             else
-            	debug("Loaded TP successfully for %s", path);
-            bwMatrixMeta = fromTpImage(prefix + "-tp.bmp", imageOffset, blackPixelRgb);
+                debug("Loaded TP successfully for %s", path);
             return bwMatrixMeta;
         } else if (normalized.endsWith("-mx.bmp"))
             return new BwMatrixMeta(ImageUtil.loadMxImageFromResource(path), imageOffset, blackPixelRgb, null);
@@ -634,15 +635,15 @@ public class BwMatrixMeta {
             throw new NotSupportedException("Un-recognized format");
     }
 
-    public static BwMatrixMeta fromTpImage(String path, Configuration.Offset tpImageOffset, int blackPixelRgb) throws IOException {
+    public static BwMatrixMeta fromTpImage(String path, Offset tpImageOffset, int blackPixelRgb) throws IOException {
         BufferedImageInfo tpbi = ImageUtil.loadTpImageFromResource(path);
         try {
-            Tuple2<BufferedImageInfo, Configuration.Offset> transformed = ImageUtil.transformFromTpToMxImage(tpbi, blackPixelRgb, tpImageOffset);
+            Tuple2<BufferedImageInfo, Offset> transformed = ImageUtil.transformFromTpToMxImage(tpbi, blackPixelRgb, tpImageOffset);
             return new BwMatrixMeta(
         		transformed._1,
         		transformed._1.notAvailable
         		? null
-        		: new Configuration.Offset(
+        		: new Offset(
         				tpImageOffset.X + transformed._2.X, 
         				tpImageOffset.Y + transformed._2.Y
         		), 

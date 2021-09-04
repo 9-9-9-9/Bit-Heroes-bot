@@ -9,6 +9,8 @@ import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
+import bh.bot.common.types.Offset;
+import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
@@ -23,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -50,7 +51,7 @@ public class AfkApp extends AbstractApplication {
     protected void internalRun(String[] args) {
         this.gameScreenInteractor = InteractionUtil.Screen.Game.of(this);
         ArrayList<AttendablePlace> eventList;
-        Configuration.UserConfig userConfig = null;
+        UserConfig userConfig = null;
 
         try {
             eventList = getAttendablePlaces();
@@ -62,7 +63,7 @@ public class AfkApp extends AbstractApplication {
                 int profileNumber = this.argumentInfo.profileNumber;
                 if (profileNumber < 1)
                     profileNumber = readProfileNumber("You want to do Raid/World Boss so you have to specific profile number first!\nSelect profile number");
-                Tuple2<Boolean, Configuration.UserConfig> resultLoadUserConfig = Configuration
+                Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration
                         .loadUserConfig(profileNumber);
                 if (!resultLoadUserConfig._1) {
                     err("Profile number %d could not be found", profileNumber);
@@ -77,12 +78,15 @@ public class AfkApp extends AbstractApplication {
                         info(colorFormatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
                                 userConfig.getRaidLevelDesc());
                         info(colorFormatInfo, "and World Boss %s", userConfig.getWorldBossLevelDesc());
+                        warn("This function is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on");
                     } else if (doRaid) {
                         info(colorFormatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
                                 userConfig.getRaidLevelDesc());
-                    } else if (doWorldBoss) {
-                        info(colorFormatInfo, "You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
-                    }
+                    } else //noinspection ConstantConditions
+                        if (doWorldBoss) {
+                            info(colorFormatInfo, "You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
+                            warn("This function is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on");
+                        }
                 } catch (InvalidDataException ex2) {
                     err(ex2.getMessage());
                     printRequiresSetting();
@@ -100,7 +104,7 @@ public class AfkApp extends AbstractApplication {
         }
         //
         final AtomicBoolean masterSwitch = new AtomicBoolean(false);
-        final Configuration.UserConfig finalUserConfig = userConfig;
+        final UserConfig finalUserConfig = userConfig;
         ThreadUtil.waitDone(() -> doLoop(masterSwitch, finalUserConfig, //
                 eventList.contains(AttendablePlaces.pvp), //
                 eventList.contains(AttendablePlaces.worldBoss), //
@@ -117,7 +121,7 @@ public class AfkApp extends AbstractApplication {
     }
 
     private void doLoop(//
-                        AtomicBoolean masterSwitch, Configuration.UserConfig userConfig, //
+                        AtomicBoolean masterSwitch, UserConfig userConfig, //
                         boolean doPvp, //
                         boolean doWorldBoss, //
                         boolean doRaid, //
@@ -132,7 +136,7 @@ public class AfkApp extends AbstractApplication {
             if (doInvasion && Configuration.isSteamProfile)
                 throw new NotSupportedException("Invasion has not been supported on Steam mode");
 
-            info("Starting AFK");
+            info(colorFormatInfo, "\n\nStarting AFK");
             boolean isUnknownGvgOrInvasionOrExpedition = (doGvg && doInvasion) || (doGvg && doExpedition)
                     || (doInvasion && doExpedition);
             boolean isUnknownTrialsOrGauntlet = doTrials && doGauntlet;
@@ -230,7 +234,7 @@ public class AfkApp extends AbstractApplication {
                     continue ML;
                 }
 
-                if (taskList.stream().allMatch(x -> !isNotBlocked(x._2))) {
+                if (taskList.stream().noneMatch(x -> isNotBlocked(x._2))) {
                     info("Waiting for resource generation, sleeping %d minutes", minutesSleepWaitingResourceGeneration);
                     sleepWhileWaitingResourceRegen = originalSleepWhileWaitingResourceRegen;
                     continue ML;
@@ -438,18 +442,17 @@ public class AfkApp extends AbstractApplication {
         if (eventList.size() == 0) {
 
             final List<MenuItem> menuItems = Stream
-                    .concat(allAttendablePlaces.stream().map(x -> MenuItem.from(x)), Arrays.asList(
+                    .concat(allAttendablePlaces.stream().map(MenuItem::from), Stream.of(
                             MenuItem.from(AttendablePlaces.invasion, AttendablePlaces.trials),
                             MenuItem.from(AttendablePlaces.expedition, AttendablePlaces.trials),
                             MenuItem.from(AttendablePlaces.gvg, AttendablePlaces.gauntlet),
                             MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid),
                             MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid,
-                                    AttendablePlaces.expedition, AttendablePlaces.trials))
-                            .stream())
+                                    AttendablePlaces.expedition, AttendablePlaces.trials)))
                     .collect(Collectors.toList());
 
-            String menuItem = String.join("\n", menuItems.stream().map(x -> String.format("  %3d. %s", x.num, x.name))
-                    .collect(Collectors.toList()));
+            String menuItem = menuItems.stream().map(x -> String.format("  %3d. %s", x.num, x.name))
+                    .collect(Collectors.joining("\n"));
 
             final ArrayList<AttendablePlace> selectedOptions = new ArrayList<>();
             final Supplier<List<String>> selectedOptionsInfoProvider = () -> selectedOptions.stream().map(x -> x.name)
@@ -477,7 +480,7 @@ public class AfkApp extends AbstractApplication {
                 if (events == null)
                     break;
                 eventList.addAll(events);
-                eventList = new ArrayList<>(eventList.stream().distinct().collect(Collectors.toList()));
+                eventList = eventList.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
                 selectedOptions.clear();
                 selectedOptions.addAll(eventList);
             }
@@ -488,7 +491,7 @@ public class AfkApp extends AbstractApplication {
             }
         }
 
-        eventList = new ArrayList<>(eventList.stream().distinct().collect(Collectors.toList()));
+        eventList = eventList.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
 
         info("Selected:");
         for (AttendablePlace event : eventList) {
@@ -498,7 +501,7 @@ public class AfkApp extends AbstractApplication {
         return eventList;
     }
 
-    private boolean tryEnterRaid(boolean doRaid, Configuration.UserConfig userConfig) {
+    private boolean tryEnterRaid(boolean doRaid, UserConfig userConfig) {
         Point coord = findImage(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog);
         if (coord == null) {
             debug("Label raid not found");
@@ -530,15 +533,15 @@ public class AfkApp extends AbstractApplication {
                 fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord,
                         Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid()));
         sleep(5_000);
-        if (Configuration.UserConfig.isNormalMode(userConfig.raidMode)) {
+        if (UserConfig.isNormalMode(userConfig.raidMode)) {
             mouseMoveAndClickAndHide(
                     fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
                             coord, Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()));
-        } else if (Configuration.UserConfig.isHardMode(userConfig.raidMode)) {
+        } else if (UserConfig.isHardMode(userConfig.raidMode)) {
             mouseMoveAndClickAndHide(
                     fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
                             coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHardRaid()));
-        } else if (Configuration.UserConfig.isHeroicMode(userConfig.raidMode)) {
+        } else if (UserConfig.isHeroicMode(userConfig.raidMode)) {
             mouseMoveAndClickAndHide(
                     fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
                             coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicRaid()));
@@ -549,7 +552,7 @@ public class AfkApp extends AbstractApplication {
     }
 
     private Point fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta sampleImg, Point sampleImgCoord,
-                                                              Configuration.Offset targetOffset) {
+                                                              Offset targetOffset) {
         int x = sampleImgCoord.x - sampleImg.getCoordinateOffset().X;
         int y = sampleImgCoord.y - sampleImg.getCoordinateOffset().Y;
         return new Point(x + targetOffset.X, y + targetOffset.Y);

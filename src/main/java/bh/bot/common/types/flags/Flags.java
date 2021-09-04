@@ -1,6 +1,7 @@
 package bh.bot.common.types.flags;
 
 public class Flags {
+    @SuppressWarnings("rawtypes")
     public static final FlagPattern[] allFlags = new FlagPattern[]{
             new FlagDoGvG(),
             new FlagDoGauntlet(),

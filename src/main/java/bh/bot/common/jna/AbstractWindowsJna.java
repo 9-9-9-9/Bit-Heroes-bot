@@ -1,21 +1,20 @@
 package bh.bot.common.jna;
 
-import java.awt.Rectangle;
-
+import bh.bot.common.OS;
+import bh.bot.common.exceptions.NotSupportedException;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.RECT;
 
-import bh.bot.common.Configuration;
-import bh.bot.common.exceptions.NotSupportedException;
+import java.awt.*;
 
 public abstract class AbstractWindowsJna extends AbstractJna {
     protected final User32 user32 = User32.INSTANCE;
 
 	protected AbstractWindowsJna() {
-		if (!Configuration.OS.isWin)
+		if (!OS.isWin)
 			throw new NotSupportedException(String.format("Class %s does not support %s OS",
-					this.getClass().getSimpleName(), Configuration.OS.name));
+					this.getClass().getSimpleName(), OS.name));
 	}
     
     @Override

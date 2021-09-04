@@ -1,5 +1,6 @@
 package bh.bot.common;
 
+import bh.bot.common.types.Offset;
 import bh.bot.common.utils.StringUtil;
 import com.diogonunes.jcolor.AnsiFormat;
 
@@ -39,7 +40,7 @@ public class Log {
             println(String.format(format, objs));
     }
 
-    public static void printIfIncorrectImgPosition(Configuration.Offset imCoordinateOffset, Point actualCoordinate) {
+    public static void printIfIncorrectImgPosition(Offset imCoordinateOffset, Point actualCoordinate) {
         if (!Configuration.enableDevFeatures)
             return;
         int offsetX = actualCoordinate.x - Configuration.gameScreenOffset.X.get();

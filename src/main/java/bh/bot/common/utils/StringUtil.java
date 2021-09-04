@@ -13,6 +13,6 @@ public class StringUtil {
 		if (text == null)
 			return false;
 		text = text.trim().toLowerCase();
-		return text == "true" || text == "yes" || text == "y";
+		return text.equals("true") || text.equals("yes") || text.equals("y");
 	}
 }
