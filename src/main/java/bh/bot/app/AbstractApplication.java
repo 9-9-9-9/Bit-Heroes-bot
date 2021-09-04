@@ -2,16 +2,12 @@ package bh.bot.app;
 
 import bh.bot.app.farming.ExpeditionApp.ExpeditionPlace;
 import bh.bot.common.Configuration;
-import bh.bot.common.types.Offset;
-import bh.bot.common.types.AtomicOffset;
-import bh.bot.common.types.Size;
+import bh.bot.common.types.*;
 import bh.bot.common.OS;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.jna.*;
-import bh.bot.common.types.ParseArgumentsResult;
-import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.flags.FlagPattern;
 import bh.bot.common.types.flags.FlagResolution;
@@ -641,7 +637,7 @@ public abstract class AbstractApplication {
         return false;
     }
 
-    protected boolean tryEnterWorldBoss(boolean doWorldBoss, Configuration.UserConfig userConfig,
+    protected boolean tryEnterWorldBoss(boolean doWorldBoss, UserConfig userConfig,
                                         Supplier<Boolean> isBlocked) {
         Point coord = findImage(BwMatrixMeta.Metas.WorldBoss.Labels.labelInSummonDialog);
         if (coord == null)

@@ -10,6 +10,7 @@ import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.Offset;
+import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
@@ -51,7 +52,7 @@ public class AfkApp extends AbstractApplication {
     protected void internalRun(String[] args) {
         this.gameScreenInteractor = InteractionUtil.Screen.Game.of(this);
         ArrayList<AttendablePlace> eventList;
-        Configuration.UserConfig userConfig = null;
+        UserConfig userConfig = null;
 
         try {
             eventList = getAttendablePlaces();
@@ -63,7 +64,7 @@ public class AfkApp extends AbstractApplication {
                 int profileNumber = this.argumentInfo.profileNumber;
                 if (profileNumber < 1)
                     profileNumber = readProfileNumber("You want to do Raid/World Boss so you have to specific profile number first!\nSelect profile number");
-                Tuple2<Boolean, Configuration.UserConfig> resultLoadUserConfig = Configuration
+                Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration
                         .loadUserConfig(profileNumber);
                 if (!resultLoadUserConfig._1) {
                     err("Profile number %d could not be found", profileNumber);
@@ -101,7 +102,7 @@ public class AfkApp extends AbstractApplication {
         }
         //
         final AtomicBoolean masterSwitch = new AtomicBoolean(false);
-        final Configuration.UserConfig finalUserConfig = userConfig;
+        final UserConfig finalUserConfig = userConfig;
         ThreadUtil.waitDone(() -> doLoop(masterSwitch, finalUserConfig, //
                 eventList.contains(AttendablePlaces.pvp), //
                 eventList.contains(AttendablePlaces.worldBoss), //
@@ -118,7 +119,7 @@ public class AfkApp extends AbstractApplication {
     }
 
     private void doLoop(//
-                        AtomicBoolean masterSwitch, Configuration.UserConfig userConfig, //
+                        AtomicBoolean masterSwitch, UserConfig userConfig, //
                         boolean doPvp, //
                         boolean doWorldBoss, //
                         boolean doRaid, //
@@ -499,7 +500,7 @@ public class AfkApp extends AbstractApplication {
         return eventList;
     }
 
-    private boolean tryEnterRaid(boolean doRaid, Configuration.UserConfig userConfig) {
+    private boolean tryEnterRaid(boolean doRaid, UserConfig userConfig) {
         Point coord = findImage(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog);
         if (coord == null) {
             debug("Label raid not found");
@@ -531,15 +532,15 @@ public class AfkApp extends AbstractApplication {
                 fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord,
                         Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid()));
         sleep(5_000);
-        if (Configuration.UserConfig.isNormalMode(userConfig.raidMode)) {
+        if (UserConfig.isNormalMode(userConfig.raidMode)) {
             mouseMoveAndClickAndHide(
                     fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
                             coord, Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()));
-        } else if (Configuration.UserConfig.isHardMode(userConfig.raidMode)) {
+        } else if (UserConfig.isHardMode(userConfig.raidMode)) {
             mouseMoveAndClickAndHide(
                     fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
                             coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHardRaid()));
-        } else if (Configuration.UserConfig.isHeroicMode(userConfig.raidMode)) {
+        } else if (UserConfig.isHeroicMode(userConfig.raidMode)) {
             mouseMoveAndClickAndHide(
                     fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
                             coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicRaid()));

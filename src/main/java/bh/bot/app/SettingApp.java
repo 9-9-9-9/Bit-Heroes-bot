@@ -3,6 +3,7 @@ package bh.bot.app;
 import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
@@ -27,7 +28,7 @@ public class SettingApp extends AbstractApplication {
             File file = new File(fileName);
             if (file.exists() && file.isDirectory())
                 throw new InvalidDataException("%s is a directory", fileName);
-            Tuple2<Boolean, Configuration.UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(profileNumber);
+            Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(profileNumber);
             int raidLevel, raidMode, worldBossLevel;
             if (resultLoadUserConfig._1) {
                 raidLevel = resultLoadUserConfig._2.raidLevel;
@@ -39,7 +40,7 @@ public class SettingApp extends AbstractApplication {
                 else
                     info(colorFormatInfo, "You haven't specified Raid level");
 
-                if (Configuration.UserConfig.isValidDifficultyMode(resultLoadUserConfig._2.raidMode))
+                if (UserConfig.isValidDifficultyMode(resultLoadUserConfig._2.raidMode))
                     info(colorFormatInfo, "Selected Raid mode %s", resultLoadUserConfig._2.getRaidModeDesc());
                 else
                     info(colorFormatInfo, "You haven't specified Raid mode (Normal/Hard/Heroic)");
@@ -58,48 +59,48 @@ public class SettingApp extends AbstractApplication {
             }
 
             //
-            final Tuple2<Byte, Byte> raidLevelRange = Configuration.UserConfig.getRaidLevelRange();
+            final Tuple2<Byte, Byte> raidLevelRange = UserConfig.getRaidLevelRange();
             StringBuilder sb = new StringBuilder();
             sb.append("All Raid levels:\n");
             for (int rl = raidLevelRange._1; rl <= raidLevelRange._2; rl++)
-                sb.append(String.format("  %2d. %s\n", rl, Configuration.UserConfig.getRaidLevelDesc(rl)));
+                sb.append(String.format("  %2d. %s\n", rl, UserConfig.getRaidLevelDesc(rl)));
             sb.append("Specific Raid level?");
             Integer tmp = readIntInput(sb.toString(), raidLevelRange._1, raidLevelRange._2);
             raidLevel = tmp == null ? raidLevel : tmp.intValue();
             //
-            Tuple2<Byte, Byte> modeRange = Configuration.UserConfig.getModeRange();
+            Tuple2<Byte, Byte> modeRange = UserConfig.getModeRange();
             sb = new StringBuilder("All Raid's difficulty mode:\n");
             for (byte rl = modeRange._1; rl <= modeRange._2; rl++)
-                sb.append(String.format("  %2d. %s\n", rl, Configuration.UserConfig.getDifficultyModeDesc(rl, "Raid")));
+                sb.append(String.format("  %2d. %s\n", rl, UserConfig.getDifficultyModeDesc(rl, "Raid")));
             sb.append("Specific Raid mode?");
             tmp = readIntInput(sb.toString(), modeRange._1, modeRange._2);
             raidMode = tmp == null ? raidMode : tmp.intValue();
 
             //
-            final Tuple2<Byte, Byte> woldBossLevelRange = Configuration.UserConfig.getWorldBossLevelRange();
+            final Tuple2<Byte, Byte> woldBossLevelRange = UserConfig.getWorldBossLevelRange();
             sb = new StringBuilder("All World Boss levels:\n");
             for (int rl = woldBossLevelRange._1; rl <= woldBossLevelRange._2; rl++)
-                sb.append(String.format("  %2d. %s\n", rl, Configuration.UserConfig.getWorldBossLevelDesc(rl)));
+                sb.append(String.format("  %2d. %s\n", rl, UserConfig.getWorldBossLevelDesc(rl)));
             sb.append("Specific World Boss level?");
             tmp = readIntInput(sb.toString(), woldBossLevelRange._1, woldBossLevelRange._2);
             worldBossLevel = tmp == null ? worldBossLevel : tmp.intValue();
             //
 
             sb = new StringBuilder();
-            sb.append(String.format("%s=%d\n", Configuration.UserConfig.raidLevelKey, raidLevel));
-            sb.append(String.format("%s=%d\n", Configuration.UserConfig.raidModeKey, raidMode));
-            sb.append(String.format("%s=%d\n", Configuration.UserConfig.worldBossLevelKey, worldBossLevel));
+            sb.append(String.format("%s=%d\n", UserConfig.raidLevelKey, raidLevel));
+            sb.append(String.format("%s=%d\n", UserConfig.raidModeKey, raidMode));
+            sb.append(String.format("%s=%d\n", UserConfig.worldBossLevelKey, worldBossLevel));
 
-            Configuration.UserConfig newCfg = new Configuration.UserConfig(profileNumber, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel);
+            UserConfig newCfg = new UserConfig(profileNumber, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel);
 
             sb = new StringBuilder("Your setting:\n");
             if (newCfg.isValidRaidLevel() && newCfg.isValidDifficultyMode(newCfg.raidMode))
-                sb.append(String.format("  %s mode of raid %s", Configuration.UserConfig.getDifficultyModeDesc((byte) raidMode, "Raid"), Configuration.UserConfig.getRaidLevelDesc((byte) raidLevel)));
+                sb.append(String.format("  %s mode of raid %s", UserConfig.getDifficultyModeDesc((byte) raidMode, "Raid"), UserConfig.getRaidLevelDesc((byte) raidLevel)));
             else
                 sb.append("  raid has not been set");
             sb.append('\n');
             if (newCfg.isValidWorldBossLevel())
-                sb.append(String.format("  world boss %s", Configuration.UserConfig.getWorldBossLevelDesc((byte) worldBossLevel)));
+                sb.append(String.format("  world boss %s", UserConfig.getWorldBossLevelDesc((byte) worldBossLevel)));
             else
                 sb.append("  world boss has not been set");
             sb.append('\n');
