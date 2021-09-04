@@ -2,12 +2,15 @@ package bh.bot.app;
 
 import bh.bot.app.farming.ExpeditionApp.ExpeditionPlace;
 import bh.bot.common.Configuration;
-import bh.bot.common.types.*;
 import bh.bot.common.OS;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.jna.*;
+import bh.bot.common.types.Offset;
+import bh.bot.common.types.ParseArgumentsResult;
+import bh.bot.common.types.ScreenResolutionProfile;
+import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.flags.FlagPattern;
 import bh.bot.common.types.flags.FlagResolution;
@@ -37,6 +40,7 @@ import java.util.stream.Collectors;
 import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.*;
+import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.ImageUtil.freeMem;
 import static bh.bot.common.utils.InteractionUtil.Mouse.*;
 import static bh.bot.common.utils.InteractionUtil.Screen.*;
@@ -114,16 +118,6 @@ public abstract class AbstractApplication {
         return this.getClass().getAnnotation(AppMeta.class).name();
     }
 
-    protected final String getScriptFileName() {
-        return this.getClass().getAnnotation(AppMeta.class).code();
-    }
-
-    protected String getScriptName() {
-        if (OS.isWin)
-            return ".\\" + getScriptFileName() + ".bat";
-        return "./" + getScriptFileName() + ".sh";
-    }
-
     protected abstract String getUsage();
 
     protected abstract String getDescription();
@@ -134,11 +128,11 @@ public abstract class AbstractApplication {
         sb.append("\n  Description: ");
         sb.append(getDescription());
         sb.append("\nUsage:\n");
-        if (OS.isWin) {
+        if (OS.isWin)
             sb.append("java -jar BitHeroes.jar ");
-            sb.append(getAppCode());
-        } else
-            sb.append(getScriptName());
+        else
+            sb.append("./bot.sh ");
+        sb.append(getAppCode());
         String usage = getUsage();
         if (usage != null) {
             sb.append(' ');
@@ -148,7 +142,8 @@ public abstract class AbstractApplication {
 
         List<FlagPattern> flagPatterns = Arrays.asList(Flags.allFlags);
         // Local flags
-        List<FlagPattern> localFlags = flagPatterns.stream().filter(x -> !x.isGlobalFlag())
+        List<FlagPattern> localFlags = flagPatterns.stream()
+                .filter(x -> !x.isGlobalFlag() && x.isSupportedByApp(this))
                 .collect(Collectors.toList());
         if (localFlags.size() > 0) {
             sb.append("\nFlags:");
@@ -156,7 +151,9 @@ public abstract class AbstractApplication {
                 sb.append(localFlag);
         }
         // Global flags:
-        List<FlagPattern> globalFlags = flagPatterns.stream().filter(FlagPattern::isGlobalFlag)
+        List<FlagPattern> globalFlags = flagPatterns.stream()
+                .filter(FlagPattern::isGlobalFlag)
+                .filter(x -> x.isSupportedByApp(this))
                 .collect(Collectors.toList());
         sb.append("\nGlobal flags:");
         for (FlagPattern globalFlag : globalFlags.stream().filter(x -> !(x instanceof FlagResolution))
@@ -709,7 +706,7 @@ public abstract class AbstractApplication {
 
     protected void printRequiresSetting() {
         err("You have to do setting before using this function");
-        err("Please launch script 'setting.%s' and follow instruction", OS.isWin ? "bat" : "sh");
+        err("Please launch script '%s' and follow instruction", scriptFileName("setting"));
     }
 
     private HWND gameWindowHwndByJna = null;
