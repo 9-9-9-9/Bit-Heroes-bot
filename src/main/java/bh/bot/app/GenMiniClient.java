@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.StringUtil.isBlank;
@@ -25,6 +26,7 @@ public class GenMiniClient extends AbstractApplication {
     public static final int supportMaximumNumberOfAccounts = 10;
     private static final String keyChromePath = "external.application.chrome.path";
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Override
     protected void internalRun(String[] args) {
 
@@ -36,9 +38,8 @@ public class GenMiniClient extends AbstractApplication {
                 throw new InvalidDataException("None data was provided");
 
         } catch (Exception ex) {
-            err("ERROR: Unable to generate mini-client!!!");
-            err("Error message: %s", ex.getMessage());
-            info("To be able to use mini game client (using Google Chrome), the following conditions must be met:");
+            err("Unable to generate mini-client!!!\n  Reason: %s", ex.getMessage());
+            info(colorFormatInfo, "To be able to use mini game client (using Google Chrome), the following conditions must be met:");
             info(" 1. Google Chrome must be installed");
             info(" 2. You can play Bit Heroes game at https://www.kongregate.com/games/Juppiomenz/bit-heroes");
             info(" 3. Play Bit Heroes in Web using Chrome and press F12 to open Dev Tools");
@@ -46,7 +47,7 @@ public class GenMiniClient extends AbstractApplication {
             info(" 5. Paste the content of file 'prepare-mini-chrome-client.txt' into console tab");
             info(" 6. Copy the output lines and override corresponding values in user-config.properties");
             info(" 7. Run the script 'build.%s'  again", OS.isWin ? "bat" : "sh");
-            info("Notes: it's able to generate more than one client, just by modify the '1.' prefix of the keys, support up to maximum %d accounts", supportMaximumNumberOfAccounts);
+            info(colorFormatInfo, "Notes: it's able to generate more than one client, just by modify the '1.' prefix of the keys, support up to maximum %d accounts", supportMaximumNumberOfAccounts);
             System.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
             return;
         }
@@ -56,6 +57,7 @@ public class GenMiniClient extends AbstractApplication {
 
         File dir = new File("bh-client");
         if (!dir.exists())
+            //noinspection ResultOfMethodCallIgnored
             dir.mkdir();
 
         final String scriptNamePrefix = "mini-game-on-chrome";
