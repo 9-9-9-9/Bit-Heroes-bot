@@ -107,10 +107,8 @@ public class AfkApp extends AbstractApplication {
 				}
 			}
 
-			if (doExpedition) {
-				info("You want to do Expedition so you have to specific target place first!");
+			if (doExpedition)
 				this.place = selectExpeditionPlace(br);
-			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);

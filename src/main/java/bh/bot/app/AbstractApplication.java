@@ -749,25 +749,22 @@ public abstract class AbstractApplication {
 		sb.append(String.format("  2. %s\n", ExpeditionPlace.Mowhi));
 		sb.append(String.format("  3. %s\n", ExpeditionPlace.WizBot));
 		sb.append(String.format("  4. %s\n", ExpeditionPlace.Astamus));
-		sb.append("Select place to farm:");
-		ExpeditionPlace place = readInput(br, sb.toString(), "See above",
-				new Function<String, Tuple3<Boolean, String, ExpeditionPlace>>() {
-					@Override
-					public Tuple3<Boolean, String, ExpeditionPlace> apply(String s) {
-						try {
-							int num = Integer.parseInt(s.trim());
-							if (num == 1)
-								return new Tuple3<>(true, null, ExpeditionPlace.BlubLix);
-							if (num == 2)
-								return new Tuple3<>(true, null, ExpeditionPlace.Mowhi);
-							if (num == 3)
-								return new Tuple3<>(true, null, ExpeditionPlace.WizBot);
-							if (num == 4)
-								return new Tuple3<>(true, null, ExpeditionPlace.Astamus);
-							return new Tuple3<>(false, "Not a valid option", ExpeditionPlace.Astamus);
-						} catch (NumberFormatException ex) {
-							return new Tuple3<>(false, "Not a number", ExpeditionPlace.Astamus);
-						}
+		sb.append("Select a place to do Expedition:");
+		ExpeditionPlace place = readInput(br, sb.toString(), null,
+				s -> {
+					try {
+						int num = Integer.parseInt(s.trim());
+						if (num == 1)
+							return new Tuple3<>(true, null, ExpeditionPlace.BlubLix);
+						if (num == 2)
+							return new Tuple3<>(true, null, ExpeditionPlace.Mowhi);
+						if (num == 3)
+							return new Tuple3<>(true, null, ExpeditionPlace.WizBot);
+						if (num == 4)
+							return new Tuple3<>(true, null, ExpeditionPlace.Astamus);
+						return new Tuple3<>(false, "Not a valid option", ExpeditionPlace.Astamus);
+					} catch (NumberFormatException ex) {
+						return new Tuple3<>(false, "Not a number", ExpeditionPlace.Astamus);
 					}
 				});
 		info("You have selected to farm %s on expedition", place.toString().toUpperCase());
