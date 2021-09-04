@@ -2,6 +2,7 @@ package bh.bot.app;
 
 import bh.bot.Main;
 import bh.bot.common.Configuration;
+import bh.bot.common.OS;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.annotations.AppMeta;
 
@@ -44,13 +45,13 @@ public class GenMiniClient extends AbstractApplication {
             info(" 4. Go to Console tab");
             info(" 5. Paste the content of file 'prepare-mini-chrome-client.txt' into console tab");
             info(" 6. Copy the output lines and override corresponding values in user-config.properties");
-            info(" 7. Run the script 'build.%s'  again", Configuration.OS.isWin ? "bat" : "sh");
+            info(" 7. Run the script 'build.%s'  again", OS.isWin ? "bat" : "sh");
             info("Notes: it's able to generate more than one client, just by modify the '1.' prefix of the keys, support up to maximum %d accounts", supportMaximumNumberOfAccounts);
             System.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
             return;
         }
 
-        info("Current OS: %s", Configuration.OS.name);
+        info("Current OS: %s", OS.name);
         info("To run mini-client, you must have Google Chrome installed");
 
         File dir = new File("bh-client");
@@ -58,7 +59,7 @@ public class GenMiniClient extends AbstractApplication {
             dir.mkdir();
 
         final String scriptNamePrefix = "mini-game-on-chrome";
-        final String scriptExtension = Configuration.OS.isWin ? "bat" : "sh";
+        final String scriptExtension = OS.isWin ? "bat" : "sh";
         try (
                 InputStream fileGame = Configuration.class.getResourceAsStream("/templates/game.html");
                 InputStream fileHolo = Configuration.class.getResourceAsStream("/game-scripts/holodeck_javascripts.js");
@@ -81,7 +82,7 @@ public class GenMiniClient extends AbstractApplication {
 
                 String app;
                 List<String> chromeArgs = new ArrayList<>();
-                if (Configuration.OS.isMac) {
+                if (OS.isMac) {
                     app = "open";
                     chromeArgs.add("-a");
                     chromeArgs.add("\"Google Chrome\"");
@@ -90,7 +91,7 @@ public class GenMiniClient extends AbstractApplication {
                     chromeArgs.add("--window-size=805,545");
                     chromeArgs.add("--window-position=0,0");
                     chromeArgs.add(String.format("\"--app=file://%s\"", pathIndex.toAbsolutePath().toString()));
-                } else if (Configuration.OS.isWin) {
+                } else if (OS.isWin) {
                     app = String.format("\"%s\"", chromePathOnWindows);
                     chromeArgs.add(String.format("\"--user-data-dir=%s\"", chromeUserDir.getAbsolutePath()));
                     chromeArgs.add("--window-size=820,565");
@@ -105,7 +106,7 @@ public class GenMiniClient extends AbstractApplication {
                 }
 
                 StringBuffer sb = new StringBuffer();
-                if (Configuration.OS.isMac) {
+                if (OS.isMac) {
                     sb.append("#!/usr/bin/env bash");
                     sb.append('\n');
                     sb.append("read -p \"Launching this mini client will force close all current Google Chrome processes! Are you sure? (Y/N) \" -n 1 -r");
@@ -127,7 +128,7 @@ public class GenMiniClient extends AbstractApplication {
                     sb.append('\n');
                     sb.append("sleep 2s");
                     sb.append('\n');
-                } else if (Configuration.OS.isLinux) {
+                } else if (OS.isLinux) {
                     sb.append("#!/bin/bash");
                 }
 
@@ -138,7 +139,7 @@ public class GenMiniClient extends AbstractApplication {
                     sb.append(arg);
                 }
 
-                if (Configuration.OS.isMac || Configuration.OS.isLinux) {
+                if (OS.isMac || OS.isLinux) {
                     sb.append(" > /dev/null 2>&1&");
                 }
 
@@ -147,10 +148,10 @@ public class GenMiniClient extends AbstractApplication {
                 info("Generated file '%s' for account %s", scriptFileName, gameAccount.kongUserName);
             }
 
-            if (Configuration.OS.isMac || Configuration.OS.isLinux) {
+            if (OS.isMac || OS.isLinux) {
                 info("Now you can launch mini game client by running the following script in terminal:");
                 info(" bash ./%s*.%s", scriptNamePrefix, scriptExtension);
-            } else if (Configuration.OS.isWin) {
+            } else if (OS.isWin) {
                 info("Now you can launch mini game client by double click the '%s*.%s' file", scriptNamePrefix, scriptExtension);
             }
         } catch (Exception e) {
@@ -183,7 +184,7 @@ public class GenMiniClient extends AbstractApplication {
     }
 
     private String getChromePathOnWindows() {
-        if (!Configuration.OS.isWin)
+        if (!OS.isWin)
             return null;
         final String defaultChromePath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
         String chromePathOnWindows = Configuration.read(keyChromePath);

@@ -7,6 +7,7 @@ import bh.bot.app.dev.ScreenCaptureApp;
 import bh.bot.app.dev.TestApp;
 import bh.bot.app.farming.*;
 import bh.bot.common.Configuration;
+import bh.bot.common.OS;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotImplementedException;
@@ -18,8 +19,6 @@ import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
 import com.diogonunes.jcolor.AnsiFormat;
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
-import sun.security.krb5.Config;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,6 +32,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static bh.bot.common.Log.*;
+import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.StringUtil.isBlank;
 import static com.diogonunes.jcolor.Attribute.BOLD;
 import static com.diogonunes.jcolor.Attribute.BRIGHT_CYAN_TEXT;
@@ -118,7 +118,7 @@ public class Main {
             }
         }
 
-        boolean addMoreFlags = readYesNoInput("(optional) Do you want to add some add some flags? (Yes/No)", String.format("You can pass flags like '--exit=3600'/'--steam'/'--all'/'--help'... here. For list of supported flags available for each function, please run file 'help.%s'", Configuration.OS.isWin ? "bat" : "sh"));
+        boolean addMoreFlags = readYesNoInput("Do you want to add some add some flags? (Yes/No)", String.format("You can pass flags like '--exit=3600'/'--steam'/'--all'/'--help'... here. For list of supported flags available for each function, please run file '%s'", scriptFileName("help")));
         if (addMoreFlags) {
             final Supplier<List<String>> selectedFlagsInfoProvider = () -> lArgs.stream().filter(x -> x.startsWith("--")).collect(Collectors.toList());
             while (true) {
@@ -228,7 +228,7 @@ public class Main {
         for (FlagPattern flagPattern : usingFlagPatterns)
             if (!flagPattern.isSupportedOnCurrentOsPlatform())
                 throw new InvalidFlagException(String.format("Flag '--%s' is not supported on %s",
-                        flagPattern.getName(), Configuration.OS.name));
+                        flagPattern.getName(), OS.name));
 
         ScreenResolutionProfile screenResolutionProfile;
         boolean is800x480Resolution = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSteamResolution800x480);

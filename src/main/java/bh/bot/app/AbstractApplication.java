@@ -3,6 +3,7 @@ package bh.bot.app;
 import bh.bot.app.farming.ExpeditionApp.ExpeditionPlace;
 import bh.bot.common.Configuration;
 import bh.bot.common.Configuration.Offset;
+import bh.bot.common.OS;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
@@ -118,7 +119,7 @@ public abstract class AbstractApplication {
     }
 
     protected String getScriptName() {
-        if (Configuration.OS.isWin)
+        if (OS.isWin)
             return ".\\" + getScriptFileName() + ".bat";
         return "./" + getScriptFileName() + ".sh";
     }
@@ -132,7 +133,7 @@ public abstract class AbstractApplication {
         sb.append("\n  Description: ");
         sb.append(getDescription());
         sb.append("\nUsage:\n");
-        if (Configuration.OS.isWin) {
+        if (OS.isWin) {
             sb.append("java -jar BitHeroes.jar ");
             sb.append(getAppCode());
         } else
@@ -707,7 +708,7 @@ public abstract class AbstractApplication {
 
     protected void printRequiresSetting() {
         err("You have to do setting before using this function");
-        err("Please launch script 'setting.%s' and follow instruction", Configuration.OS.isWin ? "bat" : "sh");
+        err("Please launch script 'setting.%s' and follow instruction", OS.isWin ? "bat" : "sh");
     }
 
     private HWND gameWindowHwndByJna = null;
@@ -719,7 +720,7 @@ public abstract class AbstractApplication {
                 info("Feature doCheckGameScreenOffset has been disabled by configuration");
                 return;
             }
-            if (!Configuration.OS.isWin) {
+            if (!OS.isWin) {
                 Process which = Runtime.getRuntime().exec("which xwininfo xdotool ps");
                 int exitCode = which.waitFor();
                 if (exitCode != 0) {
@@ -775,13 +776,13 @@ public abstract class AbstractApplication {
     protected IJna getJnaInstance() {
         if (Configuration.isSteamProfile)
             return new SteamWindowsJna();
-        if (Configuration.OS.isWin)
+        if (OS.isWin)
             return new MiniClientWindowsJna();
-        if (Configuration.OS.isLinux)
+        if (OS.isLinux)
             return new MiniClientLinuxJna();
-        if (Configuration.OS.isWin)
+        if (OS.isWin)
             return new MiniClientMacOsJna();
-        throw new NotSupportedException(Configuration.OS.name);
+        throw new NotSupportedException(OS.name);
     }
 
     protected void adjustScreenOffset() {

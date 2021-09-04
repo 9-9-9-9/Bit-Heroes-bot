@@ -1,23 +1,22 @@
 package bh.bot.common.jna;
 
-import java.awt.Rectangle;
-
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinDef.RECT;
-
-import bh.bot.common.Configuration;
 import bh.bot.common.Configuration.Offset;
+import bh.bot.common.OS;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.tuples.Tuple4;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.RECT;
+
+import java.awt.*;
 
 public class SteamWindowsJna extends AbstractWindowsJna {
 	public SteamWindowsJna() {
 		super();
-		if (!Configuration.OS.isWin)
+		if (!OS.isWin)
 			throw new NotSupportedException(String.format("Class %s does not support %s OS",
-					this.getClass().getSimpleName(), Configuration.OS.name));
+					this.getClass().getSimpleName(), OS.name));
 	}
 
 	@Override

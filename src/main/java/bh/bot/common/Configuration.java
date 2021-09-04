@@ -5,7 +5,6 @@ import bh.bot.common.Configuration.Offset.AtomicOffset;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.types.ParseArgumentsResult;
-import bh.bot.common.types.Platform;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.ScreenResolutionProfile.WebProfile;
@@ -48,16 +47,6 @@ public class Configuration {
         public static int color;
         public static byte colorBw;
         public static byte colorBwL2;
-    }
-
-    public static class OS {
-        public static final String name = System.getProperty("os.name");
-        private static final String normalizedName = name.toLowerCase();
-        public static final boolean isMac = normalizedName.indexOf("mac") >= 0 || normalizedName.indexOf("darwin") >= 0;
-        public static final boolean isWin = !isMac && normalizedName.indexOf("win") >= 0;
-        public static final boolean isLinux = !isMac && !isWin;
-        public static Platform platform = isWin ? Platform.Windows
-                : isMac ? Platform.MacOS : isLinux ? Platform.Linux : Platform.Unknown;
     }
 
     public static class Timeout {

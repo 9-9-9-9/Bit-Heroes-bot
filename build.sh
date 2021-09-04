@@ -10,11 +10,7 @@ mkdir -p ./out/
 rm -f ./BitHeroes.jar
 cp ./target/BitHeroes-*-jar-with-dependencies.jar ./BitHeroes.jar
 touch user-config.properties
-chmod +x ./rerun.sh
-chmod +x ./fishing.sh
-#chmod +x ./samepix.sh
-#chmod +x ./keeppix.sh
-chmod +x ./matrix.sh
+chmod +x ./*.sh
 
 # Generating mini client
 rm -f ./mini-game-on-chrome*.sh
