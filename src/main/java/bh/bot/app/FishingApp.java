@@ -7,7 +7,6 @@ import bh.bot.common.types.Offset;
 import bh.bot.common.types.Size;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
-import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
 
 import java.awt.*;
@@ -16,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static bh.bot.Main.readInput;
+import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.ImageUtil.freeMem;
 import static bh.bot.common.utils.InteractionUtil.Keyboard.sendSpaceKey;
@@ -37,17 +36,7 @@ public class FishingApp extends AbstractApplication {
             arg = Integer.parseInt(args[0]);
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
             info(getHelp());
-            arg = readInput("How many times do you want to hook?", "Numeric only", s -> {
-                try {
-                    int num = Integer.parseInt(s);
-                    if (num < 1) {
-                        return new Tuple3<>(false, "Must greater than 0", 0);
-                    }
-                    return new Tuple3<>(true, null, num);
-                } catch (NumberFormatException ex1) {
-                    return new Tuple3<>(false, "The value you inputted is not a number", 0);
-                }
-            });
+            arg = readInputLoopCount("How many times do you want to hook?");
         }
 
         final int loop = arg;
@@ -128,7 +117,7 @@ public class FishingApp extends AbstractApplication {
 
     private void doLoopFishing(int loopCount, final AtomicBoolean masterSwitch, final Point anchorPoint,
                                final AtomicInteger screen, final AtomicBoolean unsure, final AtomicLong unsureFrom) {
-        info("Start Fishing");
+        info(colorFormatInfo, "\n\nStart Fishing");
         try {
             moveCursor(new Point(950, 100));
 
@@ -328,7 +317,7 @@ public class FishingApp extends AbstractApplication {
                     blackPixelDRgb, //
                     sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF, //
                     colorTolerant, im.getOriginalPixelPart(px[0], px[1]))) {
-                optionalDebug(debug, "Fail (1) at %3d, %3d (offset=%3d, %3d, coor=%3d, %3d) with color: %d vs %d",
+                optionalDebug(debug, "Fail (1) at %3d, %3d (offset=%3d, %3d, coord=%3d, %3d) with color: %d vs %d",
                         offsetX + px[0], offsetY + px[1], offsetX, offsetY, px[0], px[1], blackPixelRgb,
                         sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF);
                 return false;
@@ -340,7 +329,7 @@ public class FishingApp extends AbstractApplication {
                     blackPixelRgb, //
                     sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF, //
                     colorTolerant)) {
-                optionalDebug(debug, "Fail (2) at %3d, %3d (offset=%3d, %3d, coor=%3d, %3d) with color: %d vs %d",
+                optionalDebug(debug, "Fail (2) at %3d, %3d (offset=%3d, %3d, coord=%3d, %3d) with color: %d vs %d",
                         offsetX + px[0], offsetY + px[1], offsetX, offsetY, px[0], px[1], blackPixelRgb,
                         sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF);
                 return false;

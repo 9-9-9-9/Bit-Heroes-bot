@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -82,7 +81,8 @@ public class AfkApp extends AbstractApplication {
                     } else if (doRaid) {
                         info(colorFormatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
                                 userConfig.getRaidLevelDesc());
-                    } else if (doWorldBoss) {
+                    } else //noinspection ConstantConditions
+                        if (doWorldBoss) {
                         info(colorFormatInfo, "You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
                     }
                 } catch (InvalidDataException ex2) {
@@ -134,7 +134,7 @@ public class AfkApp extends AbstractApplication {
             if (doInvasion && Configuration.isSteamProfile)
                 throw new NotSupportedException("Invasion has not been supported on Steam mode");
 
-            info("Starting AFK");
+            info(colorFormatInfo, "\n\nStarting AFK");
             boolean isUnknownGvgOrInvasionOrExpedition = (doGvg && doInvasion) || (doGvg && doExpedition)
                     || (doInvasion && doExpedition);
             boolean isUnknownTrialsOrGauntlet = doTrials && doGauntlet;
@@ -232,7 +232,7 @@ public class AfkApp extends AbstractApplication {
                     continue ML;
                 }
 
-                if (taskList.stream().allMatch(x -> !isNotBlocked(x._2))) {
+                if (taskList.stream().noneMatch(x -> isNotBlocked(x._2))) {
                     info("Waiting for resource generation, sleeping %d minutes", minutesSleepWaitingResourceGeneration);
                     sleepWhileWaitingResourceRegen = originalSleepWhileWaitingResourceRegen;
                     continue ML;
@@ -440,18 +440,17 @@ public class AfkApp extends AbstractApplication {
         if (eventList.size() == 0) {
 
             final List<MenuItem> menuItems = Stream
-                    .concat(allAttendablePlaces.stream().map(x -> MenuItem.from(x)), Arrays.asList(
+                    .concat(allAttendablePlaces.stream().map(MenuItem::from), Stream.of(
                             MenuItem.from(AttendablePlaces.invasion, AttendablePlaces.trials),
                             MenuItem.from(AttendablePlaces.expedition, AttendablePlaces.trials),
                             MenuItem.from(AttendablePlaces.gvg, AttendablePlaces.gauntlet),
                             MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid),
                             MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid,
-                                    AttendablePlaces.expedition, AttendablePlaces.trials))
-                            .stream())
+                                    AttendablePlaces.expedition, AttendablePlaces.trials)))
                     .collect(Collectors.toList());
 
-            String menuItem = String.join("\n", menuItems.stream().map(x -> String.format("  %3d. %s", x.num, x.name))
-                    .collect(Collectors.toList()));
+            String menuItem = menuItems.stream().map(x -> String.format("  %3d. %s", x.num, x.name))
+                    .collect(Collectors.joining("\n"));
 
             final ArrayList<AttendablePlace> selectedOptions = new ArrayList<>();
             final Supplier<List<String>> selectedOptionsInfoProvider = () -> selectedOptions.stream().map(x -> x.name)
@@ -479,7 +478,7 @@ public class AfkApp extends AbstractApplication {
                 if (events == null)
                     break;
                 eventList.addAll(events);
-                eventList = new ArrayList<>(eventList.stream().distinct().collect(Collectors.toList()));
+                eventList = eventList.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
                 selectedOptions.clear();
                 selectedOptions.addAll(eventList);
             }
@@ -490,7 +489,7 @@ public class AfkApp extends AbstractApplication {
             }
         }
 
-        eventList = new ArrayList<>(eventList.stream().distinct().collect(Collectors.toList()));
+        eventList = eventList.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
 
         info("Selected:");
         for (AttendablePlace event : eventList) {

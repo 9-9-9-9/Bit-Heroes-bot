@@ -13,8 +13,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
 
+import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
@@ -36,15 +36,12 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 loopCount = Integer.parseInt(args[0]);
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
                 info(getHelp());
-                loopCount = readInput("Loop count:", "how many time do you want to do " + getAppName(), new Function<String, Tuple3<Boolean, String, Integer>>() {
-                    @Override
-                    public Tuple3<Boolean, String, Integer> apply(String s) {
-                        try {
-                            int result = Integer.parseInt(s, 16) & 0xFFFFFF;
-                            return new Tuple3<>(true, null, result);
-                        } catch (Exception ex2) {
-                            return new Tuple3<>(false, "Unable to parse, error: " + ex.getMessage(), 0);
-                        }
+                loopCount = readInput("Loop count:", "how many time do you want to do " + getAppName(), s -> {
+                    try {
+                        int result = Integer.parseInt(s, 16) & 0xFFFFFF;
+                        return new Tuple3<>(true, null, result);
+                    } catch (Exception ex2) {
+                        return new Tuple3<>(false, "Unable to parse, error: " + ex.getMessage(), 0);
                     }
                 });
             }
@@ -74,7 +71,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
     }
 
     protected void loop(int loopCount, AtomicBoolean masterSwitch) {
-        info("Starting %s", getAppName());
+        info(colorFormatInfo, "\n\nStarting %s", getAppName());
         List<NextAction> internalPredefinedImageActions = getInternalPredefinedImageActions();
         int continuousNotFound = 0;
         final Point coordinateHideMouse = new Point(0, 0);

@@ -153,7 +153,7 @@ public class ImageUtil {
             return true;
         if (originalPixelPart == null)
             return false;
-        return isMatch(originalPixelPart.shortValue(), getRed(rgb2), Configuration.Tolerant.colorBwL2);
+        return isMatch(originalPixelPart, getRed(rgb2), Configuration.Tolerant.colorBwL2);
     }
 
     private static boolean isMatch(int c1, int c2, int tolerant) {
@@ -187,7 +187,8 @@ public class ImageUtil {
             return;
         try {
             bi.flush();
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
+            //
         }
     }
 

@@ -126,6 +126,7 @@ public abstract class AbstractApplication {
 
     protected abstract String getDescription();
 
+    @SuppressWarnings("rawtypes")
     public String getHelp() {
         StringBuilder sb = new StringBuilder(getAppName());
         sb.append("\n  Description: ");
@@ -153,7 +154,7 @@ public abstract class AbstractApplication {
                 sb.append(localFlag);
         }
         // Global flags:
-        List<FlagPattern> globalFlags = flagPatterns.stream().filter(x -> x.isGlobalFlag())
+        List<FlagPattern> globalFlags = flagPatterns.stream().filter(FlagPattern::isGlobalFlag)
                 .collect(Collectors.toList());
         sb.append("\nGlobal flags:");
         for (FlagPattern globalFlag : globalFlags.stream().filter(x -> !(x instanceof FlagResolution))
@@ -386,8 +387,6 @@ public abstract class AbstractApplication {
         return detectLabel(BwMatrixMeta.Metas.Fishing.Labels.fishing, 0xFFFFFF, 0x7F7F7F);
     }
 
-    private final byte greenMinDiff = 70;
-
     protected Tuple2<Point[], Byte> detectRadioButtons(Rectangle scanRect) {
         final BwMatrixMeta im = BwMatrixMeta.Metas.Globally.Buttons.radioButton;
         im.throwIfNotAvailable();
@@ -395,6 +394,7 @@ public abstract class AbstractApplication {
         final boolean debug = false;
 
         int positionTolerant = Math.min(10, Configuration.Tolerant.position);
+        final byte greenMinDiff = 70;
 
         try (ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(
                 new Offset(Math.max(0, scanRect.x - positionTolerant),
@@ -477,7 +477,6 @@ public abstract class AbstractApplication {
                     optionalDebug(debug, "detectRadioButtons captured at %3d,%3d with size %3dx%3d, match at %3d,%3d",
                             screenCapturedResult.x, screenCapturedResult.y, screenCapturedResult.w,
                             screenCapturedResult.h, x, y);
-                    // im.setLastMatchPoint(startingCoord.x, startingCoord.y);
                     startingCoords.add(new Point(x, y));
                 }
             }
@@ -486,9 +485,11 @@ public abstract class AbstractApplication {
                 throw new InvalidDataException("Unable to detect index of selected radio button among %d results",
                         startingCoords.size());
 
-            return new Tuple2<>(startingCoords.stream()
-                    .map(c -> new Point(screenCapturedResult.x + c.x, screenCapturedResult.y + c.y))
-                    .collect(Collectors.toList()).toArray(new Point[0]), (byte) selectedRadioButtonIndex);
+            return new Tuple2<>(
+                    startingCoords.stream()
+                    .map(c -> new Point(screenCapturedResult.x + c.x, screenCapturedResult.y + c.y)).toArray(Point[]::new),
+                    (byte) selectedRadioButtonIndex
+            );
         }
     }
 
@@ -669,8 +670,7 @@ public abstract class AbstractApplication {
     }
 
     protected ExpeditionPlace selectExpeditionPlace() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Select a place to do Expedition:\n");
+        StringBuilder sb = new StringBuilder("Select a place to do Expedition:\n");
         sb.append(String.format("  1. %s\n", ExpeditionPlace.BlubLix));
         sb.append(String.format("  2. %s\n", ExpeditionPlace.Mowhi));
         sb.append(String.format("  3. %s\n", ExpeditionPlace.WizBot));
@@ -692,7 +692,7 @@ public abstract class AbstractApplication {
                         return new Tuple3<>(false, "Not a number", ExpeditionPlace.Astamus);
                     }
                 });
-        info("You have selected to farm %s on expedition", place.toString().toUpperCase());
+        info("Going to farm %s in Expedition", place.toString().toUpperCase());
         return place;
     }
 
@@ -778,7 +778,7 @@ public abstract class AbstractApplication {
             return new MiniClientWindowsJna();
         if (OS.isLinux)
             return new MiniClientLinuxJna();
-        if (OS.isWin)
+        if (OS.isMac)
             return new MiniClientMacOsJna();
         throw new NotSupportedException(OS.name);
     }
@@ -817,6 +817,20 @@ public abstract class AbstractApplication {
                 return new Tuple3<>(false, "Value must be in range from 1 to " + GenMiniClient.supportMaximumNumberOfAccounts, 0);
             } catch (NumberFormatException ex) {
                 return new Tuple3<>(false, "Not a number", 0);
+            }
+        });
+    }
+
+    protected int readInputLoopCount(String ask) {
+        return readInput(ask, "Numeric only", s -> {
+            try {
+                int num = Integer.parseInt(s);
+                if (num < 1) {
+                    return new Tuple3<>(false, "Must greater than 0", 0);
+                }
+                return new Tuple3<>(true, null, num);
+            } catch (NumberFormatException ex1) {
+                return new Tuple3<>(false, "The value you inputted is not a number", 0);
             }
         });
     }

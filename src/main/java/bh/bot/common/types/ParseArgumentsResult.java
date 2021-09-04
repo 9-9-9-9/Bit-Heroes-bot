@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class ParseArgumentsResult {
     public final Class<? extends AbstractApplication> applicationClass;
     public final String[] arguments;
+    @SuppressWarnings("rawtypes")
     public final ArrayList<FlagPattern> usingFlags;
     public int exitAfterXSecs;
     public boolean enableDebugMessages;
@@ -26,6 +27,7 @@ public class ParseArgumentsResult {
     public ScreenResolutionProfile screenResolutionProfile;
     public int profileNumber;
 
+    @SuppressWarnings("rawtypes")
     public ParseArgumentsResult(Class<? extends AbstractApplication> applicationClass, String[] arguments, ArrayList<FlagPattern> usingFlags) {
         this.applicationClass = applicationClass;
         this.arguments = arguments;

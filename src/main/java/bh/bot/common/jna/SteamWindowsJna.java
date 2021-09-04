@@ -64,7 +64,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 		if (rect.width < ew || rect.height < eh)
 			return new Tuple4<>(false,
 					String.format("JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d", ew,
-							eh, cw, ch),
+							eh, rect.width, rect.height),
 					null, null);
 		final int ww = rect.width;
 		final int wh = rect.height;

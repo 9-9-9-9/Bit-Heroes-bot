@@ -5,13 +5,12 @@ import bh.bot.common.Log;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
-import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ThreadUtil;
 
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static bh.bot.Main.readInput;
+import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
@@ -30,17 +29,7 @@ public class ReRunApp extends AbstractApplication {
             arg = Integer.parseInt(args[0]);
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
             info(getHelp());
-            arg = readInput("How many times do you want to click ReRun buttons?", "Numeric only", s -> {
-                try {
-                    int num = Integer.parseInt(s);
-                    if (num < 1) {
-                        return new Tuple3<>(false, "Must greater than 0", 0);
-                    }
-                    return new Tuple3<>(true, null, num);
-                } catch (NumberFormatException ex1) {
-                    return new Tuple3<>(false, "The value you inputted is not a number", 0);
-                }
-            });
+            arg = readInputLoopCount("How many times do you want to click ReRun buttons?");
         }
 
         final int loop = arg;
@@ -59,7 +48,7 @@ public class ReRunApp extends AbstractApplication {
     }
 
     private void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
-        info("Starting ReRun");
+        info(colorFormatInfo, "\n\nStarting ReRun");
         try {
             moveCursor(new Point(950, 100));
             long lastFound = System.currentTimeMillis();

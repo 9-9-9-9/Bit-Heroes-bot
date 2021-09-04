@@ -70,7 +70,7 @@ public abstract class AbstractLinuxJna extends AbstractJna {
                 }
 
                 List<String> xwiOutput = prcResult._2;
-                if (!xwiOutput.stream().anyMatch(x -> x.contains("Bit Heroes"))) {
+                if (xwiOutput.stream().noneMatch(x -> x.contains("Bit Heroes"))) {
                     debug("%d is not mini-client", windowId);
                     continue;
                 }
@@ -113,7 +113,8 @@ public abstract class AbstractLinuxJna extends AbstractJna {
         debug("App: %s, commands: %s", app, String.join(", ", args));
         File fileTmpOutput = new File(String.format("/tmp/bh-tmp.%s.out", UUID.randomUUID().toString()));
         try {
-            fileTmpOutput.createNewFile();
+            if (fileTmpOutput.createNewFile())
+                return new Tuple2<>(false, null);
             ArrayList<String> nArgs = new ArrayList<>();
             nArgs.add(app);
             nArgs.addAll(Arrays.asList(args));
@@ -127,6 +128,7 @@ public abstract class AbstractLinuxJna extends AbstractJna {
             return new Tuple2<>(true, readOutputLines(fileTmpOutput));
         } finally {
             try {
+                //noinspection ResultOfMethodCallIgnored
                 fileTmpOutput.delete();
             } catch (Exception ex2) {
                 ex2.printStackTrace();
@@ -135,7 +137,7 @@ public abstract class AbstractLinuxJna extends AbstractJna {
     }
 
     private List<String> readOutputLines(File file) throws IOException {
-        List<String> output = Files.readAllLines(file.toPath()).stream().filter(x -> StringUtil.isNotBlank(x)).collect(Collectors.toList());
+        List<String> output = Files.readAllLines(file.toPath()).stream().filter(StringUtil::isNotBlank).collect(Collectors.toList());
         if (output.size() == 0)
             throw new InvalidDataException("File %s contains no data", file.getName());
         return output;

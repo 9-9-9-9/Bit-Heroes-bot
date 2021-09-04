@@ -59,8 +59,6 @@ public class Main {
                     GauntletApp.class, //
                     GenMiniClient.class,
 //
-                    // KeepPixApp.class,
-                    // SamePixApp.class,
                     ExtractMatrixApp.class, //
                     ImportTpImageApp.class, //
 //
@@ -68,7 +66,7 @@ public class Main {
                     TestApp.class//
             );
 
-            if (args.length == 0 || Arrays.asList(args).stream().allMatch(x -> x.trim().startsWith("--")))
+            if (args.length == 0 || Arrays.stream(args).allMatch(x -> x.trim().startsWith("--")))
                 args = buildArgument(args);
 
             process(args);
@@ -102,7 +100,7 @@ public class Main {
 
 		ArrayList<String> lArgs = new ArrayList<>();
 		lArgs.add(meta.code());
-		lArgs.addAll(Arrays.asList(args).stream().map(x -> x.trim()).filter(x -> x.startsWith("--")).distinct().collect(Collectors.toList()));
+		lArgs.addAll(Arrays.stream(args).map(String::trim).filter(x -> x.startsWith("--")).distinct().collect(Collectors.toList()));
 
         FlagPrintHelpMessage flagHelp = new FlagPrintHelpMessage();
         if (lArgs.stream().anyMatch(x -> x.equalsIgnoreCase(flagHelp.getCode())))
@@ -111,7 +109,7 @@ public class Main {
         FlagSteamResolution800x480 flagSteam = new FlagSteamResolution800x480();
         if (flagSteam.isSupportedOnCurrentOsPlatform()) {
             String flagSteamCode = flagSteam.getCode();
-            if (!lArgs.stream().anyMatch(x -> x.equalsIgnoreCase(flagSteamCode))) {
+            if (lArgs.stream().noneMatch(x -> x.equalsIgnoreCase(flagSteamCode))) {
                 boolean enableSteam = readYesNoInput("Steam client?", "Press 'Y' to launch this app on Steam mode (800x480) or press 'N' to launch this app on Mini-client mode (800x520)");
                 if (enableSteam)
                     lArgs.add(flagSteamCode);
@@ -161,6 +159,7 @@ public class Main {
             return;
         }
 
+        //noinspection rawtypes
         for (FlagPattern flagPattern : parseArgumentsResult.usingFlags)
             if (!flagPattern.isSupportedByApp(instance)) {
                 System.out.println(instance.getHelp());
@@ -171,13 +170,14 @@ public class Main {
         instance.run(parseArgumentsResult);
     }
 
+    @SuppressWarnings("rawtypes")
     private static ParseArgumentsResult parseArguments(String[] args)
             throws InvalidFlagException {
         String appCode = args[0];
 
-        List<FlagPattern> flagPatterns = Arrays.asList(Flags.allFlags);
+        FlagPattern[] flagPatterns = Flags.allFlags;
 
-        List<String> rawFlags = Arrays.stream(args).map(x -> x.trim()).filter(x -> x.startsWith("--"))
+        List<String> rawFlags = Arrays.stream(args).map(String::trim).filter(x -> x.startsWith("--"))
                 .collect(Collectors.toList());
 
         ArrayList<FlagPattern> usingFlagPatterns = new ArrayList<>();

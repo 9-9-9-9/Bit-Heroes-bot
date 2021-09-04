@@ -44,11 +44,11 @@ public class AttendablePlace {
         }
 
         public static MenuItem from(AttendablePlace...attendablePlaces) {
-            List<AttendablePlace> aps = Arrays.asList(attendablePlaces).stream().distinct().collect(Collectors.toList());
+            List<AttendablePlace> aps = Arrays.stream(attendablePlaces).distinct().collect(Collectors.toList());
             int num = 0;
             for (AttendablePlace ap : aps)
                 num |= ap.id;
-            return new MenuItem(String.join(" + ", aps.stream().map(x -> x.name).collect(Collectors.toList())), num);
+            return new MenuItem(aps.stream().map(x -> x.name).collect(Collectors.joining(" + ")), num);
         }
     }
 }

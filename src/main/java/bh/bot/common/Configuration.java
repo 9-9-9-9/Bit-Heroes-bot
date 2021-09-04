@@ -150,6 +150,7 @@ public class Configuration {
         return new Tuple2<>(true, new UserConfig(profileNo, raidLevel, raidMode, worldBossLevel));
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static String readKey(Properties properties, String key, String defaultValue, String defaultValueDesc) {
         String value = properties.getProperty(key);
         if (isBlank(value)) {
@@ -199,8 +200,8 @@ public class Configuration {
 
     public static java.util.List<Tuple2<Class<? extends AbstractApplication>, AppMeta>> getApplicationClasses(boolean includeDevApps) {
         return applicationClassesInfo.stream()
-                .filter(x -> includeDevApps ? true : !x._2.dev())
-                .sorted(Comparator.comparingDouble((Tuple2<Class<? extends AbstractApplication>, AppMeta> o) -> new Double(o._2.displayOrder())).thenComparing(o -> o._2.name()))
+                .filter(x -> includeDevApps || !x._2.dev())
+                .sorted(Comparator.comparingDouble((Tuple2<Class<? extends AbstractApplication>, AppMeta> o) -> o._2.displayOrder()).thenComparing(o -> o._2.name()))
                 .collect(Collectors.toList());
     }
 

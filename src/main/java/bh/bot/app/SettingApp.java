@@ -66,7 +66,7 @@ public class SettingApp extends AbstractApplication {
                 sb.append(String.format("  %2d. %s\n", rl, UserConfig.getRaidLevelDesc(rl)));
             sb.append("Specific Raid level?");
             Integer tmp = readIntInput(sb.toString(), raidLevelRange._1, raidLevelRange._2);
-            raidLevel = tmp == null ? raidLevel : tmp.intValue();
+            raidLevel = tmp == null ? raidLevel : tmp;
             //
             Tuple2<Byte, Byte> modeRange = UserConfig.getModeRange();
             sb = new StringBuilder("All Raid's difficulty mode:\n");
@@ -74,7 +74,7 @@ public class SettingApp extends AbstractApplication {
                 sb.append(String.format("  %2d. %s\n", rl, UserConfig.getDifficultyModeDesc(rl, "Raid")));
             sb.append("Specific Raid mode?");
             tmp = readIntInput(sb.toString(), modeRange._1, modeRange._2);
-            raidMode = tmp == null ? raidMode : tmp.intValue();
+            raidMode = tmp == null ? raidMode : tmp;
 
             //
             final Tuple2<Byte, Byte> woldBossLevelRange = UserConfig.getWorldBossLevelRange();
@@ -83,7 +83,7 @@ public class SettingApp extends AbstractApplication {
                 sb.append(String.format("  %2d. %s\n", rl, UserConfig.getWorldBossLevelDesc(rl)));
             sb.append("Specific World Boss level?");
             tmp = readIntInput(sb.toString(), woldBossLevelRange._1, woldBossLevelRange._2);
-            worldBossLevel = tmp == null ? worldBossLevel : tmp.intValue();
+            worldBossLevel = tmp == null ? worldBossLevel : tmp;
             //
 
             sb = new StringBuilder();
@@ -94,7 +94,7 @@ public class SettingApp extends AbstractApplication {
             UserConfig newCfg = new UserConfig(profileNumber, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel);
 
             sb = new StringBuilder("Your setting:\n");
-            if (newCfg.isValidRaidLevel() && newCfg.isValidDifficultyMode(newCfg.raidMode))
+            if (newCfg.isValidRaidLevel() && UserConfig.isValidDifficultyMode(newCfg.raidMode))
                 sb.append(String.format("  %s mode of raid %s", UserConfig.getDifficultyModeDesc((byte) raidMode, "Raid"), UserConfig.getRaidLevelDesc((byte) raidLevel)));
             else
                 sb.append("  raid has not been set");

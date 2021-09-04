@@ -63,7 +63,7 @@ public class GenMiniClient extends AbstractApplication {
         try (
                 InputStream fileGame = Configuration.class.getResourceAsStream("/templates/game.html");
                 InputStream fileHolo = Configuration.class.getResourceAsStream("/game-scripts/holodeck_javascripts.js");
-                InputStream fileSiteWide = Configuration.class.getResourceAsStream("/game-scripts/sitewide_javascripts.js");
+                InputStream fileSiteWide = Configuration.class.getResourceAsStream("/game-scripts/sitewide_javascripts.js")
         ) {
             String originalGameHtml = readFromInputStream(fileGame);
             Files.write(Paths.get("bh-client/holodeck_javascripts.js"), readFromInputStream(fileHolo).getBytes());
@@ -105,7 +105,7 @@ public class GenMiniClient extends AbstractApplication {
                     chromeArgs.add(String.format("'--app=file://%s'", pathIndex.toAbsolutePath().toString()));
                 }
 
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 if (OS.isMac) {
                     sb.append("#!/usr/bin/env bash");
                     sb.append('\n');
