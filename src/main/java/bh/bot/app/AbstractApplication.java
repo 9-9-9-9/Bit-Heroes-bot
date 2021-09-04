@@ -1,5 +1,6 @@
 package bh.bot.app;
 
+import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
@@ -825,7 +826,7 @@ public abstract class AbstractApplication {
 						Configuration.gameScreenOffset.set(result._4);
 						x = result._4.X;
 						y = result._4.Y;
-						info("Game's screen offset has been adjusted automatically to %d,%d", x, y);
+						info(colorFormatInfo, "Game's screen offset has been adjusted automatically to %d,%d", x, y);
 					} else {
 						debug("screen offset not change");
 					}
@@ -837,7 +838,7 @@ public abstract class AbstractApplication {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			err("Error occured during doCheckGameScreenOffset");
+			err("Error occurs during doCheckGameScreenOffset");
 		}
 	}
 
