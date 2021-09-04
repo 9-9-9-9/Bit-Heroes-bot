@@ -1,13 +1,19 @@
 package bh.bot.common;
 
-import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.info;
-import static bh.bot.common.Log.warn;
-import static bh.bot.common.utils.StringUtil.isBlank;
-import static bh.bot.common.utils.StringUtil.isNotBlank;
+import bh.bot.app.AbstractApplication;
+import bh.bot.common.Configuration.Offset.AtomicOffset;
+import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.exceptions.NotImplementedException;
+import bh.bot.common.types.ParseArgumentsResult;
+import bh.bot.common.types.Platform;
+import bh.bot.common.types.ScreenResolutionProfile;
+import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
+import bh.bot.common.types.ScreenResolutionProfile.WebProfile;
+import bh.bot.common.types.annotations.AppCode;
+import bh.bot.common.types.tuples.Tuple2;
+import bh.bot.common.utils.StringUtil;
 
-import java.awt.Point;
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,20 +23,9 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import bh.bot.Main;
-import bh.bot.app.AbstractApplication;
-import bh.bot.common.Configuration.Offset.AtomicOffset;
-import bh.bot.common.exceptions.InvalidDataException;
-import bh.bot.common.exceptions.NotImplementedException;
-import bh.bot.common.exceptions.NotSupportedException;
-import bh.bot.common.types.ParseArgumentsResult;
-import bh.bot.common.types.Platform;
-import bh.bot.common.types.ScreenResolutionProfile;
-import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
-import bh.bot.common.types.ScreenResolutionProfile.WebProfile;
-import bh.bot.common.types.annotations.AppCode;
-import bh.bot.common.types.tuples.Tuple2;
-import bh.bot.common.utils.StringUtil;
+import static bh.bot.common.Log.*;
+import static bh.bot.common.utils.StringUtil.isBlank;
+import static bh.bot.common.utils.StringUtil.isNotBlank;
 
 public class Configuration {
     public static ScreenResolutionProfile screenResolutionProfile = null;
@@ -195,7 +190,7 @@ public class Configuration {
                 case 8:
                     return "The Wolf's Deception (T13-T16)";
                 default:
-                    return "NEW, Unknown name (T?-T?)";
+                    return "Unknown (T?-T?)";
             }
         }
     }
@@ -204,28 +199,20 @@ public class Configuration {
 
     public static void loadSystemConfig(final ParseArgumentsResult parseArgumentsResult) throws IOException {
         final ScreenResolutionProfile screenResolutionProfile = parseArgumentsResult.screenResolutionProfile;
-        final boolean enableJna = parseArgumentsResult.enableJna;
         info("Using '%s' profile which supports %dx%d game resolution", screenResolutionProfile.getName(),
                 screenResolutionProfile.getSupportedGameResolutionWidth(),
                 screenResolutionProfile.getSupportedGameResolutionHeight());
 
         Configuration.screenResolutionProfile = screenResolutionProfile;
-        Configuration.isSteamProfile = screenResolutionProfile instanceof SteamProfile;
-        Configuration.isWebProfile = screenResolutionProfile instanceof WebProfile;
-        Configuration.profileName = screenResolutionProfile.getName().trim();
+        isSteamProfile = screenResolutionProfile instanceof SteamProfile;
+        isWebProfile = screenResolutionProfile instanceof WebProfile;
+        profileName = screenResolutionProfile.getName().trim();
         if (isBlank(profileName))
             throw new InvalidDataException("profileName");
 
-        if (Configuration.isSteamProfile) {
-            if (!OS.isWin) {
-                err("Steam profile only available on Windows");
-                System.exit(Main.EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
-            }
-            info("****** IMPORTANT ****** IMPORTANT ******");
-            warn("You must move the Bit Heroes game's window to top left corner of your screen or provide exactly screen offset into the 'offset.screen.x & y' keys");
+        warn("You must move the Bit Heroes game's window to top left corner of your screen or provide exactly screen offset into the 'offset.screen.x & y' keys");
+        if (isSteamProfile)
             warn("Your Bit Heroes game window must be 800x480. You can check it by open Settings, see the Windowed option");
-            info("****************************************");
-        }
 
         properties.load(Configuration.class.getResourceAsStream("/config.properties"));
 
@@ -263,22 +250,6 @@ public class Configuration {
         debug("Tolerant.color     = %d", Tolerant.color);
         debug("Tolerant.colorBw   = %d", Tolerant.colorBw);
         debug("Tolerant.colorBwL2 = %d", Tolerant.colorBwL2);
-
-        if (enableJna) {
-            try {
-                if (isSteamProfile) {
-
-                } else {
-                    throw new NotSupportedException("enableJna & non isSteamProfile");
-                }
-            } catch (NotSupportedException ex1) {
-                throw ex1;
-            } catch (Exception ex2) {
-                ex2.printStackTrace();
-                err("Unable to init JNA interaction, ignore this flag");
-                parseArgumentsResult.enableJna = false;
-            }
-        }
     }
 
     public static Tuple2<Boolean, UserConfig> loadUserConfig(int profileNo) throws IOException { // returns tuple of
@@ -339,7 +310,7 @@ public class Configuration {
     private static final ArrayList<Tuple2<Class<? extends AbstractApplication>, String>> applicationClassesInfo = new ArrayList<>();
 
     @SafeVarargs
-	public static void registerApplicationClasses(Class<? extends AbstractApplication>... classes) {
+    public static void registerApplicationClasses(Class<? extends AbstractApplication>... classes) {
         for (Class<? extends AbstractApplication> class_ : classes) {
             AppCode annotation = class_.getAnnotation(AppCode.class);
             if (annotation == null)
@@ -396,9 +367,9 @@ public class Configuration {
             this.X = x;
             this.Y = y;
         }
-        
+
         public Point toScreenCoordinate() {
-        	return new Point(Configuration.gameScreenOffset.X.get() + X, Configuration.gameScreenOffset.Y.get() + Y);
+            return new Point(Configuration.gameScreenOffset.X.get() + X, Configuration.gameScreenOffset.Y.get() + Y);
         }
 
         @Override

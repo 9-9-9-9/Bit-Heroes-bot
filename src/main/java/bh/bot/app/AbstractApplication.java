@@ -1,5 +1,6 @@
 package bh.bot.app;
 
+import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
@@ -17,6 +18,7 @@ import static bh.bot.common.utils.InteractionUtil.Screen.captureScreen;
 import static bh.bot.common.utils.InteractionUtil.Screen.getPixelColor;
 import static bh.bot.common.utils.StringUtil.isBlank;
 import static bh.bot.common.utils.ThreadUtil.sleep;
+import static com.diogonunes.jcolor.Attribute.*;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -37,6 +39,7 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
 import bh.bot.common.jna.*;
+import com.diogonunes.jcolor.AnsiFormat;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
 import bh.bot.Main;
@@ -254,10 +257,8 @@ public abstract class AbstractApplication {
 		// final boolean debug = im == BwMatrixMeta.Metas.Raid.Buttons.accept;
 		final boolean debug = false;
 
-		ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
-		BufferedImage sc = screenCapturedResult.image;
-
-		try {
+		try (ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im)){
+			BufferedImage sc = screenCapturedResult.image;
 			saveDebugImage(sc, "scanToFindImage." + im.getImageNameCode());
 
 			boolean go = true;
@@ -313,8 +314,6 @@ public abstract class AbstractApplication {
 				return p;
 
 			return null;
-		} finally {
-			freeMem(sc);
 		}
 	}
 
@@ -341,9 +340,8 @@ public abstract class AbstractApplication {
 
 		final boolean debug = false;
 
-		ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
-		BufferedImage sc = screenCapturedResult.image;
-		try {
+		try (ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im)) {
+			BufferedImage sc = screenCapturedResult.image;
 			saveDebugImage(sc, "detectLabel");
 
 			for (int y = sc.getHeight() - im.getHeight() - 1; y >= 0; y--) {
@@ -398,8 +396,6 @@ public abstract class AbstractApplication {
 			}
 
 			return null;
-		} finally {
-			freeMem(sc);
 		}
 	}
 
@@ -416,12 +412,12 @@ public abstract class AbstractApplication {
 		final boolean debug = false;
 
 		int positionTolerant = Math.min(10, Configuration.Tolerant.position);
-		ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(
+
+		try (ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(
 				new Configuration.Offset(Math.max(0, scanRect.x - positionTolerant),
 						Math.max(0, scanRect.y - positionTolerant)),
-				scanRect.width + positionTolerant * 2, scanRect.height + positionTolerant * 2);
-		BufferedImage sc = screenCapturedResult.image;
-		try {
+				scanRect.width + positionTolerant * 2, scanRect.height + positionTolerant * 2)){
+			BufferedImage sc = screenCapturedResult.image;
 			saveDebugImage(sc, "detectRadioButtons");
 
 			ArrayList<Point> startingCoords = new ArrayList<>();
@@ -510,8 +506,6 @@ public abstract class AbstractApplication {
 			return new Tuple2<>(startingCoords.stream()
 					.map(c -> new Point(screenCapturedResult.x + c.x, screenCapturedResult.y + c.y))
 					.collect(Collectors.toList()).toArray(new Point[0]), (byte) selectedRadioButtonIndex);
-		} finally {
-			freeMem(sc);
 		}
 	}
 
@@ -633,24 +627,26 @@ public abstract class AbstractApplication {
 		}
 	}
 
-	protected <T> T readInput(BufferedReader br, String ask, String desc,
+	protected <T> T readInput(String ask, String desc,
 			Function<String, Tuple3<Boolean, String, T>> transform) {
-		return readInput(br, ask, desc, transform, false);
+		return readInput(ask, desc, transform, false);
 	}
 
-	protected <T> T readInput(BufferedReader br, String ask, String desc,
+	protected <T> T readInput(String ask, String desc,
 			Function<String, Tuple3<Boolean, String, T>> transform, boolean allowBlankAndIfBlankThenReturnNull) {
-		return readInput(br, ask, desc, null, transform, allowBlankAndIfBlankThenReturnNull);
+		return readInput(ask, desc, null, transform, allowBlankAndIfBlankThenReturnNull);
 	}
 
-	protected <T> T readInput(BufferedReader br, String ask, String desc,
+	private static final AnsiFormat fAsk = new AnsiFormat(BRIGHT_CYAN_TEXT(), BOLD());
+	protected <T> T readInput(String ask, String desc,
 			Supplier<List<String>> selectedOptionsInfoProvider, Function<String, Tuple3<Boolean, String, T>> transform,
 			boolean allowBlankAndIfBlankThenReturnNull) {
 		try {
+			BufferedReader br = Main.getBufferedReader();
 			String input;
 			while (true) {
-				info("\n\n\n\n==========================");
-				info(ask);
+				info("\n\n==================================");
+				info(fAsk, ask);
 				if (selectedOptionsInfoProvider != null) {
 					List<String> selectedOptions = selectedOptionsInfoProvider.get();
 					if (selectedOptions.size() > 0)
@@ -658,7 +654,7 @@ public abstract class AbstractApplication {
 				}
 				if (desc != null)
 					info("(%s)", desc);
-				info("** Notice ** Please complete the above question first, otherwise bot will be hanged here!!!");
+				warn("Please complete the above question first, otherwise bot will be hanged here!!!");
 				input = br.readLine();
 
 				if (isBlank(input)) {
@@ -743,31 +739,28 @@ public abstract class AbstractApplication {
 		return clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses);
 	}
 
-	protected ExpeditionPlace selectExpeditionPlace(BufferedReader br) {
+	protected ExpeditionPlace selectExpeditionPlace() {
 		StringBuilder sb = new StringBuilder();
+		sb.append("Select a place to do Expedition:\n");
 		sb.append(String.format("  1. %s\n", ExpeditionPlace.BlubLix));
 		sb.append(String.format("  2. %s\n", ExpeditionPlace.Mowhi));
 		sb.append(String.format("  3. %s\n", ExpeditionPlace.WizBot));
 		sb.append(String.format("  4. %s\n", ExpeditionPlace.Astamus));
-		sb.append("Select place to farm:");
-		ExpeditionPlace place = readInput(br, sb.toString(), "See above",
-				new Function<String, Tuple3<Boolean, String, ExpeditionPlace>>() {
-					@Override
-					public Tuple3<Boolean, String, ExpeditionPlace> apply(String s) {
-						try {
-							int num = Integer.parseInt(s.trim());
-							if (num == 1)
-								return new Tuple3<>(true, null, ExpeditionPlace.BlubLix);
-							if (num == 2)
-								return new Tuple3<>(true, null, ExpeditionPlace.Mowhi);
-							if (num == 3)
-								return new Tuple3<>(true, null, ExpeditionPlace.WizBot);
-							if (num == 4)
-								return new Tuple3<>(true, null, ExpeditionPlace.Astamus);
-							return new Tuple3<>(false, "Not a valid option", ExpeditionPlace.Astamus);
-						} catch (NumberFormatException ex) {
-							return new Tuple3<>(false, "Not a number", ExpeditionPlace.Astamus);
-						}
+		ExpeditionPlace place = readInput(sb.toString(), null,
+				s -> {
+					try {
+						int num = Integer.parseInt(s.trim());
+						if (num == 1)
+							return new Tuple3<>(true, null, ExpeditionPlace.BlubLix);
+						if (num == 2)
+							return new Tuple3<>(true, null, ExpeditionPlace.Mowhi);
+						if (num == 3)
+							return new Tuple3<>(true, null, ExpeditionPlace.WizBot);
+						if (num == 4)
+							return new Tuple3<>(true, null, ExpeditionPlace.Astamus);
+						return new Tuple3<>(false, "Not a valid option", ExpeditionPlace.Astamus);
+					} catch (NumberFormatException ex) {
+						return new Tuple3<>(false, "Not a number", ExpeditionPlace.Astamus);
 					}
 				});
 		info("You have selected to farm %s on expedition", place.toString().toUpperCase());
@@ -833,7 +826,7 @@ public abstract class AbstractApplication {
 						Configuration.gameScreenOffset.set(result._4);
 						x = result._4.X;
 						y = result._4.Y;
-						info("Game's screen offset has been adjusted automatically to %d,%d", x, y);
+						info(colorFormatInfo, "Game's screen offset has been adjusted automatically to %d,%d", x, y);
 					} else {
 						debug("screen offset not change");
 					}
@@ -845,7 +838,7 @@ public abstract class AbstractApplication {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			err("Error occured during doCheckGameScreenOffset");
+			err("Error occurs during doCheckGameScreenOffset");
 		}
 	}
 
@@ -884,5 +877,18 @@ public abstract class AbstractApplication {
 		} catch (Exception e) {
 			err("Err detecting screen offset: %s", e.getMessage());
 		}
+	}
+
+	protected int readProfileNumber(String ask) {
+		return readInput(ask, String.format("select a number, min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), s -> {
+			try {
+				int num = Integer.parseInt(s.trim());
+				if (num >= 1 && num <= GenMiniClient.supportMaximumNumberOfAccounts)
+					return new Tuple3<>(true, null, num);
+				return new Tuple3<>(false, "Value must be in range from 1 to " + GenMiniClient.supportMaximumNumberOfAccounts, 0);
+			} catch (NumberFormatException ex) {
+				return new Tuple3<>(false, "Not a number", 0);
+			}
+		});
 	}
 }

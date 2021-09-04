@@ -7,37 +7,20 @@ import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.function.Function;
 
+import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.common.Log.info;
 
 @AppCode(code = "setting")
 public class SettingApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
-        try (
-                InputStreamReader isr = new InputStreamReader(System.in);
-                BufferedReader br = new BufferedReader(isr);
-        ) {
-            int profileNumber = readInput(br, "Which profile do you want to edit?", String.format("select a number, min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), new Function<String, Tuple3<Boolean, String, Integer>>() {
-                @Override
-                public Tuple3<Boolean, String, Integer> apply(String s) {
-                    try {
-                        int num = Integer.parseInt(s.trim());
-                        if (num >= 1 && num <= GenMiniClient.supportMaximumNumberOfAccounts)
-                            return new Tuple3<>(true, null, num);
-                        return new Tuple3<>(false, "Value must be in range from 1 to " + GenMiniClient.supportMaximumNumberOfAccounts, 0);
-                    } catch (NumberFormatException ex) {
-                        return new Tuple3<>(false, "Not a number", 0);
-                    }
-                }
-            });
+        try {
+            int profileNumber = readProfileNumber("Which profile do you want to edit?");
 
             String fileName = Configuration.getProfileConfigFileName(profileNumber);
             File file = new File(fileName);
@@ -51,19 +34,22 @@ public class SettingApp extends AbstractApplication {
                 worldBossLevel = resultLoadUserConfig._2.worldBossLevel;
 
                 if (resultLoadUserConfig._2.isValidRaidLevel())
-                    info("Selected Raid level %s", resultLoadUserConfig._2.getRaidLevelDesc());
+                    info(colorFormatInfo, "Selected Raid level %s", resultLoadUserConfig._2.getRaidLevelDesc());
                 else
-                    info("You haven't specified Raid level");
+                    info(colorFormatInfo, "You haven't specified Raid level");
 
                 if (Configuration.UserConfig.isValidDifficultyMode(resultLoadUserConfig._2.raidMode))
-                    info("Selected Raid mode %s", resultLoadUserConfig._2.getRaidModeDesc());
+                    info(colorFormatInfo, "Selected Raid mode %s", resultLoadUserConfig._2.getRaidModeDesc());
                 else
-                    info("You haven't specified Raid mode (Normal/Hard/Heroic)");
+                    info(colorFormatInfo, "You haven't specified Raid mode (Normal/Hard/Heroic)");
 
                 if (resultLoadUserConfig._2.isValidWorldBossLevel())
-                    info("Selected World Boss %s", resultLoadUserConfig._2.getWorldBossLevelDesc());
+                    info(colorFormatInfo, "Selected World Boss %s", resultLoadUserConfig._2.getWorldBossLevelDesc());
                 else
-                    info("You haven't specified World Boss level");
+                    info(colorFormatInfo, "You haven't specified World Boss level");
+
+                info("Press any key to continue...");
+                Main.getBufferedReader().readLine();
             } else {
                 raidLevel = 0;
                 raidMode = 0;
@@ -77,58 +63,24 @@ public class SettingApp extends AbstractApplication {
             for (int rl = raidLevelRange._1; rl <= raidLevelRange._2; rl++)
                 sb.append(String.format("  %2d. %s\n", rl, Configuration.UserConfig.getRaidLevelDesc(rl)));
             sb.append("Specific Raid level?");
-            Integer tmp = readInput(br, sb.toString(), "See the list above. To skip and keep the current value, just leave this empty and press Enter", new Function<String, Tuple3<Boolean, String, Integer>>() {
-                @Override
-                public Tuple3<Boolean, String, Integer> apply(String s) {
-                    try {
-                        int num = Integer.parseInt(s);
-                        if (num >= raidLevelRange._1 && num <= raidLevelRange._2)
-                            return new Tuple3<>(true, null, num);
-                        return new Tuple3<>(false, String.format("Value must in range from %d to %d", raidLevelRange._1, raidLevelRange._2), 0);
-                    } catch (NumberFormatException ex) {
-                        return new Tuple3<>(false, String.format("Must be a number in range from %d to %d", raidLevelRange._1, raidLevelRange._2), 0);
-                    }
-                }
-            }, true);
+            Integer tmp = readInput(sb.toString(), raidLevelRange._1, raidLevelRange._2);
             raidLevel = tmp == null ? raidLevel : tmp.intValue();
             //
             Tuple2<Byte, Byte> modeRange = Configuration.UserConfig.getModeRange();
-            info("All Raid's difficulty mode:");
+            sb = new StringBuilder("All Raid's difficulty mode:\n");
             for (byte rl = modeRange._1; rl <= modeRange._2; rl++)
-                info("%2d. %s", rl, Configuration.UserConfig.getDifficultyModeDesc(rl, "Raid"));
-            tmp = readInput(br, "Specific Raid mode?", "See the list above. To skip and keep the current value, just leave this empty and press Enter", new Function<String, Tuple3<Boolean, String, Integer>>() {
-                @Override
-                public Tuple3<Boolean, String, Integer> apply(String s) {
-                    try {
-                        int num = Integer.parseInt(s);
-                        if (num >= modeRange._1 && num <= modeRange._2)
-                            return new Tuple3<>(true, null, num);
-                        return new Tuple3<>(false, String.format("Value must in range from %d to %d", modeRange._1, modeRange._2), 0);
-                    } catch (NumberFormatException ex) {
-                        return new Tuple3<>(false, String.format("Must be a number in range from %d to %d", modeRange._1, modeRange._2), 0);
-                    }
-                }
-            }, true);
+                sb.append(String.format("  %2d. %s\n", rl, Configuration.UserConfig.getDifficultyModeDesc(rl, "Raid")));
+            sb.append("Specific Raid mode?");
+            tmp = readInput(sb.toString(), modeRange._1, modeRange._2);
             raidMode = tmp == null ? raidMode : tmp.intValue();
 
             //
             final Tuple2<Byte, Byte> woldBossLevelRange = Configuration.UserConfig.getWorldBossLevelRange();
-            info("All World Boss levels:");
+            sb = new StringBuilder("All World Boss levels:\n");
             for (int rl = woldBossLevelRange._1; rl <= woldBossLevelRange._2; rl++)
-                info("%2d. %s", rl, Configuration.UserConfig.getWorldBossLevelDesc(rl));
-            tmp = readInput(br, "Specific World Boss level?", "See the list above. To skip and keep the current value, just leave this empty and press Enter", new Function<String, Tuple3<Boolean, String, Integer>>() {
-                @Override
-                public Tuple3<Boolean, String, Integer> apply(String s) {
-                    try {
-                        int num = Integer.parseInt(s);
-                        if (num >= woldBossLevelRange._1 && num <= woldBossLevelRange._2)
-                            return new Tuple3<>(true, null, num);
-                        return new Tuple3<>(false, String.format("Value must in range from %d to %d", woldBossLevelRange._1, woldBossLevelRange._2), 0);
-                    } catch (NumberFormatException ex) {
-                        return new Tuple3<>(false, String.format("Must be a number in range from %d to %d", woldBossLevelRange._1, woldBossLevelRange._2), 0);
-                    }
-                }
-            }, true);
+                sb.append(String.format("  %2d. %s\n", rl, Configuration.UserConfig.getWorldBossLevelDesc(rl)));
+            sb.append("Specific World Boss level?");
+            tmp = readInput(sb.toString(), woldBossLevelRange._1, woldBossLevelRange._2);
             worldBossLevel = tmp == null ? worldBossLevel : tmp.intValue();
             //
 
@@ -137,19 +89,27 @@ public class SettingApp extends AbstractApplication {
             sb.append(String.format("%s=%d\n", Configuration.UserConfig.raidModeKey, raidMode));
             sb.append(String.format("%s=%d\n", Configuration.UserConfig.worldBossLevelKey, worldBossLevel));
 
-            info("You have selected:");
-            info("  %s mode of raid %s", Configuration.UserConfig.getDifficultyModeDesc((byte)raidMode, "Raid"), Configuration.UserConfig.getRaidLevelDesc((byte)raidLevel));
-            info("  world boss %s", Configuration.UserConfig.getWorldBossLevelDesc((byte)worldBossLevel));
-            boolean save = readInput(br, "Do you want to save the above setting into profile number " + profileNumber + "?", "Press Y/N then enter", new Function<String, Tuple3<Boolean, String, Boolean>>() {
-                @Override
-                public Tuple3<Boolean, String, Boolean> apply(String s) {
-                    s = s.trim().toLowerCase();
-                    if (s.equals("y"))
-                        return new Tuple3<>(true, null, true);
-                    if (s.equals("n"))
-                        return new Tuple3<>(true, null, false);
-                    return new Tuple3<>(false, "Must be 'Y' or 'N'", false);
-                }
+            Configuration.UserConfig newCfg = new Configuration.UserConfig(profileNumber, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel);
+
+            sb = new StringBuilder("Your setting:\n");
+            if (newCfg.isValidRaidLevel() && newCfg.isValidDifficultyMode(newCfg.raidMode))
+                sb.append(String.format("  %s mode of raid %s", Configuration.UserConfig.getDifficultyModeDesc((byte) raidMode, "Raid"), Configuration.UserConfig.getRaidLevelDesc((byte) raidLevel)));
+            else
+                sb.append("  raid has not been set");
+            sb.append('\n');
+            if (newCfg.isValidWorldBossLevel())
+                sb.append(String.format("  world boss %s", Configuration.UserConfig.getWorldBossLevelDesc((byte) worldBossLevel)));
+            else
+                sb.append("  world boss has not been set");
+            sb.append('\n');
+            sb.append(String.format("Do you want to save the above setting into profile number %d ?", profileNumber));
+            boolean save = readInput(sb.toString(), "Press Y/N then enter", s -> {
+                s = s.trim().toLowerCase();
+                if (s.equals("y"))
+                    return new Tuple3<>(true, null, true);
+                if (s.equals("n"))
+                    return new Tuple3<>(true, null, false);
+                return new Tuple3<>(false, "Must be 'Y' or 'N'", false);
             });
 
             if (save) {
@@ -162,6 +122,19 @@ public class SettingApp extends AbstractApplication {
             ex.printStackTrace();
             System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
         }
+    }
+
+    private Integer readInput(String ask, int min, int max) {
+        return readInput(ask, "See the list above. To skip and keep the current value, just leave this empty and press Enter", s -> {
+            try {
+                int num = Integer.parseInt(s);
+                if (num >= min && num <= max)
+                    return new Tuple3<>(true, null, num);
+                return new Tuple3<>(false, String.format("Value must in range from %d to %d", min, max), 0);
+            } catch (NumberFormatException ex) {
+                return new Tuple3<>(false, String.format("Must be a number in range from %d to %d", min, max), 0);
+            }
+        }, true);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package bh.bot.app;
 
-import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
@@ -10,9 +9,6 @@ import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ThreadUtil;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static bh.bot.common.Log.debug;
@@ -24,34 +20,26 @@ import static bh.bot.common.utils.ThreadUtil.sleep;
 public class ReRunApp extends AbstractApplication {
 
     private int longTimeNoSee = Configuration.Timeout.defaultLongTimeNoSeeInMinutes * 60_000;
+
     @Override
     protected void internalRun(String[] args) {
         longTimeNoSee = Configuration.Timeout.longTimeNoSeeInMinutes * 60_000;
         int arg;
-        try (
-                InputStreamReader isr = new InputStreamReader(System.in);
-                BufferedReader br = new BufferedReader(isr);
-        ) {
-            try {
-                arg = Integer.parseInt(args[0]);
-            } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
-                info(getHelp());
-                arg = readInput(br, "How many times do you want to click ReRun buttons?", "Numeric only", s -> {
-                    try {
-                        int num = Integer.parseInt(s);
-                        if (num < 1) {
-                            return new Tuple3<>(false, "Must greater than 0", 0);
-                        }
-                        return new Tuple3<>(true, null, num);
-                    } catch (NumberFormatException ex1) {
-                        return new Tuple3<>(false, "The value you inputted is not a number", 0);
+        try {
+            arg = Integer.parseInt(args[0]);
+        } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
+            info(getHelp());
+            arg = readInput("How many times do you want to click ReRun buttons?", "Numeric only", s -> {
+                try {
+                    int num = Integer.parseInt(s);
+                    if (num < 1) {
+                        return new Tuple3<>(false, "Must greater than 0", 0);
                     }
-                });
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
-            throw new RuntimeException(e);
+                    return new Tuple3<>(true, null, num);
+                } catch (NumberFormatException ex1) {
+                    return new Tuple3<>(false, "The value you inputted is not a number", 0);
+                }
+            });
         }
 
         final int loop = arg;

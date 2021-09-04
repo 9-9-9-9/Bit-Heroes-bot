@@ -7,7 +7,9 @@ import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.tuples.Tuple3;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
@@ -29,34 +31,25 @@ public class KeepPixApp extends AbstractApplication {
 
             String templateImg, inputImg;
 
-            try (
-                    InputStreamReader isr = new InputStreamReader(System.in);
-                    BufferedReader br = new BufferedReader(isr);
-            ) {
-                try {
-                    templateImg = args[0];
-                    inputImg = args[1];
-                    if (!new File(templateImg).exists() || !new File(inputImg).exists())
-                        throw new FileNotFoundException();
-                } catch (ArrayIndexOutOfBoundsException | FileNotFoundException ex) {
-                    info(getHelp());
-                    Function<String, Tuple3<Boolean, String, String>> transform = s -> {
-                        try {
-                            File file = new File(s);
-                            if (!file.exists())
-                                return new Tuple3<>(false, "File does not exists", null);
-                            return new Tuple3<>(true, null, s);
-                        } catch (Exception ex2) {
-                            return new Tuple3<>(false, "Invalid file path", null);
-                        }
-                    };
-                    templateImg = readInput(br, "File path of the template picture you want to get source pixels:", null, transform);
-                    inputImg = readInput(br, "File path of the picture you want to process:", null, transform);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
-                throw e;
+            try {
+                templateImg = args[0];
+                inputImg = args[1];
+                if (!new File(templateImg).exists() || !new File(inputImg).exists())
+                    throw new FileNotFoundException();
+            } catch (ArrayIndexOutOfBoundsException | FileNotFoundException ex) {
+                info(getHelp());
+                Function<String, Tuple3<Boolean, String, String>> transform = s -> {
+                    try {
+                        File file = new File(s);
+                        if (!file.exists())
+                            return new Tuple3<>(false, "File does not exists", null);
+                        return new Tuple3<>(true, null, s);
+                    } catch (Exception ex2) {
+                        return new Tuple3<>(false, "Invalid file path", null);
+                    }
+                };
+                templateImg = readInput("File path of the template picture you want to get source pixels:", null, transform);
+                inputImg = readInput("File path of the picture you want to process:", null, transform);
             }
 
             BufferedImage biTemplate = loadImageFromFile(templateImg);
@@ -73,25 +66,22 @@ public class KeepPixApp extends AbstractApplication {
             int maxX = Integer.MIN_VALUE;
             int maxY = Integer.MIN_VALUE;
             for (int y = 0; y < biInput.getHeight(); y++)
-                for (int x = 0; x < biInput.getWidth(); x++)
-                {
+                for (int x = 0; x < biInput.getWidth(); x++) {
                     int rgb = biInput.getRGB(x, y);
-                    if (templatePixels.contains(rgb))
-                    {
+                    if (templatePixels.contains(rgb)) {
                         biOutput.setRGB(x, y, rgb);
 
                         minX = Math.min(minX, x);
                         minY = Math.min(minY, y);
                         maxX = Math.max(maxX, x);
                         maxY = Math.max(maxY, y);
-                    }
-                    else
+                    } else
                         biOutput.setRGB(x, y, 0xFFFFFF);
                 }
 
             saveImage(biOutput, "filtered");
             info("Saved filtered image");
-            
+
             int w = maxX - minX + 1;
             int h = maxY - minY + 1;
 

@@ -1,7 +1,6 @@
 package bh.bot.app.farming;
 
 import bh.bot.Main;
-import bh.bot.app.GenMiniClient;
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.AttendablePlace;
@@ -9,15 +8,13 @@ import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.annotations.AppCode;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
-import bh.bot.common.types.tuples.Tuple3;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 
@@ -27,24 +24,10 @@ public class WorldBossApp extends AbstractDoFarmingApp {
     private Configuration.UserConfig userConfig;
 
     @Override
-    protected boolean readMoreInput(BufferedReader br) throws IOException {
+    protected boolean readMoreInput() throws IOException {
         int profileNumber = this.argumentInfo.profileNumber;
-        if (profileNumber < 1) {
-            info("You want to do WorldBoss so you have to specific profile number first!");
-            profileNumber = readInput(br, "Select profile number", String.format("min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), new Function<String, Tuple3<Boolean, String, Integer>>() {
-                @Override
-                public Tuple3<Boolean, String, Integer> apply(String s) {
-                    try {
-                        int num = Integer.parseInt(s.trim());
-                        if (num >= 1 && num <= GenMiniClient.supportMaximumNumberOfAccounts)
-                            return new Tuple3<>(true, null, num);
-                        return new Tuple3<>(false, "Value must be in range from 1 to " + GenMiniClient.supportMaximumNumberOfAccounts, 0);
-                    } catch (NumberFormatException ex) {
-                        return new Tuple3<>(false, "Not a number", 0);
-                    }
-                }
-            });
-        }
+        if (profileNumber < 1)
+            profileNumber = readProfileNumber("You want to do World Boss so you have to specific profile number first!\nSelect profile number");
         Tuple2<Boolean, Configuration.UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(profileNumber);
         if (!resultLoadUserConfig._1) {
             err("Profile number %d could not be found");
@@ -56,7 +39,7 @@ public class WorldBossApp extends AbstractDoFarmingApp {
         userConfig = resultLoadUserConfig._2;
 
         try {
-            info("You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
+            info(colorFormatInfo, "You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
             return true;
         } catch (InvalidDataException ex2) {
             err(ex2.getMessage());

@@ -1,8 +1,23 @@
 package bh.bot;
 
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.info;
+import bh.bot.app.*;
+import bh.bot.app.dev.ExtractMatrixApp;
+import bh.bot.app.dev.ImportTpImageApp;
+import bh.bot.app.dev.ScreenCaptureApp;
+import bh.bot.app.dev.TestApp;
+import bh.bot.app.farming.*;
+import bh.bot.common.Configuration;
+import bh.bot.common.Telegram;
+import bh.bot.common.exceptions.InvalidFlagException;
+import bh.bot.common.exceptions.NotImplementedException;
+import bh.bot.common.types.ParseArgumentsResult;
+import bh.bot.common.types.ScreenResolutionProfile;
+import bh.bot.common.types.flags.*;
+import bh.bot.common.utils.InteractionUtil;
+import com.diogonunes.jcolor.AnsiFormat;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -10,53 +25,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import bh.bot.app.AbstractApplication;
-import bh.bot.app.AfkApp;
-import bh.bot.app.FishingApp;
-import bh.bot.app.GenMiniClient;
-import bh.bot.app.ReRunApp;
-import bh.bot.app.SettingApp;
-import bh.bot.app.dev.ExtractMatrixApp;
-import bh.bot.app.dev.ImportTpImageApp;
-import bh.bot.app.dev.ScreenCaptureApp;
-import bh.bot.app.dev.TestApp;
-import bh.bot.app.farming.ExpeditionApp;
-import bh.bot.app.farming.GauntletApp;
-import bh.bot.app.farming.GvgApp;
-import bh.bot.app.farming.InvasionApp;
-import bh.bot.app.farming.PvpApp;
-import bh.bot.app.farming.TrialsApp;
-import bh.bot.app.farming.WorldBossApp;
-import bh.bot.common.Configuration;
-import bh.bot.common.Log;
-import bh.bot.common.Telegram;
-import bh.bot.common.exceptions.InvalidFlagException;
-import bh.bot.common.exceptions.NotImplementedException;
-import bh.bot.common.types.ParseArgumentsResult;
-import bh.bot.common.types.ScreenResolutionProfile;
-import bh.bot.common.types.flags.FlagAll;
-import bh.bot.common.types.flags.FlagDoExpedition;
-import bh.bot.common.types.flags.FlagDoGauntlet;
-import bh.bot.common.types.flags.FlagDoGvG;
-import bh.bot.common.types.flags.FlagDoInvasion;
-import bh.bot.common.types.flags.FlagDoPvp;
-import bh.bot.common.types.flags.FlagDoRaid;
-import bh.bot.common.types.flags.FlagDoTrials;
-import bh.bot.common.types.flags.FlagDoWorldBoss;
-import bh.bot.common.types.flags.FlagExitAfterAmountOfSeconds;
-import bh.bot.common.types.flags.FlagMuteNoti;
-import bh.bot.common.types.flags.FlagPattern;
-import bh.bot.common.types.flags.FlagPrintHelpMessage;
-import bh.bot.common.types.flags.FlagProfileNo;
-import bh.bot.common.types.flags.FlagSaveDebugImages;
-import bh.bot.common.types.flags.FlagShowDebugMessages;
-import bh.bot.common.types.flags.FlagSteamResolution800x480;
-import bh.bot.common.types.flags.FlagWebResolution800x520;
-import bh.bot.common.types.flags.Flags;
-import bh.bot.common.utils.InteractionUtil;
+import static bh.bot.common.Log.*;
+import static com.diogonunes.jcolor.Attribute.BOLD;
 
 @SuppressWarnings("deprecation")
 public class Main {
+	public static final AnsiFormat colorFormatInfo = new AnsiFormat(com.diogonunes.jcolor.Attribute.BRIGHT_BLUE_TEXT(), BOLD());
+
 	public static void main(String[] args) {
 		try {
 
@@ -87,7 +62,7 @@ public class Main {
 			ParseArgumentsResult parseArgumentsResult = parseArguments(args);
 
 			if (parseArgumentsResult.enableDebugMessages)
-				Log.enableDebug();
+				enableDebug();
 			if (parseArgumentsResult.disableTelegramNoti)
 				Telegram.disable();
 
@@ -226,6 +201,14 @@ public class Main {
 		li.eRaid = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoRaid);
 		// end events
 		return li;
+	}
+
+	private static BufferedReader bufferedReader = null;
+
+	public static synchronized BufferedReader getBufferedReader() {
+		if (bufferedReader == null)
+			bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+		return bufferedReader;
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;

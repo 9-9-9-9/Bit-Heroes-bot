@@ -127,7 +127,7 @@ public class InteractionUtil {
 			return robot.getPixelColor(x, y);
 		}
 
-		public static class ScreenCapturedResult {
+		public static class ScreenCapturedResult implements AutoCloseable {
 			public BufferedImage image;
 			public int x;
 			public int y;
@@ -140,6 +140,11 @@ public class InteractionUtil {
 				this.y = y;
 				this.w = image.getWidth();
 				this.h = image.getHeight();
+			}
+
+			@Override
+			public void close() {
+				freeMem(this.image);
 			}
 		}
 

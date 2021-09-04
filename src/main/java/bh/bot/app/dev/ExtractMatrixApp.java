@@ -7,10 +7,8 @@ import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.function.Function;
 
 import static bh.bot.common.Log.info;
@@ -32,81 +30,72 @@ public class ExtractMatrixApp extends AbstractApplication {
             boolean isDisplayedHelp = false;
             int rgb, tolerant;
             String img;
-            try (
-                    InputStreamReader isr = new InputStreamReader(System.in);
-                    BufferedReader br = new BufferedReader(isr);
-            ) {
-                try {
-                    rgb = Integer.parseInt(args[0], 16) & 0xFFFFFF;
-                } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
-                    info(getHelp());
-                    isDisplayedHelp = true;
-                    rgb = readInput(br, "Color to keep:", "6 characters, in hex format, without prefix '0x', for example: FFFFFF is white, or FFC0CB is pink", new Function<String, Tuple3<Boolean, String, Integer>>() {
-                        @Override
-                        public Tuple3<Boolean, String, Integer> apply(String s) {
-                            final String normalized = s.trim().toUpperCase();
-                            if (normalized.length() != 6)
-                                return new Tuple3<>(false, "Must be 6 characters in length", 0);
-                            for (char c : normalized.toCharArray())
-                                if (c < 48 || (c > 57 && c < 65) || c > 70)
-                                    return new Tuple3<>(false, "Contains invalid Hexadecimal character, must be 0-9 A-F", 0);
-                            try {
-                                int result = Integer.parseInt(normalized, 16) & 0xFFFFFF;
-                                return new Tuple3<>(true, null, result);
-                            } catch (Exception ex2) {
-                                return new Tuple3<>(false, "Unable to parse, error: " + ex.getMessage(), 0);
-                            }
-                        }
-                    });
-                }
-
-                try {
-                    tolerant = Math.abs(Integer.parseInt(args[1]));
-                } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
-                    info(getHelp());
-                    isDisplayedHelp = true;
-                    tolerant = readInput(br, "Tolerant:", "Tolerant when color contains same R & G & B value", new Function<String, Tuple3<Boolean, String, Integer>>() {
-                        @Override
-                        public Tuple3<Boolean, String, Integer> apply(String s) {
-                            String normalized = s.trim().toUpperCase();
-                            if (normalized.length() != 6)
-                                return new Tuple3<>(false, "Must be 6 characters in length", 0);
-                            for (char c : normalized.toCharArray())
-                                if (c < 48 || (c > 57 && c < 65) || c > 70)
-                                    return new Tuple3<>(false, "Contains invalid Hexadecimal character, must be 0-9 A-F", 0);
-                            try {
-                                int result = Integer.parseInt(normalized);
-                                if (result < 0)
-                                    return new Tuple3<>(false, "Must be equals or greater than 0", 0);
-                                return new Tuple3<>(true, null, result);
-                            } catch (Exception ex2) {
-                                return new Tuple3<>(false, "Unable to parse, error: " + ex.getMessage(), 0);
-                            }
-                        }
-                    });
-                }
-
-                try {
-                    img = args[2];
-                } catch (ArrayIndexOutOfBoundsException ex) {
-                    if (!isDisplayedHelp)
-                        info(getHelp());
-                    Function<String, Tuple3<Boolean, String, String>> transform = s -> {
+            try {
+                rgb = Integer.parseInt(args[0], 16) & 0xFFFFFF;
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
+                info(getHelp());
+                isDisplayedHelp = true;
+                rgb = readInput("Color to keep:", "6 characters, in hex format, without prefix '0x', for example: FFFFFF is white, or FFC0CB is pink", new Function<String, Tuple3<Boolean, String, Integer>>() {
+                    @Override
+                    public Tuple3<Boolean, String, Integer> apply(String s) {
+                        final String normalized = s.trim().toUpperCase();
+                        if (normalized.length() != 6)
+                            return new Tuple3<>(false, "Must be 6 characters in length", 0);
+                        for (char c : normalized.toCharArray())
+                            if (c < 48 || (c > 57 && c < 65) || c > 70)
+                                return new Tuple3<>(false, "Contains invalid Hexadecimal character, must be 0-9 A-F", 0);
                         try {
-                            File file = new File(s);
-                            if (!file.exists())
-                                return new Tuple3<>(false, "File does not exists", null);
-                            return new Tuple3<>(true, null, s);
+                            int result = Integer.parseInt(normalized, 16) & 0xFFFFFF;
+                            return new Tuple3<>(true, null, result);
                         } catch (Exception ex2) {
-                            return new Tuple3<>(false, "Invalid file path", null);
+                            return new Tuple3<>(false, "Unable to parse, error: " + ex.getMessage(), 0);
                         }
-                    };
-                    img = readInput(br, "File path of the picture you want to extract:", null, transform);
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
-                throw ex;
+                    }
+                });
+            }
+
+            try {
+                tolerant = Math.abs(Integer.parseInt(args[1]));
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
+                info(getHelp());
+                isDisplayedHelp = true;
+                tolerant = readInput("Tolerant:", "Tolerant when color contains same R & G & B value", new Function<String, Tuple3<Boolean, String, Integer>>() {
+                    @Override
+                    public Tuple3<Boolean, String, Integer> apply(String s) {
+                        String normalized = s.trim().toUpperCase();
+                        if (normalized.length() != 6)
+                            return new Tuple3<>(false, "Must be 6 characters in length", 0);
+                        for (char c : normalized.toCharArray())
+                            if (c < 48 || (c > 57 && c < 65) || c > 70)
+                                return new Tuple3<>(false, "Contains invalid Hexadecimal character, must be 0-9 A-F", 0);
+                        try {
+                            int result = Integer.parseInt(normalized);
+                            if (result < 0)
+                                return new Tuple3<>(false, "Must be equals or greater than 0", 0);
+                            return new Tuple3<>(true, null, result);
+                        } catch (Exception ex2) {
+                            return new Tuple3<>(false, "Unable to parse, error: " + ex.getMessage(), 0);
+                        }
+                    }
+                });
+            }
+
+            try {
+                img = args[2];
+            } catch (ArrayIndexOutOfBoundsException ex) {
+                if (!isDisplayedHelp)
+                    info(getHelp());
+                Function<String, Tuple3<Boolean, String, String>> transform = s -> {
+                    try {
+                        File file = new File(s);
+                        if (!file.exists())
+                            return new Tuple3<>(false, "File does not exists", null);
+                        return new Tuple3<>(true, null, s);
+                    } catch (Exception ex2) {
+                        return new Tuple3<>(false, "Invalid file path", null);
+                    }
+                };
+                img = readInput("File path of the picture you want to extract:", null, transform);
             }
 
             info("Keep RGB %d", rgb);
@@ -119,7 +108,7 @@ public class ExtractMatrixApp extends AbstractApplication {
             saveImage(testTransformMxResult.tp, "a-tp");
 
             info("Done %dx%d from offset %d,%d", testTransformMxResult.mx.getWidth(), testTransformMxResult.mx.getHeight(), testTransformMxResult.mxOffset.X, testTransformMxResult.mxOffset.Y);
-            
+
             warn("This function is deprecated, please use `tp` instead");
         } catch (IOException ex) {
             ex.printStackTrace();

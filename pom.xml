@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>bh.bot</groupId>
     <artifactId>BitHeroes</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.2</version>
 
     <dependencies>
         <dependency>
@@ -18,6 +18,11 @@
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna-platform</artifactId>
             <version>5.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.diogonunes</groupId>
+            <artifactId>JColor</artifactId>
+            <version>5.0.1</version>
         </dependency>
     </dependencies>
 
