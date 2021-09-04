@@ -360,6 +360,6 @@ public class FishingApp extends AbstractApplication {
 
     @Override
     protected String getLimitationExplain() {
-        return "To start using this function, you the to be ready in fishing state, and the Start button is clearly visible on the screen";
+        return "To start using this function, you have to be ready in fishing state, and the Start button is clearly visible on the screen";
     }
 }
