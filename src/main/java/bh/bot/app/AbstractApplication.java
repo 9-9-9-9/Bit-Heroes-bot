@@ -66,9 +66,11 @@ public abstract class AbstractApplication {
         mkdir("out", "images", getAppCode());
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void mkdir(String path, String... paths) {
         File file = Paths.get(path, paths).toFile();
         if (!file.exists())
+            //noinspection ResultOfMethodCallIgnored
             file.mkdir();
     }
 
@@ -670,6 +672,7 @@ public abstract class AbstractApplication {
     }
 
     protected ExpeditionPlace selectExpeditionPlace() {
+        //noinspection StringBufferReplaceableByString
         StringBuilder sb = new StringBuilder("Select a place to do Expedition:\n");
         sb.append(String.format("  1. %s\n", ExpeditionPlace.BlubLix));
         sb.append(String.format("  2. %s\n", ExpeditionPlace.Mowhi));
@@ -718,12 +721,11 @@ public abstract class AbstractApplication {
                 info("Feature doCheckGameScreenOffset has been disabled by configuration");
                 return;
             }
-            if (!OS.isWin) {
+            if (OS.isLinux || OS.isMac) {
                 Process which = Runtime.getRuntime().exec("which xwininfo xdotool ps");
                 int exitCode = which.waitFor();
                 if (exitCode != 0) {
-                    err("Unable to adjust game screen offset automatically: exit code of which command is %d. Require the following tools to be installed: xwininfo, xdotool, ps",
-                            exitCode);
+                    warn("Unable to adjust game screen offset automatically. Require the following tools to be installed: xwininfo, xdotool, ps");
                     return;
                 }
             }
@@ -748,7 +750,7 @@ public abstract class AbstractApplication {
                     Tuple4<Boolean, String, Rectangle, Offset> result = jna.locateGameScreenOffset(gameWindowHwndByJna,
                             srp);
                     if (!result._1) {
-                        err("Unable to perform auto adjust game screen offset due to error: %s", result._2);
+                        warn("Unable to perform auto adjust game screen offset due to error: %s", result._2);
                         continue;
                     }
                     if (result._4.X != x || result._4.Y != y) {
@@ -759,15 +761,15 @@ public abstract class AbstractApplication {
                     } else {
                         debug("screen offset not change");
                     }
-                } catch (Exception e2) {
-                    err(e2.getMessage());
+                } catch (Exception ex2) {
+                    warn("Unable to perform auto adjust game screen offset due to error: %s", ex2.getMessage());
                 } finally {
                     sleep(60_000);
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            err("Error occurs during doCheckGameScreenOffset");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            warn("Error occurs during doCheckGameScreenOffset");
         }
     }
 
