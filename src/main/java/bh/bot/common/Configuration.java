@@ -1,6 +1,5 @@
 package bh.bot.common;
 
-import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration.Offset.AtomicOffset;
 import bh.bot.common.exceptions.InvalidDataException;
@@ -205,22 +204,15 @@ public class Configuration {
                 screenResolutionProfile.getSupportedGameResolutionHeight());
 
         Configuration.screenResolutionProfile = screenResolutionProfile;
-        Configuration.isSteamProfile = screenResolutionProfile instanceof SteamProfile;
-        Configuration.isWebProfile = screenResolutionProfile instanceof WebProfile;
-        Configuration.profileName = screenResolutionProfile.getName().trim();
+        isSteamProfile = screenResolutionProfile instanceof SteamProfile;
+        isWebProfile = screenResolutionProfile instanceof WebProfile;
+        profileName = screenResolutionProfile.getName().trim();
         if (isBlank(profileName))
             throw new InvalidDataException("profileName");
 
-        if (Configuration.isSteamProfile) {
-            if (!OS.isWin) {
-                err("Steam profile only available on Windows");
-                System.exit(Main.EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
-            }
-            info("****** IMPORTANT ****** IMPORTANT ******");
-            warn("You must move the Bit Heroes game's window to top left corner of your screen or provide exactly screen offset into the 'offset.screen.x & y' keys");
+        warn("You must move the Bit Heroes game's window to top left corner of your screen or provide exactly screen offset into the 'offset.screen.x & y' keys");
+        if (isSteamProfile)
             warn("Your Bit Heroes game window must be 800x480. You can check it by open Settings, see the Windowed option");
-            info("****************************************");
-        }
 
         properties.load(Configuration.class.getResourceAsStream("/config.properties"));
 
@@ -318,7 +310,7 @@ public class Configuration {
     private static final ArrayList<Tuple2<Class<? extends AbstractApplication>, String>> applicationClassesInfo = new ArrayList<>();
 
     @SafeVarargs
-	public static void registerApplicationClasses(Class<? extends AbstractApplication>... classes) {
+    public static void registerApplicationClasses(Class<? extends AbstractApplication>... classes) {
         for (Class<? extends AbstractApplication> class_ : classes) {
             AppCode annotation = class_.getAnnotation(AppCode.class);
             if (annotation == null)
@@ -375,9 +367,9 @@ public class Configuration {
             this.X = x;
             this.Y = y;
         }
-        
+
         public Point toScreenCoordinate() {
-        	return new Point(Configuration.gameScreenOffset.X.get() + X, Configuration.gameScreenOffset.Y.get() + Y);
+            return new Point(Configuration.gameScreenOffset.X.get() + X, Configuration.gameScreenOffset.Y.get() + Y);
         }
 
         @Override
