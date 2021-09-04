@@ -52,6 +52,7 @@ public class ExpeditionApp extends AbstractDoFarmingApp {
         return tryEnterExpedition(true, this.place);
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     public enum ExpeditionPlace {
         BlubLix, Mowhi, WizBot, Astamus
     }

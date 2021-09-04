@@ -254,10 +254,8 @@ public abstract class AbstractApplication {
 		// final boolean debug = im == BwMatrixMeta.Metas.Raid.Buttons.accept;
 		final boolean debug = false;
 
-		ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
-		BufferedImage sc = screenCapturedResult.image;
-
-		try {
+		try (ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im)){
+			BufferedImage sc = screenCapturedResult.image;
 			saveDebugImage(sc, "scanToFindImage." + im.getImageNameCode());
 
 			boolean go = true;
@@ -313,8 +311,6 @@ public abstract class AbstractApplication {
 				return p;
 
 			return null;
-		} finally {
-			freeMem(sc);
 		}
 	}
 
@@ -341,9 +337,8 @@ public abstract class AbstractApplication {
 
 		final boolean debug = false;
 
-		ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im);
-		BufferedImage sc = screenCapturedResult.image;
-		try {
+		try (ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(im)) {
+			BufferedImage sc = screenCapturedResult.image;
 			saveDebugImage(sc, "detectLabel");
 
 			for (int y = sc.getHeight() - im.getHeight() - 1; y >= 0; y--) {
@@ -398,8 +393,6 @@ public abstract class AbstractApplication {
 			}
 
 			return null;
-		} finally {
-			freeMem(sc);
 		}
 	}
 
@@ -416,12 +409,12 @@ public abstract class AbstractApplication {
 		final boolean debug = false;
 
 		int positionTolerant = Math.min(10, Configuration.Tolerant.position);
-		ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(
+
+		try (ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(
 				new Configuration.Offset(Math.max(0, scanRect.x - positionTolerant),
 						Math.max(0, scanRect.y - positionTolerant)),
-				scanRect.width + positionTolerant * 2, scanRect.height + positionTolerant * 2);
-		BufferedImage sc = screenCapturedResult.image;
-		try {
+				scanRect.width + positionTolerant * 2, scanRect.height + positionTolerant * 2)){
+			BufferedImage sc = screenCapturedResult.image;
 			saveDebugImage(sc, "detectRadioButtons");
 
 			ArrayList<Point> startingCoords = new ArrayList<>();
@@ -510,8 +503,6 @@ public abstract class AbstractApplication {
 			return new Tuple2<>(startingCoords.stream()
 					.map(c -> new Point(screenCapturedResult.x + c.x, screenCapturedResult.y + c.y))
 					.collect(Collectors.toList()).toArray(new Point[0]), (byte) selectedRadioButtonIndex);
-		} finally {
-			freeMem(sc);
 		}
 	}
 
