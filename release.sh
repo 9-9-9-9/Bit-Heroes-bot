@@ -50,6 +50,9 @@ cat <<EOF > ./release/user-config.properties
 
 # Google Chrome path, for Windows only
 #external.application.chrome.path=C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe
+
+# Google Chrome user dir, specify an external directory help you dont need to move the 'chrome-user-dir' folder next time when you update this Bit Heroes bot
+#external.mini-client.user.dir=D:\\\\Data\\\\chrome-user-dir
 EOF
 
 # Copy files for mini client

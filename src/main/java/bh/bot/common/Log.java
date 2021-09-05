@@ -81,7 +81,7 @@ public class Log {
         println(color(String.format(format, objs), cFormat));
     }
 
-    private static final AnsiFormat fWarning = new AnsiFormat(YELLOW_TEXT(), BOLD());
+    public static final AnsiFormat fWarning = new AnsiFormat(YELLOW_TEXT(), BOLD());
 
     public static void warn(String format, Object... objs) {
         if (StringUtil.isBlank(format))

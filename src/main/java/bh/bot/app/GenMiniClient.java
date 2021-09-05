@@ -2,6 +2,7 @@ package bh.bot.app;
 
 import bh.bot.Main;
 import bh.bot.common.Configuration;
+import bh.bot.common.Log;
 import bh.bot.common.OS;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.annotations.AppMeta;
@@ -15,17 +16,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static bh.bot.Main.colorFormatInfo;
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
 import static bh.bot.common.utils.StringUtil.isNotBlank;
 
 @AppMeta(code = "client", name = "Generate mini-client", displayOrder = 4)
 public class GenMiniClient extends AbstractApplication {
-    private static final File chromeUserDir = new File("chrome-user-dir");
+    private static final String requireChromeUserDirName = "chrome-user-dir";
 
     public static final int supportMaximumNumberOfAccounts = 10;
     private static final String keyChromePath = "external.application.chrome.path";
+    private static final String keyChromeUserDirPath = "external.mini-client.user.dir";
 
     @SuppressWarnings("SpellCheckingInspection")
     @Override
@@ -72,6 +73,14 @@ public class GenMiniClient extends AbstractApplication {
             Files.write(Paths.get("bh-client/holodeck_javascripts.js"), readFromInputStream(fileHolo).getBytes());
             Files.write(Paths.get("bh-client/sitewide_javascripts.js"), readFromInputStream(fileSiteWide).getBytes());
 
+            final String chromeUserDir = getChromeUserDir();
+            if (chromeUserDir == null) {
+                System.exit(Main.EXIT_CODE_EXTERNAL_REASON);
+                return;
+            }
+
+            info(fWarning, "Chrome user directory: %s", chromeUserDir);
+
             String chromePathOnWindows = getChromePathOnWindows();
 
             for (GameAccount gameAccount : gameAccounts) {
@@ -96,13 +105,13 @@ public class GenMiniClient extends AbstractApplication {
                     chromeArgs.add(String.format("\"--app=file://%s\"", pathIndex.toAbsolutePath().toString()));
                 } else if (OS.isWin) {
                     app = String.format("\"%s\"", chromePathOnWindows);
-                    chromeArgs.add(String.format("\"--user-data-dir=%s\"", chromeUserDir.getAbsolutePath()));
+                    chromeArgs.add(String.format("\"--user-data-dir=%s\"", chromeUserDir));
                     chromeArgs.add("--window-size=820,565");
                     chromeArgs.add("--window-position=0,0");
                     chromeArgs.add(String.format("\"--app=file://%s\"", pathIndex.toAbsolutePath().toString()));
                 } else {
                     app = "google-chrome";
-                    chromeArgs.add(String.format("'--user-data-dir=%s'", chromeUserDir.getAbsolutePath()));
+                    chromeArgs.add(String.format("'--user-data-dir=%s'", chromeUserDir));
                     chromeArgs.add("--window-size=800,520");
                     chromeArgs.add("--window-position=0,0");
                     chromeArgs.add(String.format("'--app=file://%s'", pathIndex.toAbsolutePath().toString()));
@@ -159,6 +168,7 @@ public class GenMiniClient extends AbstractApplication {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            err("Unable to generate mini-client");
         }
     }
 
@@ -184,6 +194,68 @@ public class GenMiniClient extends AbstractApplication {
             throw new InvalidDataException("Problem with keys with prefix '%d.', missing one or two of three required keys", no);
         }
         return result;
+    }
+
+    private String getChromeUserDir() {
+        final String defaultChromeUserDir = requireChromeUserDirName;
+        try {
+            String cfgChromeUserDir = Configuration.read(keyChromeUserDirPath);
+            if (isBlank(cfgChromeUserDir)) {
+                info(colorFormatInfo, "FYI: you can specify a chrome user's directory so next time when you download a new version of this Bit Heroes bot, you don't need to copy the '%s' folder", defaultChromeUserDir);
+                info(colorFormatInfo, "To do it, edit file `user-config.properties` and set path to key `%s`", keyChromeUserDirPath);
+                return new File(defaultChromeUserDir).getAbsolutePath();
+            }
+
+            File dir = new File(cfgChromeUserDir);
+            if (dir.exists()) {
+                if (!dir.isDirectory()) {
+                    err("The directory you have specified by the value of key %s in user-config.properties is NOT a directory", keyChromeUserDirPath);
+                    err("%s is a file, it's NOT a directory. Please specific an empty directory instead", dir.getAbsolutePath());
+                    return null;
+                }
+
+                if (dir.getName().equalsIgnoreCase(requireChromeUserDirName)) {
+                    return dir.getAbsolutePath();
+                }
+
+                return appendRequiredDirNamePart(dir);
+            }
+
+            if (dir.getName().equalsIgnoreCase(requireChromeUserDirName)) {
+                if (!dir.mkdir()) {
+                    err("Unable to create directory %s", dir.getAbsolutePath());
+                    err("May be related to permission issue, please specify another directory to the key '%s' in the user-config.properties file", keyChromeUserDirPath);
+                    return null;
+                }
+                return dir.getAbsolutePath();
+            }
+
+            return appendRequiredDirNamePart(dir);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            err("An error occurs while trying to get chrome user dir based on configuration of key `%s` in user-config.properties file", keyChromeUserDirPath);
+            String result = new File(defaultChromeUserDir).getAbsolutePath();
+            err("The following directory will be used by default: %s", result);
+            return result;
+        }
+    }
+
+    private String appendRequiredDirNamePart(File dir) {
+        warn("Custom chrome's user directory must ends with '%s', this folder name will be automatically appended", requireChromeUserDirName);
+        dir = Paths.get(dir.getAbsolutePath(), requireChromeUserDirName).toFile();
+        warn("Directory after appended: %s", dir.getAbsolutePath());
+        if (dir.exists()) {
+            if (!dir.isDirectory()) {
+                err("But it's NOT a directory, please specify another directory to the key '%s' in the user-config.properties file", keyChromeUserDirPath);
+                return null;
+            }
+        } else {
+            if (!dir.mkdir()) {
+                err("Unable to create that directory, may be related to permission issue, please specify another directory to the key '%s' in the user-config.properties file", keyChromeUserDirPath);
+                return null;
+            }
+        }
+        return dir.getAbsolutePath();
     }
 
     private String getChromePathOnWindows() {
