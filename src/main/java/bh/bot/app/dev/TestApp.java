@@ -1,13 +1,11 @@
 package bh.bot.app.dev;
 
-import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
-import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.InteractionUtil;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Win32Exception;
@@ -15,12 +13,11 @@ import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.RECT;
 
 import java.awt.*;
-import java.io.BufferedReader;
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import static bh.bot.Main.readInput;
-import static bh.bot.common.Log.*;
+import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.InteractionUtil.Mouse.clickRadioButton;
 
 @SuppressWarnings("unused")
@@ -32,12 +29,7 @@ public class TestApp extends AbstractApplication {
     protected void internalRun(String[] args) {
         adjustScreenOffset();
 
-        warn("Hello darkness my old friend");
-        err("Something wrong here %d", 1);
-        String str1, str2;
-        BufferedReader br = Main.getBufferedReader();
-        str1 = readInput("ask1", null, s -> new Tuple3<>(true, null, "1"));
-        str2 = readInput("ask2", null, s -> new Tuple3<>(true, null, "2"));
+        info("%s", new File("/home/hungpv/Dev/Personal/nginx/mhpt/site-content").getName());
     }
 
     public static class JnaTest {
