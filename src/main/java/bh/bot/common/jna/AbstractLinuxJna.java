@@ -113,7 +113,7 @@ public abstract class AbstractLinuxJna extends AbstractJna {
         debug("App: %s, commands: %s", app, String.join(", ", args));
         File fileTmpOutput = new File(String.format("/tmp/bh-tmp.%s.out", UUID.randomUUID().toString()));
         try {
-            if (fileTmpOutput.createNewFile())
+            if (!fileTmpOutput.createNewFile())
                 return new Tuple2<>(false, null);
             ArrayList<String> nArgs = new ArrayList<>();
             nArgs.add(app);
