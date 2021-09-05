@@ -567,9 +567,11 @@ public abstract class AbstractApplication {
                 }
                 if (ImageUtil.isRedLikeColor(color)) {
                     continousRed++;
-                    if (continousRed >= 2)
-                        info("Detected Auto is not turned on, gonna reactive it soon");
+                    if (continousRed >= 2 && continousRed < maxContinousRed) {
+                        info("Detected Auto is not turned on, gonna reactive it after %d seconds", (maxContinousRed - continousRed) * sleepMs / 1_000);
+                    }
                     if (continousRed >= maxContinousRed) {
+                        info("Detected Auto is not turned on, gonna reactive it soon");
                         moveCursor(point);
                         sleep(100);
                         mouseClick();

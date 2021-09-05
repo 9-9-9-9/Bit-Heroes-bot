@@ -85,12 +85,6 @@ public class SettingApp extends AbstractApplication {
             tmp = readIntInput(sb.toString(), woldBossLevelRange._1, woldBossLevelRange._2);
             worldBossLevel = tmp == null ? worldBossLevel : tmp;
             //
-
-            sb = new StringBuilder();
-            sb.append(String.format("%s=%d\n", UserConfig.raidLevelKey, raidLevel));
-            sb.append(String.format("%s=%d\n", UserConfig.raidModeKey, raidMode));
-            sb.append(String.format("%s=%d\n", UserConfig.worldBossLevelKey, worldBossLevel));
-
             UserConfig newCfg = new UserConfig(profileNumber, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel);
 
             sb = new StringBuilder("Your setting:\n");
@@ -115,6 +109,10 @@ public class SettingApp extends AbstractApplication {
             });
 
             if (save) {
+                sb = new StringBuilder();
+                sb.append(String.format("%s=%d\n", UserConfig.raidLevelKey, raidLevel));
+                sb.append(String.format("%s=%d\n", UserConfig.raidModeKey, raidMode));
+                sb.append(String.format("%s=%d\n", UserConfig.worldBossLevelKey, worldBossLevel));
                 Files.write(Paths.get(fileName), sb.toString().getBytes());
                 info("Saved successfully");
             } else {
