@@ -22,7 +22,7 @@ public class SettingApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
         try {
-            String cfgProfileName = readCfgProfileName("Which profile do you want to edit?");
+            String cfgProfileName = readCfgProfileName("Which profile do you want to edit?", "You can select an existing profile to edit or specify a new profile by typing a new name");
 
             String fileName = Configuration.getProfileConfigFileName(cfgProfileName);
             File file = new File(fileName);

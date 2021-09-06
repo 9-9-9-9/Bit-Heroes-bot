@@ -911,7 +911,7 @@ public abstract class AbstractApplication {
         }
     }
 
-    protected String readCfgProfileName(String ask) {
+    protected String readCfgProfileName(String ask, String desc) {
         StringBuilder sb = new StringBuilder();
         try {
             final String prefix = "readonly.";
@@ -949,7 +949,7 @@ public abstract class AbstractApplication {
             err("Problem while trying to list existing files in current directory: %s", ex.getMessage());
         }
         sb.append(ask);
-        return readInput(sb.toString(), null, s -> {
+        return readInput(sb.toString(), desc, s -> {
             s = s.trim().toLowerCase();
             if (!ValidationUtil.isValidUserProfileName(s))
                 return new Tuple3<>(false, "Not a valid profile name, correct format should be: " + FlagProfileName.formatDesc, null);
@@ -974,7 +974,7 @@ public abstract class AbstractApplication {
     protected UserConfig getPredefinedUserConfigFromProfileName(String ask) throws IOException {
         String cfgProfileName = this.argumentInfo.cfgProfileName;
         if (StringUtil.isBlank(cfgProfileName))
-            cfgProfileName = readCfgProfileName(ask);
+            cfgProfileName = readCfgProfileName(ask, null);
         Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(cfgProfileName);
         if (!resultLoadUserConfig._1) {
             err("Profile name could not be found (check existence of file readonly.<profile_name>.user-config.properties)");
