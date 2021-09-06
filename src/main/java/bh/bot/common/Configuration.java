@@ -1,5 +1,6 @@
 package bh.bot.common;
 
+import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotImplementedException;
@@ -85,7 +86,7 @@ public class Configuration {
         Features.disableJna = StringUtil.isTrue(read("disable.jna"));
         Features.disableDoCheckGameScreenOffset =
                 Features.disableJna || StringUtil.isTrue(read("disable.jna.disableDoCheckGameScreenOffset"));
-        Features.disableColorizeTerminal = StringUtil.isTrue(read("disable.jansi"));
+        Features.disableColorizeTerminal = StringUtil.isTrue(read("disable.jansi")) || Main.forceDisableAnsi;
 
         String keyLongTimeNoSee = "timeout.minutes.long-time-no-see";
         short minLongTimeNoSee = 10;

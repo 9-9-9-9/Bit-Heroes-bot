@@ -39,8 +39,14 @@ import static bh.bot.common.utils.StringUtil.isBlank;
 
 @SuppressWarnings("deprecation")
 public class Main {
+	public static boolean forceDisableAnsi = false;
     public static void main(String[] args) {
-    	AnsiConsole.systemInstall();
+    	try {
+        	AnsiConsole.systemInstall();
+    	} catch (Throwable t) {
+    		System.err.println("Failure initialization ansi console! Error message: " + t.getMessage());
+    		forceDisableAnsi = true;
+    	}
         try {
             Configuration.registerApplicationClasses( //
                     SettingApp.class, //
