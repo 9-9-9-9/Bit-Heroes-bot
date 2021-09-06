@@ -31,6 +31,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.fusesource.jansi.AnsiConsole;
+
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.StringUtil.isBlank;
@@ -43,6 +45,7 @@ public class Main {
     private static final AnsiFormat colorFormatAsk = new AnsiFormat(BRIGHT_CYAN_TEXT(), BOLD());
 
     public static void main(String[] args) {
+    	AnsiConsole.systemInstall();
         try {
             Configuration.registerApplicationClasses( //
                     SettingApp.class, //
