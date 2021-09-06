@@ -17,7 +17,7 @@ public class FlagShutdownAfterFinished extends FlagPattern.NonParamFlag {
 
     @Override
     public String getDescription() {
-        return String.format("Shutdown your desktop/laptop within %d minutes after program exited. Should combines with flag `--exit`", shutdownAfterXMinutes);
+        return String.format("Shutdown your computer within %d minutes after program exited. Should combines with flag `--exit`", shutdownAfterXMinutes);
     }
 
     @Override

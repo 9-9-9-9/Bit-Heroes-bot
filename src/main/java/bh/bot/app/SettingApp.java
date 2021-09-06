@@ -98,7 +98,7 @@ public class SettingApp extends AbstractApplication {
             else
                 sb.append("  world boss has not been set");
             sb.append('\n');
-            sb.append(String.format("Do you want to save the above setting into profile number %d ?", cfgProfileName));
+            sb.append(String.format("Do you want to save the above setting into profile name '%s' ?", cfgProfileName));
             boolean save = readInput(sb.toString(), "Press Y/N then enter", s -> {
                 s = s.trim().toLowerCase();
                 if (s.equals("y"))
