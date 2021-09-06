@@ -4,11 +4,12 @@ public class Flags {
     @SuppressWarnings("rawtypes")
     public static final FlagPattern[] allFlags = new FlagPattern[]{
             new FlagDoGvG(),
-            new FlagDoGauntlet(),
             new FlagDoInvasion(),
+            new FlagDoExpedition(),
             new FlagDoPvp(),
             new FlagDoRaid(),
             new FlagDoTrials(),
+            new FlagDoGauntlet(),
             new FlagDoWorldBoss(),
             new FlagExitAfterAmountOfSeconds(),
             new FlagShutdownAfterFinished(),
