@@ -7,13 +7,13 @@ import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
+import bh.bot.common.utils.ColorizeUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.info;
 
@@ -36,19 +36,19 @@ public class SettingApp extends AbstractApplication {
                 worldBossLevel = resultLoadUserConfig._2.worldBossLevel;
 
                 if (resultLoadUserConfig._2.isValidRaidLevel())
-                    info(colorFormatInfo, "Selected Raid level %s", resultLoadUserConfig._2.getRaidLevelDesc());
+                    info(ColorizeUtil.formatInfo, "Selected Raid level %s", resultLoadUserConfig._2.getRaidLevelDesc());
                 else
-                    info(colorFormatInfo, "You haven't specified Raid level");
+                    info(ColorizeUtil.formatInfo, "You haven't specified Raid level");
 
                 if (UserConfig.isValidDifficultyMode(resultLoadUserConfig._2.raidMode))
-                    info(colorFormatInfo, "Selected Raid mode %s", resultLoadUserConfig._2.getRaidModeDesc());
+                    info(ColorizeUtil.formatInfo, "Selected Raid mode %s", resultLoadUserConfig._2.getRaidModeDesc());
                 else
-                    info(colorFormatInfo, "You haven't specified Raid mode (Normal/Hard/Heroic)");
+                    info(ColorizeUtil.formatInfo, "You haven't specified Raid mode (Normal/Hard/Heroic)");
 
                 if (resultLoadUserConfig._2.isValidWorldBossLevel())
-                    info(colorFormatInfo, "Selected World Boss %s", resultLoadUserConfig._2.getWorldBossLevelDesc());
+                    info(ColorizeUtil.formatInfo, "Selected World Boss %s", resultLoadUserConfig._2.getWorldBossLevelDesc());
                 else
-                    info(colorFormatInfo, "You haven't specified World Boss level");
+                    info(ColorizeUtil.formatInfo, "You haven't specified World Boss level");
 
                 info("Press any key to continue...");
                 Main.getBufferedReader().readLine();

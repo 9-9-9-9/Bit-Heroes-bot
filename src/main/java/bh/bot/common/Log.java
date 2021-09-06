@@ -2,12 +2,14 @@ package bh.bot.common;
 
 import bh.bot.common.types.Offset;
 import bh.bot.common.utils.StringUtil;
-import com.diogonunes.jcolor.AnsiFormat;
 
 import java.awt.*;
+import java.util.function.Function;
 
-import static com.diogonunes.jcolor.Ansi.colorize;
-import static com.diogonunes.jcolor.Attribute.*;
+import org.fusesource.jansi.Ansi;
+
+import static org.fusesource.jansi.Ansi.ansi;
+import static bh.bot.common.utils.ColorizeUtil.*;
 
 public class Log {
     private static boolean isOnDebugMode;
@@ -77,20 +79,16 @@ public class Log {
         println(String.format(format, objs));
     }
 
-    public static void info(AnsiFormat cFormat, String format, Object... objs) {
-        println(color(String.format(format, objs), cFormat));
+    public static void info(Function<Ansi, Ansi> fFormat, String format, Object... objs) {
+        println(colorize(String.format(format, objs), fFormat));
     }
-
-    public static final AnsiFormat fWarning = new AnsiFormat(YELLOW_TEXT(), BOLD());
 
     public static void warn(String format, Object... objs) {
         if (StringUtil.isBlank(format))
             return;
         String text = String.format(format, objs);
-        println(color(String.format("** WARNING ** %s", text), fWarning));
+        println(colorize(String.format("** WARNING ** %s", text), formatWarning));
     }
-
-    private static final AnsiFormat fError = new AnsiFormat(RED_TEXT(), BOLD());
 
     public static void err(Object obj) {
         if (obj instanceof Exception) {
@@ -99,11 +97,11 @@ public class Log {
         }
         if (obj == null)
             return;
-        System.err.println(color(String.format("** ERR ** %s", obj.toString()), fError));
+        System.err.println(colorize(String.format("** ERR ** %s", obj.toString()), formatError));
     }
 
     public static void err(String format, Object... objs) {
-        System.err.println(color(String.format("** ERR ** %s", String.format(format, objs)), fError));
+        System.err.println(colorize(String.format("** ERR ** %s", String.format(format, objs)), formatError));
     }
 
     private static void println(Object obj) {
@@ -112,9 +110,11 @@ public class Log {
         System.out.println(obj.toString());
     }
 
-    private static String color(String text, AnsiFormat attributes) {
+    private static String colorize(String text, Function<Ansi, Ansi> formatter) {
         if (Configuration.Features.disableColorizeTerminal)
             return text;
-        return colorize(text, attributes);
+        return formatter.apply(ansi()).a(text).reset().toString();
     }
+    
+    
 }

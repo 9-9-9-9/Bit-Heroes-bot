@@ -6,6 +6,7 @@ import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
+import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Win32Exception;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.InteractionUtil.Mouse.clickRadioButton;
+import static bh.bot.common.utils.ColorizeUtil.*;
 
 @SuppressWarnings("unused")
 @AppMeta(code = "test", name = "Test Code", dev = true)
@@ -29,7 +31,10 @@ public class TestApp extends AbstractApplication {
     protected void internalRun(String[] args) {
         adjustScreenOffset();
 
-        info("%s", new File("/home/hungpv/Dev/Personal/nginx/mhpt/site-content").getName());
+        info(cInfo("One"));
+        info(cAsk("One"));
+        info(cWarning("One"));
+        info(cError("One"));
     }
 
     public static class JnaTest {

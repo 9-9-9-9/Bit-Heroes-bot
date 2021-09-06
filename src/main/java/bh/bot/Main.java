@@ -17,8 +17,8 @@ import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.flags.*;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
+import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
-import com.diogonunes.jcolor.AnsiFormat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,18 +31,22 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.fusesource.jansi.AnsiConsole;
+
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.StringUtil.isBlank;
-import static com.diogonunes.jcolor.Attribute.BOLD;
-import static com.diogonunes.jcolor.Attribute.BRIGHT_CYAN_TEXT;
 
 @SuppressWarnings("deprecation")
 public class Main {
-    public static final AnsiFormat colorFormatInfo = new AnsiFormat(com.diogonunes.jcolor.Attribute.BRIGHT_BLUE_TEXT(), BOLD());
-    private static final AnsiFormat colorFormatAsk = new AnsiFormat(BRIGHT_CYAN_TEXT(), BOLD());
-
+	public static boolean forceDisableAnsi = false;
     public static void main(String[] args) {
+    	try {
+        	AnsiConsole.systemInstall();
+    	} catch (Throwable t) {
+    		System.err.println("Failure initialization ansi console! Error message: " + t.getMessage());
+    		forceDisableAnsi = true;
+    	}
         try {
             Configuration.registerApplicationClasses( //
                     SettingApp.class, //
@@ -95,8 +99,8 @@ public class Main {
             }
         });
 
-        info(colorFormatInfo, "You selected function:");
-        info(colorFormatAsk, "  %s", meta.name());
+        info(ColorizeUtil.formatInfo, "You selected function:");
+        info(ColorizeUtil.formatAsk, "  %s", meta.name());
 
 		ArrayList<String> lArgs = new ArrayList<>();
 		lArgs.add(meta.code());
@@ -316,7 +320,7 @@ public class Main {
             String errMessage = null;
             while (true) {
                 info("\n\n==================================");
-                info(colorFormatAsk, ask);
+                info(ColorizeUtil.formatAsk, ask);
                 if (selectedOptionsInfoProvider != null) {
                     List<String> selectedOptions = selectedOptionsInfoProvider.get();
                     if (selectedOptions.size() > 0)

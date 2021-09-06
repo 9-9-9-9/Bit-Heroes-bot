@@ -15,6 +15,7 @@ import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
+import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.ThreadUtil;
 
@@ -29,7 +30,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.types.AttendablePlace.MenuItem;
@@ -75,16 +75,16 @@ public class AfkApp extends AbstractApplication {
 
                 try {
                     if (doRaid && doWorldBoss) {
-                        info(colorFormatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
+                        info(ColorizeUtil.formatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
                                 userConfig.getRaidLevelDesc());
-                        info(colorFormatInfo, "and World Boss %s", userConfig.getWorldBossLevelDesc());
+                        info(ColorizeUtil.formatInfo, "and World Boss %s", userConfig.getWorldBossLevelDesc());
                         warn("This function is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on");
                     } else if (doRaid) {
-                        info(colorFormatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
+                        info(ColorizeUtil.formatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
                                 userConfig.getRaidLevelDesc());
                     } else //noinspection ConstantConditions
                         if (doWorldBoss) {
-                            info(colorFormatInfo, "You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
+                            info(ColorizeUtil.formatInfo, "You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
                             warn("This function is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on");
                         }
                 } catch (InvalidDataException ex2) {
@@ -136,7 +136,7 @@ public class AfkApp extends AbstractApplication {
             if (doInvasion && Configuration.isSteamProfile)
                 throw new NotSupportedException("Invasion has not been supported on Steam mode");
 
-            info(colorFormatInfo, "\n\nStarting AFK");
+            info(ColorizeUtil.formatInfo, "\n\nStarting AFK");
             boolean isUnknownGvgOrInvasionOrExpedition = (doGvg && doInvasion) || (doGvg && doExpedition)
                     || (doInvasion && doExpedition);
             boolean isUnknownTrialsOrGauntlet = doTrials && doGauntlet;
@@ -148,8 +148,6 @@ public class AfkApp extends AbstractApplication {
             if (doWorldBoss)
                 taskList.add(new Tuple3<>(AttendablePlaces.worldBoss, blockWorldBossUntil,
                         WorldBossApp.getPredefinedImageActions()));
-            if (doRaid)
-                taskList.add(new Tuple3<>(AttendablePlaces.raid, blockRaidUntil, getPredefinedImageActionsOfRaid()));
             if (doGvg)
                 taskList.add(new Tuple3<>(AttendablePlaces.gvg, blockGvgAndInvasionAndExpeditionUntil,
                         GvgApp.getPredefinedImageActions()));
@@ -165,6 +163,8 @@ public class AfkApp extends AbstractApplication {
             if (doGauntlet)
                 taskList.add(new Tuple3<>(AttendablePlaces.gauntlet, blockTrialsAndGauntletUntil,
                         GauntletApp.getPredefinedImageActions()));
+            if (doRaid)
+                taskList.add(new Tuple3<>(AttendablePlaces.raid, blockRaidUntil, getPredefinedImageActionsOfRaid()));
 
             for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tp : taskList) {
                 for (AbstractDoFarmingApp.NextAction na : tp._3) {
