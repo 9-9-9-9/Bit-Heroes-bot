@@ -148,8 +148,6 @@ public class AfkApp extends AbstractApplication {
             if (doWorldBoss)
                 taskList.add(new Tuple3<>(AttendablePlaces.worldBoss, blockWorldBossUntil,
                         WorldBossApp.getPredefinedImageActions()));
-            if (doRaid)
-                taskList.add(new Tuple3<>(AttendablePlaces.raid, blockRaidUntil, getPredefinedImageActionsOfRaid()));
             if (doGvg)
                 taskList.add(new Tuple3<>(AttendablePlaces.gvg, blockGvgAndInvasionAndExpeditionUntil,
                         GvgApp.getPredefinedImageActions()));
@@ -165,6 +163,8 @@ public class AfkApp extends AbstractApplication {
             if (doGauntlet)
                 taskList.add(new Tuple3<>(AttendablePlaces.gauntlet, blockTrialsAndGauntletUntil,
                         GauntletApp.getPredefinedImageActions()));
+            if (doRaid)
+                taskList.add(new Tuple3<>(AttendablePlaces.raid, blockRaidUntil, getPredefinedImageActionsOfRaid()));
 
             for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tp : taskList) {
                 for (AbstractDoFarmingApp.NextAction na : tp._3) {
