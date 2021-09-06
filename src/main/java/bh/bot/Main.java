@@ -21,6 +21,7 @@ import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
@@ -31,6 +32,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.fusesource.jansi.AnsiConsole;
 
 import static bh.bot.common.Log.*;
@@ -39,6 +42,7 @@ import static bh.bot.common.utils.StringUtil.isBlank;
 
 @SuppressWarnings("deprecation")
 public class Main {
+    public static final String botName = "99 bot";
 	public static boolean forceDisableAnsi = false;
     public static void main(String[] args) {
     	try {
@@ -55,6 +59,7 @@ public class Main {
                     FishingApp.class, //
                     AfkApp.class, //
                     WorldBossApp.class, //
+                    RaidApp.class, //
                     PvpApp.class, //
                     InvasionApp.class, //
                     ExpeditionApp.class, //
@@ -120,7 +125,7 @@ public class Main {
             }
         }
 
-        boolean addMoreFlags = readYesNoInput("Do you want to add some add some flags? (Yes/No)", String.format("You can pass flags like '--exit=3600'/'--steam'/'--all'/'--help'... here. For list of supported flags available for each function, please run file '%s'", scriptFileName("help")));
+        boolean addMoreFlags = readYesNoInput("Do you want to add some add some flags? (Yes/No, empty is No)", String.format("You can pass flags like '--exit=3600'/'--steam'/'--all'/'--help'... here. For list of supported flags available for each function, please run file '%s'", scriptFileName("help")), true);
         if (addMoreFlags) {
             final Supplier<List<String>> selectedFlagsInfoProvider = () -> lArgs.stream().filter(x -> x.startsWith("--")).collect(Collectors.toList());
             while (true) {
@@ -171,6 +176,15 @@ public class Main {
                         flagPattern.getName(), instance.getAppCode()));
             }
 
+        try {
+            MavenXpp3Reader reader = new MavenXpp3Reader();
+            Model model = reader.read(new FileReader("pom.xml"));
+            info(ColorizeUtil.formatAsk, "Hi, my name is %s v%s, have a nice day", botName, model.getVersion());
+        } catch (Exception ignored) {
+            info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
+        }
+        info(ColorizeUtil.formatAsk, "Please give me a Star at my github repository https://github.com/9-9-9-9/Bit-Heroes-bot thank you");
+
         instance.run(parseArgumentsResult);
     }
 
@@ -202,7 +216,7 @@ public class Main {
 
         // Parse param
         int exitAfter = 0;
-        int profileNumber = -1;
+        String cfgProfileName = null;
         for (FlagPattern flagPattern : usingFlagPatterns) {
             if (!flagPattern.isAllowParam())
                 continue;
@@ -212,8 +226,8 @@ public class Main {
                 continue;
             }
 
-            if (flagPattern instanceof FlagProfileNo) {
-                profileNumber = ((FlagProfileNo) flagPattern).parseParams().get(0);
+            if (flagPattern instanceof FlagProfileName) {
+                cfgProfileName = ((FlagProfileName) flagPattern).parseParams().get(0);
                 continue;
             }
 
@@ -262,12 +276,13 @@ public class Main {
 
         ParseArgumentsResult li = new ParseArgumentsResult(applicationClassFromAppCode, args, usingFlagPatterns);
         li.exitAfterXSecs = exitAfter;
+        li.shutdownAfterFinished = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShutdownAfterFinished);
         li.displayHelp = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagPrintHelpMessage);
         li.enableSavingDebugImages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSaveDebugImages);
         li.enableDebugMessages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShowDebugMessages);
         li.disableTelegramNoti = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagMuteNoti);
         li.screenResolutionProfile = screenResolutionProfile;
-        li.profileNumber = profileNumber;
+        li.cfgProfileName = cfgProfileName;
         li.hasFlagAll = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagAll);
         // events
         li.eWorldBoss = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);
@@ -301,15 +316,22 @@ public class Main {
     }
 
     public static boolean readYesNoInput(String ask, String desc) {
-    	return readInput(ask, desc == null ? "Answer by typing Y/N" : desc, s -> {
-			String answer = s.trim().toLowerCase();
-			if ("yes".equals(answer) || "y".equals(answer))
-				return new Tuple3<>(true, null, true);
-			if ("no".equals(answer) || "n".equals(answer))
-				return new Tuple3<>(true, null, false);
-			return new Tuple3<>(false, "Not a valid answer", null);
-		});
-	}
+        return readYesNoInput(ask, desc, false);
+    }
+
+    public static boolean readYesNoInput(String ask, String desc, boolean emptyAsNo) {
+        Boolean result = readInput(ask, desc == null ? "Answer by typing Y/N" : desc, s -> {
+            String answer = s.trim().toLowerCase();
+            if ("yes".equals(answer) || "y".equals(answer))
+                return new Tuple3<>(true, null, true);
+            if ("no".equals(answer) || "n".equals(answer))
+                return new Tuple3<>(true, null, false);
+            return new Tuple3<>(false, "Not a valid answer", null);
+        }, emptyAsNo);
+        if (result == null)
+            return false;
+        return result;
+    }
 
     public static <T> T readInput(String ask, String desc,
                                   Supplier<List<String>> selectedOptionsInfoProvider, Function<String, Tuple3<Boolean, String, T>> transform,
@@ -363,5 +385,6 @@ public class Main {
     public static final int EXIT_CODE_INVALID_FLAG = 8;
     public static final int EXIT_CODE_UNABLE_DETECTING_FISHING_ANCHOR = 9;
     public static final int EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION = 11;
+    public static final int EXIT_CODE_REQUIRE_SUDO = 12;
     public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }

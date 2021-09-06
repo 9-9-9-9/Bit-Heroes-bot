@@ -9,11 +9,9 @@ import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
-import bh.bot.common.types.Offset;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
-import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
@@ -60,18 +58,7 @@ public class AfkApp extends AbstractApplication {
             boolean doWorldBoss = eventList.contains(AttendablePlaces.worldBoss);
             boolean doExpedition = eventList.contains(AttendablePlaces.expedition);
             if (doRaid || doWorldBoss) {
-                int profileNumber = this.argumentInfo.profileNumber;
-                if (profileNumber < 1)
-                    profileNumber = readProfileNumber("You want to do Raid/World Boss so you have to specific profile number first!\nSelect profile number");
-                Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration
-                        .loadUserConfig(profileNumber);
-                if (!resultLoadUserConfig._1) {
-                    err("Profile number %d could not be found", profileNumber);
-                    printRequiresSetting();
-                    System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
-                }
-
-                userConfig = resultLoadUserConfig._2;
+                userConfig = getPredefinedUserConfigFromProfileName("You want to do Raid/World Boss so you have to specific profile name first!\nSelect an existing profile:");
 
                 try {
                     if (doRaid && doWorldBoss) {
@@ -84,7 +71,7 @@ public class AfkApp extends AbstractApplication {
                                 userConfig.getRaidLevelDesc());
                     } else //noinspection ConstantConditions
                         if (doWorldBoss) {
-                            info(ColorizeUtil.formatInfo, "You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
+                            info(ColorizeUtil.formatInfo, "You have selected world boss %s", userConfig.getWorldBossLevelDesc());
                             warn("This function is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on");
                         }
                 } catch (InvalidDataException ex2) {
@@ -164,7 +151,7 @@ public class AfkApp extends AbstractApplication {
                 taskList.add(new Tuple3<>(AttendablePlaces.gauntlet, blockTrialsAndGauntletUntil,
                         GauntletApp.getPredefinedImageActions()));
             if (doRaid)
-                taskList.add(new Tuple3<>(AttendablePlaces.raid, blockRaidUntil, getPredefinedImageActionsOfRaid()));
+                taskList.add(new Tuple3<>(AttendablePlaces.raid, blockRaidUntil, RaidApp.getPredefinedImageActions()));
 
             for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tp : taskList) {
                 for (AbstractDoFarmingApp.NextAction na : tp._3) {
@@ -177,7 +164,7 @@ public class AfkApp extends AbstractApplication {
             ArrayList<AbstractDoFarmingApp.NextAction> outOfTurnNextActionList = new ArrayList<>();
             addOutOfTurnActionsToList(outOfTurnNextActionList, PvpApp.getPredefinedImageActions());
             addOutOfTurnActionsToList(outOfTurnNextActionList, WorldBossApp.getPredefinedImageActions());
-            addOutOfTurnActionsToList(outOfTurnNextActionList, getPredefinedImageActionsOfRaid());
+            addOutOfTurnActionsToList(outOfTurnNextActionList, RaidApp.getPredefinedImageActions());
             addOutOfTurnActionsToList(outOfTurnNextActionList, GvgApp.getPredefinedImageActions());
             addOutOfTurnActionsToList(outOfTurnNextActionList, InvasionApp.getPredefinedImageActions());
             addOutOfTurnActionsToList(outOfTurnNextActionList, ExpeditionApp.getPredefinedImageActions());
@@ -194,6 +181,7 @@ public class AfkApp extends AbstractApplication {
             short sleepWhileWaitingResourceRegen = 0;
 
             final Supplier<Boolean> isWorldBossBlocked = () -> !isNotBlocked(blockWorldBossUntil);
+            final Supplier<Boolean> isRaidBlocked = () -> !isNotBlocked(blockRaidUntil);
 
             ML:
             while (!masterSwitch.get()) {
@@ -268,7 +256,7 @@ public class AfkApp extends AbstractApplication {
                     continue ML;
                 }
 
-                if (tryEnterRaid(doRaid, userConfig)) {
+                if (tryEnterRaid(doRaid, userConfig, isRaidBlocked)) {
                     debug("tryEnterRaid");
                     continuousNotFound = 0;
                     moveCursor(coordinateHideMouse);
@@ -501,63 +489,6 @@ public class AfkApp extends AbstractApplication {
         return eventList;
     }
 
-    private boolean tryEnterRaid(boolean doRaid, UserConfig userConfig) {
-        Point coord = findImage(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog);
-        if (coord == null) {
-            debug("Label raid not found");
-            return false;
-        }
-        if (!isNotBlocked(blockRaidUntil) || !doRaid) {
-            spamEscape(1);
-            return false;
-        }
-        mouseMoveAndClickAndHide(coord);
-        BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog.setLastMatchPoint(coord.x, coord.y);
-        Tuple2<Point[], Byte> result = detectRadioButtons(
-                Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
-        Point[] points = result._1;
-        int selectedLevel = result._2 + 1;
-        info("Found %d, selected %d", points.length, selectedLevel);
-        if (selectedLevel != userConfig.raidLevel)
-            clickRadioButton(userConfig.raidLevel, points, "Raid");
-        sleep(3_000);
-        result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
-        selectedLevel = result._2 + 1;
-        if (selectedLevel != userConfig.raidLevel) {
-            err("Failure on selecting raid level");
-            spamEscape(1);
-            return false;
-        }
-        sleep(1_000);
-        mouseMoveAndClickAndHide(
-                fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord,
-                        Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid()));
-        sleep(5_000);
-        if (UserConfig.isNormalMode(userConfig.raidMode)) {
-            mouseMoveAndClickAndHide(
-                    fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
-                            coord, Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()));
-        } else if (UserConfig.isHardMode(userConfig.raidMode)) {
-            mouseMoveAndClickAndHide(
-                    fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
-                            coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHardRaid()));
-        } else if (UserConfig.isHeroicMode(userConfig.raidMode)) {
-            mouseMoveAndClickAndHide(
-                    fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
-                            coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicRaid()));
-        } else {
-            throw new InvalidDataException("Unknown raid mode value: %d", userConfig.raidMode);
-        }
-        return true;
-    }
-
-    private Point fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta sampleImg, Point sampleImgCoord,
-                                                              Offset targetOffset) {
-        int x = sampleImgCoord.x - sampleImg.getCoordinateOffset().X;
-        int y = sampleImgCoord.y - sampleImg.getCoordinateOffset().Y;
-        return new Point(x + targetOffset.X, y + targetOffset.Y);
-    }
-
     @Override
     protected String getUsage() {
         return null;
@@ -571,12 +502,5 @@ public class AfkApp extends AbstractApplication {
     @Override
     protected String getLimitationExplain() {
         return "This function does not support select level/mode, how many badge/ticket/... to consumes and can only everything by default so please chose everything first manually then use this";
-    }
-
-    private List<AbstractDoFarmingApp.NextAction> getPredefinedImageActionsOfRaid() {
-        return Arrays.asList(new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.town, true, false),
-                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Dungeons.Buttons.rerun, true, false),
-                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Buttons.accept, false, false),
-                new AbstractDoFarmingApp.NextAction(BwMatrixMeta.Metas.Raid.Dialogs.notEnoughShards, false, true));
     }
 }

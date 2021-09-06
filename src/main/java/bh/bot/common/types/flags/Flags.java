@@ -11,6 +11,7 @@ public class Flags {
             new FlagDoTrials(),
             new FlagDoWorldBoss(),
             new FlagExitAfterAmountOfSeconds(),
+            new FlagShutdownAfterFinished(),
             new FlagMuteNoti(),
             new FlagPrintHelpMessage(),
             new FlagSteamResolution800x480(),
@@ -18,6 +19,6 @@ public class Flags {
             new FlagAll(),
             new FlagSaveDebugImages(),
             new FlagShowDebugMessages(),
-            new FlagProfileNo(),
+            new FlagProfileName(),
     };
 }

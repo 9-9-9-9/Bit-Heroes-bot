@@ -22,13 +22,13 @@ public class SettingApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
         try {
-            int profileNumber = readProfileNumber("Which profile do you want to edit?");
+            String cfgProfileName = readCfgProfileName("Which profile do you want to edit?", "You can select an existing profile to edit or specify a new profile by typing a new name");
 
-            String fileName = Configuration.getProfileConfigFileName(profileNumber);
+            String fileName = Configuration.getProfileConfigFileName(cfgProfileName);
             File file = new File(fileName);
             if (file.exists() && file.isDirectory())
                 throw new InvalidDataException("%s is a directory", fileName);
-            Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(profileNumber);
+            Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(cfgProfileName);
             int raidLevel, raidMode, worldBossLevel;
             if (resultLoadUserConfig._1) {
                 raidLevel = resultLoadUserConfig._2.raidLevel;
@@ -85,7 +85,7 @@ public class SettingApp extends AbstractApplication {
             tmp = readIntInput(sb.toString(), woldBossLevelRange._1, woldBossLevelRange._2);
             worldBossLevel = tmp == null ? worldBossLevel : tmp;
             //
-            UserConfig newCfg = new UserConfig(profileNumber, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel);
+            UserConfig newCfg = new UserConfig(cfgProfileName, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel);
 
             sb = new StringBuilder("Your setting:\n");
             if (newCfg.isValidRaidLevel() && UserConfig.isValidDifficultyMode(newCfg.raidMode))
@@ -98,7 +98,7 @@ public class SettingApp extends AbstractApplication {
             else
                 sb.append("  world boss has not been set");
             sb.append('\n');
-            sb.append(String.format("Do you want to save the above setting into profile number %d ?", profileNumber));
+            sb.append(String.format("Do you want to save the above setting into profile number %d ?", cfgProfileName));
             boolean save = readInput(sb.toString(), "Press Y/N then enter", s -> {
                 s = s.trim().toLowerCase();
                 if (s.equals("y"))

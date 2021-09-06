@@ -11,6 +11,7 @@ public class ParseArgumentsResult {
     @SuppressWarnings("rawtypes")
     public final ArrayList<FlagPattern> usingFlags;
     public int exitAfterXSecs;
+    public boolean shutdownAfterFinished;
     public boolean enableDebugMessages;
     public boolean disableTelegramNoti;
     public boolean displayHelp;
@@ -25,7 +26,7 @@ public class ParseArgumentsResult {
     public boolean eWorldBoss;
     public boolean eRaid;
     public ScreenResolutionProfile screenResolutionProfile;
-    public int profileNumber;
+    public String cfgProfileName;
 
     @SuppressWarnings("rawtypes")
     public ParseArgumentsResult(Class<? extends AbstractApplication> applicationClass, String[] arguments, ArrayList<FlagPattern> usingFlags) {

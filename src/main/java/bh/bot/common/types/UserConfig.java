@@ -17,13 +17,13 @@ public class UserConfig {
     private static final byte worldBossLevelMin = 1;
     private static final byte worldBossLevelMax = 8;
 
-    public final int profileNo;
+    public final String cfgProfileName;
     public final byte raidLevel;
     public final byte raidMode;
     public final byte worldBossLevel;
 
-    public UserConfig(int profileNo, byte raidLevel, byte raidMode, byte worldBossLevel) {
-        this.profileNo = profileNo;
+    public UserConfig(String cfgProfileName, byte raidLevel, byte raidMode, byte worldBossLevel) {
+        this.cfgProfileName = cfgProfileName;
         this.raidLevel = raidLevel;
         this.raidMode = raidMode;
         this.worldBossLevel = worldBossLevel;

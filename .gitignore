@@ -9,6 +9,7 @@ chrome-user-dir/
 tmp/
 release/
 BitHeroes-v*/
+99bot-v*/
 *.iml
 *.jar
 *.log

@@ -1,11 +1,11 @@
-## This is bot for Bit Heroes
+## This is bot for Bit Heroes, called 99 bot
 ##### on Linux / Windows / ~~MacOS~~
 [![Github Open Issues](https://img.shields.io/github/issues/9-9-9-9/Bit-Heroes-bot.svg)](https://github.com/9-9-9-9/Bit-Heroes-bot/issues)
 [![Github All Releases](https://img.shields.io/github/downloads/9-9-9-9/Bit-Heroes-bot/total.svg)](https://github.com/9-9-9-9/Bit-Heroes-bot/releases)
 
 have inspiration from https://github.com/tiemonl/Bit-Heroes-Fishing-Bot
 
-**If you like my bot, please give this repo a Star, thanks**
+**I'm 99bot, if you like me, please give this repo a Star, thanks**
 ___
 [Wiki version](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
 
