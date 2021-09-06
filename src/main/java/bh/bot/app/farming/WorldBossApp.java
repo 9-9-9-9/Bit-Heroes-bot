@@ -40,7 +40,7 @@ public class WorldBossApp extends AbstractDoFarmingApp {
         userConfig = resultLoadUserConfig._2;
 
         try {
-            info(ColorizeUtil.formatInfo, "You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
+            info(ColorizeUtil.formatInfo, "You have selected world boss %s", userConfig.getWorldBossLevelDesc());
             return true;
         } catch (InvalidDataException ex2) {
             err(ex2.getMessage());

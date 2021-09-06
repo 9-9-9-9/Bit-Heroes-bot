@@ -84,7 +84,7 @@ public class AfkApp extends AbstractApplication {
                                 userConfig.getRaidLevelDesc());
                     } else //noinspection ConstantConditions
                         if (doWorldBoss) {
-                            info(ColorizeUtil.formatInfo, "You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
+                            info(ColorizeUtil.formatInfo, "You have selected world boss %s", userConfig.getWorldBossLevelDesc());
                             warn("This function is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on");
                         }
                 } catch (InvalidDataException ex2) {

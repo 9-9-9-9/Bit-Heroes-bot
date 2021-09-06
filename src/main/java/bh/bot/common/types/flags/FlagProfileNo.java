@@ -3,6 +3,7 @@ package bh.bot.common.types.flags;
 import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
 import bh.bot.app.GenMiniClient;
+import bh.bot.app.farming.RaidApp;
 import bh.bot.app.farming.WorldBossApp;
 import bh.bot.common.exceptions.InvalidFlagException;
 
@@ -35,7 +36,7 @@ public class FlagProfileNo extends FlagPattern<Integer> {
 
     @Override
     public boolean isSupportedByApp(AbstractApplication instance) {
-        return instance instanceof AfkApp || instance instanceof WorldBossApp;
+        return instance instanceof AfkApp || instance instanceof WorldBossApp || instance instanceof RaidApp;
     }
 
     @Override
