@@ -697,19 +697,82 @@ public abstract class AbstractApplication {
                 Configuration.screenResolutionProfile.getRectangleRadioButtonsOfWorldBoss());
         Point[] points = result._1;
         int selectedLevel = result._2 + 1;
-        info("Found %d, selected %d", points.length, selectedLevel);
-        if (selectedLevel != userConfig.worldBossLevel)
-            clickRadioButton(userConfig.worldBossLevel, points, "World Boss");
-        sleep(3_000);
-        result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfWorldBoss());
-        selectedLevel = result._2 + 1;
+        info("Found %d world bosses, selected %s", points.length, UserConfig.getWorldBossLevelDesc(selectedLevel));
         if (selectedLevel != userConfig.worldBossLevel) {
-            err("Failure on selecting world boss level");
-            spamEscape(1);
-            return false;
+            info("Going to changed to %s", UserConfig.getWorldBossLevelDesc(userConfig.worldBossLevel));
+            clickRadioButton(userConfig.worldBossLevel, points, "World Boss");
+            sleep(3_000);
+            result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfWorldBoss());
+            selectedLevel = result._2 + 1;
+            info("Found %d world bosses, selected %s", result._1.length, UserConfig.getWorldBossLevelDesc(selectedLevel));
+            if (selectedLevel != userConfig.worldBossLevel) {
+                err("Failure on selecting world boss level");
+                spamEscape(1);
+                return false;
+            }
         }
         sleep(1_000);
         return clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses);
+    }
+
+    protected boolean tryEnterRaid(boolean doRaid, UserConfig userConfig, Supplier<Boolean> isBlocked) {
+        Point coord = findImage(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog);
+        if (coord == null) {
+            debug("Label raid not found");
+            return false;
+        }
+        if (isBlocked.get() || !doRaid) {
+            spamEscape(1);
+            return false;
+        }
+        mouseMoveAndClickAndHide(coord);
+        BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog.setLastMatchPoint(coord.x, coord.y);
+        Tuple2<Point[], Byte> result = detectRadioButtons(
+                Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
+        Point[] points = result._1;
+        int selectedLevel = result._2 + 1;
+        info("Found %d raid levels, selected %s", points.length, UserConfig.getRaidLevelDesc(selectedLevel));
+        if (selectedLevel != userConfig.raidLevel) {
+            info("Going to changed to %s", UserConfig.getRaidLevelDesc(userConfig.raidLevel));
+            clickRadioButton(userConfig.raidLevel, points, "Raid");
+            sleep(3_000);
+            result = detectRadioButtons(Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
+            selectedLevel = result._2 + 1;
+            info("Found %d raid levels, selected %s", result._1.length, UserConfig.getRaidLevelDesc(selectedLevel));
+            if (selectedLevel != userConfig.raidLevel) {
+                err("Failure on selecting raid level");
+                spamEscape(1);
+                return false;
+            }
+        }
+        sleep(1_000);
+        mouseMoveAndClickAndHide(
+                fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord,
+                        Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid()));
+        sleep(5_000);
+        if (UserConfig.isNormalMode(userConfig.raidMode)) {
+            mouseMoveAndClickAndHide(
+                    fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
+                            coord, Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()));
+        } else if (UserConfig.isHardMode(userConfig.raidMode)) {
+            mouseMoveAndClickAndHide(
+                    fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
+                            coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHardRaid()));
+        } else if (UserConfig.isHeroicMode(userConfig.raidMode)) {
+            mouseMoveAndClickAndHide(
+                    fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
+                            coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicRaid()));
+        } else {
+            throw new InvalidDataException("Unknown raid mode value: %d", userConfig.raidMode);
+        }
+        return true;
+    }
+
+    private Point fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta sampleImg, Point sampleImgCoord,
+                                                              Offset targetOffset) {
+        int x = sampleImgCoord.x - sampleImg.getCoordinateOffset().X;
+        int y = sampleImgCoord.y - sampleImg.getCoordinateOffset().Y;
+        return new Point(x + targetOffset.X, y + targetOffset.Y);
     }
 
     protected ExpeditionPlace selectExpeditionPlace() {
