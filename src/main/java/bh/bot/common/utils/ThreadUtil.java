@@ -7,8 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.*;
 
 public class ThreadUtil {
     public static void waitDone(Runnable... runAbles) {
@@ -18,6 +17,8 @@ public class ThreadUtil {
             sleep(3000);
         }
         info("waitDone finished");
+        debug("ExecutorService is shutting down now");
+        pool.shutdownNow();
     }
 
     public static void sleep(int ms) {

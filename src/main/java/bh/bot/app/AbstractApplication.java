@@ -1,5 +1,6 @@
 package bh.bot.app;
 
+import bh.bot.Main;
 import bh.bot.app.farming.ExpeditionApp.ExpeditionPlace;
 import bh.bot.common.Configuration;
 import bh.bot.common.OS;
@@ -14,6 +15,7 @@ import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.flags.FlagPattern;
 import bh.bot.common.types.flags.FlagResolution;
+import bh.bot.common.types.flags.FlagShutdownAfterFinished;
 import bh.bot.common.types.flags.Flags;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
@@ -61,7 +63,47 @@ public abstract class AbstractApplication {
             BwMatrixMeta.load();
         Telegram.setAppName(getAppName());
         warn(getLimitationExplain());
-        internalRun(launchInfo.arguments);
+
+        if (launchInfo.shutdownAfterFinished) {
+            String command;
+            if (OS.isWin)
+                command = "shutdown -s -t 0";
+            else if (OS.isLinux) {
+                command = "sudo shutdown now";
+                try {
+                    if (0 != Runtime.getRuntime().exec("sudo -nv").waitFor()) {
+                        err("You must run this bot as sudo to be able to run command '%s' upon completion", command);
+                        System.exit(Main.EXIT_CODE_REQUIRE_SUDO);
+                    }
+                } catch (Exception ex) {
+                    err(ex.getMessage());
+                    err("Unable to check compatible between `--shutdown` flag and your system, not sure if it works");
+                }
+            } else
+                throw new NotSupportedException(String.format("Shutdown command is not supported on %s OS", OS.name));
+
+            internalRun(launchInfo.arguments);
+
+            final int shutdownAfterMinutes = FlagShutdownAfterFinished.shutdownAfterXMinutes;
+            final int notiEverySec = 30;
+            warn("System is going to shutdown after %d minutes", shutdownAfterMinutes);
+            final int sleepPerRound = notiEverySec * 1_000;
+            int count = shutdownAfterMinutes * 60_000 / sleepPerRound;
+            while (count-- > 0) {
+                sleep(sleepPerRound);
+                warn("System is going to shutdown after %d seconds", count * sleepPerRound / 1_000);
+            }
+            warn("System is going to shutdown NOW");
+
+            try {
+                Runtime.getRuntime().exec(command);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                err("Error occurs while trying to shutdown system");
+            }
+        } else {
+            internalRun(launchInfo.arguments);
+        }
     }
 
     private void initOutputDirectories() {

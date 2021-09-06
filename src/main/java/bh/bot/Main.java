@@ -262,6 +262,7 @@ public class Main {
 
         ParseArgumentsResult li = new ParseArgumentsResult(applicationClassFromAppCode, args, usingFlagPatterns);
         li.exitAfterXSecs = exitAfter;
+        li.shutdownAfterFinished = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShutdownAfterFinished);
         li.displayHelp = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagPrintHelpMessage);
         li.enableSavingDebugImages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSaveDebugImages);
         li.enableDebugMessages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShowDebugMessages);
@@ -363,5 +364,6 @@ public class Main {
     public static final int EXIT_CODE_INVALID_FLAG = 8;
     public static final int EXIT_CODE_UNABLE_DETECTING_FISHING_ANCHOR = 9;
     public static final int EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION = 11;
+    public static final int EXIT_CODE_REQUIRE_SUDO = 12;
     public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }

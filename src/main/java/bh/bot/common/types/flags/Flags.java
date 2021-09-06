@@ -11,6 +11,7 @@ public class Flags {
             new FlagDoTrials(),
             new FlagDoWorldBoss(),
             new FlagExitAfterAmountOfSeconds(),
+            new FlagShutdownAfterFinished(),
             new FlagMuteNoti(),
             new FlagPrintHelpMessage(),
             new FlagSteamResolution800x480(),
