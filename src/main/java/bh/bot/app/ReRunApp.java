@@ -5,12 +5,12 @@ import bh.bot.common.Log;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
+import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.ThreadUtil;
 
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
@@ -48,7 +48,7 @@ public class ReRunApp extends AbstractApplication {
     }
 
     private void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
-        info(colorFormatInfo, "\n\nStarting ReRun");
+        info(ColorizeUtil.formatInfo, "\n\nStarting ReRun");
         try {
             moveCursor(new Point(950, 100));
             long lastFound = System.currentTimeMillis();

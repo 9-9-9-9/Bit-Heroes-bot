@@ -1,24 +1,29 @@
 package bh.bot.app;
 
-import bh.bot.Main;
-import bh.bot.common.Configuration;
-import bh.bot.common.Log;
-import bh.bot.common.OS;
-import bh.bot.common.exceptions.InvalidDataException;
-import bh.bot.common.types.annotations.AppMeta;
-import bh.bot.common.utils.Extensions;
+import static bh.bot.common.Log.err;
+import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.warn;
+import static bh.bot.common.utils.StringUtil.isBlank;
+import static bh.bot.common.utils.StringUtil.isNotBlank;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static bh.bot.Main.colorFormatInfo;
-import static bh.bot.common.Log.*;
-import static bh.bot.common.utils.StringUtil.isBlank;
-import static bh.bot.common.utils.StringUtil.isNotBlank;
+import bh.bot.Main;
+import bh.bot.common.Configuration;
+import bh.bot.common.OS;
+import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.utils.ColorizeUtil;
+import bh.bot.common.utils.Extensions;
 
 @AppMeta(code = "client", name = "Generate mini-client", displayOrder = 4)
 public class GenMiniClient extends AbstractApplication {
@@ -41,7 +46,7 @@ public class GenMiniClient extends AbstractApplication {
 
         } catch (Exception ex) {
             err("Unable to generate mini-client!!!\n  Reason: %s", ex.getMessage());
-            info(colorFormatInfo, "To be able to use mini game client (using Google Chrome), the following conditions must be met:");
+            info(ColorizeUtil.formatInfo, "To be able to use mini game client (using Google Chrome), the following conditions must be met:");
             info(" 1. Google Chrome must be installed");
             info(" 2. You can play Bit Heroes game at https://www.kongregate.com/games/Juppiomenz/bit-heroes");
             info(" 3. Play Bit Heroes in Web using Chrome and press F12 to open Dev Tools");
@@ -49,7 +54,7 @@ public class GenMiniClient extends AbstractApplication {
             info(" 5. Paste the content of file 'prepare-mini-chrome-client.txt' into console tab");
             info(" 6. Copy the output lines and override corresponding values in user-config.properties");
             info(" 7. Run the script '%s'  again", Extensions.scriptFileName("client"));
-            info(colorFormatInfo, "Notes: it's able to generate more than one client, just by modify the '1.' prefix of the keys, support up to maximum %d accounts", supportMaximumNumberOfAccounts);
+            info(ColorizeUtil.formatInfo, "Notes: it's able to generate more than one client, just by modify the '1.' prefix of the keys, support up to maximum %d accounts", supportMaximumNumberOfAccounts);
             System.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
             return;
         }
@@ -79,7 +84,7 @@ public class GenMiniClient extends AbstractApplication {
                 return;
             }
 
-            info(fWarning, "Chrome user directory: %s", chromeUserDir);
+            info(ColorizeUtil.formatWarning, "Chrome user directory: %s", chromeUserDir);
 
             String chromePathOnWindows = getChromePathOnWindows();
 
@@ -201,8 +206,8 @@ public class GenMiniClient extends AbstractApplication {
         try {
             String cfgChromeUserDir = Configuration.read(keyChromeUserDirPath);
             if (isBlank(cfgChromeUserDir)) {
-                info(colorFormatInfo, "FYI: you can specify a chrome user's directory so next time when you download a new version of this Bit Heroes bot, you don't need to copy the '%s' folder", defaultChromeUserDir);
-                info(colorFormatInfo, "To do it, edit file `user-config.properties` and set path to key `%s`", keyChromeUserDirPath);
+                info(ColorizeUtil.formatInfo, "FYI: you can specify a chrome user's directory so next time when you download a new version of this Bit Heroes bot, you don't need to copy the '%s' folder", defaultChromeUserDir);
+                info(ColorizeUtil.formatInfo, "To do it, edit file `user-config.properties` and set path to key `%s`", keyChromeUserDirPath);
                 return new File(defaultChromeUserDir).getAbsolutePath();
             }
 

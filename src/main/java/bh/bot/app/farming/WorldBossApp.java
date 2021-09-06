@@ -9,13 +9,13 @@ import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
+import bh.bot.common.utils.ColorizeUtil;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 
@@ -40,7 +40,7 @@ public class WorldBossApp extends AbstractDoFarmingApp {
         userConfig = resultLoadUserConfig._2;
 
         try {
-            info(colorFormatInfo, "You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
+            info(ColorizeUtil.formatInfo, "You have selected world boss level %s", userConfig.getWorldBossLevelDesc());
             return true;
         } catch (InvalidDataException ex2) {
             err(ex2.getMessage());

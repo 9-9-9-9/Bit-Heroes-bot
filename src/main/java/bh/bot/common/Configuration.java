@@ -35,7 +35,7 @@ public class Configuration {
     public static class Features {
         public static boolean disableJna = false;
         public static boolean disableDoCheckGameScreenOffset = false;
-        public static boolean disableColorizeTerminal = "windows 7".equals(OS.name.trim().toLowerCase());
+        public static boolean disableColorizeTerminal = false;
     }
 
     public static class Tolerant {
@@ -85,7 +85,7 @@ public class Configuration {
         Features.disableJna = StringUtil.isTrue(read("disable.jna"));
         Features.disableDoCheckGameScreenOffset =
                 Features.disableJna || StringUtil.isTrue(read("disable.jna.disableDoCheckGameScreenOffset"));
-        Features.disableColorizeTerminal = StringUtil.isTrue(read("disable.colorize-terminal"));
+        Features.disableColorizeTerminal = StringUtil.isTrue(read("disable.jansi"));
 
         String keyLongTimeNoSee = "timeout.minutes.long-time-no-see";
         short minLongTimeNoSee = 10;

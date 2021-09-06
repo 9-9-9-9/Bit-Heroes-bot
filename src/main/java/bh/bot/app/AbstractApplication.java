@@ -19,6 +19,7 @@ import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.types.tuples.Tuple4;
+import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.InteractionUtil.Screen.*;
@@ -37,7 +38,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.Extensions.scriptFileName;
@@ -756,7 +756,7 @@ public abstract class AbstractApplication {
                         Configuration.gameScreenOffset.set(result._4);
                         x = result._4.X;
                         y = result._4.Y;
-                        info(colorFormatInfo, "Game's screen offset has been adjusted automatically to %d,%d", x, y);
+                        info(ColorizeUtil.formatInfo, "Game's screen offset has been adjusted automatically to %d,%d", x, y);
                     } else {
                         debug("screen offset not change");
                     }

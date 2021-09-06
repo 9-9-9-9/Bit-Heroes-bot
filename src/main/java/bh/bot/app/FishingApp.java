@@ -7,6 +7,7 @@ import bh.bot.common.types.Offset;
 import bh.bot.common.types.Size;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
+import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.ImageUtil;
 
 import java.awt.*;
@@ -15,7 +16,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static bh.bot.Main.colorFormatInfo;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.ImageUtil.freeMem;
 import static bh.bot.common.utils.InteractionUtil.Keyboard.sendSpaceKey;
@@ -117,7 +117,7 @@ public class FishingApp extends AbstractApplication {
 
     private void doLoopFishing(int loopCount, final AtomicBoolean masterSwitch, final Point anchorPoint,
                                final AtomicInteger screen, final AtomicBoolean unsure, final AtomicLong unsureFrom) {
-        info(colorFormatInfo, "\n\nStart Fishing");
+        info(ColorizeUtil.formatInfo, "\n\nStart Fishing");
         try {
             moveCursor(new Point(950, 100));
 
