@@ -13,17 +13,12 @@ import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
-import bh.bot.common.types.flags.FlagPattern;
-import bh.bot.common.types.flags.FlagResolution;
-import bh.bot.common.types.flags.FlagShutdownAfterFinished;
-import bh.bot.common.types.flags.Flags;
+import bh.bot.common.types.flags.*;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.types.tuples.Tuple4;
-import bh.bot.common.utils.ColorizeUtil;
-import bh.bot.common.utils.ImageUtil;
-import bh.bot.common.utils.InteractionUtil;
+import bh.bot.common.utils.*;
 import bh.bot.common.utils.InteractionUtil.Screen.*;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
@@ -38,7 +33,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.*;
@@ -914,17 +911,50 @@ public abstract class AbstractApplication {
         }
     }
 
-    protected int readProfileNumber(String ask) {
-        return readInput(ask, String.format("select a number, min 1, max %d", GenMiniClient.supportMaximumNumberOfAccounts), s -> {
-            try {
-                int num = Integer.parseInt(s.trim());
-                if (num >= 1 && num <= GenMiniClient.supportMaximumNumberOfAccounts)
-                    return new Tuple3<>(true, null, num);
-                return new Tuple3<>(false, "Value must be in range from 1 to " + GenMiniClient.supportMaximumNumberOfAccounts, 0);
-            } catch (NumberFormatException ex) {
-                return new Tuple3<>(false, "Not a number", 0);
+    protected String readCfgProfileName(String ask) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            final String prefix = "readonly.";
+            final String suffix = ".user-config.properties";
+            boolean foundAny = false;
+            for (File file : Arrays.stream(new File(".").listFiles())
+                    .filter(x -> x.isFile())
+                    .sorted().collect(Collectors.toList())) {
+                String name = file.getName();
+                if (!name.startsWith(prefix) || !name.endsWith(suffix))
+                    continue;
+                if (name.length() < prefix.length() + suffix.length() + 1)
+                    continue;
+                StringBuilder sb2 = new StringBuilder();
+                ArrayList<Byte> chars = new ArrayList<>();
+                for (char c : name.toCharArray())
+                    chars.add((byte)c);
+                chars.stream().skip(prefix.length()).limit(name.length() - prefix.length() - suffix.length()).forEach(c -> sb2.append((char)c.byteValue()));
+                String cfgProfileName = sb2.toString();
+                if (cfgProfileName.length() > 0) {
+                    if (!ValidationUtil.isValidUserProfileName(cfgProfileName))
+                        continue;
+                    if (!foundAny) {
+                        foundAny = true;
+                        sb.append("Existing profiles:\n");
+                    }
+                    sb.append("  ");
+                    sb.append(cfgProfileName);
+                    sb.append('\n');
+                }
             }
-        });
+            if (foundAny)
+                sb.append('\n');
+        } catch (Exception ex) {
+            err("Problem while trying to list existing files in current directory: %s", ex.getMessage());
+        }
+        sb.append(ask);
+        return readInput(sb.toString(), null, s -> {
+            s = s.trim().toLowerCase();
+            if (!ValidationUtil.isValidUserProfileName(s))
+                return new Tuple3<>(false, "Not a valid profile name, correct format should be: " + FlagProfileName.formatDesc, null);
+            return new Tuple3<>(true, null, s);
+        }).trim().toLowerCase();
     }
 
     protected int readInputLoopCount(String ask) {
@@ -941,13 +971,13 @@ public abstract class AbstractApplication {
         });
     }
 
-    protected UserConfig getPredefinedUserConfigFromProfileNumber(String ask) throws IOException {
-        int profileNumber = this.argumentInfo.profileNumber;
-        if (profileNumber < 1)
-            profileNumber = readProfileNumber(ask);
-        Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(profileNumber);
+    protected UserConfig getPredefinedUserConfigFromProfileName(String ask) throws IOException {
+        String cfgProfileName = this.argumentInfo.cfgProfileName;
+        if (StringUtil.isBlank(cfgProfileName))
+            cfgProfileName = readCfgProfileName(ask);
+        Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(cfgProfileName);
         if (!resultLoadUserConfig._1) {
-            err("Profile number %d could not be found", profileNumber);
+            err("Profile name could not be found (check existence of file readonly.<profile_name>.user-config.properties)");
             printRequiresSetting();
             System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
         }

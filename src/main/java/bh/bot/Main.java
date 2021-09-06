@@ -203,7 +203,7 @@ public class Main {
 
         // Parse param
         int exitAfter = 0;
-        int profileNumber = -1;
+        String cfgProfileName = null;
         for (FlagPattern flagPattern : usingFlagPatterns) {
             if (!flagPattern.isAllowParam())
                 continue;
@@ -213,8 +213,8 @@ public class Main {
                 continue;
             }
 
-            if (flagPattern instanceof FlagProfileNo) {
-                profileNumber = ((FlagProfileNo) flagPattern).parseParams().get(0);
+            if (flagPattern instanceof FlagProfileName) {
+                cfgProfileName = ((FlagProfileName) flagPattern).parseParams().get(0);
                 continue;
             }
 
@@ -269,7 +269,7 @@ public class Main {
         li.enableDebugMessages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShowDebugMessages);
         li.disableTelegramNoti = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagMuteNoti);
         li.screenResolutionProfile = screenResolutionProfile;
-        li.profileNumber = profileNumber;
+        li.cfgProfileName = cfgProfileName;
         li.hasFlagAll = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagAll);
         // events
         li.eWorldBoss = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);

@@ -8,8 +8,10 @@ import bh.bot.common.types.*;
 import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.ScreenResolutionProfile.WebProfile;
 import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.flags.FlagProfileName;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.utils.StringUtil;
+import bh.bot.common.utils.ValidationUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -109,21 +111,25 @@ public class Configuration {
         debug("Tolerant.colorBwL2 = %d", Tolerant.colorBwL2);
     }
 
-    public static Tuple2<Boolean, UserConfig> loadUserConfig(int profileNo) throws IOException { // returns tuple of
-        // File Exists +
-        // Data
-        String profileConfigFileName = getProfileConfigFileName(profileNo);
+    public static Tuple2<Boolean, UserConfig> loadUserConfig(String cfgProfileName) throws IOException { // returns tuple of
+        // File Exists + Data
+
+        if (!ValidationUtil.isValidUserProfileName(cfgProfileName)) {
+            err("That's not a valid profile name, correct format should be: %s", FlagProfileName.formatDesc);
+            return new Tuple2<>(false, null);
+        }
+
+        String profileConfigFileName = getProfileConfigFileName(cfgProfileName);
         final File fileCfg = new File(profileConfigFileName);
         if (!fileCfg.exists() || !fileCfg.isFile()) {
-            debug("Unable to load user config for profile no.%d, reason: file '%s' not found", profileNo,
+            debug("Unable to load user config for profile '%s', reason: file '%s' not found", cfgProfileName,
                     profileConfigFileName);
             return new Tuple2<>(false, null);
         }
 
         byte raidLevel, raidMode, worldBossLevel;
 
-        if (profileNo > 1)
-            info("Going to load configuration from %s", fileCfg.getName());
+        info("Going to load configuration from %s", fileCfg.getName());
 
         Properties properties = new Properties();
         try (InputStream inputStream = new FileInputStream(fileCfg)) {
@@ -148,7 +154,7 @@ public class Configuration {
             throw new InvalidDataException("Value of key '%s' is not a number", UserConfig.worldBossLevelKey);
         }
 
-        return new Tuple2<>(true, new UserConfig(profileNo, raidLevel, raidMode, worldBossLevel));
+        return new Tuple2<>(true, new UserConfig(cfgProfileName, raidLevel, raidMode, worldBossLevel));
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -161,8 +167,8 @@ public class Configuration {
         return value;
     }
 
-    public static String getProfileConfigFileName(int profileNo) {
-        return String.format("readonly.%d.user-config.properties", profileNo);
+    public static String getProfileConfigFileName(String cfgProfileName) {
+        return String.format("readonly.%s.user-config.properties", cfgProfileName);
     }
 
     private static final ArrayList<Tuple2<Class<? extends AbstractApplication>, AppMeta>> applicationClassesInfo = new ArrayList<>();

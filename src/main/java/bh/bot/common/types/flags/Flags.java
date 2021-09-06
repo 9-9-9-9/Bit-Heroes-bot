@@ -19,6 +19,6 @@ public class Flags {
             new FlagAll(),
             new FlagSaveDebugImages(),
             new FlagShowDebugMessages(),
-            new FlagProfileNo(),
+            new FlagProfileName(),
     };
 }

@@ -24,7 +24,7 @@ public class WorldBossApp extends AbstractDoFarmingApp {
 
     @Override
     protected boolean readMoreInput() throws IOException {
-        userConfig = getPredefinedUserConfigFromProfileNumber("You want to do World Boss so you have to specific profile number first!\nSelect profile number");
+        userConfig = getPredefinedUserConfigFromProfileName("You want to do World Boss so you have to specific profile name first!\nSelect an existing profile:");
 
         try {
             info(ColorizeUtil.formatInfo, "You have selected world boss %s", userConfig.getWorldBossLevelDesc());

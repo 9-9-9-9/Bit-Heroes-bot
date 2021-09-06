@@ -24,7 +24,7 @@ public class RaidApp extends AbstractDoFarmingApp {
 
     @Override
     protected boolean readMoreInput() throws IOException {
-        userConfig = getPredefinedUserConfigFromProfileNumber("You want to do Raid so you have to specific profile number first!\nSelect profile number");
+        userConfig = getPredefinedUserConfigFromProfileName("You want to do Raid so you have to specific profile name first!\nSelect an existing profile:");
 
         try {
             info(
