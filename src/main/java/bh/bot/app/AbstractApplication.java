@@ -940,4 +940,17 @@ public abstract class AbstractApplication {
             }
         });
     }
+
+    protected UserConfig getPredefinedUserConfigFromProfileNumber(String ask) throws IOException {
+        int profileNumber = this.argumentInfo.profileNumber;
+        if (profileNumber < 1)
+            profileNumber = readProfileNumber(ask);
+        Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(profileNumber);
+        if (!resultLoadUserConfig._1) {
+            err("Profile number %d could not be found", profileNumber);
+            printRequiresSetting();
+            System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
+        }
+        return resultLoadUserConfig._2;
+    }
 }

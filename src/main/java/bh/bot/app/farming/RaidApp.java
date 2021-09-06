@@ -1,14 +1,12 @@
 package bh.bot.app.farming;
 
 import bh.bot.Main;
-import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.images.BwMatrixMeta;
-import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.utils.ColorizeUtil;
 
 import java.io.IOException;
@@ -26,18 +24,7 @@ public class RaidApp extends AbstractDoFarmingApp {
 
     @Override
     protected boolean readMoreInput() throws IOException {
-        int profileNumber = this.argumentInfo.profileNumber;
-        if (profileNumber < 1)
-            profileNumber = readProfileNumber("You want to do Raid so you have to specific profile number first!\nSelect profile number");
-        Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(profileNumber);
-        if (!resultLoadUserConfig._1) {
-            err("Profile number %d could not be found");
-            printRequiresSetting();
-            System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
-            return false;
-        }
-
-        userConfig = resultLoadUserConfig._2;
+        userConfig = getPredefinedUserConfigFromProfileNumber("You want to do Raid so you have to specific profile number first!\nSelect profile number");
 
         try {
             info(
