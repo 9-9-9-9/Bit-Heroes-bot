@@ -5,7 +5,7 @@
 
 have inspiration from https://github.com/tiemonl/Bit-Heroes-Fishing-Bot
 
-**I'm 99bot, if you like me, please give this repo a Star, thanks**
+> Hi, I'm 99bot, please give this repo a Star, thanks
 ___
 [Wiki version](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
 
@@ -17,14 +17,14 @@ Normal users please [read at this page](https://github.com/9-9-9-9/Bit-Heroes-bo
 ___
 Officially support game resolution 800x520 ([web](https://www.kongregate.com/games/Juppiomenz/bit-heroes) + mini-client) and [Steam version with resolution 800x480](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Does-this-bot-supports-Steam-version-of-Bit-Heroes%3F)
 
-Only support English user interface
+**Only support English user interface**
 
 ### Contains the following functions:
 1. [**ReRun** Dungeons and Raid](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22rerun%22)
 2. [Auto fishing](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22fishing%22)
-3. Farm  [World Boss](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22world-boss%22) / [PVP](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22pvp%22) / [Invasion](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22invasion%22) / [GVG](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22GVG%22) / [Expedition](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22expedition%22) / [Trials](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22trials%22) / [Gauntlet](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22gauntlet%22)
-4. [Launch game in mini client using Google Chrome](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
-5. [Do stuffs while AFK](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22afk%22)
+3. [Do stuffs while AFK](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22afk%22)
+4. Farm  [World Boss](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22world-boss%22) / [Raid](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22raid%22) / [PVP](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22pvp%22) / [Invasion](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22invasion%22) / [GVG](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22GVG%22) / [Expedition](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22expedition%22) / [Trials](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22trials%22) / [Gauntlet](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22gauntlet%22)
+5. [Launch game in mini client using Google Chrome](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
 
 And some extra functions support developers on developing this bot
 
@@ -39,7 +39,7 @@ And some extra functions support developers on developing this bot
 1. `git clone https://github.com/9-9-9-9/Bit-Heroes-bot` or download ZIP file then extract
 2. Depends on OS:
     - Windows: click and run the file `build.bat`
-    - Linux/MacOS: run the following command `./build.sh` on terminal
+    - Linux/MacOS: run command `./build.sh` in terminal
 
 #### Easy to use:
 1. Configure follow [instruction on Wiki (click me)](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Basic-setup)
@@ -48,16 +48,15 @@ And some extra functions support developers on developing this bot
   - Mini-client/Web on Windows: `bot.bat`
   - Linux/MacOS: `./bot.sh`
   
-Tips 1: you can launch app with flags directly via command-line after got familiar with it:
+Tips 1: you can launch app with flags directly via command-line after got familiar with 99bot:
 > java -jar BitHeroes.jar "function_name" "param1" ["param2"] [--flags]
 
 Tips 2: see help
 - Windows: run file `help.bat`
 - Linux/MacOS: run script `./help.sh`
 
-
 ##### Optional configuration:
-- Configure Raid/World Boss:
+- [Configure Raid/World Boss](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Select-Raid-World-Boss-level,-mode,..-using-%60setting%60-function):
   - Windows: run file `setting.bat`
   - Linux/MacOS: run script `./setting.sh`
 - [push notification via Telegram](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
