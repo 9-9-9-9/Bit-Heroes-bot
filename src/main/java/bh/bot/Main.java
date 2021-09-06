@@ -42,7 +42,7 @@ import static bh.bot.common.utils.StringUtil.isBlank;
 
 @SuppressWarnings("deprecation")
 public class Main {
-    public static final String botName = "99 bot";
+    public static final String botName = "99bot";
 	public static boolean forceDisableAnsi = false;
     public static void main(String[] args) {
     	try {
