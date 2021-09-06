@@ -8,7 +8,7 @@ fi
 /opt/app/apache-maven-3.6.3/bin/mvn clean package
 mkdir -p ./out/
 rm -f ./BitHeroes.jar
-cp ./target/BitHeroes-*-jar-with-dependencies.jar ./BitHeroes.jar
+cp ./target/99bot-*-jar-with-dependencies.jar ./BitHeroes.jar
 touch user-config.properties
 chmod +x ./*.sh
 

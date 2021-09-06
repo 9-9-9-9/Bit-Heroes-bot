@@ -8,7 +8,7 @@ then
   exit 1
 fi
 
-BINARY=./target/BitHeroes-$VERSION-jar-with-dependencies.jar
+BINARY=./target/99bot-$VERSION-jar-with-dependencies.jar
 if [ ! -f $BINARY ];
 then
   echo 'Binary version '$VERSION' does not exist'
@@ -82,10 +82,10 @@ cat ./README.release.md >> ./release/README.md
 rm -f ./release/bh-client/*.html
 
 # Compress output
-FILE=Bit-Heroes-bot-Release-v$VERSION.zip
+FILE=Bit-Heroes-99bot-Release-v$VERSION.zip
 rm -f $FILE
 
-DIR=./BitHeroes-v$VERSION
+DIR=./99bot-v$VERSION
 rm -rf $DIR
 mv ./release $DIR
 zip -r $FILE $DIR

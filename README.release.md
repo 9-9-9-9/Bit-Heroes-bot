@@ -3,10 +3,10 @@ Upgrade notes:
   - `user-config.properties` files, it contains your configurations
   - `chrome-user-dir` directory, that folder was created by chrome to do temp cache and also save your game's setting. By specify an external directory into the key `external.mini-client.user.dir` of the `user-config.properties` file, next time when you upgrade this bot, you don't need to move this folder
 ___
-## Bit Heroes bot
+## 99 bot for Bit Heroes
 ##### on Linux / Windows / ~~MacOS~~
 
-**If you like my bot, please give this repo a Star, thanks**
+**I'm 99bot, if you like me, please give this repo a Star, thanks**
 
 [Wiki version](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
 

@@ -21,6 +21,7 @@ import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
@@ -31,6 +32,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.fusesource.jansi.AnsiConsole;
 
 import static bh.bot.common.Log.*;
@@ -39,6 +42,7 @@ import static bh.bot.common.utils.StringUtil.isBlank;
 
 @SuppressWarnings("deprecation")
 public class Main {
+    public static final String botName = "99 bot";
 	public static boolean forceDisableAnsi = false;
     public static void main(String[] args) {
     	try {
@@ -171,6 +175,15 @@ public class Main {
                 throw new InvalidFlagException(String.format("Flag '--%s' does not supported by '%s'",
                         flagPattern.getName(), instance.getAppCode()));
             }
+
+        try {
+            MavenXpp3Reader reader = new MavenXpp3Reader();
+            Model model = reader.read(new FileReader("pom.xml"));
+            info(ColorizeUtil.formatAsk, "Hi, my name is %s v%s, have a nice day", botName, model.getVersion());
+        } catch (Exception ignored) {
+            info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
+        }
+        info(ColorizeUtil.formatAsk, "Please give me a Star at my github repository https://github.com/9-9-9-9/Bit-Heroes-bot thank you");
 
         instance.run(parseArgumentsResult);
     }
