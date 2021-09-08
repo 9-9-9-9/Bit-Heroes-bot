@@ -93,10 +93,11 @@ public class SettingApp extends AbstractApplication {
             //
             final Tuple2<Byte, Byte> expeditionPlaceRange = UserConfig.getExpeditionPlaceRange();
             sb = new StringBuilder("All Expedition doors:\n");
+            sb.append(String.format("  %2d. %s\n", 0, "Unset (select every time)"));
             for (int rl = expeditionPlaceRange._1; rl <= expeditionPlaceRange._2; rl++)
                 sb.append(String.format("  %2d. %s\n", rl, UserConfig.getExpeditionPlaceDesc(rl)));
             sb.append("Specific Expedition door to enter?");
-            tmp = readIntInput(sb.toString(), expeditionPlaceRange._1, expeditionPlaceRange._2);
+            tmp = readIntInput(sb.toString(), 0, expeditionPlaceRange._2);
             expeditionPlace = tmp == null ? expeditionPlace : tmp;
             //
             UserConfig newCfg = new UserConfig(cfgProfileName, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel, (byte) expeditionPlace);
