@@ -30,11 +30,7 @@ public class ExpeditionApp extends AbstractDoFarmingApp {
             place = selectExpeditionPlace();
         }
 
-        warn("Inferno Dimension has not yet been implemented");
-        warn("Hallowed Dimension has not yet been implemented");
-        warn("Jammie Dimension has not yet been implemented");
-        warn("Battle Bards has not yet been implemented");
-        warn("Currently, Expedition only supports Idol Dimension");
+        printWarningExpeditionImplementation();
         return true;
     }
 

@@ -982,4 +982,12 @@ public abstract class AbstractApplication {
         }
         return resultLoadUserConfig._2;
     }
+
+    protected void printWarningExpeditionImplementation() {
+        warn("Inferno Dimension has not yet been implemented");
+        warn("Hallowed Dimension has not yet been implemented");
+        warn("Jammie Dimension has not yet been implemented");
+        warn("Battle Bards has not yet been implemented");
+        warn("Currently, Expedition only supports Idol Dimension");
+    }
 }
