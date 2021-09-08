@@ -5,6 +5,7 @@ import bh.bot.app.AfkApp;
 import bh.bot.app.FishingApp;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.farming.AbstractDoFarmingApp;
+import bh.bot.common.OS;
 import bh.bot.common.types.Platform;
 
 public class FlagShutdownAfterFinished extends FlagPattern.NonParamFlag {
@@ -17,12 +18,18 @@ public class FlagShutdownAfterFinished extends FlagPattern.NonParamFlag {
 
     @Override
     public String getDescription() {
-        return String.format("Shutdown your computer within %d minutes after program exited. Should combines with flag `--exit`", shutdownAfterXMinutes);
+        return String.format(
+                "Shutdown your computer within %d minutes after program exited. Should combines with flag `--exit`%s",
+                shutdownAfterXMinutes,
+                OS.isWin
+                        ? ""
+                        : ". Require bot ran as sudo in able to run shutdown command: 'sudo shutdown now' upon exit"
+        );
     }
 
     @Override
     public Platform[] getSupportedOsPlatforms() {
-        return new Platform[] { Platform.Windows, Platform.Linux };
+        return new Platform[]{Platform.Windows, Platform.Linux};
     }
 
     @Override
