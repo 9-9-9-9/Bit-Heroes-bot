@@ -229,7 +229,7 @@ public class AfkApp extends AbstractApplication {
                         masterSwitch.set(true);
                         FlagExitAfkAfterIfWaitResourceGeneration flag = new FlagExitAfkAfterIfWaitResourceGeneration();
                         warn("Due to flag '%s', AFK will exit now", flag.getCode());
-                        info("Flag '%s': %s", flag.getDescription());
+                        info("Flag '%s': %s",flag.getCode(), flag.getDescription());
                     }
                     sleepWhileWaitingResourceRegen = originalSleepWhileWaitingResourceRegen;
                     continue ML;

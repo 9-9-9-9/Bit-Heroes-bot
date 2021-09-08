@@ -8,7 +8,6 @@ public class FlagCloseGameWindowAfterExit extends FlagPattern.NonParamFlag {
 
     @Override
     public String getName() {
-        //noinspection SpellCheckingInspection
         return "close-game";
     }
 
