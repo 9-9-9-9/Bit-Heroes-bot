@@ -34,7 +34,7 @@ public class FlagProfileName extends FlagPattern<String> {
     }
 
     @Override
-    public boolean isSupportedByApp(AbstractApplication instance) {
+    protected boolean internalCheckIsSupportedByApp(AbstractApplication instance) {
         return instance instanceof AfkApp || instance instanceof WorldBossApp || instance instanceof RaidApp;
     }
 

@@ -15,4 +15,9 @@ public class FlagShowDebugMessages extends FlagPattern.NonParamFlag {
     public boolean isDevelopersOnly() {
         return true;
     }
+
+    @Override
+    public boolean isGlobalFlag() {
+        return true;
+    }
 }

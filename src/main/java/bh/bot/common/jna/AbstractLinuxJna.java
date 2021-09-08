@@ -109,7 +109,7 @@ public abstract class AbstractLinuxJna extends AbstractJna {
         throw new IllegalArgumentException(String.format("Input data has incorrect format: %s", raw));
     }
 
-    private Tuple2<Boolean, List<String>> startProcess(String app, String... args) throws InterruptedException, IOException {
+    protected Tuple2<Boolean, List<String>> startProcess(String app, String... args) throws InterruptedException, IOException {
         debug("App: %s, commands: %s", app, String.join(", ", args));
         File fileTmpOutput = new File(String.format("/tmp/bh-tmp.%s.out", UUID.randomUUID().toString()));
         try {

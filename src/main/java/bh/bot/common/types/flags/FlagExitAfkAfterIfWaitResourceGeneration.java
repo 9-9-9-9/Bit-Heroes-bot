@@ -3,15 +3,15 @@ package bh.bot.common.types.flags;
 import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
 
-public class FlagAll extends FlagPattern.NonParamFlag {
+public class FlagExitAfkAfterIfWaitResourceGeneration extends FlagPattern.NonParamFlag {
     @Override
     public String getName() {
-        return "all";
+        return "ear";
     }
 
     @Override
     public String getDescription() {
-        return "Include all local options (except --exit)";
+        return "Exit AFK if no more task to do (all out of turns and wait for resource generation)";
     }
 
     @Override

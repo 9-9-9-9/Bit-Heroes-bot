@@ -22,7 +22,7 @@ public class AttendablePlace {
         this.name = name;
         this.id = id;
         this.img = BwMatrixMeta.from(
-        		String.format("labels/attendable-places/%s?", imgCode),
+                String.format("labels/attendable-places/%s?", imgCode),
                 new Offset(0, 0),
                 0xFFFFFF
         );
@@ -43,12 +43,19 @@ public class AttendablePlace {
             this.num = num;
         }
 
-        public static MenuItem from(AttendablePlace...attendablePlaces) {
+        public static MenuItem from(AttendablePlace... attendablePlaces) {
             List<AttendablePlace> aps = Arrays.stream(attendablePlaces).distinct().collect(Collectors.toList());
             int num = 0;
             for (AttendablePlace ap : aps)
                 num |= ap.id;
             return new MenuItem(aps.stream().map(x -> x.name).collect(Collectors.joining(" + ")), num);
+        }
+
+        public static MenuItem from(String name, AttendablePlace... attendablePlaces) {
+            int num = 0;
+            for (AttendablePlace ap : Arrays.stream(attendablePlaces).collect(Collectors.toList()))
+                num |= ap.id;
+            return new MenuItem(name, num);
         }
     }
 }

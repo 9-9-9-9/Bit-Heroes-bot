@@ -1,17 +1,11 @@
 package bh.bot.common;
 
-import bh.bot.Main;
-import bh.bot.app.AbstractApplication;
-import bh.bot.common.exceptions.InvalidDataException;
-import bh.bot.common.exceptions.NotImplementedException;
-import bh.bot.common.types.*;
-import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
-import bh.bot.common.types.ScreenResolutionProfile.WebProfile;
-import bh.bot.common.types.annotations.AppMeta;
-import bh.bot.common.types.flags.FlagProfileName;
-import bh.bot.common.types.tuples.Tuple2;
-import bh.bot.common.utils.StringUtil;
-import bh.bot.common.utils.ValidationUtil;
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.err;
+import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.warn;
+import static bh.bot.common.utils.StringUtil.isBlank;
+import static bh.bot.common.utils.StringUtil.isNotBlank;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,9 +16,22 @@ import java.util.Comparator;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import static bh.bot.common.Log.*;
-import static bh.bot.common.utils.StringUtil.isBlank;
-import static bh.bot.common.utils.StringUtil.isNotBlank;
+import bh.bot.Main;
+import bh.bot.app.AbstractApplication;
+import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.exceptions.NotImplementedException;
+import bh.bot.common.types.AtomicOffset;
+import bh.bot.common.types.Offset;
+import bh.bot.common.types.ParseArgumentsResult;
+import bh.bot.common.types.ScreenResolutionProfile;
+import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
+import bh.bot.common.types.ScreenResolutionProfile.WebProfile;
+import bh.bot.common.types.UserConfig;
+import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.flags.FlagProfileName;
+import bh.bot.common.types.tuples.Tuple2;
+import bh.bot.common.utils.StringUtil;
+import bh.bot.common.utils.ValidationUtil;
 
 public class Configuration {
     public static ScreenResolutionProfile screenResolutionProfile = null;
@@ -127,7 +134,7 @@ public class Configuration {
             return new Tuple2<>(false, null);
         }
 
-        byte raidLevel, raidMode, worldBossLevel;
+        byte raidLevel, raidMode, worldBossLevel, expeditionPlace;
 
         info("Going to load configuration from %s", fileCfg.getName());
 
@@ -154,7 +161,13 @@ public class Configuration {
             throw new InvalidDataException("Value of key '%s' is not a number", UserConfig.worldBossLevelKey);
         }
 
-        return new Tuple2<>(true, new UserConfig(cfgProfileName, raidLevel, raidMode, worldBossLevel));
+        try {
+            expeditionPlace = Byte.parseByte(readKey(properties, UserConfig.expeditionPlaceKey, "0", "Not specified"));
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Value of key '%s' is not a number", UserConfig.expeditionPlaceKey);
+        }
+
+        return new Tuple2<>(true, new UserConfig(cfgProfileName, raidLevel, raidMode, worldBossLevel, expeditionPlace));
     }
 
     @SuppressWarnings("SameParameterValue")

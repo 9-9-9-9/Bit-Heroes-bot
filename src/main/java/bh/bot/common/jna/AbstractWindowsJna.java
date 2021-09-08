@@ -1,12 +1,13 @@
 package bh.bot.common.jna;
 
-import bh.bot.common.OS;
-import bh.bot.common.exceptions.NotSupportedException;
+import java.awt.Rectangle;
+
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.RECT;
 
-import java.awt.*;
+import bh.bot.common.OS;
+import bh.bot.common.exceptions.NotSupportedException;
 
 public abstract class AbstractWindowsJna extends AbstractJna {
     protected final User32 user32 = User32.INSTANCE;

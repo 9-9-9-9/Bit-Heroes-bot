@@ -10,4 +10,9 @@ public class FlagMuteNoti extends FlagPattern.NonParamFlag {
     public String getDescription() {
         return "Do not publish notification to Telegram channel";
     }
+
+    @Override
+    public boolean isGlobalFlag() {
+        return true;
+    }
 }

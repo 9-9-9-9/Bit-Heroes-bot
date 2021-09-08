@@ -2,7 +2,6 @@ package bh.bot.app;
 
 import bh.bot.Main;
 import bh.bot.app.farming.*;
-import bh.bot.app.farming.ExpeditionApp.ExpeditionPlace;
 import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidDataException;
@@ -11,6 +10,7 @@ import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.flags.FlagExitAfkAfterIfWaitResourceGeneration;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ColorizeUtil;
@@ -32,7 +32,8 @@ import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.types.AttendablePlace.MenuItem;
 import static bh.bot.common.utils.InteractionUtil.Keyboard.*;
-import static bh.bot.common.utils.InteractionUtil.Mouse.*;
+import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
+import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 @AppMeta(code = "afk", name = "AFK", displayOrder = 1)
@@ -43,7 +44,7 @@ public class AfkApp extends AbstractApplication {
     private final AtomicLong blockRaidUntil = new AtomicLong(0);
     private final AtomicLong blockGvgAndInvasionAndExpeditionUntil = new AtomicLong(0);
     private final AtomicLong blockTrialsAndGauntletUntil = new AtomicLong(0);
-    private ExpeditionPlace place = ExpeditionPlace.Astamus;
+    private byte expeditionPlace = UserConfig.getExpeditionPlaceRange()._1;
 
     @Override
     protected void internalRun(String[] args) {
@@ -57,8 +58,8 @@ public class AfkApp extends AbstractApplication {
             boolean doRaid = eventList.contains(AttendablePlaces.raid);
             boolean doWorldBoss = eventList.contains(AttendablePlaces.worldBoss);
             boolean doExpedition = eventList.contains(AttendablePlaces.expedition);
-            if (doRaid || doWorldBoss) {
-                userConfig = getPredefinedUserConfigFromProfileName("You want to do Raid/World Boss so you have to specific profile name first!\nSelect an existing profile:");
+            if (doRaid || doWorldBoss || doExpedition) {
+                userConfig = getPredefinedUserConfigFromProfileName("You want to do Raid/World Boss/Expedition so you have to specific profile name first!\nSelect an existing profile:");
 
                 try {
                     if (doRaid && doWorldBoss) {
@@ -69,11 +70,20 @@ public class AfkApp extends AbstractApplication {
                     } else if (doRaid) {
                         info(ColorizeUtil.formatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
                                 userConfig.getRaidLevelDesc());
-                    } else //noinspection ConstantConditions
-                        if (doWorldBoss) {
-                            info(ColorizeUtil.formatInfo, "You have selected world boss %s", userConfig.getWorldBossLevelDesc());
-                            warn("This function is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on");
+                    } else if (doWorldBoss) {
+                        info(ColorizeUtil.formatInfo, "You have selected world boss %s", userConfig.getWorldBossLevelDesc());
+                        warn("This function is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on");
+                    }
+
+                    if (doExpedition) {
+                        try {
+                            info(ColorizeUtil.formatInfo, "You have selected to farm %s of Expedition", userConfig.getExpeditionPlaceDesc());
+                            expeditionPlace = userConfig.expeditionPlace;
+                        } catch (InvalidDataException ex2) {
+                            warn("You haven't specified an Expedition door to enter so you have to select manually");
+                            expeditionPlace = selectExpeditionPlace();
                         }
+                    }
                 } catch (InvalidDataException ex2) {
                     err(ex2.getMessage());
                     printRequiresSetting();
@@ -81,9 +91,6 @@ public class AfkApp extends AbstractApplication {
                     return;
                 }
             }
-
-            if (doExpedition)
-                this.place = selectExpeditionPlace();
         } catch (IOException ex) {
             ex.printStackTrace();
             System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
@@ -183,6 +190,15 @@ public class AfkApp extends AbstractApplication {
             final Supplier<Boolean> isWorldBossBlocked = () -> !isNotBlocked(blockWorldBossUntil);
             final Supplier<Boolean> isRaidBlocked = () -> !isNotBlocked(blockRaidUntil);
 
+            if (doRaid)
+                info(ColorizeUtil.formatInfo, "Raid: %s of %s", userConfig.getRaidModeDesc(), userConfig.getRaidLevelDesc());
+            if (doWorldBoss)
+                info(ColorizeUtil.formatInfo, "World Boss: %s", userConfig.getWorldBossLevelDesc());
+            if (doExpedition) {
+                info(ColorizeUtil.formatInfo, "Expedition: (%d) %s", this.expeditionPlace, UserConfig.getExpeditionPlaceDesc(this.expeditionPlace));
+                printWarningExpeditionImplementation();
+            }
+
             ML:
             while (!masterSwitch.get()) {
                 sleep(loopSleep);
@@ -224,6 +240,12 @@ public class AfkApp extends AbstractApplication {
 
                 if (taskList.stream().noneMatch(x -> isNotBlocked(x._2))) {
                     info("Waiting for resource generation, sleeping %d minutes", minutesSleepWaitingResourceGeneration);
+                    if (this.argumentInfo.exitAfkIfWaitForResourceGeneration) {
+                        masterSwitch.set(true);
+                        FlagExitAfkAfterIfWaitResourceGeneration flag = new FlagExitAfkAfterIfWaitResourceGeneration();
+                        warn("Due to flag '%s', AFK will exit now", flag.getCode());
+                        info("Flag '%s': %s",flag.getCode(), flag.getDescription());
+                    }
                     sleepWhileWaitingResourceRegen = originalSleepWhileWaitingResourceRegen;
                     continue ML;
                 }
@@ -270,7 +292,7 @@ public class AfkApp extends AbstractApplication {
                     continue ML;
                 }
 
-                if (tryEnterExpedition(doExpedition, this.place)) {
+                if (tryEnterExpedition(doExpedition, this.expeditionPlace)) {
                     debug("tryEnterExpedition");
                     continuousNotFound = 0;
                     moveCursor(coordinateHideMouse);
@@ -428,16 +450,19 @@ public class AfkApp extends AbstractApplication {
             eventList.add(AttendablePlaces.raid);
         //
         if (eventList.size() == 0) {
-
-            final List<MenuItem> menuItems = Stream
-                    .concat(allAttendablePlaces.stream().map(MenuItem::from), Stream.of(
-                            MenuItem.from(AttendablePlaces.invasion, AttendablePlaces.trials),
-                            MenuItem.from(AttendablePlaces.expedition, AttendablePlaces.trials),
-                            MenuItem.from(AttendablePlaces.gvg, AttendablePlaces.gauntlet),
-                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid),
-                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid,
-                                    AttendablePlaces.expedition, AttendablePlaces.trials)))
-                    .collect(Collectors.toList());
+            final List<MenuItem> menuItems = Stream.of(
+                    MenuItem.from(AttendablePlaces.pvp),
+                    MenuItem.from(AttendablePlaces.worldBoss),
+                    MenuItem.from(AttendablePlaces.raid),
+                    MenuItem.from(AttendablePlaces.invasion),
+                    MenuItem.from("GVG/Expedition", AttendablePlaces.gvg, AttendablePlaces.expedition),
+                    MenuItem.from("GVG/Expedition/Invasion", AttendablePlaces.gvg, AttendablePlaces.expedition, AttendablePlaces.invasion),
+                    MenuItem.from("Trials/Gauntlet", AttendablePlaces.trials, AttendablePlaces.gauntlet),
+                    MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid),
+                    MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid,
+                            AttendablePlaces.expedition, AttendablePlaces.trials),
+                    MenuItem.from("All", allAttendablePlaces.toArray(new AttendablePlace[0]))
+            ).collect(Collectors.toList());
 
             String menuItem = menuItems.stream().map(x -> String.format("  %3d. %s", x.num, x.name))
                     .collect(Collectors.joining("\n"));

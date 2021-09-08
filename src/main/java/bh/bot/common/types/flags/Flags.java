@@ -12,7 +12,7 @@ public class Flags {
             new FlagDoGauntlet(),
             new FlagDoWorldBoss(),
             new FlagExitAfterAmountOfSeconds(),
-            new FlagShutdownAfterFinished(),
+            new FlagShutdownAfterExit(),
             new FlagMuteNoti(),
             new FlagPrintHelpMessage(),
             new FlagSteamResolution800x480(),
@@ -21,5 +21,7 @@ public class Flags {
             new FlagSaveDebugImages(),
             new FlagShowDebugMessages(),
             new FlagProfileName(),
+            new FlagExitAfkAfterIfWaitResourceGeneration(),
+            new FlagCloseGameWindowAfterExit()
     };
 }

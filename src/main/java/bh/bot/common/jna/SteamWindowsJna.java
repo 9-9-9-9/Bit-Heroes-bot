@@ -1,22 +1,25 @@
 package bh.bot.common.jna;
 
+import java.awt.Rectangle;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.RECT;
+
 import bh.bot.common.OS;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.tuples.Tuple4;
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinDef.RECT;
-
-import java.awt.*;
 
 public class SteamWindowsJna extends AbstractWindowsJna {
 	public SteamWindowsJna() {
 		super();
 		if (!OS.isWin)
-			throw new NotSupportedException(String.format("Class %s does not support %s OS",
-					this.getClass().getSimpleName(), OS.name));
+			throw new NotSupportedException(
+					String.format("Class %s does not support %s OS", this.getClass().getSimpleName(), OS.name));
 	}
 
 	@Override
@@ -26,7 +29,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 
 	@Override
 	public Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(HWND hwnd,
-																			 ScreenResolutionProfile screenResolutionProfile) {
+			ScreenResolutionProfile screenResolutionProfile) {
 		if (!(screenResolutionProfile instanceof SteamProfile))
 			throw new IllegalArgumentException("Not steam profile");
 
@@ -58,7 +61,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 		if (rect == null)
 			return new Tuple4<>(false, String.format("Unable to GetWindowRect, err code: %d",
 					com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()), null, null);
-		
+
 		if (rect.width <= 0 || rect.height <= 0)
 			return new Tuple4<>(false, "Window has minimized", null, null);
 		if (rect.width < ew || rect.height < eh)
@@ -77,5 +80,24 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 					offset);
 
 		return new Tuple4<>(true, null, rect, offset);
+	}
+
+	@Override
+	protected void internalTryToCloseGameWindow() {
+		try {
+			Process p = Runtime.getRuntime().exec("tasklist");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String line;
+			String BitHeroesProcess = "Bit Heroes.exe";
+			while ((line = reader.readLine()) != null) {
+				System.out.println(line);
+				if (line.contains(BitHeroesProcess)) {
+					Runtime.getRuntime().exec(String.format("taskkill /F /IM \"%s\"", BitHeroesProcess));
+					return;
+				}
+			}
+		} catch (Exception ignored) {
+			//
+		}
 	}
 }

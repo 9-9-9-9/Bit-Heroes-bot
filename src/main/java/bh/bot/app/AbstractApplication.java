@@ -1,7 +1,6 @@
 package bh.bot.app;
 
 import bh.bot.Main;
-import bh.bot.app.farming.ExpeditionApp.ExpeditionPlace;
 import bh.bot.common.Configuration;
 import bh.bot.common.OS;
 import bh.bot.common.Telegram;
@@ -33,9 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.*;
@@ -61,7 +58,7 @@ public abstract class AbstractApplication {
         Telegram.setAppName(getAppName());
         warn(getLimitationExplain());
 
-        if (launchInfo.shutdownAfterFinished) {
+        if (launchInfo.shutdownAfterExit) {
             String command;
             if (OS.isWin)
                 command = "shutdown -s -t 0";
@@ -80,8 +77,9 @@ public abstract class AbstractApplication {
                 throw new NotSupportedException(String.format("Shutdown command is not supported on %s OS", OS.name));
 
             internalRun(launchInfo.arguments);
+            tryToCloseGameWindow(launchInfo.closeGameWindowAfterExit);
 
-            final int shutdownAfterMinutes = FlagShutdownAfterFinished.shutdownAfterXMinutes;
+            final int shutdownAfterMinutes = FlagShutdownAfterExit.shutdownAfterXMinutes;
             final int notiEverySec = 30;
             warn("System is going to shutdown after %d minutes", shutdownAfterMinutes);
             final int sleepPerRound = notiEverySec * 1_000;
@@ -100,6 +98,16 @@ public abstract class AbstractApplication {
             }
         } else {
             internalRun(launchInfo.arguments);
+            tryToCloseGameWindow(launchInfo.closeGameWindowAfterExit);
+        }
+    }
+
+    private void tryToCloseGameWindow(boolean closeGameWindowAfterExit) {
+        if (!closeGameWindowAfterExit) return;
+        try {
+            getJnaInstance().tryToCloseGameWindow();
+        } catch (Exception ignored) {
+            //
         }
     }
 
@@ -651,20 +659,20 @@ public abstract class AbstractApplication {
         }
     }
 
-    protected boolean tryEnterExpedition(boolean doExpedition, ExpeditionPlace place) {
+    protected boolean tryEnterExpedition(boolean doExpedition, byte place) {
         if (doExpedition && clickImage(BwMatrixMeta.Metas.Expedition.Labels.idolDimension)) {
             Point p;
             switch (place) {
-                case BlubLix:
+                case 1:
                     p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionBlubLix().toScreenCoordinate();
                     break;
-                case Mowhi:
+                case 2:
                     p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionMowhi().toScreenCoordinate();
                     break;
-                case WizBot:
+                case 3:
                     p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionWizBot().toScreenCoordinate();
                     break;
-                case Astamus:
+                case 4:
                     p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionAstamus().toScreenCoordinate();
                     break;
                 default:
@@ -772,31 +780,24 @@ public abstract class AbstractApplication {
         return new Point(x + targetOffset.X, y + targetOffset.Y);
     }
 
-    protected ExpeditionPlace selectExpeditionPlace() {
+    protected byte selectExpeditionPlace() {
         //noinspection StringBufferReplaceableByString
         StringBuilder sb = new StringBuilder("Select a place to do Expedition:\n");
-        sb.append(String.format("  1. %s\n", ExpeditionPlace.BlubLix));
-        sb.append(String.format("  2. %s\n", ExpeditionPlace.Mowhi));
-        sb.append(String.format("  3. %s\n", ExpeditionPlace.WizBot));
-        sb.append(String.format("  4. %s\n", ExpeditionPlace.Astamus));
-        ExpeditionPlace place = readInput(sb.toString(), null,
+        final Tuple2<Byte, Byte> expeditionPlaceRange = UserConfig.getExpeditionPlaceRange();
+        for (int i = expeditionPlaceRange._1; i <= expeditionPlaceRange._2; i++)
+            sb.append(String.format("  %d. %s\n", i, UserConfig.getExpeditionPlaceDesc(i)));
+        byte place = (readInput(sb.toString(), null,
                 s -> {
                     try {
-                        int num = Integer.parseInt(s.trim());
-                        if (num == 1)
-                            return new Tuple3<>(true, null, ExpeditionPlace.BlubLix);
-                        if (num == 2)
-                            return new Tuple3<>(true, null, ExpeditionPlace.Mowhi);
-                        if (num == 3)
-                            return new Tuple3<>(true, null, ExpeditionPlace.WizBot);
-                        if (num == 4)
-                            return new Tuple3<>(true, null, ExpeditionPlace.Astamus);
-                        return new Tuple3<>(false, "Not a valid option", ExpeditionPlace.Astamus);
+                        int num = Byte.parseByte(s.trim());
+                        if (expeditionPlaceRange._1 <= num && num <= expeditionPlaceRange._2)
+                            return new Tuple3<>(true, null, num);
+                        return new Tuple3<>(false, "Not a valid option", 0);
                     } catch (NumberFormatException ex) {
-                        return new Tuple3<>(false, "Not a number", ExpeditionPlace.Astamus);
+                        return new Tuple3<>(false, "Not a number", 0);
                     }
-                });
-        info("Going to farm %s in Expedition", place.toString().toUpperCase());
+                })).byteValue();
+        info("Going to farm %s in Expedition", UserConfig.getExpeditionPlaceDesc(place));
         return place;
     }
 
@@ -875,10 +876,8 @@ public abstract class AbstractApplication {
     }
 
     protected IJna getJnaInstance() {
-        if (Configuration.isSteamProfile)
-            return new SteamWindowsJna();
         if (OS.isWin)
-            return new MiniClientWindowsJna();
+            return Configuration.isSteamProfile ? new SteamWindowsJna() : new MiniClientWindowsJna();
         if (OS.isLinux)
             return new MiniClientLinuxJna();
         if (OS.isMac)
@@ -982,5 +981,13 @@ public abstract class AbstractApplication {
             System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
         }
         return resultLoadUserConfig._2;
+    }
+
+    protected void printWarningExpeditionImplementation() {
+        warn("Inferno Dimension has not yet been implemented");
+        warn("Hallowed Dimension has not yet been implemented");
+        warn("Jammie Dimension has not yet been implemented");
+        warn("Battle Bards has not yet been implemented");
+        warn("Currently, Expedition only supports Idol Dimension");
     }
 }
