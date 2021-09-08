@@ -44,7 +44,7 @@ public class AfkApp extends AbstractApplication {
     private final AtomicLong blockRaidUntil = new AtomicLong(0);
     private final AtomicLong blockGvgAndInvasionAndExpeditionUntil = new AtomicLong(0);
     private final AtomicLong blockTrialsAndGauntletUntil = new AtomicLong(0);
-    private byte place = UserConfig.getExpeditionPlaceRange()._1;
+    private byte expeditionPlace = UserConfig.getExpeditionPlaceRange()._1;
 
     @Override
     protected void internalRun(String[] args) {
@@ -78,10 +78,10 @@ public class AfkApp extends AbstractApplication {
                     if (doExpedition) {
                         try {
                             info(ColorizeUtil.formatInfo, "You have selected to farm %s of Expedition", userConfig.getExpeditionPlaceDesc());
-                            place = userConfig.expeditionPlace;
+                            expeditionPlace = userConfig.expeditionPlace;
                         } catch (InvalidDataException ex2) {
                             warn("You haven't specified an Expedition door to enter so you have to select manually");
-                            place = selectExpeditionPlace();
+                            expeditionPlace = selectExpeditionPlace();
                         }
                     }
                 } catch (InvalidDataException ex2) {
@@ -190,6 +190,13 @@ public class AfkApp extends AbstractApplication {
             final Supplier<Boolean> isWorldBossBlocked = () -> !isNotBlocked(blockWorldBossUntil);
             final Supplier<Boolean> isRaidBlocked = () -> !isNotBlocked(blockRaidUntil);
 
+            if (doRaid)
+                info(ColorizeUtil.formatInfo, "Raid: %s of %s", userConfig.getRaidModeDesc(), userConfig.getRaidLevelDesc());
+            if (doWorldBoss)
+                info(ColorizeUtil.formatInfo, "World Boss: %s", userConfig.getWorldBossLevelDesc());
+            if (doExpedition)
+                info(ColorizeUtil.formatInfo, "Expedition: (%d) %s", this.expeditionPlace, UserConfig.getExpeditionPlaceDesc(this.expeditionPlace));
+
             ML:
             while (!masterSwitch.get()) {
                 sleep(loopSleep);
@@ -283,7 +290,7 @@ public class AfkApp extends AbstractApplication {
                     continue ML;
                 }
 
-                if (tryEnterExpedition(doExpedition, this.place)) {
+                if (tryEnterExpedition(doExpedition, this.expeditionPlace)) {
                     debug("tryEnterExpedition");
                     continuousNotFound = 0;
                     moveCursor(coordinateHideMouse);
