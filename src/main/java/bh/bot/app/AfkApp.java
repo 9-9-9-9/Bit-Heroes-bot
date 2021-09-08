@@ -194,8 +194,14 @@ public class AfkApp extends AbstractApplication {
                 info(ColorizeUtil.formatInfo, "Raid: %s of %s", userConfig.getRaidModeDesc(), userConfig.getRaidLevelDesc());
             if (doWorldBoss)
                 info(ColorizeUtil.formatInfo, "World Boss: %s", userConfig.getWorldBossLevelDesc());
-            if (doExpedition)
+            if (doExpedition) {
                 info(ColorizeUtil.formatInfo, "Expedition: (%d) %s", this.expeditionPlace, UserConfig.getExpeditionPlaceDesc(this.expeditionPlace));
+                warn("Inferno Dimension has not yet been implemented");
+                warn("Hallowed Dimension has not yet been implemented");
+                warn("Jammie Dimension has not yet been implemented");
+                warn("Battle Bards has not yet been implemented");
+                warn("Currently, Expedition only supports Idol Dimension");
+            }
 
             ML:
             while (!masterSwitch.get()) {

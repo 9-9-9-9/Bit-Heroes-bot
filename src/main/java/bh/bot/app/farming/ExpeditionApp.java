@@ -25,12 +25,17 @@ public class ExpeditionApp extends AbstractDoFarmingApp {
         try {
             info(ColorizeUtil.formatInfo, "You have selected to farm %s of Expedition", userConfig.getExpeditionPlaceDesc());
             place = userConfig.expeditionPlace;
-            return true;
         } catch (InvalidDataException ex2) {
             warn("You haven't specified an Expedition door to enter so you have to select manually");
             place = selectExpeditionPlace();
-            return true;
         }
+
+        warn("Inferno Dimension has not yet been implemented");
+        warn("Hallowed Dimension has not yet been implemented");
+        warn("Jammie Dimension has not yet been implemented");
+        warn("Battle Bards has not yet been implemented");
+        warn("Currently, Expedition only supports Idol Dimension");
+        return true;
     }
 
     @Override
