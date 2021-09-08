@@ -12,7 +12,8 @@ public class ParseArgumentsResult {
     public final ArrayList<FlagPattern> usingFlags;
     public int exitAfterXSecs;
     public boolean exitAfkIfWaitForResourceGeneration;
-    public boolean shutdownAfterFinished;
+    public boolean shutdownAfterExit;
+    public boolean closeGameWindowAfterExit;
     public boolean enableDebugMessages;
     public boolean disableTelegramNoti;
     public boolean displayHelp;

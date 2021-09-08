@@ -33,9 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.*;
@@ -61,7 +59,7 @@ public abstract class AbstractApplication {
         Telegram.setAppName(getAppName());
         warn(getLimitationExplain());
 
-        if (launchInfo.shutdownAfterFinished) {
+        if (launchInfo.shutdownAfterExit) {
             String command;
             if (OS.isWin)
                 command = "shutdown -s -t 0";
@@ -80,8 +78,9 @@ public abstract class AbstractApplication {
                 throw new NotSupportedException(String.format("Shutdown command is not supported on %s OS", OS.name));
 
             internalRun(launchInfo.arguments);
+            tryToCloseGameWindow(launchInfo.closeGameWindowAfterExit);
 
-            final int shutdownAfterMinutes = FlagShutdownAfterFinished.shutdownAfterXMinutes;
+            final int shutdownAfterMinutes = FlagShutdownAfterExit.shutdownAfterXMinutes;
             final int notiEverySec = 30;
             warn("System is going to shutdown after %d minutes", shutdownAfterMinutes);
             final int sleepPerRound = notiEverySec * 1_000;
@@ -100,6 +99,16 @@ public abstract class AbstractApplication {
             }
         } else {
             internalRun(launchInfo.arguments);
+            tryToCloseGameWindow(launchInfo.closeGameWindowAfterExit);
+        }
+    }
+
+    private void tryToCloseGameWindow(boolean closeGameWindowAfterExit) {
+        if (!closeGameWindowAfterExit) return;
+        try {
+            getJnaInstance().tryToCloseGameWindow();
+        } catch (Exception ignored) {
+            //
         }
     }
 
@@ -875,10 +884,8 @@ public abstract class AbstractApplication {
     }
 
     protected IJna getJnaInstance() {
-        if (Configuration.isSteamProfile)
-            return new SteamWindowsJna();
         if (OS.isWin)
-            return new MiniClientWindowsJna();
+            return Configuration.isSteamProfile ? new SteamWindowsJna() : new MiniClientWindowsJna();
         if (OS.isLinux)
             return new MiniClientLinuxJna();
         if (OS.isMac)

@@ -11,4 +11,5 @@ public interface IJna {
 	HWND getGameWindow(Object...args);
 	Rectangle getRectangle(HWND hwnd);
 	Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(HWND hwnd, ScreenResolutionProfile screenResolutionProfile);
+	void tryToCloseGameWindow();
 }

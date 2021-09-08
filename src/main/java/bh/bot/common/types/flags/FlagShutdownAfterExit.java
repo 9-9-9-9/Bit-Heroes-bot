@@ -8,7 +8,7 @@ import bh.bot.app.farming.AbstractDoFarmingApp;
 import bh.bot.common.OS;
 import bh.bot.common.types.Platform;
 
-public class FlagShutdownAfterFinished extends FlagPattern.NonParamFlag {
+public class FlagShutdownAfterExit extends FlagPattern.NonParamFlag {
     public static final byte shutdownAfterXMinutes = 2;
 
     @Override
@@ -19,7 +19,7 @@ public class FlagShutdownAfterFinished extends FlagPattern.NonParamFlag {
     @Override
     public String getDescription() {
         return String.format(
-                "Shutdown your computer within %d minutes after program exited. Should combines with flag `--exit`%s",
+                "Shutdown your computer within %d minutes after bot exited%s",
                 shutdownAfterXMinutes,
                 OS.isWin
                         ? ""

@@ -7,6 +7,8 @@ import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.RECT;
 
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public abstract class AbstractWindowsJna extends AbstractJna {
     protected final User32 user32 = User32.INSTANCE;
