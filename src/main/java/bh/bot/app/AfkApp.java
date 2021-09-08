@@ -2,7 +2,6 @@ package bh.bot.app;
 
 import bh.bot.Main;
 import bh.bot.app.farming.*;
-import bh.bot.app.farming.ExpeditionApp.ExpeditionPlace;
 import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidDataException;
@@ -33,7 +32,8 @@ import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.types.AttendablePlace.MenuItem;
 import static bh.bot.common.utils.InteractionUtil.Keyboard.*;
-import static bh.bot.common.utils.InteractionUtil.Mouse.*;
+import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
+import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 @AppMeta(code = "afk", name = "AFK", displayOrder = 1)
@@ -44,7 +44,7 @@ public class AfkApp extends AbstractApplication {
     private final AtomicLong blockRaidUntil = new AtomicLong(0);
     private final AtomicLong blockGvgAndInvasionAndExpeditionUntil = new AtomicLong(0);
     private final AtomicLong blockTrialsAndGauntletUntil = new AtomicLong(0);
-    private ExpeditionPlace place = ExpeditionPlace.Astamus;
+    private byte place = UserConfig.getExpeditionPlaceRange()._1;
 
     @Override
     protected void internalRun(String[] args) {
@@ -58,8 +58,8 @@ public class AfkApp extends AbstractApplication {
             boolean doRaid = eventList.contains(AttendablePlaces.raid);
             boolean doWorldBoss = eventList.contains(AttendablePlaces.worldBoss);
             boolean doExpedition = eventList.contains(AttendablePlaces.expedition);
-            if (doRaid || doWorldBoss) {
-                userConfig = getPredefinedUserConfigFromProfileName("You want to do Raid/World Boss so you have to specific profile name first!\nSelect an existing profile:");
+            if (doRaid || doWorldBoss || doExpedition) {
+                userConfig = getPredefinedUserConfigFromProfileName("You want to do Raid/World Boss/Expedition so you have to specific profile name first!\nSelect an existing profile:");
 
                 try {
                     if (doRaid && doWorldBoss) {
@@ -70,11 +70,20 @@ public class AfkApp extends AbstractApplication {
                     } else if (doRaid) {
                         info(ColorizeUtil.formatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
                                 userConfig.getRaidLevelDesc());
-                    } else //noinspection ConstantConditions
-                        if (doWorldBoss) {
-                            info(ColorizeUtil.formatInfo, "You have selected world boss %s", userConfig.getWorldBossLevelDesc());
-                            warn("This function is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on");
+                    } else if (doWorldBoss) {
+                        info(ColorizeUtil.formatInfo, "You have selected world boss %s", userConfig.getWorldBossLevelDesc());
+                        warn("This function is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on");
+                    }
+
+                    if (doExpedition) {
+                        try {
+                            info(ColorizeUtil.formatInfo, "You have selected to farm %s of Expedition", userConfig.getExpeditionPlaceDesc());
+                            place = userConfig.expeditionPlace;
+                        } catch (InvalidDataException ex2) {
+                            warn("You haven't specified an Expedition door to enter so you have to select manually");
+                            place = selectExpeditionPlace();
                         }
+                    }
                 } catch (InvalidDataException ex2) {
                     err(ex2.getMessage());
                     printRequiresSetting();
@@ -82,9 +91,6 @@ public class AfkApp extends AbstractApplication {
                     return;
                 }
             }
-
-            if (doExpedition)
-                this.place = selectExpeditionPlace();
         } catch (IOException ex) {
             ex.printStackTrace();
             System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);

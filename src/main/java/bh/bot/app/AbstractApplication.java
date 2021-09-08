@@ -1,7 +1,6 @@
 package bh.bot.app;
 
 import bh.bot.Main;
-import bh.bot.app.farming.ExpeditionApp.ExpeditionPlace;
 import bh.bot.common.Configuration;
 import bh.bot.common.OS;
 import bh.bot.common.Telegram;
@@ -660,20 +659,20 @@ public abstract class AbstractApplication {
         }
     }
 
-    protected boolean tryEnterExpedition(boolean doExpedition, ExpeditionPlace place) {
+    protected boolean tryEnterExpedition(boolean doExpedition, byte place) {
         if (doExpedition && clickImage(BwMatrixMeta.Metas.Expedition.Labels.idolDimension)) {
             Point p;
             switch (place) {
-                case BlubLix:
+                case 1:
                     p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionBlubLix().toScreenCoordinate();
                     break;
-                case Mowhi:
+                case 2:
                     p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionMowhi().toScreenCoordinate();
                     break;
-                case WizBot:
+                case 3:
                     p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionWizBot().toScreenCoordinate();
                     break;
-                case Astamus:
+                case 4:
                     p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionAstamus().toScreenCoordinate();
                     break;
                 default:
@@ -781,31 +780,24 @@ public abstract class AbstractApplication {
         return new Point(x + targetOffset.X, y + targetOffset.Y);
     }
 
-    protected ExpeditionPlace selectExpeditionPlace() {
+    protected byte selectExpeditionPlace() {
         //noinspection StringBufferReplaceableByString
         StringBuilder sb = new StringBuilder("Select a place to do Expedition:\n");
-        sb.append(String.format("  1. %s\n", ExpeditionPlace.BlubLix));
-        sb.append(String.format("  2. %s\n", ExpeditionPlace.Mowhi));
-        sb.append(String.format("  3. %s\n", ExpeditionPlace.WizBot));
-        sb.append(String.format("  4. %s\n", ExpeditionPlace.Astamus));
-        ExpeditionPlace place = readInput(sb.toString(), null,
+        final Tuple2<Byte, Byte> expeditionPlaceRange = UserConfig.getExpeditionPlaceRange();
+        for (int i = expeditionPlaceRange._1; i <= expeditionPlaceRange._2; i++)
+            sb.append(String.format("  %d. %s\n", i, UserConfig.getExpeditionPlaceDesc(i)));
+        byte place = (readInput(sb.toString(), null,
                 s -> {
                     try {
-                        int num = Integer.parseInt(s.trim());
-                        if (num == 1)
-                            return new Tuple3<>(true, null, ExpeditionPlace.BlubLix);
-                        if (num == 2)
-                            return new Tuple3<>(true, null, ExpeditionPlace.Mowhi);
-                        if (num == 3)
-                            return new Tuple3<>(true, null, ExpeditionPlace.WizBot);
-                        if (num == 4)
-                            return new Tuple3<>(true, null, ExpeditionPlace.Astamus);
-                        return new Tuple3<>(false, "Not a valid option", ExpeditionPlace.Astamus);
+                        int num = Byte.parseByte(s.trim());
+                        if (expeditionPlaceRange._1 <= num && num <= expeditionPlaceRange._2)
+                            return new Tuple3<>(true, null, num);
+                        return new Tuple3<>(false, "Not a valid option", 0);
                     } catch (NumberFormatException ex) {
-                        return new Tuple3<>(false, "Not a number", ExpeditionPlace.Astamus);
+                        return new Tuple3<>(false, "Not a number", 0);
                     }
-                });
-        info("Going to farm %s in Expedition", place.toString().toUpperCase());
+                })).byteValue();
+        info("Going to farm %s in Expedition", UserConfig.getExpeditionPlaceDesc(place));
         return place;
     }
 
