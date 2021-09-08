@@ -26,7 +26,7 @@ public class FlagShutdownAfterFinished extends FlagPattern.NonParamFlag {
     }
 
     @Override
-    public boolean isSupportedByApp(AbstractApplication instance) {
+    protected boolean internalCheckIsSupportedByApp(AbstractApplication instance) {
         return instance instanceof ReRunApp
                 || instance instanceof FishingApp
                 || instance instanceof AbstractDoFarmingApp

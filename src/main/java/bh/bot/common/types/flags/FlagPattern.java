@@ -55,7 +55,7 @@ public abstract class FlagPattern<T> {
         return true;
     }
 
-    public boolean isSupportedByApp(AbstractApplication instance) {
+    public final boolean isSupportedByApp(AbstractApplication instance) {
         if (isGlobalFlag())
             return true;
         return internalCheckIsSupportedByApp(instance);
@@ -110,8 +110,9 @@ public abstract class FlagPattern<T> {
         return new Platform[] { Platform.Linux, Platform.Windows, Platform.MacOS };
     }
 
+    private final String code = "--" + getName();
     public String getCode() {
-        return "--" + getName();
+        return code;
     }
 
     @Override

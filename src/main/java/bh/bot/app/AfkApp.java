@@ -11,6 +11,7 @@ import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.flags.FlagExitAfkAfterIfWaitResourceGeneration;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ColorizeUtil;
@@ -224,6 +225,12 @@ public class AfkApp extends AbstractApplication {
 
                 if (taskList.stream().noneMatch(x -> isNotBlocked(x._2))) {
                     info("Waiting for resource generation, sleeping %d minutes", minutesSleepWaitingResourceGeneration);
+                    if (this.argumentInfo.exitAfkIfWaitForResourceGeneration) {
+                        masterSwitch.set(true);
+                        FlagExitAfkAfterIfWaitResourceGeneration flag = new FlagExitAfkAfterIfWaitResourceGeneration();
+                        warn("Due to flag '%s', AFK will exit now", flag.getCode());
+                        info("Flag '%s': %s", flag.getDescription());
+                    }
                     sleepWhileWaitingResourceRegen = originalSleepWhileWaitingResourceRegen;
                     continue ML;
                 }

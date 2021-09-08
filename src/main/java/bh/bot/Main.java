@@ -276,6 +276,7 @@ public class Main {
 
         ParseArgumentsResult li = new ParseArgumentsResult(applicationClassFromAppCode, args, usingFlagPatterns);
         li.exitAfterXSecs = exitAfter;
+        li.exitAfkIfWaitForResourceGeneration = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagExitAfkAfterIfWaitResourceGeneration);
         li.shutdownAfterFinished = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShutdownAfterFinished);
         li.displayHelp = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagPrintHelpMessage);
         li.enableSavingDebugImages = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSaveDebugImages);

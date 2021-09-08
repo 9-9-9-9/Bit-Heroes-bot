@@ -11,6 +11,7 @@ public class ParseArgumentsResult {
     @SuppressWarnings("rawtypes")
     public final ArrayList<FlagPattern> usingFlags;
     public int exitAfterXSecs;
+    public boolean exitAfkIfWaitForResourceGeneration;
     public boolean shutdownAfterFinished;
     public boolean enableDebugMessages;
     public boolean disableTelegramNoti;

@@ -21,5 +21,6 @@ public class Flags {
             new FlagSaveDebugImages(),
             new FlagShowDebugMessages(),
             new FlagProfileName(),
+            new FlagExitAfkAfterIfWaitResourceGeneration()
     };
 }
