@@ -10,4 +10,9 @@ public class FlagPrintHelpMessage extends FlagPattern.NonParamFlag {
     public String getDescription() {
         return "Display help message of specific function";
     }
+
+    @Override
+    public boolean isGlobalFlag() {
+        return true;
+    }
 }

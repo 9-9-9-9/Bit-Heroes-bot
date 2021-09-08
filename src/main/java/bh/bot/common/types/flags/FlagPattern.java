@@ -51,9 +51,7 @@ public abstract class FlagPattern<T> {
         throw new NotImplementedException();
     }
 
-    public boolean isGlobalFlag() {
-        return true;
-    }
+    public abstract boolean isGlobalFlag();
 
     public final boolean isSupportedByApp(AbstractApplication instance) {
         if (isGlobalFlag())

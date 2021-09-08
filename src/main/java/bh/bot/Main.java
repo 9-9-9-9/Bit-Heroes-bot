@@ -125,7 +125,7 @@ public class Main {
             }
         }
 
-        boolean addMoreFlags = readYesNoInput("Do you want to add some add some flags? (Yes/No, empty is No)", String.format("You can pass flags like '--exit=3600'/'--steam'/'--all'/'--help'... here. For list of supported flags available for each function, please run file '%s'", scriptFileName("help")), true);
+        boolean addMoreFlags = readYesNoInput("Do you want to add some add some flags? (Y/N, empty is No)", String.format("You can pass flags like '--exit=3600'/'--steam'/'--all'/'--help'... here. For list of supported flags available for each function, please run file '%s'", scriptFileName("help")), true);
         if (addMoreFlags) {
             final Supplier<List<String>> selectedFlagsInfoProvider = () -> lArgs.stream().filter(x -> x.startsWith("--")).collect(Collectors.toList());
             while (true) {
@@ -323,9 +323,9 @@ public class Main {
     public static boolean readYesNoInput(String ask, String desc, boolean emptyAsNo) {
         Boolean result = readInput(ask, desc == null ? "Answer by typing Y/N" : desc, s -> {
             String answer = s.trim().toLowerCase();
-            if ("yes".equals(answer) || "y".equals(answer))
+            if ("y".equals(answer) || "yes".equals(answer))
                 return new Tuple3<>(true, null, true);
-            if ("no".equals(answer) || "n".equals(answer))
+            if ("n".equals(answer) || "no".equals(answer))
                 return new Tuple3<>(true, null, false);
             return new Tuple3<>(false, "Not a valid answer", null);
         }, emptyAsNo);
