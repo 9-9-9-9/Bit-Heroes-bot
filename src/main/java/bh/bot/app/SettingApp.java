@@ -29,11 +29,12 @@ public class SettingApp extends AbstractApplication {
             if (file.exists() && file.isDirectory())
                 throw new InvalidDataException("%s is a directory", fileName);
             Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(cfgProfileName);
-            int raidLevel, raidMode, worldBossLevel;
+            int raidLevel, raidMode, worldBossLevel, expeditionPlace;
             if (resultLoadUserConfig._1) {
                 raidLevel = resultLoadUserConfig._2.raidLevel;
                 raidMode = resultLoadUserConfig._2.raidMode;
                 worldBossLevel = resultLoadUserConfig._2.worldBossLevel;
+                expeditionPlace = resultLoadUserConfig._2.expeditionPlace;
 
                 if (resultLoadUserConfig._2.isValidRaidLevel())
                     info(ColorizeUtil.formatInfo, "Selected Raid level %s", resultLoadUserConfig._2.getRaidLevelDesc());
@@ -50,12 +51,18 @@ public class SettingApp extends AbstractApplication {
                 else
                     info(ColorizeUtil.formatInfo, "You haven't specified World Boss level");
 
+                if (resultLoadUserConfig._2.isValidExpeditionPlace())
+                    info(ColorizeUtil.formatInfo, "Selected Expedition door %s", resultLoadUserConfig._2.getExpeditionPlaceDesc());
+                else
+                    info(ColorizeUtil.formatInfo, "You haven't specified Expedition door");
+
                 info("Press any key to continue...");
                 Main.getBufferedReader().readLine();
             } else {
                 raidLevel = 0;
                 raidMode = 0;
                 worldBossLevel = 0;
+                expeditionPlace = 0;
             }
 
             //
@@ -75,7 +82,6 @@ public class SettingApp extends AbstractApplication {
             sb.append("Specific Raid mode?");
             tmp = readIntInput(sb.toString(), modeRange._1, modeRange._2);
             raidMode = tmp == null ? raidMode : tmp;
-
             //
             final Tuple2<Byte, Byte> woldBossLevelRange = UserConfig.getWorldBossLevelRange();
             sb = new StringBuilder("All World Boss levels:\n");
@@ -85,7 +91,15 @@ public class SettingApp extends AbstractApplication {
             tmp = readIntInput(sb.toString(), woldBossLevelRange._1, woldBossLevelRange._2);
             worldBossLevel = tmp == null ? worldBossLevel : tmp;
             //
-            UserConfig newCfg = new UserConfig(cfgProfileName, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel);
+            final Tuple2<Byte, Byte> expeditionPlaceRange = UserConfig.getExpeditionPlaceRange();
+            sb = new StringBuilder("All Expedition doors:\n");
+            for (int rl = expeditionPlaceRange._1; rl <= expeditionPlaceRange._2; rl++)
+                sb.append(String.format("  %2d. %s\n", rl, UserConfig.getExpeditionPlaceDesc(rl)));
+            sb.append("Specific Expedition door to enter?");
+            tmp = readIntInput(sb.toString(), expeditionPlaceRange._1, expeditionPlaceRange._2);
+            expeditionPlace = tmp == null ? expeditionPlace : tmp;
+            //
+            UserConfig newCfg = new UserConfig(cfgProfileName, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel, (byte) expeditionPlace);
 
             sb = new StringBuilder("Your setting:\n");
             if (newCfg.isValidRaidLevel() && UserConfig.isValidDifficultyMode(newCfg.raidMode))
@@ -97,6 +111,11 @@ public class SettingApp extends AbstractApplication {
                 sb.append(String.format("  world boss %s", UserConfig.getWorldBossLevelDesc((byte) worldBossLevel)));
             else
                 sb.append("  world boss has not been set");
+            sb.append('\n');
+            if (newCfg.isValidExpeditionPlace())
+                sb.append(String.format("  expedition %s", UserConfig.getExpeditionPlaceDesc((byte) expeditionPlace)));
+            else
+                sb.append("  expedition door has not been set");
             sb.append('\n');
             sb.append(String.format("Do you want to save the above setting into profile name '%s' ?", cfgProfileName));
             boolean save = readInput(sb.toString(), "Press Y/N then enter", s -> {
@@ -113,6 +132,7 @@ public class SettingApp extends AbstractApplication {
                 sb.append(String.format("%s=%d\n", UserConfig.raidLevelKey, raidLevel));
                 sb.append(String.format("%s=%d\n", UserConfig.raidModeKey, raidMode));
                 sb.append(String.format("%s=%d\n", UserConfig.worldBossLevelKey, worldBossLevel));
+                sb.append(String.format("%s=%d\n", UserConfig.expeditionPlaceKey, expeditionPlace));
                 Files.write(Paths.get(fileName), sb.toString().getBytes());
                 info("Saved successfully");
             } else {
@@ -144,7 +164,7 @@ public class SettingApp extends AbstractApplication {
 
     @Override
     protected String getDescription() {
-        return "Do setting raid level, raid mode,...";
+        return "Do setting raid level, raid mode, world boss level, expedition door to enter,...";
     }
 
     @Override

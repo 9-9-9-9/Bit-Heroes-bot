@@ -134,7 +134,7 @@ public class Configuration {
             return new Tuple2<>(false, null);
         }
 
-        byte raidLevel, raidMode, worldBossLevel;
+        byte raidLevel, raidMode, worldBossLevel, expeditionPlace;
 
         info("Going to load configuration from %s", fileCfg.getName());
 
@@ -161,7 +161,13 @@ public class Configuration {
             throw new InvalidDataException("Value of key '%s' is not a number", UserConfig.worldBossLevelKey);
         }
 
-        return new Tuple2<>(true, new UserConfig(cfgProfileName, raidLevel, raidMode, worldBossLevel));
+        try {
+            expeditionPlace = Byte.parseByte(readKey(properties, UserConfig.expeditionPlaceKey, "0", "Not specified"));
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Value of key '%s' is not a number", UserConfig.expeditionPlaceKey);
+        }
+
+        return new Tuple2<>(true, new UserConfig(cfgProfileName, raidLevel, raidMode, worldBossLevel, expeditionPlace));
     }
 
     @SuppressWarnings("SameParameterValue")

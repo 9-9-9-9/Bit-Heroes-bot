@@ -7,6 +7,7 @@ public class UserConfig {
     public static final String raidLevelKey = "ig.user.raid.level";
     public static final String raidModeKey = "ig.user.raid.mode";
     public static final String worldBossLevelKey = "ig.user.world-boss.level";
+    public static final String expeditionPlaceKey = "ig.user.expedition.place";
 
     public static final byte modeNormal = 1;
     public static final byte modeHard = 2;
@@ -16,17 +17,21 @@ public class UserConfig {
     private static final byte raidLevelMax = 13;
     private static final byte worldBossLevelMin = 1;
     private static final byte worldBossLevelMax = 8;
+    private static final byte expeditionPlaceMin = 1;
+    private static final byte expeditionPlaceMax = 4;
 
     public final String cfgProfileName;
     public final byte raidLevel;
     public final byte raidMode;
     public final byte worldBossLevel;
+    public final byte expeditionPlace;
 
-    public UserConfig(String cfgProfileName, byte raidLevel, byte raidMode, byte worldBossLevel) {
+    public UserConfig(String cfgProfileName, byte raidLevel, byte raidMode, byte worldBossLevel, byte expeditionPlace) {
         this.cfgProfileName = cfgProfileName;
         this.raidLevel = raidLevel;
         this.raidMode = raidMode;
         this.worldBossLevel = worldBossLevel;
+        this.expeditionPlace = expeditionPlace;
     }
 
     public String getRaidLevelDesc() {
@@ -44,6 +49,13 @@ public class UserConfig {
         return getWorldBossLevelDesc(worldBossLevel);
     }
 
+    public String getExpeditionPlaceDesc() {
+        if (!isValidExpeditionPlace())
+            throw new InvalidDataException("Invalid Expedition place number %d. Must in range %d to %d", expeditionPlace,
+                    expeditionPlaceMin, expeditionPlaceMax);
+        return getExpeditionPlaceDesc(worldBossLevel);
+    }
+
     public String getRaidModeDesc() {
         return getDifficultyModeDesc(raidMode, "Raid");
     }
@@ -56,12 +68,20 @@ public class UserConfig {
         return worldBossLevel >= worldBossLevelMin && worldBossLevel <= worldBossLevelMax;
     }
 
+    public boolean isValidExpeditionPlace() {
+        return expeditionPlace >= expeditionPlaceMin && expeditionPlace <= expeditionPlaceMax;
+    }
+
     public static Tuple2<Byte, Byte> getRaidLevelRange() {
         return new Tuple2<>(raidLevelMin, raidLevelMax);
     }
 
     public static Tuple2<Byte, Byte> getWorldBossLevelRange() {
         return new Tuple2<>(worldBossLevelMin, worldBossLevelMax);
+    }
+
+    public static Tuple2<Byte, Byte> getExpeditionPlaceRange() {
+        return new Tuple2<>(expeditionPlaceMin, expeditionPlaceMax);
     }
 
     public static Tuple2<Byte, Byte> getModeRange() {
@@ -111,6 +131,7 @@ public class UserConfig {
         return String.format("R%d (T%d)", level, level + 3);
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     public static String getWorldBossLevelDesc(int level) {
         switch (level) {
             case 1:
@@ -131,6 +152,22 @@ public class UserConfig {
                 return "The Wolf's Deception (T13-T16)";
             default:
                 return "Unknown (T?-T?)";
+        }
+    }
+
+    @SuppressWarnings("SpellCheckingInspection")
+    public static String getExpeditionPlaceDesc(int number) {
+        switch (number) {
+            case 1:
+                return "Raleib (InfernoD) / GooGarum (HallowedD) / Zorgo (JammieD) / Blublix (IdolD) / Hero (BattleB) ";
+            case 2:
+                return "Blemo (InfernoD) / Svord (HallowedD) / Yackerz (JammieD) / Mowhi (IdolD) / Burning (BattleB) ";
+            case 3:
+                return "Gummy (InfernoD) / Twimbo (HallowedD) / Vionot (JammieD) / Wizbot (IdolD) / Melvapaloozo (BattleB) ";
+            case 4:
+                return "Zarlock (InfernoD) / X5-T34M (HallowedD) / Grampa (JammieD) / Astamus (IdolD) / Bitstock (BattleB) ";
+            default:
+                return "Unknown ?";
         }
     }
 }
