@@ -428,16 +428,19 @@ public class AfkApp extends AbstractApplication {
             eventList.add(AttendablePlaces.raid);
         //
         if (eventList.size() == 0) {
-
-            final List<MenuItem> menuItems = Stream
-                    .concat(allAttendablePlaces.stream().map(MenuItem::from), Stream.of(
-                            MenuItem.from(AttendablePlaces.invasion, AttendablePlaces.trials),
-                            MenuItem.from(AttendablePlaces.expedition, AttendablePlaces.trials),
-                            MenuItem.from(AttendablePlaces.gvg, AttendablePlaces.gauntlet),
-                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid),
-                            MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid,
-                                    AttendablePlaces.expedition, AttendablePlaces.trials)))
-                    .collect(Collectors.toList());
+            final List<MenuItem> menuItems = Stream.of(
+                    MenuItem.from(AttendablePlaces.pvp),
+                    MenuItem.from(AttendablePlaces.worldBoss),
+                    MenuItem.from(AttendablePlaces.raid),
+                    MenuItem.from(AttendablePlaces.invasion),
+                    MenuItem.from("GVG/Expedition", AttendablePlaces.gvg, AttendablePlaces.expedition),
+                    MenuItem.from("GVG/Expedition/Invasion", AttendablePlaces.gvg, AttendablePlaces.expedition, AttendablePlaces.invasion),
+                    MenuItem.from("Trials/Gauntlet", AttendablePlaces.trials, AttendablePlaces.gauntlet),
+                    MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid),
+                    MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid,
+                            AttendablePlaces.expedition, AttendablePlaces.trials),
+                    MenuItem.from("All", allAttendablePlaces.toArray(new AttendablePlace[0]))
+            ).collect(Collectors.toList());
 
             String menuItem = menuItems.stream().map(x -> String.format("  %3d. %s", x.num, x.name))
                     .collect(Collectors.joining("\n"));
