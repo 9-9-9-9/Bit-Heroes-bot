@@ -54,7 +54,7 @@ public class ExpeditionApp extends AbstractDoFarmingApp {
 
     @Override
     protected String getLimitationExplain() {
-        return "This function does not support select badge cost, so choose it before turn this on";
+        return "Expedition does not support select badge cost, so choose it before turn this on";
     }
 
     @Override

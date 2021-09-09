@@ -36,9 +36,8 @@ public class MiniClientLinuxJna extends AbstractLinuxJna {
                 debug("internalTryToCloseGameWindow: Output of ps command has invalid format: %s", psOutput);
                 continue;
             }
-            int pid = Integer.parseInt(spl[0]);
-            startProcess("kill", "-9", String.valueOf(pid));
 
+            int pid = Integer.parseInt(spl[0]);
             new ProcessBuilder(new String[]{
                     "kill", "-9", String.valueOf(pid)
             }).start().waitFor();

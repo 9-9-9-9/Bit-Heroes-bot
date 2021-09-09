@@ -31,6 +31,6 @@ public class TrialsApp extends AbstractDoFarmingApp {
 
     @Override
     protected String getLimitationExplain() {
-        return "This function does not support select difficulty and token cost, so choose it before turn this on";
+        return "Trials does not support select difficulty and token cost, so choose it before turn this on";
     }
 }

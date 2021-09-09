@@ -1,9 +1,11 @@
 package bh.bot.common.types;
 
+import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.types.tuples.Tuple4;
 
 import java.awt.*;
 
+@SuppressWarnings("SpellCheckingInspection")
 public abstract class ScreenResolutionProfile {
 	public abstract String getName();
 
@@ -98,6 +100,46 @@ public abstract class ScreenResolutionProfile {
 	public abstract Offset getOffsetEnterIdolDimensionWizBot();
 
 	public abstract Offset getOffsetEnterIdolDimensionAstamus();
+
+	public abstract Offset getOffsetLabelInfernoDimension();
+
+	public abstract Offset getOffsetEnterInfernoDimensionRaleib();
+
+	public abstract Offset getOffsetEnterInfernoDimensionBlemo();
+
+	public abstract Offset getOffsetEnterInfernoDimensionGummy();
+
+	public abstract Offset getOffsetEnterInfernoDimensionZarlock();
+
+	public abstract Offset getOffsetLabelHallowedDimension();
+
+	public abstract Offset getOffsetEnterHallowedDimensionGooGarum();
+
+	public abstract Offset getOffsetEnterHallowedDimensionSvord();
+
+	public abstract Offset getOffsetEnterHallowedDimensionTwimbo();
+
+	public abstract Offset getOffsetEnterHallowedDimensionX5T34M();
+
+	public abstract Offset getOffsetLabelJammieDimension();
+
+	public abstract Offset getOffsetEnterJammieDimensionZorgo();
+
+	public abstract Offset getOffsetEnterJammieDimensionYackerz();
+
+	public abstract Offset getOffsetEnterJammieDimensionVionot();
+
+	public abstract Offset getOffsetEnterJammieDimensionGrampa();
+
+	public abstract Offset getOffsetLabelBattleBards();
+
+	public abstract Offset getOffsetEnterBattleBardsHero();
+
+	public abstract Offset getOffsetEnterBattleBardsBurning();
+
+	public abstract Offset getOffsetEnterBattleBardsMelvapaloozo();
+
+	public abstract Offset getOffsetEnterBattleBardsBitstock();
 
 	public abstract Offset getOffsetDialogNotEnoughInvasionBadges();
 
@@ -492,6 +534,106 @@ public abstract class ScreenResolutionProfile {
 		}
 
 		@Override
+		public Offset getOffsetLabelInfernoDimension() {
+			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterInfernoDimensionRaleib() {
+			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterInfernoDimensionBlemo() {
+			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterInfernoDimensionGummy() {
+			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterInfernoDimensionZarlock() {
+			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetLabelHallowedDimension() {
+			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterHallowedDimensionGooGarum() {
+			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterHallowedDimensionSvord() {
+			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterHallowedDimensionTwimbo() {
+			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterHallowedDimensionX5T34M() {
+			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetLabelJammieDimension() {
+			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterJammieDimensionZorgo() {
+			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterJammieDimensionYackerz() {
+			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterJammieDimensionVionot() {
+			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterJammieDimensionGrampa() {
+			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetLabelBattleBards() {
+			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterBattleBardsHero() {
+			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterBattleBardsBurning() {
+			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterBattleBardsMelvapaloozo() {
+			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterBattleBardsBitstock() {
+			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
+		}
+
+		@Override
 		public Offset getOffsetButtonAcceptExpedition() {
 			return new Offset(474, 457);
 		}
@@ -661,17 +803,17 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetButtonPlayInvasion() {
-			return null;
+			return new Offset(513, 250);
 		}
 
 		@Override
 		public Offset getOffsetButtonAcceptInvasion() {
-			return null;
+			return new Offset(470, 424);
 		}
 
 		@Override
 		public Offset getOffsetButtonTownAfterCompetedInvasion() {
-			return null;
+			return new Offset(388, 435);
 		}
 
 		@Override
@@ -837,6 +979,106 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetEnterIdolDimensionAstamus() {
 			return new Offset(400, 286);
+		}
+
+		@Override
+		public Offset getOffsetLabelInfernoDimension() {
+			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterInfernoDimensionRaleib() {
+			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterInfernoDimensionBlemo() {
+			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterInfernoDimensionGummy() {
+			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterInfernoDimensionZarlock() {
+			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetLabelHallowedDimension() {
+			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterHallowedDimensionGooGarum() {
+			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterHallowedDimensionSvord() {
+			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterHallowedDimensionTwimbo() {
+			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterHallowedDimensionX5T34M() {
+			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetLabelJammieDimension() {
+			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterJammieDimensionZorgo() {
+			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterJammieDimensionYackerz() {
+			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterJammieDimensionVionot() {
+			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterJammieDimensionGrampa() {
+			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetLabelBattleBards() {
+			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterBattleBardsHero() {
+			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterBattleBardsBurning() {
+			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterBattleBardsMelvapaloozo() {
+			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
+		}
+
+		@Override
+		public Offset getOffsetEnterBattleBardsBitstock() {
+			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
 		}
 
 		@Override

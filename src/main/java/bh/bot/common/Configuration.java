@@ -75,7 +75,7 @@ public class Configuration {
         if (isBlank(profileName))
             throw new InvalidDataException("profileName");
 
-        warn("You must move the Bit Heroes game's window to top left corner of your screen or provide exactly screen offset into the 'offset.screen.x & y' keys");
+        warn("You must move the Bit Heroes game's window to top left corner of your screen or provide exactly screen offset into the 'offset.screen.x & y' keys. See more: https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Manually-setting-game-screen-coordinate");
         if (isSteamProfile)
             warn("Your Bit Heroes game window must be 800x480. You can check it by open Settings, see the Windowed option");
 

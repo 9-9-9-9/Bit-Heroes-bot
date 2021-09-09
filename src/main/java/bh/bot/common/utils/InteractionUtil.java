@@ -66,10 +66,6 @@ public class InteractionUtil {
 			moveCursor(p);
 			sleep(300);
 			mouseClick();
-			// sleep(200);
-			// moveCursor(p);
-			// sleep(100);
-			// mouseClick();
 			sleep(200);
 			hideCursor();
 		}
@@ -81,7 +77,8 @@ public class InteractionUtil {
 		public static void clickRadioButton(int level, Point[] points, String evName) {
 			if (level < 1 || level > points.length)
 				throw new InvalidDataException(
-						"Can not select level %d of %s because it's not exists, do you setup wrongly?", level, evName);
+						"Can not select level %d of %s because it's not exists, do you setup wrongly?", level, evName
+				);
 			Point p = points[level - 1];
 			moveCursor(new Point(p.x + 7, p.y + 7));
 			sleep(500);
@@ -161,7 +158,8 @@ public class InteractionUtil {
 					stepY = backwardScanLeftAttendablePlaces._3;
 					maxX = backwardScanLeftAttendablePlaces._4;
 				} else { // right
-					Tuple4<Integer, Integer, Integer, Integer> backwardScanRightAttendablePlaces = Configuration.screenResolutionProfile
+					Tuple4<Integer, Integer, Integer, Integer> backwardScanRightAttendablePlaces = Configuration
+							.screenResolutionProfile
 							.getBackwardScanRightSideAttendablePlaces();
 					minX = backwardScanRightAttendablePlaces._1;
 					firstY = backwardScanRightAttendablePlaces._2;

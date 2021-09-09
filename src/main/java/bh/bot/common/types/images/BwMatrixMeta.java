@@ -274,7 +274,11 @@ public class BwMatrixMeta {
             }
 
             public static class Labels {
+                public static BwMatrixMeta infernoDimension;
+                public static BwMatrixMeta hallowedDimension;
+                public static BwMatrixMeta jammieDimension;
                 public static BwMatrixMeta idolDimension;
+                public static BwMatrixMeta battleBards;
             }
         }
 

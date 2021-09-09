@@ -126,10 +126,6 @@ public class AfkApp extends AbstractApplication {
                         boolean doGauntlet //
     ) {
         try {
-
-            if (doInvasion && Configuration.isSteamProfile)
-                throw new NotSupportedException("Invasion has not been supported on Steam mode");
-
             info(ColorizeUtil.formatInfo, "\n\nStarting AFK");
             boolean isUnknownGvgOrInvasionOrExpedition = (doGvg && doInvasion) || (doGvg && doExpedition)
                     || (doInvasion && doExpedition);
@@ -460,7 +456,7 @@ public class AfkApp extends AbstractApplication {
                     MenuItem.from("Trials/Gauntlet", AttendablePlaces.trials, AttendablePlaces.gauntlet),
                     MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid),
                     MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid,
-                            AttendablePlaces.expedition, AttendablePlaces.trials),
+                            AttendablePlaces.invasion, AttendablePlaces.gauntlet),
                     MenuItem.from("All", allAttendablePlaces.toArray(new AttendablePlace[0]))
             ).collect(Collectors.toList());
 
@@ -521,7 +517,7 @@ public class AfkApp extends AbstractApplication {
 
     @Override
     protected String getDescription() {
-        return "It helps you AFK by automatically consume PVP/World Boss/GVG/Invasion/Trials/Gauntlet turns";
+        return "AFK automatically consume PVP/World Boss/GVG/Invasion/Trials/Gauntlet turns, thus you can away from keyboard";
     }
 
     @Override
