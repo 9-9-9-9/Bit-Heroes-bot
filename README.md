@@ -56,7 +56,7 @@ Tips 2: see help
 - Linux/MacOS: run script `./help.sh`
 
 ##### Optional configuration:
-- [Configure Raid/World Boss](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Select-Raid-World-Boss-level,-mode,..-using-%60setting%60-function):
+- [Configure Raid/World Boss/Expedition](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Select-Raid-World-Boss-level,-mode,..-using-%60setting%60-function):
   - Windows: run file `setting.bat`
   - Linux/MacOS: run script `./setting.sh`
 - [push notification via Telegram](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)

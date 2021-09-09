@@ -37,7 +37,6 @@ public class MiniClientLinuxJna extends AbstractLinuxJna {
                 continue;
             }
             int pid = Integer.parseInt(spl[0]);
-            startProcess("kill", "-9", String.valueOf(pid));
 
             new ProcessBuilder(new String[]{
                     "kill", "-9", String.valueOf(pid)
