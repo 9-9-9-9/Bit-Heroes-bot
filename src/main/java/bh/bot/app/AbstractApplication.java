@@ -1,6 +1,7 @@
 package bh.bot.app;
 
 import bh.bot.Main;
+import bh.bot.app.farming.ExpeditionApp;
 import bh.bot.common.Configuration;
 import bh.bot.common.OS;
 import bh.bot.common.Telegram;
@@ -27,8 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -659,30 +659,59 @@ public abstract class AbstractApplication {
         }
     }
 
+    private final HashMap<BwMatrixMeta, Offset[]> expeditionMap =
+            this instanceof AfkApp || this instanceof ExpeditionApp
+                    ? new HashMap<BwMatrixMeta, Offset[]>() {{
+                put(BwMatrixMeta.Metas.Expedition.Labels.infernoDimension, new Offset[]{
+                        Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionRaleib(),
+                        Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionBlemo(),
+                        Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionGummy(),
+                        Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionZarlock(),
+                });
+                put(BwMatrixMeta.Metas.Expedition.Labels.hallowedDimension, new Offset[]{
+                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionGooGarum(),
+                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionSvord(),
+                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionTwimbo(),
+                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionX5T34M(),
+                });
+                put(BwMatrixMeta.Metas.Expedition.Labels.jammieDimension, new Offset[]{
+                        Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionZorgo(),
+                        Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionYackerz(),
+                        Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionVionot(),
+                        Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionGrampa(),
+                });
+                put(BwMatrixMeta.Metas.Expedition.Labels.idolDimension, new Offset[]{
+                        Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionBlubLix(),
+                        Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionMowhi(),
+                        Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionWizBot(),
+                        Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionAstamus(),
+                });
+                put(BwMatrixMeta.Metas.Expedition.Labels.battleBards, new Offset[]{
+                        Configuration.screenResolutionProfile.getOffsetEnterBattleBardsHero(),
+                        Configuration.screenResolutionProfile.getOffsetEnterBattleBardsBurning(),
+                        Configuration.screenResolutionProfile.getOffsetEnterBattleBardsMelvapaloozo(),
+                        Configuration.screenResolutionProfile.getOffsetEnterBattleBardsBitstock(),
+                });
+            }}
+                    : null;
+
     protected boolean tryEnterExpedition(boolean doExpedition, byte place) {
-        if (doExpedition && clickImage(BwMatrixMeta.Metas.Expedition.Labels.idolDimension)) {
-            Point p;
-            switch (place) {
-                case 1:
-                    p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionBlubLix().toScreenCoordinate();
-                    break;
-                case 2:
-                    p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionMowhi().toScreenCoordinate();
-                    break;
-                case 3:
-                    p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionWizBot().toScreenCoordinate();
-                    break;
-                case 4:
-                    p = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionAstamus().toScreenCoordinate();
-                    break;
-                default:
-                    return false;
+        if (!doExpedition)
+            return false;
+
+        for (Map.Entry<BwMatrixMeta, Offset[]> entry : expeditionMap.entrySet()) {
+            if (entry.getKey() == null)
+                continue;
+
+            if (clickImage(entry.getKey())) {
+                Point p = entry.getValue()[place - 1].toScreenCoordinate();
+                mouseMoveAndClickAndHide(p);
+                sleep(5_000);
+                hideCursor();
+                return true;
             }
-            mouseMoveAndClickAndHide(p);
-            sleep(5_000);
-            hideCursor();
-            return true;
         }
+
         return false;
     }
 
