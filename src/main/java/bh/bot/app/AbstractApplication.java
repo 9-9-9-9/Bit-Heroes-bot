@@ -810,7 +810,6 @@ public abstract class AbstractApplication {
     }
 
     protected byte selectExpeditionPlace() {
-        //noinspection StringBufferReplaceableByString
         StringBuilder sb = new StringBuilder("Select a place to do Expedition:\n");
         final Tuple2<Byte, Byte> expeditionPlaceRange = UserConfig.getExpeditionPlaceRange();
         for (int i = expeditionPlaceRange._1; i <= expeditionPlaceRange._2; i++)
@@ -945,8 +944,8 @@ public abstract class AbstractApplication {
             final String prefix = "readonly.";
             final String suffix = ".user-config.properties";
             boolean foundAny = false;
-            for (File file : Arrays.stream(new File(".").listFiles())
-                    .filter(x -> x.isFile())
+            for (File file : Arrays.stream(Objects.requireNonNull(new File(".").listFiles()))
+                    .filter(File::isFile)
                     .sorted().collect(Collectors.toList())) {
                 String name = file.getName();
                 if (!name.startsWith(prefix) || !name.endsWith(suffix))
