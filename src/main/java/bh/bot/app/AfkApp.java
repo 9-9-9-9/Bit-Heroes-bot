@@ -521,7 +521,7 @@ public class AfkApp extends AbstractApplication {
 
     @Override
     protected String getDescription() {
-        return "It helps you AFK by automatically consume PVP/World Boss/GVG/Invasion/Trials/Gauntlet turns";
+        return "AFK automatically consume PVP/World Boss/GVG/Invasion/Trials/Gauntlet turns, thus you can away from keyboard";
     }
 
     @Override

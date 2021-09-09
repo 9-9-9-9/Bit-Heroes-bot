@@ -33,6 +33,6 @@ public class PvpApp extends AbstractDoFarmingApp {
 
     @Override
     protected String getLimitationExplain() {
-        return "This function only hit first opponent and does not support select PVP ticket cost, so choose it before turn this on";
+        return "PVP only hit first opponent and does not support select PVP ticket cost, so choose it before turn this on";
     }
 }
