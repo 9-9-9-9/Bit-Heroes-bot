@@ -662,6 +662,7 @@ public abstract class AbstractApplication {
     private final HashMap<BwMatrixMeta, Offset[]> expeditionMap =
             this instanceof AfkApp || this instanceof ExpeditionApp
                     ? new HashMap<BwMatrixMeta, Offset[]>() {{
+            	/*
                 put(BwMatrixMeta.Metas.Expedition.Labels.infernoDimension, new Offset[]{
                         Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionRaleib(),
                         Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionBlemo(),
@@ -680,18 +681,21 @@ public abstract class AbstractApplication {
                         Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionVionot(),
                         Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionGrampa(),
                 });
+                */
                 put(BwMatrixMeta.Metas.Expedition.Labels.idolDimension, new Offset[]{
                         Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionBlubLix(),
                         Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionMowhi(),
                         Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionWizBot(),
                         Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionAstamus(),
                 });
+                /*
                 put(BwMatrixMeta.Metas.Expedition.Labels.battleBards, new Offset[]{
                         Configuration.screenResolutionProfile.getOffsetEnterBattleBardsHero(),
                         Configuration.screenResolutionProfile.getOffsetEnterBattleBardsBurning(),
                         Configuration.screenResolutionProfile.getOffsetEnterBattleBardsMelvapaloozo(),
                         Configuration.screenResolutionProfile.getOffsetEnterBattleBardsBitstock(),
                 });
+                */
             }}
                     : null;
 

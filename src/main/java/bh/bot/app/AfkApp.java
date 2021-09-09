@@ -126,10 +126,6 @@ public class AfkApp extends AbstractApplication {
                         boolean doGauntlet //
     ) {
         try {
-
-            if (doInvasion && Configuration.isSteamProfile)
-                throw new NotSupportedException("Invasion has not been supported on Steam mode");
-
             info(ColorizeUtil.formatInfo, "\n\nStarting AFK");
             boolean isUnknownGvgOrInvasionOrExpedition = (doGvg && doInvasion) || (doGvg && doExpedition)
                     || (doInvasion && doExpedition);
@@ -460,7 +456,7 @@ public class AfkApp extends AbstractApplication {
                     MenuItem.from("Trials/Gauntlet", AttendablePlaces.trials, AttendablePlaces.gauntlet),
                     MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid),
                     MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid,
-                            AttendablePlaces.expedition, AttendablePlaces.trials),
+                            AttendablePlaces.invasion, AttendablePlaces.gauntlet),
                     MenuItem.from("All", allAttendablePlaces.toArray(new AttendablePlace[0]))
             ).collect(Collectors.toList());
 

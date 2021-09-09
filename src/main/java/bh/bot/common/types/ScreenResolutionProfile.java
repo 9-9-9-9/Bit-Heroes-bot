@@ -803,17 +803,17 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetButtonPlayInvasion() {
-			return null;
+			return new Offset(513, 250);
 		}
 
 		@Override
 		public Offset getOffsetButtonAcceptInvasion() {
-			return null;
+			return new Offset(470, 424);
 		}
 
 		@Override
 		public Offset getOffsetButtonTownAfterCompetedInvasion() {
-			return null;
+			return new Offset(388, 435);
 		}
 
 		@Override
