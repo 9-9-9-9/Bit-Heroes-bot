@@ -88,7 +88,7 @@ public class FlagDoAfk extends FlagPattern<FlagDoAfk.AfkBatch> {
             } else if (c == codeGauntlet) {
                 result.doGauntlet = true;
             } else {
-                throw new NotSupportedException(String.format("Unrecognized code value '%s' for flag '%s'. Accepted values are: %s", c, getCode(), shortDesc));
+                throw new InvalidFlagException(String.format("Unrecognized code value '%s' for flag '%s'. Accepted values are: %s", c, getCode(), shortDesc));
             }
         }
 
