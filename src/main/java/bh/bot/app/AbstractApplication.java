@@ -533,7 +533,7 @@ public abstract class AbstractApplication {
 
             return new Tuple2<>(
                     startingCoords.stream()
-                    .map(c -> new Point(screenCapturedResult.x + c.x, screenCapturedResult.y + c.y)).toArray(Point[]::new),
+                            .map(c -> new Point(screenCapturedResult.x + c.x, screenCapturedResult.y + c.y)).toArray(Point[]::new),
                     (byte) selectedRadioButtonIndex
             );
         }
@@ -646,13 +646,19 @@ public abstract class AbstractApplication {
                 exitAfterXSecs--;
                 sleep(1000);
 
-                int divBy = 60;
+                int divBy;
                 if (exitAfterXSecs >= 3600)
                     divBy = 900;
                 else if (exitAfterXSecs >= 600)
-                    divBy = 300;
+                    divBy = 600;
                 else if (exitAfterXSecs >= 300)
                     divBy = 120;
+                else if (exitAfterXSecs >= 60)
+                    divBy = 60;
+                else if (exitAfterXSecs >= 10)
+                    divBy = 10;
+                else
+                    divBy = 1;
 
                 if (exitAfterXSecs % divBy == 0)
                     info("Exit after %s", TimeUtil.niceTimeLong(exitAfterXSecs));
@@ -968,8 +974,8 @@ public abstract class AbstractApplication {
                 StringBuilder sb2 = new StringBuilder();
                 ArrayList<Byte> chars = new ArrayList<>();
                 for (char c : name.toCharArray())
-                    chars.add((byte)c);
-                chars.stream().skip(prefix.length()).limit(name.length() - prefix.length() - suffix.length()).forEach(c -> sb2.append((char)c.byteValue()));
+                    chars.add((byte) c);
+                chars.stream().skip(prefix.length()).limit(name.length() - prefix.length() - suffix.length()).forEach(c -> sb2.append((char) c.byteValue()));
                 String cfgProfileName = sb2.toString();
                 if (cfgProfileName.length() > 0) {
                     if (!ValidationUtil.isValidUserProfileName(cfgProfileName))
