@@ -450,8 +450,6 @@ public class AfkApp extends AbstractApplication {
                     MenuItem.from(AttendablePlaces.pvp),
                     MenuItem.from(AttendablePlaces.worldBoss),
                     MenuItem.from(AttendablePlaces.raid),
-                    MenuItem.from(AttendablePlaces.invasion),
-                    MenuItem.from("GVG/Expedition", AttendablePlaces.gvg, AttendablePlaces.expedition),
                     MenuItem.from("GVG/Expedition/Invasion", AttendablePlaces.gvg, AttendablePlaces.expedition, AttendablePlaces.invasion),
                     MenuItem.from("Trials/Gauntlet", AttendablePlaces.trials, AttendablePlaces.gauntlet),
                     MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid),

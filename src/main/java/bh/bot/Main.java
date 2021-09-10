@@ -216,6 +216,7 @@ public class Main {
 
         // Parse param
         int exitAfter = 0;
+        FlagDoAfk.AfkBatch afkBatch = new FlagDoAfk.AfkBatch();
         String cfgProfileName = null;
         for (FlagPattern flagPattern : usingFlagPatterns) {
             if (!flagPattern.isAllowParam())
@@ -228,6 +229,11 @@ public class Main {
 
             if (flagPattern instanceof FlagProfileName) {
                 cfgProfileName = ((FlagProfileName) flagPattern).parseParams().get(0);
+                continue;
+            }
+
+            if (flagPattern instanceof FlagDoAfk) {
+                afkBatch = ((FlagDoAfk) flagPattern).parseParams().get(0);
                 continue;
             }
 
@@ -287,14 +293,14 @@ public class Main {
         li.cfgProfileName = cfgProfileName;
         li.hasFlagAll = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagAll);
         // events
-        li.eWorldBoss = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);
-        li.ePvp = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoPvp);
-        li.eInvasion = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoInvasion);
-        li.eExpedition = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoExpedition);
-        li.eGvg = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoGvG);
-        li.eTrials = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoTrials);
-        li.eGauntlet = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoGauntlet);
-        li.eRaid = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoRaid);
+        li.ePvp = afkBatch.doPvp || usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoPvp);
+        li.eWorldBoss = afkBatch.doWorldBoss || usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);
+        li.eRaid = afkBatch.doRaid || usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoRaid);
+        li.eInvasion = afkBatch.doInvasion || usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoInvasion);
+        li.eExpedition = afkBatch.doExpedition || usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoExpedition);
+        li.eGvg = afkBatch.doGvg || usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoGvG);
+        li.eTrials = afkBatch.doTrials || usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoTrials);
+        li.eGauntlet = afkBatch.doGauntlet || usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoGauntlet);
         // end events
         return li;
     }
