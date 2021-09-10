@@ -518,6 +518,6 @@ public class AfkApp extends AbstractApplication {
 
     @Override
     protected String getLimitationExplain() {
-        return "This function does not support select level/mode, how many badge/ticket/... to consumes and can only everything by default so please chose everything first manually then use this";
+        return "This AFK function does not support select level/mode, how many badge/ticket/... to consumes and can only everything by default so please chose everything first manually then use this";
     }
 }
