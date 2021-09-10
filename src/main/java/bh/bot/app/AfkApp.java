@@ -424,8 +424,6 @@ public class AfkApp extends AbstractApplication {
                 AttendablePlaces.worldBoss, //
                 AttendablePlaces.raid //
         );
-        if (argumentInfo.hasFlagAll)
-            eventList.addAll(allAttendablePlaces);
         //
         if (argumentInfo.eInvasion)
             eventList.add(AttendablePlaces.invasion);

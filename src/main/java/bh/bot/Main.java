@@ -291,7 +291,6 @@ public class Main {
         li.disableTelegramNoti = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagMuteNoti);
         li.screenResolutionProfile = screenResolutionProfile;
         li.cfgProfileName = cfgProfileName;
-        li.hasFlagAll = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagAll);
         // events
         li.ePvp = afkBatch.doPvp || usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoPvp);
         li.eWorldBoss = afkBatch.doWorldBoss || usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);
