@@ -642,7 +642,7 @@ public abstract class AbstractApplication {
         try {
             if (exitAfterXSecs < 1)
                 return;
-            while (exitAfterXSecs > 0) {
+            while (exitAfterXSecs > 0 && !masterSwitch.get()) {
                 exitAfterXSecs--;
                 sleep(1000);
 
