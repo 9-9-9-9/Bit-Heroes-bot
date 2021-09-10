@@ -32,6 +32,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import bh.bot.common.utils.TimeUtil;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.fusesource.jansi.AnsiConsole;
@@ -43,14 +44,15 @@ import static bh.bot.common.utils.StringUtil.isBlank;
 @SuppressWarnings("deprecation")
 public class Main {
     public static final String botName = "99bot";
-	public static boolean forceDisableAnsi = false;
+    public static boolean forceDisableAnsi = false;
+
     public static void main(String[] args) {
-    	try {
-        	AnsiConsole.systemInstall();
-    	} catch (Throwable t) {
-    		System.err.println("Failure initialization ansi console! Error message: " + t.getMessage());
-    		forceDisableAnsi = true;
-    	}
+        try {
+            AnsiConsole.systemInstall();
+        } catch (Throwable t) {
+            System.err.println("Failure initialization ansi console! Error message: " + t.getMessage());
+            forceDisableAnsi = true;
+        }
         try {
             Configuration.registerApplicationClasses( //
                     SettingApp.class, //
@@ -97,19 +99,19 @@ public class Main {
         sb.append("Select a function you want to launch:");
         AppMeta meta = readInput(sb.toString(), null, s -> {
             try {
-            	int num = Integer.parseInt(s);
-            	return new Tuple3<>(true, null, applicationClasses.get(num - 1)._2);
+                int num = Integer.parseInt(s);
+                return new Tuple3<>(true, null, applicationClasses.get(num - 1)._2);
             } catch (NumberFormatException | IndexOutOfBoundsException ex) {
-				return new Tuple3<>(false, "Not a valid option, please try again", null);
+                return new Tuple3<>(false, "Not a valid option, please try again", null);
             }
         });
 
         info(ColorizeUtil.formatInfo, "You selected function:");
         info(ColorizeUtil.formatAsk, "  %s", meta.name());
 
-		ArrayList<String> lArgs = new ArrayList<>();
-		lArgs.add(meta.code());
-		lArgs.addAll(Arrays.stream(args).map(String::trim).filter(x -> x.startsWith("--")).distinct().collect(Collectors.toList()));
+        ArrayList<String> lArgs = new ArrayList<>();
+        lArgs.add(meta.code());
+        lArgs.addAll(Arrays.stream(args).map(String::trim).filter(x -> x.startsWith("--")).distinct().collect(Collectors.toList()));
 
         FlagPrintHelpMessage flagHelp = new FlagPrintHelpMessage();
         if (lArgs.stream().anyMatch(x -> x.equalsIgnoreCase(flagHelp.getCode())))
@@ -145,8 +147,8 @@ public class Main {
             }
         }
 
-		return lArgs.toArray(new String[0]);
-	}
+        return lArgs.toArray(new String[0]);
+    }
 
     private static void process(String[] args) throws Exception {
         ParseArgumentsResult parseArgumentsResult = parseArguments(args);
@@ -242,11 +244,7 @@ public class Main {
                             flagPattern.getClass().getSimpleName()));
         }
 
-        if (exitAfter >= 3600) {
-            int h = exitAfter / 3600;
-            int m = (exitAfter - h * 3600) / 60;
-            info("Application will exit after %d hours and %d minutes", h, m);
-        }
+        info("Application will exit after %s", TimeUtil.niceTimeLong(exitAfter));
 
         // Validate flags
         for (FlagPattern flagPattern : usingFlagPatterns)

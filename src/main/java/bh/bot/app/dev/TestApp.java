@@ -7,23 +7,20 @@ import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
-import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
-import bh.bot.common.utils.StringUtil;
+import bh.bot.common.utils.TimeUtil;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.RECT;
 
 import java.awt.*;
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.InteractionUtil.Mouse.clickRadioButton;
-import static bh.bot.common.utils.ColorizeUtil.*;
 
 @SuppressWarnings("unused")
 @AppMeta(code = "test", name = "Test Code", dev = true)
@@ -53,7 +50,7 @@ public class TestApp extends AbstractApplication {
 
     private static void assertTestTime(String input, int expect) {
         try {
-            if (StringUtil.parseTimeToSec(input) != expect)
+            if (TimeUtil.parseTimeToSec(input) != expect)
                 err("%10s != %-7d", input, expect);
         } catch (InvalidDataException ex) {
             err("Failure compare %10s vs %-7d: %s", input, expect, ex.getMessage());

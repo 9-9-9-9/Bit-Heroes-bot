@@ -645,8 +645,17 @@ public abstract class AbstractApplication {
             while (exitAfterXSecs > 0) {
                 exitAfterXSecs--;
                 sleep(1000);
-                if (exitAfterXSecs % 60 == 0)
-                    info("Exit after %d seconds", exitAfterXSecs);
+
+                int divBy = 60;
+                if (exitAfterXSecs >= 3600)
+                    divBy = 900;
+                else if (exitAfterXSecs >= 600)
+                    divBy = 300;
+                else if (exitAfterXSecs >= 300)
+                    divBy = 120;
+
+                if (exitAfterXSecs % divBy == 0)
+                    info("Exit after %s", TimeUtil.niceTimeLong(exitAfterXSecs));
                 if (masterSwitch.get())
                     break;
             }
