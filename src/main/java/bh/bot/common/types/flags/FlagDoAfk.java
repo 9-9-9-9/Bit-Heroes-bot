@@ -32,8 +32,10 @@ public class FlagDoAfk extends FlagPattern<FlagDoAfk.AfkBatch> {
 
     @Override
     public String getDescription() {
-        return String.format("Short way to include tasks to do by AFK. Accepted values are combination of: %s (PVP), %s (World Boss), %s (Raid), %s (Invasion), %s (Expedition), %s (GVG), %s (Gauntlet), %s (Trials), %s (Invasion/GVG/Expedition), %s (Trials/Gauntlet), %s (PVP/World Boss/Raid), %s (All)", codePvp, codeWorldBoss1, codeRaid, codeInvasion, codeExpedition, codeGVG, codeGauntlet, codeTrials, codeComboInvasionGvgExpedition, codeComboTrialsGauntlet, codeComboPvpWorldBossRaid, codeComboAll);
+        return String.format("Short way to include tasks to do by AFK. Accepted values are combination of: %s", shortDesc);
     }
+
+    private final String shortDesc = String.format("%s (PVP), %s (World Boss), %s (Raid), %s (Invasion), %s (Expedition), %s (GVG), %s (Gauntlet), %s (Trials), %s (Invasion/GVG/Expedition), %s (Trials/Gauntlet), %s (PVP/World Boss/Raid), %s (All)", codePvp, codeWorldBoss1, codeRaid, codeInvasion, codeExpedition, codeGVG, codeGauntlet, codeTrials, codeComboInvasionGvgExpedition, codeComboTrialsGauntlet, codeComboPvpWorldBossRaid, codeComboAll);
 
     @Override
     public boolean isAllowParam() {
@@ -86,7 +88,7 @@ public class FlagDoAfk extends FlagPattern<FlagDoAfk.AfkBatch> {
             } else if (c == codeGauntlet) {
                 result.doGauntlet = true;
             } else {
-                throw new NotSupportedException(String.format("Unrecognized code value '%s' for flag '%s'", c, getCode()));
+                throw new NotSupportedException(String.format("Unrecognized code value '%s' for flag '%s'. Accepted values are: %s", c, getCode(), shortDesc));
             }
         }
 
