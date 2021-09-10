@@ -662,8 +662,6 @@ public abstract class AbstractApplication {
 
                 if (exitAfterXSecs % divBy == 0)
                     info("Exit after %s", TimeUtil.niceTimeLong(exitAfterXSecs));
-                if (masterSwitch.get())
-                    break;
             }
             masterSwitch.set(true);
             info("Application is going to exit now");
