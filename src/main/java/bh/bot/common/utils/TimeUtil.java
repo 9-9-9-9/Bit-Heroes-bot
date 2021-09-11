@@ -78,7 +78,8 @@ public class TimeUtil {
             sb.append(h).append(" hours ");
         if (m > 0)
             sb.append(m).append(" minute").append(m > 1 ? "s " : " ");
-        sb.append(sec).append(" seconds");
-        return sb.toString();
+        if (sec > 0 || sb.length() == 0)
+            sb.append(sec).append(" seconds");
+        return sb.toString().trim();
     }
 }

@@ -49,7 +49,7 @@ public class Log {
         int offsetY = actualCoordinate.y - Configuration.gameScreenOffset.Y.get();
         if (imCoordinateOffset.X == offsetX && imCoordinateOffset.Y == offsetY)
             return;
-        if (Math.abs(imCoordinateOffset.X - offsetX) < 2 && Math.abs(imCoordinateOffset.Y - offsetY) < 2)
+        if (Math.abs(imCoordinateOffset.X - offsetX) <= Configuration.Tolerant.minPositionTolerant && Math.abs(imCoordinateOffset.Y - offsetY) <= Configuration.Tolerant.minPositionTolerant)
             return;
         try {
             throw new Exception("Un-match offset (for debugging purpose)");

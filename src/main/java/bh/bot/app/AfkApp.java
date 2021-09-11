@@ -35,6 +35,7 @@ import static bh.bot.common.utils.InteractionUtil.Keyboard.*;
 import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
+import static bh.bot.common.utils.ThreadUtil.waitDone;
 
 @AppMeta(code = "afk", name = "AFK", displayOrder = 1)
 public class AfkApp extends AbstractApplication {
@@ -99,7 +100,7 @@ public class AfkApp extends AbstractApplication {
         //
         final AtomicBoolean masterSwitch = new AtomicBoolean(false);
         final UserConfig finalUserConfig = userConfig;
-        ThreadUtil.waitDone(() -> doLoop(masterSwitch, finalUserConfig, //
+        waitDone(() -> doLoop(masterSwitch, finalUserConfig, //
                 eventList.contains(AttendablePlaces.pvp), //
                 eventList.contains(AttendablePlaces.worldBoss), //
                 eventList.contains(AttendablePlaces.raid), //
@@ -240,7 +241,6 @@ public class AfkApp extends AbstractApplication {
                         masterSwitch.set(true);
                         FlagExitAfkAfterIfWaitResourceGeneration flag = new FlagExitAfkAfterIfWaitResourceGeneration();
                         warn("Due to flag '%s', AFK will exit now", flag.getCode());
-                        info("Flag '%s': %s",flag.getCode(), flag.getDescription());
                     }
                     sleepWhileWaitingResourceRegen = originalSleepWhileWaitingResourceRegen;
                     continue ML;

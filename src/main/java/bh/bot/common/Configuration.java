@@ -49,6 +49,7 @@ public class Configuration {
     }
 
     public static class Tolerant {
+        public static final byte minPositionTolerant = 5;
         public static int position;
         public static int color;
         public static byte colorBw;
@@ -109,7 +110,7 @@ public class Configuration {
 
         gameScreenOffset = new AtomicOffset(Offset.fromKeyPrefix("offset.screen"));
 
-        Tolerant.position = Math.max(5, readInt("tolerant.position"));
+        Tolerant.position = Math.max(Tolerant.minPositionTolerant, readInt("tolerant.position"));
         Tolerant.color = Math.max(0, readInt("tolerant.color"));
         Tolerant.colorBw = (byte) Math.max(0, readInt("tolerant.color.bw"));
         Tolerant.colorBwL2 = (byte) Math.max(0, readInt("tolerant.color.bw.l2"));
