@@ -19,7 +19,7 @@ public class Telegram {
     //
     private static final String channelId = Configuration.getFromConfigOrEnv("telegram.channel-id", "TELEGRAM_BH_CHANNEL");
     //
-    private static boolean isDisabled = !isNotBlank(token) && !isNotBlank(channelId);
+    private static boolean isDisabled = isBlank(token) || isBlank(channelId);
 
     public static boolean isDisabled() {
         return isDisabled;
@@ -39,10 +39,11 @@ public class Telegram {
 
     public static void sendMessage(String msg, boolean critical) {
         if (isDisabled) {
+            dev("disabled Telegram::sendMessage");
             return;
         }
 
-        int retry = 10;
+        int retry = critical ? 20 : 10;
 
         while (retry > 0) {
             try {
@@ -76,10 +77,12 @@ public class Telegram {
             outputStreamWriter.close();
 
             int responseCode = httpURLConnection.getResponseCode();
-            debug("RC: %d", responseCode);
-            debug("RM: %s", httpURLConnection.getResponseMessage());
-            info("Telegram::sendMessage (%d): %s", responseCode, msg);
-            return responseCode == 200;
+
+            if (responseCode == 200)
+                return true;
+
+            err("Telegram::internalSendMessage failure with response code: %d, response msg: %s", responseCode, httpURLConnection.getResponseMessage());
+            return false;
         } finally {
             httpURLConnection.disconnect();
         }
