@@ -191,6 +191,8 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetDialogAreYouSureWantToExit();
 
+	public abstract Offset getOffsetDialogNews();
+
 	public static class WebProfile extends ScreenResolutionProfile {
 
 		@Override
@@ -636,6 +638,11 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetButtonAcceptExpedition() {
 			return new Offset(474, 457);
+		}
+
+		@Override
+		public Offset getOffsetDialogNews() {
+			return null;
 		}
 	}
 
@@ -1084,6 +1091,11 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetButtonAcceptExpedition() {
 			return new Offset(469, 424);
+		}
+
+		@Override
+		public Offset getOffsetDialogNews() {
+			return new Offset(359, 69);
 		}
 	}
 }

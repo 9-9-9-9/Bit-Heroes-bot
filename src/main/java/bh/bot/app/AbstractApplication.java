@@ -544,6 +544,7 @@ public abstract class AbstractApplication {
     private static final int smallTalkSleepSecsWhenClicked = 3;
     private static final int detectDcSleepSecs = 60;
     private static final int reactiveAutoSleepSecs = 10;
+    private static final int closeEnterGameDialogNewsSleepSecs = 60;
 
 	protected void internalDoSmallTasks(AtomicBoolean masterSwitch, SmallTasks st) {
 		try {
@@ -551,6 +552,7 @@ public abstract class AbstractApplication {
 			long nextDetectDcEpoch = addSec(detectDcSleepSecs);
 			long nextReactiveAuto = addSec(reactiveAutoSleepSecs);
 			final AtomicInteger continousRed = new AtomicInteger(0);
+			long nextCloseEnterGameDialogNews = addSec(closeEnterGameDialogNewsSleepSecs);
 			while (!masterSwitch.get()) {
 				sleep(1_000);
 				
@@ -565,6 +567,9 @@ public abstract class AbstractApplication {
 				
 				if (st.autoExit)
 					autoExit(masterSwitch);
+
+				if (st.closeEnterGameNewsDialog && nextCloseEnterGameDialogNews <= System.currentTimeMillis())
+					nextCloseEnterGameDialogNews = closeEnterGameDialogNews();
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -582,12 +587,14 @@ public abstract class AbstractApplication {
 		public final boolean clickDisconnect;
 		public final boolean reactiveAuto;
 		public final boolean autoExit;
+		public final boolean closeEnterGameNewsDialog;
 
 		private SmallTasks(Builder b) {
 			this.clickTalk = b.f(0);
 			this.clickDisconnect = b.f(1);
 			this.reactiveAuto = b.f(2);
 			this.autoExit = b.f(3);
+			this.closeEnterGameNewsDialog = b.f(4);
 		}
 
 		public static Builder builder() {
@@ -624,6 +631,10 @@ public abstract class AbstractApplication {
 
 			public Builder autoExit() {
 				return this.set(3);
+			}
+
+			public Builder closeEnterGameNewsDialog() {
+				return this.set(4);
 			}
 		}
 	}
@@ -697,6 +708,12 @@ public abstract class AbstractApplication {
 		sleep(1_000);
 
 		return next + 1_000;
+	}
+	
+	private long closeEnterGameDialogNews() {
+		if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.news))
+			sendEscape();
+		return addSec(closeEnterGameDialogNewsSleepSecs);
 	}
 
 	protected final long applicationStartTime = System.currentTimeMillis();

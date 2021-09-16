@@ -119,6 +119,7 @@ public class AfkApp extends AbstractApplication {
 								.clickDisconnect() //
 								.reactiveAuto() //
 								.autoExit() //
+								.closeEnterGameNewsDialog() //
 								.build() //
 				), //
 				() -> doCheckGameScreenOffset(masterSwitch) //
