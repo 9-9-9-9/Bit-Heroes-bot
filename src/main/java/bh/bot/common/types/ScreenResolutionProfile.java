@@ -642,7 +642,7 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetDialogNews() {
-			return null;
+			return new Offset(356, 77);
 		}
 	}
 
