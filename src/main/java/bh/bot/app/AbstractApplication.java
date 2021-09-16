@@ -19,7 +19,6 @@ import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.types.tuples.Tuple4;
 import bh.bot.common.utils.*;
-import bh.bot.common.utils.InteractionUtil.Screen.*;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
 import javax.imageio.ImageIO;
@@ -40,6 +39,7 @@ import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.ImageUtil.freeMem;
 import static bh.bot.common.utils.InteractionUtil.Mouse.*;
 import static bh.bot.common.utils.InteractionUtil.Screen.*;
+import static bh.bot.common.utils.InteractionUtil.Keyboard.*;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public abstract class AbstractApplication {
@@ -621,7 +621,10 @@ public abstract class AbstractApplication {
                         info("Detected Auto is not turned on, gonna reactive it soon");
                         moveCursor(point);
                         sleep(100);
-                        mouseClick();
+                        if (continousRed % 4 == 0)
+                        	sendSpaceKey();
+                        else
+                        	mouseClick();
                         hideCursor();
 
                         info("Sent re-active");
