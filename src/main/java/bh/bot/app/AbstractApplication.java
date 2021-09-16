@@ -768,10 +768,9 @@ public abstract class AbstractApplication {
 
     protected boolean tryEnterRaid(boolean doRaid, UserConfig userConfig, Supplier<Boolean> isBlocked) {
         Point coord = findImage(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog);
-        if (coord == null) {
-            debug("Label raid not found");
+        if (coord == null)
             return false;
-        }
+		
         if (isBlocked.get() || !doRaid) {
             spamEscape(1);
             return false;
