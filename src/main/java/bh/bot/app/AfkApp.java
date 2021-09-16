@@ -15,6 +15,7 @@ import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
+import bh.bot.common.utils.StringUtil;
 
 import java.awt.*;
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class AfkApp extends AbstractApplication {
         UserConfig userConfig = null;
 
         try {
-            eventList = getAttendablePlaces();
+            eventList = getAttendablePlaces(getEventListFromArg(args));
 
             boolean doRaid = eventList.contains(AttendablePlaces.raid);
             boolean doWorldBoss = eventList.contains(AttendablePlaces.worldBoss);
@@ -99,31 +100,31 @@ public class AfkApp extends AbstractApplication {
         //
         final AtomicBoolean masterSwitch = new AtomicBoolean(false);
         final UserConfig finalUserConfig = userConfig;
-		waitDone( //
-				() -> doLoop( //
-						masterSwitch, finalUserConfig, //
-						eventList.contains(AttendablePlaces.pvp), //
-						eventList.contains(AttendablePlaces.worldBoss), //
-						eventList.contains(AttendablePlaces.raid), //
-						eventList.contains(AttendablePlaces.gvg), //
-						eventList.contains(AttendablePlaces.invasion), //
-						eventList.contains(AttendablePlaces.expedition), //
-						eventList.contains(AttendablePlaces.trials), //
-						eventList.contains(AttendablePlaces.gauntlet) //
-				), //
-				() -> internalDoSmallTasks( //
-						masterSwitch, //
-						SmallTasks //
-								.builder() //
-								.clickTalk() //
-								.clickDisconnect() //
-								.reactiveAuto() //
-								.autoExit() //
-								.closeEnterGameNewsDialog() //
-								.build() //
-				), //
-				() -> doCheckGameScreenOffset(masterSwitch) //
-		);
+        waitDone( //
+                () -> doLoop( //
+                        masterSwitch, finalUserConfig, //
+                        eventList.contains(AttendablePlaces.pvp), //
+                        eventList.contains(AttendablePlaces.worldBoss), //
+                        eventList.contains(AttendablePlaces.raid), //
+                        eventList.contains(AttendablePlaces.gvg), //
+                        eventList.contains(AttendablePlaces.invasion), //
+                        eventList.contains(AttendablePlaces.expedition), //
+                        eventList.contains(AttendablePlaces.trials), //
+                        eventList.contains(AttendablePlaces.gauntlet) //
+                ), //
+                () -> internalDoSmallTasks( //
+                        masterSwitch, //
+                        SmallTasks //
+                                .builder() //
+                                .clickTalk() //
+                                .clickDisconnect() //
+                                .reactiveAuto() //
+                                .autoExit() //
+                                .closeEnterGameNewsDialog() //
+                                .build() //
+                ), //
+                () -> doCheckGameScreenOffset(masterSwitch) //
+        );
         Telegram.sendMessage("Stopped", false);
     }
 
@@ -423,7 +424,7 @@ public class AfkApp extends AbstractApplication {
         x.set(System.currentTimeMillis() + attendablePlace.procedureTicketMinutes * 60_000);
     }
 
-    private ArrayList<AttendablePlace> getAttendablePlaces() {
+    private ArrayList<AttendablePlace> getAttendablePlaces(AfkBatch afkBatch) {
         ArrayList<AttendablePlace> eventList = new ArrayList<>();
         final List<AttendablePlace> allAttendablePlaces = Arrays.asList(//
                 AttendablePlaces.invasion, //
@@ -437,22 +438,22 @@ public class AfkApp extends AbstractApplication {
                 AttendablePlaces.raid //
         );
         //
-        if (argumentInfo.eInvasion)
+        if (argumentInfo.eInvasion || afkBatch.doInvasion)
             eventList.add(AttendablePlaces.invasion);
-        if (argumentInfo.eExpedition)
+        if (argumentInfo.eExpedition || afkBatch.doExpedition)
             eventList.add(AttendablePlaces.expedition);
-        if (argumentInfo.eGvg)
+        if (argumentInfo.eGvg || afkBatch.doGvg)
             eventList.add(AttendablePlaces.gvg);
-        if (argumentInfo.eTrials)
+        if (argumentInfo.eTrials || afkBatch.doTrials)
             eventList.add(AttendablePlaces.trials);
-        if (argumentInfo.eGauntlet)
+        if (argumentInfo.eGauntlet || afkBatch.doGauntlet)
             eventList.add(AttendablePlaces.gauntlet);
 
-        if (argumentInfo.ePvp)
+        if (argumentInfo.ePvp || afkBatch.doPvp)
             eventList.add(AttendablePlaces.pvp);
-        if (argumentInfo.eWorldBoss)
+        if (argumentInfo.eWorldBoss || afkBatch.doWorldBoss)
             eventList.add(AttendablePlaces.worldBoss);
-        if (argumentInfo.eRaid)
+        if (argumentInfo.eRaid || afkBatch.doRaid)
             eventList.add(AttendablePlaces.raid);
         //
         if (eventList.size() == 0) {
@@ -520,16 +521,94 @@ public class AfkApp extends AbstractApplication {
 
     @Override
     protected String getUsage() {
-        return null;
+        return "<(optional)tasks_combination>";
     }
 
     @Override
     protected String getDescription() {
-        return "AFK automatically consume PVP/World Boss/GVG/Invasion/Trials/Gauntlet turns, thus you can away from keyboard";
+        return "AFK automatically consume PVP/World Boss/GVG/Invasion/Trials/Gauntlet turns, thus you can away from keyboard. Argument is combination of " + shortDescArg;
     }
 
     @Override
     protected String getLimitationExplain() {
         return "This AFK function does not support select level/mode, how many badge/ticket/... to consumes and can only everything by default so please chose everything first manually then use this";
+    }
+
+    private static final char codePvp = 'P';
+    private static final char codeWorldBoss1 = 'B';
+    private static final char codeWorldBoss2 = 'W';
+    private static final char codeRaid = 'R';
+    private static final char codeInvasion = 'I';
+    private static final char codeExpedition = 'E';
+    private static final char codeGVG = 'V';
+    private static final char codeTrials = 'T';
+    private static final char codeGauntlet = 'G';
+    private static final char codeComboPvpWorldBossRaid = '1';
+    private static final char codeComboInvasionGvgExpedition = '2';
+    private static final char codeComboTrialsGauntlet = '3';
+    private static final char codeComboAll = 'A';
+
+    private static final String shortDescArg = String.format("%s (PVP), %s (World Boss), %s (Raid), %s (Invasion), %s (Expedition), %s (GVG), %s (Gauntlet), %s (Trials), %s (PVP/World Boss/Raid), %s (Invasion/GVG/Expedition), %s (Trials/Gauntlet), %s (All)", codePvp, codeWorldBoss1, codeRaid, codeInvasion, codeExpedition, codeGVG, codeGauntlet, codeTrials, codeComboPvpWorldBossRaid, codeComboInvasionGvgExpedition, codeComboTrialsGauntlet, codeComboAll);
+
+    private static class AfkBatch {
+        public boolean doPvp;
+        public boolean doWorldBoss;
+        public boolean doRaid;
+        public boolean doInvasion;
+        public boolean doExpedition;
+        public boolean doGvg;
+        public boolean doTrials;
+        public boolean doGauntlet;
+    }
+
+    private static AfkBatch getEventListFromArg(String[] args) {
+        final AfkBatch result = new AfkBatch();
+        String normalized = Arrays.stream(args).filter(StringUtil::isNotBlank).map(String::trim).map(String::toUpperCase).collect(Collectors.joining(","));
+        if (StringUtil.isNotBlank(normalized)) {
+            for (char c : normalized.toCharArray()) {
+                if (c == codeComboAll) {
+                    result.doPvp = true;
+                    result.doWorldBoss = true;
+                    result.doRaid = true;
+                    result.doInvasion = true;
+                    result.doExpedition = true;
+                    result.doGvg = true;
+                    result.doTrials = true;
+                    result.doGauntlet = true;
+                } else if (c == codeComboPvpWorldBossRaid) {
+                    result.doPvp = true;
+                    result.doWorldBoss = true;
+                    result.doRaid = true;
+                } else if (c == codeComboInvasionGvgExpedition) {
+                    result.doInvasion = true;
+                    result.doExpedition = true;
+                    result.doGvg = true;
+                } else if (c == codeComboTrialsGauntlet) {
+                    result.doTrials = true;
+                    result.doGauntlet = true;
+                } else if (c == codePvp) {
+                    result.doPvp = true;
+                } else if (c == codeWorldBoss1 || c == codeWorldBoss2) {
+                    result.doWorldBoss = true;
+                } else if (c == codeRaid) {
+                    result.doRaid = true;
+                } else if (c == codeInvasion) {
+                    result.doInvasion = true;
+                } else if (c == codeGVG) {
+                    result.doGvg = true;
+                } else if (c == codeExpedition) {
+                    result.doExpedition = true;
+                } else if (c == codeTrials) {
+                    result.doTrials = true;
+                } else if (c == codeGauntlet) {
+                    result.doGauntlet = true;
+                } else if (c == ',' || c == ';' || c == '+') {
+                    continue;
+                } else {
+                    throw new InvalidDataException("Unrecognized code value '%s'. Accepted values are combination of %s. For example combination '%s%s%s' stands for PVP + World Boss + Trials", c, shortDescArg, codePvp, codeWorldBoss1, codeTrials);
+                }
+            }
+        }
+        return result;
     }
 }

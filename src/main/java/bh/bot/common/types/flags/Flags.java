@@ -22,6 +22,5 @@ public class Flags {
             new FlagProfileName(),
             new FlagExitAfkAfterIfWaitResourceGeneration(),
             new FlagCloseGameWindowAfterExit(),
-            new FlagDoAfk(),
     };
 }
