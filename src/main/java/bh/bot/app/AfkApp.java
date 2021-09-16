@@ -15,7 +15,6 @@ import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
-import bh.bot.common.utils.ThreadUtil;
 
 import java.awt.*;
 import java.io.IOException;
@@ -100,18 +99,24 @@ public class AfkApp extends AbstractApplication {
         //
         final AtomicBoolean masterSwitch = new AtomicBoolean(false);
         final UserConfig finalUserConfig = userConfig;
-        waitDone(() -> doLoop(masterSwitch, finalUserConfig, //
-                eventList.contains(AttendablePlaces.pvp), //
-                eventList.contains(AttendablePlaces.worldBoss), //
-                eventList.contains(AttendablePlaces.raid), //
-                eventList.contains(AttendablePlaces.gvg), //
-                eventList.contains(AttendablePlaces.invasion), //
-                eventList.contains(AttendablePlaces.expedition), //
-                eventList.contains(AttendablePlaces.trials), //
-                eventList.contains(AttendablePlaces.gauntlet) //
-                ), () -> doClickTalk(masterSwitch::get), () -> detectDisconnected(masterSwitch),
-                () -> autoReactiveAuto(masterSwitch), () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch),
-                () -> doCheckGameScreenOffset(masterSwitch));
+		waitDone( //
+				() -> doLoop( //
+						masterSwitch, finalUserConfig, //
+						eventList.contains(AttendablePlaces.pvp), //
+						eventList.contains(AttendablePlaces.worldBoss), //
+						eventList.contains(AttendablePlaces.raid), //
+						eventList.contains(AttendablePlaces.gvg), //
+						eventList.contains(AttendablePlaces.invasion), //
+						eventList.contains(AttendablePlaces.expedition), //
+						eventList.contains(AttendablePlaces.trials), //
+						eventList.contains(AttendablePlaces.gauntlet) //
+				), //
+				() -> doClickTalk(masterSwitch::get), //
+				() -> detectDisconnected(masterSwitch), //
+				() -> autoReactiveAuto(masterSwitch), //
+				() -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch), //
+				() -> doCheckGameScreenOffset(masterSwitch) //
+		);
         Telegram.sendMessage("Stopped", false);
     }
 
