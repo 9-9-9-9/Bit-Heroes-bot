@@ -63,7 +63,9 @@ public class TimeUtil {
         }
     }
 
-    public static String niceTimeLong(int sec) {
+    public static String niceTimeLong(long lsec) {
+    	int sec = (int) lsec;
+    	
         int d = sec / 86400;
         sec -= d * 86400;
         int h = sec / 3600;
@@ -80,6 +82,7 @@ public class TimeUtil {
             sb.append(m).append(" minute").append(m > 1 ? "s " : " ");
         if (sec > 0 || sb.length() == 0)
             sb.append(sec).append(" seconds");
+        
         return sb.toString().trim();
     }
 }

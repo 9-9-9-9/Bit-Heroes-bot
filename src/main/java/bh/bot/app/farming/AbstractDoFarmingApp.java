@@ -56,12 +56,19 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
         final int cnt = loopCount;
         this.gameScreenInteractor = InteractionUtil.Screen.Game.of(this);
         AtomicBoolean masterSwitch = new AtomicBoolean(false);
-        ThreadUtil.waitDone(
-                () -> loop(cnt, masterSwitch),
-                () -> detectDisconnected(masterSwitch),
-                () -> autoReactiveAuto(masterSwitch),
-                () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch),
-                () -> doCheckGameScreenOffset(masterSwitch)
+        ThreadUtil.waitDone( //
+                () -> loop(cnt, masterSwitch), //
+				() -> internalDoSmallTasks( //
+						masterSwitch, //
+						SmallTasks //
+								.builder() //
+								.clickTalk() //
+								.clickDisconnect() //
+								.reactiveAuto() //
+								.autoExit() //
+								.build() //
+				), //
+                () -> doCheckGameScreenOffset(masterSwitch) //
         );
         Telegram.sendMessage("Stopped", false);
     }

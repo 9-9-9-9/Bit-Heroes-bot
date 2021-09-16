@@ -171,7 +171,7 @@ public class Main {
         }
 
         //noinspection rawtypes
-        for (FlagPattern flagPattern : parseArgumentsResult.usingFlags)
+        for (@SuppressWarnings("rawtypes") FlagPattern flagPattern : parseArgumentsResult.usingFlags)
             if (!flagPattern.isSupportedByApp(instance)) {
                 System.out.println(instance.getHelp());
                 throw new InvalidFlagException(String.format("Flag '--%s' does not supported by '%s'",

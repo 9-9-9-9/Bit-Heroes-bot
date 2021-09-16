@@ -37,11 +37,17 @@ public class ReRunApp extends AbstractApplication {
         AtomicBoolean masterSwitch = new AtomicBoolean(false);
         ThreadUtil.waitDone(
                 () -> doLoopClickImage(loop, masterSwitch),
-                () -> doClickTalk(masterSwitch::get),
-                () -> detectDisconnected(masterSwitch),
+				() -> internalDoSmallTasks( //
+						masterSwitch, //
+						SmallTasks //
+								.builder() //
+								.clickTalk() //
+								.clickDisconnect() //
+								.reactiveAuto() //
+								.autoExit() //
+								.build() //
+				), //
                 () -> detectDefeatedOnRaid(masterSwitch),
-                () -> autoReactiveAuto(masterSwitch),
-                () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch),
                 () -> doCheckGameScreenOffset(masterSwitch)
         );
         Telegram.sendMessage("Stopped", false);

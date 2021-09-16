@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -539,141 +540,198 @@ public abstract class AbstractApplication {
         }
     }
 
-    protected void doClickTalk(Supplier<Boolean> shouldStop) {
-        try {
-            int sleepSecs = 60;
-            int sleepSecsWhenClicked = 3;
-            int cnt = sleepSecs;
-            while (!shouldStop.get()) {
-                cnt--;
-                sleep(1000);
-                if (cnt > 0) {
-                    continue;
-                }
+    private static final int smallTalkSleepSecs = 60;
+    private static final int smallTalkSleepSecsWhenClicked = 3;
+    private static final int detectDcSleepSecs = 60;
+    private static final int reactiveAutoSleepSecs = 10;
 
-                cnt = sleepSecs;
-                if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.talkRightArrow)) {
-                    debug("clicked talk");
-                    cnt = sleepSecsWhenClicked;
-                } else {
-                    debug("No talk");
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
-        }
-    }
+	protected void internalDoSmallTasks(AtomicBoolean masterSwitch, SmallTasks st) {
+		try {
+			long nextSmallTalkEpoch = addSec(smallTalkSleepSecs);
+			long nextDetectDcEpoch = addSec(detectDcSleepSecs);
+			long nextReactiveAuto = addSec(reactiveAutoSleepSecs);
+			final AtomicInteger continousRed = new AtomicInteger(0);
+			while (!masterSwitch.get()) {
+				sleep(1_000);
+				
+				if (st.clickTalk && nextSmallTalkEpoch <= System.currentTimeMillis())
+					nextSmallTalkEpoch = doClickTalk();
 
-    protected void detectDisconnected(AtomicBoolean masterSwitch) {
-        try {
-            int sleepSecs = 60;
-            int cnt = sleepSecs;
-            while (!masterSwitch.get()) {
-                cnt--;
-                sleep(1000);
-                if (cnt > 0) {
-                    continue;
-                }
+				if (st.clickDisconnect && nextDetectDcEpoch <= System.currentTimeMillis())
+					nextDetectDcEpoch = detectDisconnected(masterSwitch);
 
-                cnt = sleepSecs;
-                if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.reconnect)) {
-                    masterSwitch.set(true);
-                    Telegram.sendMessage("Disconnected", true);
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
-            masterSwitch.set(true);
-        }
-    }
+				if (st.reactiveAuto && nextReactiveAuto <= System.currentTimeMillis())
+					nextReactiveAuto = autoReactiveAuto(continousRed);
+				
+				if (st.autoExit)
+					autoExit(masterSwitch);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
+			masterSwitch.set(true);
+		}
+	}
+	
+	private long addSec(int secs) {
+		return System.currentTimeMillis() + secs * 1_000;
+	}
 
-    protected void autoReactiveAuto(AtomicBoolean masterSwitch) {
-        try {
-            final int sleepMs = 10_000;
-            int continousRed = 0;
-            final int maxContinousRed = 6;
-            while (!masterSwitch.get()) {
-                sleep(sleepMs);
-                Point point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoG);
-                if (point == null) {
-                    debug("AutoG button not found");
-                    point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoR);
-                    if (point == null) {
-                        debug("AutoR button not found");
-                        continue;
-                    }
-                }
-                debug("Found the Auto button at %d,%d", point.x, point.y);
-                Color color = getPixelColor(point.x - 5, point.y);
-                if (ImageUtil.isGreenLikeColor(color)) {
-                    debug("Auto is currently ON (green)");
-                    continousRed = 0;
-                    continue;
-                }
-                if (ImageUtil.isRedLikeColor(color)) {
-                    continousRed++;
-                    if (continousRed >= 2 && continousRed < maxContinousRed) {
-                        info("Detected Auto is not turned on, gonna reactive it after %d seconds", (maxContinousRed - continousRed) * sleepMs / 1_000);
-                    }
-                    if (continousRed >= maxContinousRed) {
-                        info("Detected Auto is not turned on, gonna reactive it soon");
-                        moveCursor(point);
-                        sleep(100);
-                        if (continousRed % 4 == 0)
-                        	sendSpaceKey();
-                        else
-                        	mouseClick();
-                        hideCursor();
+	protected static class SmallTasks {
+		public final boolean clickTalk;
+		public final boolean clickDisconnect;
+		public final boolean reactiveAuto;
+		public final boolean autoExit;
 
-                        info("Sent re-active");
-                        sleep(2_000);
-                    }
-                } else {
-                    debug("Red Auto not found");
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
-            masterSwitch.set(true);
-        }
-    }
+		private SmallTasks(Builder b) {
+			this.clickTalk = b.f(0);
+			this.clickDisconnect = b.f(1);
+			this.reactiveAuto = b.f(2);
+			this.autoExit = b.f(3);
+		}
 
-    protected void autoExit(int exitAfterXSecs, AtomicBoolean masterSwitch) {
-        try {
-            if (exitAfterXSecs < 1)
-                return;
-            while (exitAfterXSecs > 0 && !masterSwitch.get()) {
-                exitAfterXSecs--;
-                sleep(1000);
+		public static Builder builder() {
+			return new Builder();
+		}
 
-                int divBy;
-                if (exitAfterXSecs >= 3600)
-                    divBy = 900;
-                else if (exitAfterXSecs >= 600)
-                    divBy = 600;
-                else if (exitAfterXSecs >= 300)
-                    divBy = 120;
-                else if (exitAfterXSecs >= 60)
-                    divBy = 60;
-                else if (exitAfterXSecs >= 10)
-                    divBy = 10;
-                else
-                    divBy = 1;
+		public static class Builder {
+			private final boolean[] flags = new boolean[10];
 
-                if (exitAfterXSecs % divBy == 0)
-                    info("Exit after %s", TimeUtil.niceTimeLong(exitAfterXSecs));
-            }
-            masterSwitch.set(true);
-            info("Application is going to exit now");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
-            masterSwitch.set(true);
-        }
-    }
+			private Builder set(int index) {
+				this.flags[index] = true;
+				return this;
+			}
+
+			private boolean f(int index) {
+				return this.flags[index];
+			}
+
+			public SmallTasks build() {
+				return new SmallTasks(this);
+			}
+
+			public Builder clickTalk() {
+				return this.set(0);
+			}
+
+			public Builder clickDisconnect() {
+				return this.set(1);
+			}
+
+			public Builder reactiveAuto() {
+				return this.set(2);
+			}
+
+			public Builder autoExit() {
+				return this.set(3);
+			}
+		}
+	}
+
+	private long doClickTalk() {
+		if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.talkRightArrow)) {
+			debug("clicked talk");
+			return addSec(smallTalkSleepSecsWhenClicked);
+		} else {
+			debug("No talk");
+			return addSec(smallTalkSleepSecs);
+		}
+	}
+
+	private long detectDisconnected(AtomicBoolean masterSwitch) {
+		if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.reconnect))
+			masterSwitch.set(true);
+		return addSec(detectDcSleepSecs);
+	}
+
+    private final byte maxContinousRed = 6;
+	private long autoReactiveAuto(AtomicInteger continousRed) {
+		long next = addSec(reactiveAutoSleepSecs);
+		
+		Point point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoG);
+		if (point == null) {
+			debug("AutoG button not found");
+			point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoR);
+			if (point == null) {
+				debug("AutoR button not found");
+				return next;
+			}
+		}
+		
+		debug("Found the Auto button at %d,%d", point.x, point.y);
+		
+		Color color = getPixelColor(point.x - 5, point.y);
+		
+		if (ImageUtil.isGreenLikeColor(color)) {
+			debug("Auto is currently ON (green)");
+			continousRed.set(0);
+			return next;
+		}
+		
+		if (!ImageUtil.isRedLikeColor(color)) {
+			debug("Red Auto not found");
+			return next;
+		}
+
+		int cr = continousRed.addAndGet(1);
+
+		if (cr < maxContinousRed) {
+			if (cr >= 2)
+				info( //
+						"Detected Auto is not turned on, gonna reactive it after %d seconds", //
+						(maxContinousRed - cr) * reactiveAutoSleepSecs //
+				);
+			return next;
+		}
+
+		info("Detected Auto is not turned on, gonna reactive it soon");
+		moveCursor(point);
+		sleep(100);
+		if (cr % 4 == 0)
+			sendSpaceKey();
+		else
+			mouseClick();
+		hideCursor();
+
+		info("Sent re-active");
+		sleep(1_000);
+
+		return next + 1_000;
+	}
+
+	protected final long applicationStartTime = System.currentTimeMillis();
+
+	private void autoExit(AtomicBoolean masterSwitch) {
+		if (argumentInfo.exitAfterXSecs < 1)
+			return;
+
+		long applicationExpectedExitTime = applicationStartTime + argumentInfo.exitAfterXSecs * 1_000;
+		long now = System.currentTimeMillis();
+		if (applicationExpectedExitTime <= now) {
+			masterSwitch.set(true);
+			info("Application is going to exit now");
+			return;
+		}
+
+		long exitAfterXSecs = (applicationExpectedExitTime - System.currentTimeMillis()) / 1_000;
+
+		int divBy;
+		if (exitAfterXSecs >= 3600)
+			divBy = 900;
+		else if (exitAfterXSecs >= 600)
+			divBy = 600;
+		else if (exitAfterXSecs >= 300)
+			divBy = 120;
+		else if (exitAfterXSecs >= 60)
+			divBy = 60;
+		else if (exitAfterXSecs >= 10)
+			divBy = 10;
+		else
+			divBy = 1;
+
+		if (exitAfterXSecs % divBy == 0)
+			info("Exit after %s", TimeUtil.niceTimeLong(exitAfterXSecs));
+	}
 
     private final HashMap<BwMatrixMeta, Offset[]> expeditionMap =
             this instanceof AfkApp || this instanceof ExpeditionApp
