@@ -19,7 +19,6 @@ import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.types.tuples.Tuple4;
 import bh.bot.common.utils.*;
-import bh.bot.common.utils.InteractionUtil.Screen.*;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
 import javax.imageio.ImageIO;
@@ -31,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -40,6 +40,7 @@ import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.ImageUtil.freeMem;
 import static bh.bot.common.utils.InteractionUtil.Mouse.*;
 import static bh.bot.common.utils.InteractionUtil.Screen.*;
+import static bh.bot.common.utils.InteractionUtil.Keyboard.*;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public abstract class AbstractApplication {
@@ -533,187 +534,274 @@ public abstract class AbstractApplication {
 
             return new Tuple2<>(
                     startingCoords.stream()
-                    .map(c -> new Point(screenCapturedResult.x + c.x, screenCapturedResult.y + c.y)).toArray(Point[]::new),
+                            .map(c -> new Point(screenCapturedResult.x + c.x, screenCapturedResult.y + c.y)).toArray(Point[]::new),
                     (byte) selectedRadioButtonIndex
             );
         }
     }
 
-    protected void doClickTalk(Supplier<Boolean> shouldStop) {
-        try {
-            int sleepSecs = 60;
-            int sleepSecsWhenClicked = 3;
-            int cnt = sleepSecs;
-            while (!shouldStop.get()) {
-                cnt--;
-                sleep(1000);
-                if (cnt > 0) {
-                    continue;
-                }
+    private static final int smallTalkSleepSecs = 60;
+    private static final int smallTalkSleepSecsWhenClicked = 3;
+    private static final int detectDcSleepSecs = 60;
+    private static final int reactiveAutoSleepSecs = 10;
+    private static final int closeEnterGameDialogNewsSleepSecs = 60;
 
-                cnt = sleepSecs;
-                if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.talkRightArrow)) {
-                    debug("clicked talk");
-                    cnt = sleepSecsWhenClicked;
-                } else {
-                    debug("No talk");
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
-        }
-    }
+	protected void internalDoSmallTasks(AtomicBoolean masterSwitch, SmallTasks st) {
+		try {
+			long nextSmallTalkEpoch = addSec(smallTalkSleepSecs);
+			long nextDetectDcEpoch = addSec(detectDcSleepSecs);
+			long nextReactiveAuto = addSec(reactiveAutoSleepSecs);
+			final AtomicInteger continousRed = new AtomicInteger(0);
+			long nextCloseEnterGameDialogNews = addSec(closeEnterGameDialogNewsSleepSecs);
+			while (!masterSwitch.get()) {
+				sleep(1_000);
+				
+				if (st.clickTalk && nextSmallTalkEpoch <= System.currentTimeMillis())
+					nextSmallTalkEpoch = doClickTalk();
 
-    protected void detectDisconnected(AtomicBoolean masterSwitch) {
-        try {
-            int sleepSecs = 60;
-            int cnt = sleepSecs;
-            while (!masterSwitch.get()) {
-                cnt--;
-                sleep(1000);
-                if (cnt > 0) {
-                    continue;
-                }
+				if (st.clickDisconnect && nextDetectDcEpoch <= System.currentTimeMillis())
+					nextDetectDcEpoch = detectDisconnected(masterSwitch);
 
-                cnt = sleepSecs;
-                if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.reconnect)) {
-                    masterSwitch.set(true);
-                    Telegram.sendMessage("Disconnected", true);
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
-            masterSwitch.set(true);
-        }
-    }
+				if (st.reactiveAuto && nextReactiveAuto <= System.currentTimeMillis())
+					nextReactiveAuto = autoReactiveAuto(continousRed);
+				
+				if (st.autoExit)
+					autoExit(masterSwitch);
 
-    protected void autoReactiveAuto(AtomicBoolean masterSwitch) {
-        try {
-            final int sleepMs = 10_000;
-            int continousRed = 0;
-            final int maxContinousRed = 6;
-            while (!masterSwitch.get()) {
-                sleep(sleepMs);
-                Point point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoG);
-                if (point == null) {
-                    debug("AutoG button not found");
-                    point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoR);
-                    if (point == null) {
-                        debug("AutoR button not found");
-                        continue;
-                    }
-                }
-                debug("Found the Auto button at %d,%d", point.x, point.y);
-                Color color = getPixelColor(point.x - 5, point.y);
-                if (ImageUtil.isGreenLikeColor(color)) {
-                    debug("Auto is currently ON (green)");
-                    continousRed = 0;
-                    continue;
-                }
-                if (ImageUtil.isRedLikeColor(color)) {
-                    continousRed++;
-                    if (continousRed >= 2 && continousRed < maxContinousRed) {
-                        info("Detected Auto is not turned on, gonna reactive it after %d seconds", (maxContinousRed - continousRed) * sleepMs / 1_000);
-                    }
-                    if (continousRed >= maxContinousRed) {
-                        info("Detected Auto is not turned on, gonna reactive it soon");
-                        moveCursor(point);
-                        sleep(100);
-                        mouseClick();
-                        hideCursor();
+				if (st.closeEnterGameNewsDialog && nextCloseEnterGameDialogNews <= System.currentTimeMillis())
+					nextCloseEnterGameDialogNews = closeEnterGameDialogNews();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
+			masterSwitch.set(true);
+		}
+	}
+	
+	private long addSec(int secs) {
+		return System.currentTimeMillis() + secs * 1_000;
+	}
 
-                        info("Sent re-active");
-                        sleep(2_000);
-                    }
-                } else {
-                    debug("Red Auto not found");
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
-            masterSwitch.set(true);
-        }
-    }
+	protected static class SmallTasks {
+		public final boolean clickTalk;
+		public final boolean clickDisconnect;
+		public final boolean reactiveAuto;
+		public final boolean autoExit;
+		public final boolean closeEnterGameNewsDialog;
 
-    protected void autoExit(int exitAfterXSecs, AtomicBoolean masterSwitch) {
-        try {
-            if (exitAfterXSecs < 1)
-                return;
-            while (exitAfterXSecs > 0) {
-                exitAfterXSecs--;
-                sleep(1000);
-                if (exitAfterXSecs % 60 == 0)
-                    info("Exit after %d seconds", exitAfterXSecs);
-                if (masterSwitch.get())
-                    break;
-            }
-            masterSwitch.set(true);
-            info("Application is going to exit now");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
-            masterSwitch.set(true);
-        }
-    }
+		private SmallTasks(Builder b) {
+			this.clickTalk = b.f(0);
+			this.clickDisconnect = b.f(1);
+			this.reactiveAuto = b.f(2);
+			this.autoExit = b.f(3);
+			this.closeEnterGameNewsDialog = b.f(4);
+		}
 
-    private final HashMap<BwMatrixMeta, Offset[]> expeditionMap =
-            this instanceof AfkApp || this instanceof ExpeditionApp
-                    ? new HashMap<BwMatrixMeta, Offset[]>() {{
-            	/*
-                put(BwMatrixMeta.Metas.Expedition.Labels.infernoDimension, new Offset[]{
-                        Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionRaleib(),
-                        Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionBlemo(),
-                        Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionGummy(),
-                        Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionZarlock(),
-                });
-                put(BwMatrixMeta.Metas.Expedition.Labels.hallowedDimension, new Offset[]{
-                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionGooGarum(),
-                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionSvord(),
-                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionTwimbo(),
-                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionX5T34M(),
-                });
-                put(BwMatrixMeta.Metas.Expedition.Labels.jammieDimension, new Offset[]{
-                        Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionZorgo(),
-                        Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionYackerz(),
-                        Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionVionot(),
-                        Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionGrampa(),
-                });
-                */
-                put(BwMatrixMeta.Metas.Expedition.Labels.idolDimension, new Offset[]{
-                        Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionBlubLix(),
-                        Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionMowhi(),
-                        Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionWizBot(),
-                        Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionAstamus(),
-                });
-                /*
-                put(BwMatrixMeta.Metas.Expedition.Labels.battleBards, new Offset[]{
-                        Configuration.screenResolutionProfile.getOffsetEnterBattleBardsHero(),
-                        Configuration.screenResolutionProfile.getOffsetEnterBattleBardsBurning(),
-                        Configuration.screenResolutionProfile.getOffsetEnterBattleBardsMelvapaloozo(),
-                        Configuration.screenResolutionProfile.getOffsetEnterBattleBardsBitstock(),
-                });
-                */
-            }}
-                    : null;
+		public static Builder builder() {
+			return new Builder();
+		}
+
+		public static class Builder {
+			private final boolean[] flags = new boolean[10];
+
+			private Builder set(int index) {
+				this.flags[index] = true;
+				return this;
+			}
+
+			private boolean f(int index) {
+				return this.flags[index];
+			}
+
+			public SmallTasks build() {
+				return new SmallTasks(this);
+			}
+
+			public Builder clickTalk() {
+				return this.set(0);
+			}
+
+			public Builder clickDisconnect() {
+				return this.set(1);
+			}
+
+			public Builder reactiveAuto() {
+				return this.set(2);
+			}
+
+			public Builder autoExit() {
+				return this.set(3);
+			}
+
+			public Builder closeEnterGameNewsDialog() {
+				return this.set(4);
+			}
+		}
+	}
+
+	private long doClickTalk() {
+		if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.talkRightArrow)) {
+			debug("clicked talk");
+			return addSec(smallTalkSleepSecsWhenClicked);
+		} else {
+			debug("No talk");
+			return addSec(smallTalkSleepSecs);
+		}
+	}
+
+	private long detectDisconnected(AtomicBoolean masterSwitch) {
+		if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.reconnect))
+			masterSwitch.set(true);
+		return addSec(detectDcSleepSecs);
+	}
+
+    private final byte maxContinousRed = 6;
+	private long autoReactiveAuto(AtomicInteger continousRed) {
+		long next = addSec(reactiveAutoSleepSecs);
+		
+		Point point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoG);
+		if (point == null) {
+			debug("AutoG button not found");
+			point = findImage(BwMatrixMeta.Metas.Globally.Buttons.autoR);
+			if (point == null) {
+				debug("AutoR button not found");
+				return next;
+			}
+		}
+		
+		debug("Found the Auto button at %d,%d", point.x, point.y);
+		
+		Color color = getPixelColor(point.x - 5, point.y);
+		
+		if (ImageUtil.isGreenLikeColor(color)) {
+			debug("Auto is currently ON (green)");
+			continousRed.set(0);
+			return next;
+		}
+		
+		if (!ImageUtil.isRedLikeColor(color)) {
+			debug("Red Auto not found");
+			return next;
+		}
+
+		int cr = continousRed.addAndGet(1);
+
+		if (cr < maxContinousRed) {
+			if (cr >= 2)
+				info( //
+						"Detected Auto is not turned on, gonna reactive it after %d seconds", //
+						(maxContinousRed - cr) * reactiveAutoSleepSecs //
+				);
+			return next;
+		}
+
+		info("Detected Auto is not turned on, gonna reactive it soon");
+		moveCursor(point);
+		sleep(100);
+		if (cr % 4 == 0)
+			sendSpaceKey();
+		else
+			mouseClick();
+		hideCursor();
+
+		info("Sent re-active");
+		sleep(1_000);
+
+		return next + 1_000;
+	}
+	
+	private long closeEnterGameDialogNews() {
+		if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.news))
+			sendEscape();
+		return addSec(closeEnterGameDialogNewsSleepSecs);
+	}
+
+	protected final long applicationStartTime = System.currentTimeMillis();
+
+	private void autoExit(AtomicBoolean masterSwitch) {
+		if (argumentInfo.exitAfterXSecs < 1)
+			return;
+
+		long applicationExpectedExitTime = applicationStartTime + argumentInfo.exitAfterXSecs * 1_000;
+		long now = System.currentTimeMillis();
+		if (applicationExpectedExitTime <= now) {
+			masterSwitch.set(true);
+			info("Application is going to exit now");
+			return;
+		}
+
+		long exitAfterXSecs = (applicationExpectedExitTime - System.currentTimeMillis()) / 1_000;
+
+		int divBy;
+		if (exitAfterXSecs >= 3600)
+			divBy = 900;
+		else if (exitAfterXSecs >= 600)
+			divBy = 600;
+		else if (exitAfterXSecs >= 300)
+			divBy = 120;
+		else if (exitAfterXSecs >= 60)
+			divBy = 60;
+		else if (exitAfterXSecs >= 10)
+			divBy = 10;
+		else
+			divBy = 1;
+
+		if (exitAfterXSecs % divBy == 0)
+			info("Exit after %s", TimeUtil.niceTimeLong(exitAfterXSecs));
+	}
 
     protected boolean tryEnterExpedition(boolean doExpedition, byte place) {
         if (!doExpedition)
             return false;
 
-        for (Map.Entry<BwMatrixMeta, Offset[]> entry : expeditionMap.entrySet()) {
-            if (entry.getKey() == null)
-                continue;
+        Offset o = null;
+        if (clickImage(BwMatrixMeta.Metas.Expedition.Labels.hallowedDimension)) {
+            if (place == 1)
+                o = Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionGooGarum();
+            else if (place == 2)
+                o = Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionSvord();
+            else if (place == 3)
+                o = Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionTwimbo();
+            else if (place == 4)
+                o = Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionX5T34M();
+        } else if (clickImage(BwMatrixMeta.Metas.Expedition.Labels.idolDimension)) {
+            if (place == 1)
+                o = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionBlubLix();
+            else if (place == 2)
+                o = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionMowhi();
+            else if (place == 3)
+                o = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionWizBot();
+            else if (place == 4)
+                o = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionAstamus();
+        }
 
-            if (clickImage(entry.getKey())) {
-                Point p = entry.getValue()[place - 1].toScreenCoordinate();
-                mouseMoveAndClickAndHide(p);
-                sleep(5_000);
-                hideCursor();
-                return true;
-            }
+        /*
+        result.put(BwMatrixMeta.Metas.Expedition.Labels.infernoDimension, new Offset[]{
+                        Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionRaleib(),
+                        Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionBlemo(),
+                        Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionGummy(),
+                        Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionZarlock(),
+                });
+                result.put(BwMatrixMeta.Metas.Expedition.Labels.jammieDimension, new Offset[]{
+                        Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionZorgo(),
+                        Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionYackerz(),
+                        Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionVionot(),
+                        Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionGrampa(),
+                });
+                result.put(BwMatrixMeta.Metas.Expedition.Labels.battleBards, new Offset[]{
+                        Configuration.screenResolutionProfile.getOffsetEnterBattleBardsHero(),
+                        Configuration.screenResolutionProfile.getOffsetEnterBattleBardsBurning(),
+                        Configuration.screenResolutionProfile.getOffsetEnterBattleBardsMelvapaloozo(),
+                        Configuration.screenResolutionProfile.getOffsetEnterBattleBardsBitstock(),
+                });
+         */
+
+        if (o != null) {
+            Point p = o.toScreenCoordinate();
+            mouseMoveAndClickAndHide(p);
+            sleep(5_000);
+            hideCursor();
+            return true;
         }
 
         return false;
@@ -755,10 +843,9 @@ public abstract class AbstractApplication {
 
     protected boolean tryEnterRaid(boolean doRaid, UserConfig userConfig, Supplier<Boolean> isBlocked) {
         Point coord = findImage(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog);
-        if (coord == null) {
-            debug("Label raid not found");
+        if (coord == null)
             return false;
-        }
+		
         if (isBlocked.get() || !doRaid) {
             spamEscape(1);
             return false;
@@ -959,8 +1046,8 @@ public abstract class AbstractApplication {
                 StringBuilder sb2 = new StringBuilder();
                 ArrayList<Byte> chars = new ArrayList<>();
                 for (char c : name.toCharArray())
-                    chars.add((byte)c);
-                chars.stream().skip(prefix.length()).limit(name.length() - prefix.length() - suffix.length()).forEach(c -> sb2.append((char)c.byteValue()));
+                    chars.add((byte) c);
+                chars.stream().skip(prefix.length()).limit(name.length() - prefix.length() - suffix.length()).forEach(c -> sb2.append((char) c.byteValue()));
                 String cfgProfileName = sb2.toString();
                 if (cfgProfileName.length() > 0) {
                     if (!ValidationUtil.isValidUserProfileName(cfgProfileName))
@@ -1017,9 +1104,8 @@ public abstract class AbstractApplication {
 
     protected void printWarningExpeditionImplementation() {
         warn("Inferno Dimension has not yet been implemented");
-        warn("Hallowed Dimension has not yet been implemented");
         warn("Jammie Dimension has not yet been implemented");
         warn("Battle Bards has not yet been implemented");
-        warn("Currently, Expedition only supports Idol Dimension");
+        warn("Currently, Expedition only supports Idol & Hallowed Dimension");
     }
 }

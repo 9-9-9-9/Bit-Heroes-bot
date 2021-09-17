@@ -3,17 +3,18 @@ package bh.bot.common.types.flags;
 import bh.bot.app.*;
 import bh.bot.app.farming.AbstractDoFarmingApp;
 import bh.bot.common.Configuration;
-import bh.bot.common.exceptions.InvalidFlagException;
+import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.utils.TimeUtil;
 
 public class FlagExitAfterAmountOfSeconds extends FlagPattern<Integer> {
     private static final byte minimumValue = 60;
 
     @Override
-    protected Integer internalParseParam(String paramPart) throws InvalidFlagException {
-    	int min = Configuration.enableDevFeatures ? 10 : minimumValue;
-        int exitAfter = Integer.parseInt(paramPart);
+    protected Integer internalParseParam(String paramPart) {
+        int min = Configuration.enableDevFeatures ? 10 : minimumValue;
+        int exitAfter = TimeUtil.parseTimeToSec(paramPart);
         if (exitAfter < min)
-            throw new InvalidFlagException(String.format("Minimum value is %d seconds", min));
+            throw new InvalidDataException(String.format("Minimum value is %d seconds", min));
         return exitAfter;
     }
 

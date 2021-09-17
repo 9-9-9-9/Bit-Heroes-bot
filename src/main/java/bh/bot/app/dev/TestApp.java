@@ -2,25 +2,25 @@ package bh.bot.app.dev;
 
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
+import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
-import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
+import bh.bot.common.utils.TimeUtil;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.RECT;
 
 import java.awt.*;
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.InteractionUtil.Mouse.clickRadioButton;
-import static bh.bot.common.utils.ColorizeUtil.*;
 
 @SuppressWarnings("unused")
 @AppMeta(code = "test", name = "Test Code", dev = true)
@@ -31,10 +31,30 @@ public class TestApp extends AbstractApplication {
     protected void internalRun(String[] args) {
         adjustScreenOffset();
 
-        info(cInfo("One"));
-        info(cAsk("One"));
-        info(cWarning("One"));
-        info(cError("One"));
+        testParseTime();
+    }
+
+    private static void testParseTime() {
+        assertTestTime("1d3m", 86400 + 3 * 60);
+        assertTestTime("2d", 86400 * 2);
+        assertTestTime("3h5m5", 3 * 3600 + 5 * 60 + 5);
+        assertTestTime("3h5m5s", 3 * 3600 + 5 * 60 + 5);
+        assertTestTime("6h5s", 6 * 3600 + 5);
+        assertTestTime("5d2", 5 * 86400 + 2);
+        assertTestTime("5d2", 5 * 86400 + 3);
+        assertTestTime("5m2", 5 * 60 + 2);
+        assertTestTime("5m2s", 5 * 60 + 2);
+        assertTestTime("5z2s", 5 * 60 + 2);
+        info("OK");
+    }
+
+    private static void assertTestTime(String input, int expect) {
+        try {
+            if (TimeUtil.parseTimeToSec(input) != expect)
+                err("%10s != %-7d", input, expect);
+        } catch (InvalidDataException ex) {
+            err("Failure compare %10s vs %-7d: %s", input, expect, ex.getMessage());
+        }
     }
 
     public static class JnaTest {

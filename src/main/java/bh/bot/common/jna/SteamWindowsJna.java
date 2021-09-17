@@ -90,7 +90,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 			String line;
 			String BitHeroesProcess = "Bit Heroes.exe";
 			while ((line = reader.readLine()) != null) {
-				System.out.println(line);
+				// System.out.println(line);
 				if (line.contains(BitHeroesProcess)) {
 					Runtime.getRuntime().exec(String.format("taskkill /F /IM \"%s\"", BitHeroesProcess));
 					return;

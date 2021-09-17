@@ -114,7 +114,7 @@ public class SettingApp extends AbstractApplication {
                 sb.append("  world boss has not been set");
             sb.append('\n');
             if (newCfg.isValidExpeditionPlace())
-                sb.append(String.format("  expedition %s", UserConfig.getExpeditionPlaceDesc((byte) expeditionPlace)));
+                sb.append(String.format("  expedition door %d: %s", expeditionPlace, UserConfig.getExpeditionPlaceDesc((byte) expeditionPlace)));
             else
                 sb.append("  expedition door has not been set");
             sb.append('\n');

@@ -17,11 +17,10 @@ public class Flags {
             new FlagPrintHelpMessage(),
             new FlagSteamResolution800x480(),
             new FlagWebResolution800x520(),
-            new FlagAll(),
             new FlagSaveDebugImages(),
             new FlagShowDebugMessages(),
             new FlagProfileName(),
             new FlagExitAfkAfterIfWaitResourceGeneration(),
-            new FlagCloseGameWindowAfterExit()
+            new FlagCloseGameWindowAfterExit(),
     };
 }

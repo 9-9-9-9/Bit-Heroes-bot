@@ -18,7 +18,6 @@ public class ParseArgumentsResult {
     public boolean disableTelegramNoti;
     public boolean displayHelp;
     public boolean enableSavingDebugImages;
-    public boolean hasFlagAll;
     public boolean eInvasion;
     public boolean eExpedition;
     public boolean eGvg;

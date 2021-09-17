@@ -29,6 +29,8 @@ matrix.sh
 matrix.bat
 tp.sh
 tp.bat
+c.*.bat
+c.*.sh
 
 reconnect.bmp
 reconnect-hl.bmp

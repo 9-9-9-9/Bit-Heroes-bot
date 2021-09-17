@@ -19,6 +19,10 @@ import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
+import bh.bot.common.utils.TimeUtil;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.fusesource.jansi.AnsiConsole;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -32,10 +36,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.fusesource.jansi.AnsiConsole;
-
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.StringUtil.isBlank;
@@ -43,14 +43,15 @@ import static bh.bot.common.utils.StringUtil.isBlank;
 @SuppressWarnings("deprecation")
 public class Main {
     public static final String botName = "99bot";
-	public static boolean forceDisableAnsi = false;
+    public static boolean forceDisableAnsi = false;
+
     public static void main(String[] args) {
-    	try {
-        	AnsiConsole.systemInstall();
-    	} catch (Throwable t) {
-    		System.err.println("Failure initialization ansi console! Error message: " + t.getMessage());
-    		forceDisableAnsi = true;
-    	}
+        try {
+            AnsiConsole.systemInstall();
+        } catch (Throwable t) {
+            System.err.println("Failure initialization ansi console! Error message: " + t.getMessage());
+            forceDisableAnsi = true;
+        }
         try {
             Configuration.registerApplicationClasses( //
                     SettingApp.class, //
@@ -97,19 +98,19 @@ public class Main {
         sb.append("Select a function you want to launch:");
         AppMeta meta = readInput(sb.toString(), null, s -> {
             try {
-            	int num = Integer.parseInt(s);
-            	return new Tuple3<>(true, null, applicationClasses.get(num - 1)._2);
+                int num = Integer.parseInt(s);
+                return new Tuple3<>(true, null, applicationClasses.get(num - 1)._2);
             } catch (NumberFormatException | IndexOutOfBoundsException ex) {
-				return new Tuple3<>(false, "Not a valid option, please try again", null);
+                return new Tuple3<>(false, "Not a valid option, please try again", null);
             }
         });
 
         info(ColorizeUtil.formatInfo, "You selected function:");
         info(ColorizeUtil.formatAsk, "  %s", meta.name());
 
-		ArrayList<String> lArgs = new ArrayList<>();
-		lArgs.add(meta.code());
-		lArgs.addAll(Arrays.stream(args).map(String::trim).filter(x -> x.startsWith("--")).distinct().collect(Collectors.toList()));
+        ArrayList<String> lArgs = new ArrayList<>();
+        lArgs.add(meta.code());
+        lArgs.addAll(Arrays.stream(args).map(String::trim).filter(x -> x.startsWith("--")).distinct().collect(Collectors.toList()));
 
         FlagPrintHelpMessage flagHelp = new FlagPrintHelpMessage();
         if (lArgs.stream().anyMatch(x -> x.equalsIgnoreCase(flagHelp.getCode())))
@@ -145,8 +146,8 @@ public class Main {
             }
         }
 
-		return lArgs.toArray(new String[0]);
-	}
+        return lArgs.toArray(new String[0]);
+    }
 
     private static void process(String[] args) throws Exception {
         ParseArgumentsResult parseArgumentsResult = parseArguments(args);
@@ -169,7 +170,7 @@ public class Main {
         }
 
         //noinspection rawtypes
-        for (FlagPattern flagPattern : parseArgumentsResult.usingFlags)
+        for (@SuppressWarnings("rawtypes") FlagPattern flagPattern : parseArgumentsResult.usingFlags)
             if (!flagPattern.isSupportedByApp(instance)) {
                 System.out.println(instance.getHelp());
                 throw new InvalidFlagException(String.format("Flag '--%s' does not supported by '%s'",
@@ -236,11 +237,7 @@ public class Main {
                             flagPattern.getClass().getSimpleName()));
         }
 
-        if (exitAfter >= 3600) {
-            int h = exitAfter / 3600;
-            int m = (exitAfter - h * 3600) / 60;
-            info("Application will exit after %d hours and %d minutes", h, m);
-        }
+        info("Application will exit after %s", TimeUtil.niceTimeLong(exitAfter));
 
         // Validate flags
         for (FlagPattern flagPattern : usingFlagPatterns)
@@ -285,16 +282,15 @@ public class Main {
         li.disableTelegramNoti = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagMuteNoti);
         li.screenResolutionProfile = screenResolutionProfile;
         li.cfgProfileName = cfgProfileName;
-        li.hasFlagAll = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagAll);
         // events
-        li.eWorldBoss = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);
         li.ePvp = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoPvp);
+        li.eWorldBoss = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);
+        li.eRaid = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoRaid);
         li.eInvasion = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoInvasion);
         li.eExpedition = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoExpedition);
         li.eGvg = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoGvG);
         li.eTrials = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoTrials);
         li.eGauntlet = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoGauntlet);
-        li.eRaid = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoRaid);
         // end events
         return li;
     }

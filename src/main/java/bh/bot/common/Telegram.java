@@ -1,15 +1,15 @@
 package bh.bot.common;
 
-import bh.bot.common.utils.ThreadUtil;
-
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
 import static bh.bot.common.utils.StringUtil.isNotBlank;
+import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public class Telegram {
     private static String appName = "BH-Unknown";
@@ -19,7 +19,7 @@ public class Telegram {
     //
     private static final String channelId = Configuration.getFromConfigOrEnv("telegram.channel-id", "TELEGRAM_BH_CHANNEL");
     //
-    private static boolean isDisabled = !isNotBlank(token) && !isNotBlank(channelId);
+    private static boolean isDisabled = isBlank(token) || isBlank(channelId);
 
     public static boolean isDisabled() {
         return isDisabled;
@@ -27,7 +27,7 @@ public class Telegram {
 
     public static void disable() {
         isDisabled = true;
-        Log.info("Disabled Telegram messages");
+        info("Disabled Telegram messages");
     }
 
     public static void setAppName(String appName) {
@@ -39,10 +39,11 @@ public class Telegram {
 
     public static void sendMessage(String msg, boolean critical) {
         if (isDisabled) {
+            dev("disabled Telegram::sendMessage");
             return;
         }
 
-        int retry = 10;
+        int retry = critical ? 20 : 10;
 
         while (retry > 0) {
             try {
@@ -50,8 +51,8 @@ public class Telegram {
                     break;
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.err("Error while posting Telegram message: %s", e.getMessage());
-                ThreadUtil.sleep(30000);
+                err("Error while posting Telegram message: %s", e.getMessage());
+                sleep(30_000);
             } finally {
                 retry--;
             }
@@ -75,11 +76,13 @@ public class Telegram {
             outputStreamWriter.flush();
             outputStreamWriter.close();
 
-            Log.debug("Telegram.sendMessage: sent");
             int responseCode = httpURLConnection.getResponseCode();
-            Log.debug("RC: %d", responseCode);
-            Log.debug("RM: %s", httpURLConnection.getResponseMessage());
-            return responseCode == 200;
+
+            if (responseCode == 200)
+                return true;
+
+            err("Telegram::internalSendMessage failure with response code: %d, response msg: %s", responseCode, httpURLConnection.getResponseMessage());
+            return false;
         } finally {
             httpURLConnection.disconnect();
         }

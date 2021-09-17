@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 public abstract class FlagPattern<T> {
     private final ArrayList<String> rawFlags = new ArrayList<>();
 
-    public void pushRaw(String raw) {
+    public final void pushRaw(String raw) {
         rawFlags.add(raw);
     }
 
-    public ArrayList<T> parseParams() throws InvalidFlagException {
+    public final ArrayList<T> parseParams() throws InvalidFlagException {
         ArrayList<T> result = new ArrayList<>();
         for (String rawFlag : rawFlags) {
             result.add(parseParam(rawFlag));
@@ -26,7 +26,7 @@ public abstract class FlagPattern<T> {
         return result;
     }
 
-    public T parseParam(String raw) throws InvalidFlagException {
+    public final T parseParam(String raw) throws InvalidFlagException {
         if (!isAllowParam())
             throw new NotSupportedException(String.format("Flag '%s' does not support parameter", getCode()));
 
@@ -64,7 +64,7 @@ public abstract class FlagPattern<T> {
     }
 
     private int countMatch = 0;
-    public boolean isThisFlag(String raw) throws InvalidFlagException {
+    public final boolean isThisFlag(String raw) throws InvalidFlagException {
         String prefix = String.format("--%s", getName());
         if (raw.equals(prefix)) {
             if (isAllowParam())
@@ -114,7 +114,7 @@ public abstract class FlagPattern<T> {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         String text = String.format("\n  %s%s : %s%s", getCode(), isAllowParam() ? "=?" : "", isDevelopersOnly() ? "(developers only) " : "", getDescription());
         if (!isSupportedOnCurrentOsPlatform())
             text += ". Only available on " + Arrays.stream(getSupportedOsPlatforms()).map(Enum::toString).collect(Collectors.joining(", ")) + " OS";

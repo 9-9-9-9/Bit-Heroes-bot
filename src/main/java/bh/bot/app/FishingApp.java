@@ -68,47 +68,59 @@ public class FishingApp extends AbstractApplication {
         AtomicBoolean unsure = new AtomicBoolean(true);
         AtomicLong unsureFrom = new AtomicLong(Long.MAX_VALUE);
         AtomicLong seeBtnStartFrom = new AtomicLong(Long.MAX_VALUE);
-        waitDone(() -> doLoopFishing(loop, masterSwitch, anchorPoint, screen, unsure, unsureFrom),
-                () -> detectLongTimeNoSee(masterSwitch, unsureFrom, seeBtnStartFrom),
-                () -> detectScreen(masterSwitch, anchorPoint, screen, unsure, unsureFrom, seeBtnStartFrom),
-                () -> detectDisconnected(masterSwitch), () -> autoExit(argumentInfo.exitAfterXSecs, masterSwitch),
-                () -> doCheckGameScreenOffset(masterSwitch));
+		waitDone( //
+				() -> doLoopFishing(loop, masterSwitch, anchorPoint, screen, unsure, unsureFrom), //
+				() -> detectLongTimeNoSee(masterSwitch, unsureFrom, seeBtnStartFrom), //
+				() -> detectScreen(masterSwitch, anchorPoint, screen, unsure, unsureFrom, seeBtnStartFrom), //
+				() -> internalDoSmallTasks( //
+						masterSwitch, //
+						SmallTasks //
+								.builder() //
+								.clickDisconnect() //
+								.autoExit() //
+								.build() //
+				), //
+				() -> doCheckGameScreenOffset(masterSwitch) //
+		);
         Telegram.sendMessage("Stopped", false);
     }
 
-    private void detectLongTimeNoSee(final AtomicBoolean masterSwitch, final AtomicLong unsureFrom,
-                                     final AtomicLong seeBtnStartFrom) {
-        try {
-            final long MAX_TIME = 300_000;
-            while (!masterSwitch.get()) {
-                long now = System.currentTimeMillis();
-                long usf = now - unsureFrom.get();
-                long ssf = now - seeBtnStartFrom.get();
+	private void detectLongTimeNoSee( //
+			final AtomicBoolean masterSwitch, //
+			final AtomicLong unsureFrom, //
+			final AtomicLong seeBtnStartFrom //
+	) {
+		try {
+			final long MAX_TIME = 300_000;
+			while (!masterSwitch.get()) {
+				long now = System.currentTimeMillis();
+				long usf = now - unsureFrom.get();
+				long ssf = now - seeBtnStartFrom.get();
 
-                if (usf < MAX_TIME && ssf < MAX_TIME) {
-                    sleep(60_000);
-                    continue;
-                }
+				if (usf < MAX_TIME && ssf < MAX_TIME) {
+					sleep(60_000);
+					continue;
+				}
 
-                String msg;
-                if (usf >= MAX_TIME) {
-                    msg = "Unable to continue (unsure)";
-                } else {
-                    msg = "Unable to continue (stuck at Start button)";
-                }
+				String msg;
+				if (usf >= MAX_TIME) {
+					msg = "Unable to continue (unsure)";
+				} else {
+					msg = "Unable to continue (stuck at Start button)";
+				}
 
-                info(msg);
-                Telegram.sendMessage(msg, true);
+				info(msg);
+				Telegram.sendMessage(msg, true);
 
-                masterSwitch.set(true);
-                break;
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
-            masterSwitch.set(true);
-        }
-    }
+				masterSwitch.set(true);
+				break;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
+			masterSwitch.set(true);
+		}
+	}
 
     private final int screenNone = 0;
     private final int screenStart = 1;

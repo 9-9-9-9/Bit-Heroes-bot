@@ -53,7 +53,7 @@ public class UserConfig {
         if (!isValidExpeditionPlace())
             throw new InvalidDataException("Invalid Expedition place number %d. Must in range %d to %d", expeditionPlace,
                     expeditionPlaceMin, expeditionPlaceMax);
-        return getExpeditionPlaceDesc(worldBossLevel);
+        return getExpeditionPlaceDesc(expeditionPlace);
     }
 
     public String getRaidModeDesc() {
