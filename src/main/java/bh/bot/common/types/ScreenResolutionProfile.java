@@ -1015,27 +1015,27 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetLabelHallowedDimension() {
-			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+			return new Offset(220, 50);
 		}
 
 		@Override
 		public Offset getOffsetEnterHallowedDimensionGooGarum() {
-			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+			return new Offset(216, 167);
 		}
 
 		@Override
 		public Offset getOffsetEnterHallowedDimensionSvord() {
-			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+			return new Offset(504, 193);
 		}
 
 		@Override
 		public Offset getOffsetEnterHallowedDimensionTwimbo() {
-			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+			return new Offset(357, 318);
 		}
 
 		@Override
 		public Offset getOffsetEnterHallowedDimensionX5T34M() {
-			throw new NotImplementedException("Hallowed Dimension of Expedition has not yet been implemented");
+			return new Offset(634, 349);
 		}
 
 		@Override
