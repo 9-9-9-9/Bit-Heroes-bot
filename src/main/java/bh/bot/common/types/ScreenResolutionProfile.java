@@ -1,9 +1,9 @@
 package bh.bot.common.types;
 
+import java.awt.Rectangle;
+
 import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.types.tuples.Tuple4;
-
-import java.awt.*;
 
 @SuppressWarnings("SpellCheckingInspection")
 public abstract class ScreenResolutionProfile {

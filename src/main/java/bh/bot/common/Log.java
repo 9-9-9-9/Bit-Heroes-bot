@@ -13,6 +13,10 @@ import static bh.bot.common.utils.ColorizeUtil.*;
 
 public class Log {
     private static boolean isOnDebugMode;
+    
+    public static boolean isOnDebugMode() {
+    	return isOnDebugMode;
+    }
 
     public static void enableDebug() {
         isOnDebugMode = true;

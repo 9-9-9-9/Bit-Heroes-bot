@@ -8,7 +8,6 @@ import java.net.URL;
 
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
-import static bh.bot.common.utils.StringUtil.isNotBlank;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public class Telegram {
