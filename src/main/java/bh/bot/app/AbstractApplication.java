@@ -760,12 +760,6 @@ public abstract class AbstractApplication {
                         Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionGummy(),
                         Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionZarlock(),
                 });
-                put(BwMatrixMeta.Metas.Expedition.Labels.hallowedDimension, new Offset[]{
-                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionGooGarum(),
-                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionSvord(),
-                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionTwimbo(),
-                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionX5T34M(),
-                });
                 put(BwMatrixMeta.Metas.Expedition.Labels.jammieDimension, new Offset[]{
                         Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionZorgo(),
                         Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionYackerz(),
@@ -773,6 +767,12 @@ public abstract class AbstractApplication {
                         Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionGrampa(),
                 });
                 */
+                put(BwMatrixMeta.Metas.Expedition.Labels.hallowedDimension, new Offset[]{
+                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionGooGarum(),
+                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionSvord(),
+                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionTwimbo(),
+                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionX5T34M(),
+                });
                 put(BwMatrixMeta.Metas.Expedition.Labels.idolDimension, new Offset[]{
                         Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionBlubLix(),
                         Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionMowhi(),
@@ -1107,9 +1107,8 @@ public abstract class AbstractApplication {
 
     protected void printWarningExpeditionImplementation() {
         warn("Inferno Dimension has not yet been implemented");
-        warn("Hallowed Dimension has not yet been implemented");
         warn("Jammie Dimension has not yet been implemented");
         warn("Battle Bards has not yet been implemented");
-        warn("Currently, Expedition only supports Idol Dimension");
+        warn("Currently, Expedition only supports Idol & Hallowed Dimension");
     }
 }

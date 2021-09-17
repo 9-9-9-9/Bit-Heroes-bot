@@ -538,6 +538,11 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetLabelIdolDimension(), //
                 0xFFFFFF
         );
+        Metas.Expedition.Labels.hallowedDimension = BwMatrixMeta.from(//
+                "labels/expedition.hallowed-dimension?",
+                Configuration.screenResolutionProfile.getOffsetLabelHallowedDimension(), //
+                0xFFFFFF
+        );
 
         // Trials
         Metas.Trials.Buttons.play = BwMatrixMeta.from(//
