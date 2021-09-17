@@ -344,4 +344,9 @@ public class GenMiniClient extends AbstractApplication {
     protected boolean isRequiredToLoadImages() {
         return false;
     }
+    
+    @Override
+    protected boolean skipCheckVersion() {
+    	return true;
+    }
 }
