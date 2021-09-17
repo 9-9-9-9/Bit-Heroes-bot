@@ -1,1 +1,1 @@
-java -jar BitHeroes.jar
+java -jar BitHeroes.jar %*
