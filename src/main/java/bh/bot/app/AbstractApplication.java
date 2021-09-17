@@ -750,61 +750,58 @@ public abstract class AbstractApplication {
 			info("Exit after %s", TimeUtil.niceTimeLong(exitAfterXSecs));
 	}
 
-    private final HashMap<BwMatrixMeta, Offset[]> expeditionMap =
-            this instanceof AfkApp || this instanceof ExpeditionApp
-                    ? new HashMap<BwMatrixMeta, Offset[]>() {{
-            	/*
-                put(BwMatrixMeta.Metas.Expedition.Labels.infernoDimension, new Offset[]{
+    protected boolean tryEnterExpedition(boolean doExpedition, byte place) {
+        if (!doExpedition)
+            return false;
+
+        Offset o = null;
+        if (clickImage(BwMatrixMeta.Metas.Expedition.Labels.hallowedDimension)) {
+            if (place == 1)
+                o = Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionGooGarum();
+            else if (place == 2)
+                o = Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionSvord();
+            else if (place == 3)
+                o = Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionTwimbo();
+            else if (place == 4)
+                o = Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionX5T34M();
+        } else if (clickImage(BwMatrixMeta.Metas.Expedition.Labels.idolDimension)) {
+            if (place == 1)
+                o = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionBlubLix();
+            else if (place == 2)
+                o = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionMowhi();
+            else if (place == 3)
+                o = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionWizBot();
+            else if (place == 4)
+                o = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionAstamus();
+        }
+
+        /*
+        result.put(BwMatrixMeta.Metas.Expedition.Labels.infernoDimension, new Offset[]{
                         Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionRaleib(),
                         Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionBlemo(),
                         Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionGummy(),
                         Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionZarlock(),
                 });
-                put(BwMatrixMeta.Metas.Expedition.Labels.jammieDimension, new Offset[]{
+                result.put(BwMatrixMeta.Metas.Expedition.Labels.jammieDimension, new Offset[]{
                         Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionZorgo(),
                         Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionYackerz(),
                         Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionVionot(),
                         Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionGrampa(),
                 });
-                */
-                put(BwMatrixMeta.Metas.Expedition.Labels.hallowedDimension, new Offset[]{
-                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionGooGarum(),
-                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionSvord(),
-                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionTwimbo(),
-                        Configuration.screenResolutionProfile.getOffsetEnterHallowedDimensionX5T34M(),
-                });
-                put(BwMatrixMeta.Metas.Expedition.Labels.idolDimension, new Offset[]{
-                        Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionBlubLix(),
-                        Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionMowhi(),
-                        Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionWizBot(),
-                        Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionAstamus(),
-                });
-                /*
-                put(BwMatrixMeta.Metas.Expedition.Labels.battleBards, new Offset[]{
+                result.put(BwMatrixMeta.Metas.Expedition.Labels.battleBards, new Offset[]{
                         Configuration.screenResolutionProfile.getOffsetEnterBattleBardsHero(),
                         Configuration.screenResolutionProfile.getOffsetEnterBattleBardsBurning(),
                         Configuration.screenResolutionProfile.getOffsetEnterBattleBardsMelvapaloozo(),
                         Configuration.screenResolutionProfile.getOffsetEnterBattleBardsBitstock(),
                 });
-                */
-            }}
-                    : null;
+         */
 
-    protected boolean tryEnterExpedition(boolean doExpedition, byte place) {
-        if (!doExpedition)
-            return false;
-
-        for (Map.Entry<BwMatrixMeta, Offset[]> entry : expeditionMap.entrySet()) {
-            if (entry.getKey() == null)
-                continue;
-
-            if (clickImage(entry.getKey())) {
-                Point p = entry.getValue()[place - 1].toScreenCoordinate();
-                mouseMoveAndClickAndHide(p);
-                sleep(5_000);
-                hideCursor();
-                return true;
-            }
+        if (o != null) {
+            Point p = o.toScreenCoordinate();
+            mouseMoveAndClickAndHide(p);
+            sleep(5_000);
+            hideCursor();
+            return true;
         }
 
         return false;

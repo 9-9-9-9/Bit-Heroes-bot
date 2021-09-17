@@ -8,6 +8,8 @@ import static bh.bot.common.utils.ImageUtil.freeMem;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.UUID;
 
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
@@ -18,6 +20,7 @@ import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.utils.StringUtil;
 
 public class BwMatrixMeta {
+    private final UUID id;
     private final int[] firstBlackPixelOffset;
     private final ArrayList<int[]> blackPixels;
     private final ArrayList<int[]> nonBlackPixels;
@@ -33,6 +36,7 @@ public class BwMatrixMeta {
     private final Short[][] originalTpPixelPart;
 
     public BwMatrixMeta(BufferedImageInfo mxBii, Offset coordinateOffset, int blackPixelRgb, BufferedImage tpBi) {
+        this.id = UUID.randomUUID();
         if (mxBii.notAvailable) {
             this.firstBlackPixelOffset = null;
             this.blackPixels = null;
@@ -180,6 +184,19 @@ public class BwMatrixMeta {
     	if (this.originalTpPixelPart == null)
     		return null;
     	return this.originalTpPixelPart[x][y];
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BwMatrixMeta that = (BwMatrixMeta) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public static class Metas {
@@ -637,7 +654,7 @@ public class BwMatrixMeta {
                 return bwMatrixMeta;
             debug("MX type of %s is not available, going to load TP", path);
             bwMatrixMeta = fromTpImage(prefix + "-tp.bmp", imageOffset, blackPixelRgb);
-            if (!bwMatrixMeta.notAvailable)
+            if (bwMatrixMeta.notAvailable)
                 debug("TP type of %s is not available either", path);
             else
                 debug("Loaded TP successfully for %s", path);

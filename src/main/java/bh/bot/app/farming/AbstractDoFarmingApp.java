@@ -79,74 +79,81 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
     }
 
     protected void loop(int loopCount, AtomicBoolean masterSwitch) {
-        info(ColorizeUtil.formatInfo, "\n\nStarting %s", getAppName());
-        List<NextAction> internalPredefinedImageActions = getInternalPredefinedImageActions();
-        int continuousNotFound = 0;
-        final Point coordinateHideMouse = new Point(0, 0);
-        ML:
-        while (!masterSwitch.get() && loopCount > 0) {
-            sleep(5_000);
+        try {
 
-            if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmStartNotFullTeam)) {
-                debug("confirmStartNotFullTeam");
-                InteractionUtil.Keyboard.sendSpaceKey();
-                continuousNotFound = 0;
-                moveCursor(coordinateHideMouse);
-                continue ML;
-            }
+            info(ColorizeUtil.formatInfo, "\n\nStarting %s", getAppName());
+            List<NextAction> internalPredefinedImageActions = getInternalPredefinedImageActions();
+            int continuousNotFound = 0;
+            final Point coordinateHideMouse = new Point(0, 0);
+            ML:
+            while (!masterSwitch.get() && loopCount > 0) {
+                sleep(5_000);
 
-            if (doCustomAction()) {
-                debug("doCustomAction");
-                continuousNotFound = 0;
-                moveCursor(coordinateHideMouse);
-                continue ML;
-            }
-
-            for (NextAction predefinedImageAction : internalPredefinedImageActions) {
-                if (clickImage(predefinedImageAction.image)) {
-                    debug(predefinedImageAction.image.getImageNameCode());
+                if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmStartNotFullTeam)) {
+                    debug("confirmStartNotFullTeam");
+                    InteractionUtil.Keyboard.sendSpaceKey();
                     continuousNotFound = 0;
-                    if (predefinedImageAction.reduceLoopCountOnFound) {
-                        loopCount--;
-                        info("%d loop left", loopCount);
-                    }
-                    if (predefinedImageAction.isOutOfTurns) {
-                        InteractionUtil.Keyboard.sendEscape();
-                        masterSwitch.set(true);
-                    }
                     moveCursor(coordinateHideMouse);
                     continue ML;
                 }
-            }
 
-            Point coordMap = findImage(BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi);
-            if (coordMap != null) {
-                BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi.setLastMatchPoint(coordMap.x, coordMap.y);
-                debug("mapButtonOnFamiliarUi");
-                InteractionUtil.Keyboard.sendEscape();
-                continuousNotFound = 0;
-                moveCursor(coordinateHideMouse);
-                continue ML;
-            }
-
-            debug("None");
-            continuousNotFound++;
-            moveCursor(coordinateHideMouse);
-
-            if (continuousNotFound >= 6) {
-                debug("Finding %s icon", getAppName());
-                Point point = this.gameScreenInteractor.findAttendablePlace(ap);
-                if (point != null) {
-                    moveCursor(point);
-                    mouseClick();
-                    sleep(100);
+                if (doCustomAction()) {
+                    debug("doCustomAction");
+                    continuousNotFound = 0;
                     moveCursor(coordinateHideMouse);
+                    continue ML;
                 }
-                continuousNotFound = 0;
-            }
-        }
 
-        masterSwitch.set(true);
+                for (NextAction predefinedImageAction : internalPredefinedImageActions) {
+                    if (clickImage(predefinedImageAction.image)) {
+                        debug(predefinedImageAction.image.getImageNameCode());
+                        continuousNotFound = 0;
+                        if (predefinedImageAction.reduceLoopCountOnFound) {
+                            loopCount--;
+                            info("%d loop left", loopCount);
+                        }
+                        if (predefinedImageAction.isOutOfTurns) {
+                            InteractionUtil.Keyboard.sendEscape();
+                            masterSwitch.set(true);
+                        }
+                        moveCursor(coordinateHideMouse);
+                        continue ML;
+                    }
+                }
+
+                Point coordMap = findImage(BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi);
+                if (coordMap != null) {
+                    BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi.setLastMatchPoint(coordMap.x, coordMap.y);
+                    debug("mapButtonOnFamiliarUi");
+                    InteractionUtil.Keyboard.sendEscape();
+                    continuousNotFound = 0;
+                    moveCursor(coordinateHideMouse);
+                    continue ML;
+                }
+
+                debug("None");
+                continuousNotFound++;
+                moveCursor(coordinateHideMouse);
+
+                if (continuousNotFound >= 6) {
+                    debug("Finding %s icon", getAppName());
+                    Point point = this.gameScreenInteractor.findAttendablePlace(ap);
+                    if (point != null) {
+                        moveCursor(point);
+                        mouseClick();
+                        sleep(100);
+                        moveCursor(coordinateHideMouse);
+                    }
+                    continuousNotFound = 0;
+                }
+            }
+
+            masterSwitch.set(true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
+            masterSwitch.set(true);
+        }
     }
 
     @Override

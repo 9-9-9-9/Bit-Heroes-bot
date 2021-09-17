@@ -12,8 +12,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static bh.bot.common.Log.info;
-import static bh.bot.common.Log.warn;
+import static bh.bot.common.Log.*;
 
 @AppMeta(code = "expedition", name = "Expedition", displayOrder = 10)
 public class ExpeditionApp extends AbstractDoFarmingApp {
