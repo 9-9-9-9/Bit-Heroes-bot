@@ -651,14 +651,12 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetButtonPersuade() {
-			// TODO Auto-generated method stub
-			return null;
+			return new Offset(139, 329);
 		}
 
 		@Override
 		public Offset getOffsetButtonBribePersuade() {
-			// TODO Auto-generated method stub
-			return null;
+			return new Offset(567, 329);
 		}
 	}
 
