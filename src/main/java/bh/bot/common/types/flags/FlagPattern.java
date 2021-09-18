@@ -88,6 +88,12 @@ public abstract class FlagPattern<T> {
     public boolean isAllowParam() {
         return false;
     }
+    public boolean isAllowEmptyParam() {
+        return false;
+    }
+    public T getDefaultValueWhenEmptyParam() {
+        return null;
+    }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected boolean isAllowMultiple() {
