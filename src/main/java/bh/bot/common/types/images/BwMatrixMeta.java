@@ -209,6 +209,7 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta radioButton;
                 public static BwMatrixMeta close;
                 public static BwMatrixMeta mapButtonOnFamiliarUi;
+                public static BwMatrixMeta persuade;
             }
 
             public static class Dialogs {
@@ -380,6 +381,11 @@ public class BwMatrixMeta {
                 "buttons/globally.map-on-familiar-ui?",
                 Configuration.screenResolutionProfile.getOffsetButtonMapOnFamiliarUi(), //
                 0x000000
+        );
+        Metas.Globally.Buttons.persuade = BwMatrixMeta.from(//
+                "buttons/globally.persuade?",
+                Configuration.screenResolutionProfile.getOffsetButtonPersuade(), //
+                0xFFFFFF
         );
         Metas.Globally.Dialogs.confirmQuitBattle = BwMatrixMeta.from(//
                 "dialogs/globally.confirm-quit-battle?",
