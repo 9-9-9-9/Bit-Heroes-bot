@@ -72,7 +72,7 @@ public abstract class FlagPattern<T> {
     public final boolean isThisFlag(String raw) throws InvalidFlagException {
         String prefix = String.format("--%s", getName());
         if (raw.equals(prefix)) {
-            if (!isAllowParam() || !isAllowEmptyParam())
+            if (isAllowParam() && !isAllowEmptyParam())
                 throw new InvalidFlagException(String.format("Flag '%s' is invalid, must contains parameter or have to allow empty param", raw));
             countMatch++;
             if (countMatch > 1 && !isAllowMultiple())
