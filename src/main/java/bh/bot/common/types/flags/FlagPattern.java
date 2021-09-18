@@ -20,9 +20,8 @@ public abstract class FlagPattern<T> {
 
     public final ArrayList<T> parseParams() throws InvalidFlagException {
         ArrayList<T> result = new ArrayList<>();
-        for (String rawFlag : rawFlags) {
+        for (String rawFlag : rawFlags)
             result.add(parseParam(rawFlag));
-        }
         return result;
     }
 
@@ -100,7 +99,7 @@ public abstract class FlagPattern<T> {
     }
     
     public T getDefaultValueWhenEmptyParam() {
-        return null;
+    	throw new NotImplementedException();
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
