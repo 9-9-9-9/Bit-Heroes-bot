@@ -1,1 +1,1 @@
-java -jar BitHeroes.jar --steam
+java -jar BitHeroes.jar %* --steam
