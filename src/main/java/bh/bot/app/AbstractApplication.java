@@ -54,6 +54,7 @@ import bh.bot.common.jna.MiniClientLinuxJna;
 import bh.bot.common.jna.MiniClientMacOsJna;
 import bh.bot.common.jna.MiniClientWindowsJna;
 import bh.bot.common.jna.SteamWindowsJna;
+import bh.bot.common.types.Familiar;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
@@ -711,7 +712,7 @@ public abstract class AbstractApplication {
 				if (continous % 10 == 1)
 					Telegram.sendMessage("Found persuade screen", true);
 				
-				if (persuade(BwMatrixMeta.Metas.Persuade.Labels.kaleido, "KALEIDO", pPersuadeButton, pBribeButton)) {
+				if (persuade(BwMatrixMeta.Metas.Persuade.Labels.kaleido, Familiar.Kaleido, pPersuadeButton, pBribeButton)) {
 					//
 				} else {
 					persuade(true, pPersuadeButton, pBribeButton);
@@ -725,20 +726,31 @@ public abstract class AbstractApplication {
 		return addSec(persuadeSleepSecs);
 	}
 	
-	private boolean persuade(BwMatrixMeta im, String name, Point pPersuadeButton, Point pBribeButton) {
-		if (StringUtil.isBlank(name))
-			name = "FAMILIAR";
+	private boolean persuade(BwMatrixMeta im, Familiar familiar, Point pPersuadeButton, Point pBribeButton) {
+		String name = familiar.name().toUpperCase();
+		
+		if (im.notAvailable) {
+			warn("Persuading %s has not yet been implemented for this profile", name);
+			return false;
+		}
+		
+		if (!argumentInfo.familiarToBribeWithGems.contains(familiar)) {
+			persuade(true, pPersuadeButton, pBribeButton);
+			info("Bribe %s with gold", name);
+			return true;
+		}
+		
 		Point pFamiliar = findImage(im);
 		if (pFamiliar == null)
 			return false;
 		try {
 			persuade(false, pPersuadeButton, pBribeButton);
-			warn(name.toUpperCase());
-			Telegram.sendMessage(name.toUpperCase(), false);
+			warn(name);
+			Telegram.sendMessage(name, false);
 		} catch (Exception e) {
 			e.printStackTrace();
-			warn(name.toUpperCase());
-			Telegram.sendMessage(String.format("%s failure: %s", name.toUpperCase(), e.getMessage()), true);
+			err(name);
+			Telegram.sendMessage(String.format("%s failure: %s", name, e.getMessage()), true);
 		}
 		return true;
 	}

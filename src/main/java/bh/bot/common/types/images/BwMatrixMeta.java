@@ -32,7 +32,7 @@ public class BwMatrixMeta {
     private final int[] lastMatch = new int[]{-1, -1};
     private final byte tolerant;
     private final String imageNameCode;
-    private final boolean notAvailable;
+    public final boolean notAvailable;
     private final Short[][] originalTpPixelPart;
 
     public BwMatrixMeta(BufferedImageInfo mxBii, Offset coordinateOffset, int blackPixelRgb, BufferedImage tpBi) {
