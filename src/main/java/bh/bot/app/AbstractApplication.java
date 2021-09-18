@@ -71,6 +71,7 @@ import bh.bot.common.types.tuples.Tuple4;
 import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.utils.InteractionUtil;
+import bh.bot.common.utils.InteractionUtil.Keyboard;
 import bh.bot.common.utils.InteractionUtil.Screen.ScreenCapturedResult;
 import bh.bot.common.utils.RandomUtil;
 import bh.bot.common.utils.StringUtil;
@@ -702,13 +703,19 @@ public abstract class AbstractApplication {
 	}
 	
 	private long doPersuade(AtomicInteger continousPersuadeScreen) {
-		Point pPersuadeButton = findImage(BwMatrixMeta.Metas.Globally.Buttons.persuade);
 		Point pBribeButton = findImage(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe);
+		Point pPersuadeButton = pBribeButton != null ? null : findImage(BwMatrixMeta.Metas.Globally.Buttons.persuade);
 		if (pPersuadeButton != null || pBribeButton != null) {
 			int continous = continousPersuadeScreen.addAndGet(1);
 			if (continous > 0) {
 				if (continous % 10 == 1)
 					Telegram.sendMessage("Found persuade screen", true);
+				
+				if (persuade(BwMatrixMeta.Metas.Persuade.Labels.kaleido, "KALEIDO", pPersuadeButton, pBribeButton)) {
+					//
+				} else {
+					persuade(true, pPersuadeButton, pBribeButton);
+				}
 			} else {
 				info("Found persuade screen");
 			}
@@ -716,6 +723,48 @@ public abstract class AbstractApplication {
 			continousPersuadeScreen.set(0);
 		}
 		return addSec(persuadeSleepSecs);
+	}
+	
+	private boolean persuade(BwMatrixMeta im, String name, Point pPersuadeButton, Point pBribeButton) {
+		if (StringUtil.isBlank(name))
+			name = "FAMILIAR";
+		Point pFamiliar = findImage(im);
+		if (pFamiliar == null)
+			return false;
+		try {
+			persuade(false, pPersuadeButton, pBribeButton);
+			warn(name.toUpperCase());
+			Telegram.sendMessage(name.toUpperCase(), false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			warn(name.toUpperCase());
+			Telegram.sendMessage(String.format("%s failure: %s", name.toUpperCase(), e.getMessage()), true);
+		}
+		return true;
+	}
+	
+	private void persuade(boolean gold, Point pPersuadeButton, Point pBribeButton) {
+		Point p = null;
+		if (gold) {
+			if (pPersuadeButton != null) {
+				p = pPersuadeButton;
+			} else if (pBribeButton != null) {
+				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe, pBribeButton, Configuration.screenResolutionProfile.getOffsetButtonBribePersuade());
+			}
+		} else {
+			if (pPersuadeButton != null) {
+				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuade, pPersuadeButton, Configuration.screenResolutionProfile.getOffsetButtonPersuade());
+			} else if (pBribeButton != null) {
+				p = pBribeButton;
+			}
+		}
+		
+		if (p == null)
+			throw new InvalidDataException("Implemented wrongly");
+		
+		mouseMoveAndClickAndHide(p);
+		sleep(5_000);
+		Keyboard.sendEnter();
 	}
 
 	private long doClickTalk() {

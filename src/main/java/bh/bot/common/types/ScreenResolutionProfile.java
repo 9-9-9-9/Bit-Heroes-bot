@@ -196,6 +196,8 @@ public abstract class ScreenResolutionProfile {
 	public abstract Offset getOffsetButtonPersuade();
 	
 	public abstract Offset getOffsetButtonBribePersuade();
+	
+	public abstract Offset getOffsetLabelPersuadeKaleido();
 
 	public static class WebProfile extends ScreenResolutionProfile {
 
@@ -657,6 +659,12 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetButtonBribePersuade() {
 			return new Offset(567, 329);
+		}
+
+		@Override
+		public Offset getOffsetLabelPersuadeKaleido() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 
@@ -1120,6 +1128,11 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetButtonBribePersuade() {
 			return new Offset(556, 305);
+		}
+
+		@Override
+		public Offset getOffsetLabelPersuadeKaleido() {
+			return new Offset(202, 70);
 		}
 	}
 }

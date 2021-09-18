@@ -222,6 +222,12 @@ public class BwMatrixMeta {
             }
         }
 
+        public static class Persuade {
+            public static class Labels {
+            	public static BwMatrixMeta kaleido;
+            }
+        }
+
         public static class Dungeons {
             public static class Buttons {
                 public static BwMatrixMeta rerun;
@@ -422,7 +428,12 @@ public class BwMatrixMeta {
                 "buttons/dungeons.rerun?",
                 Configuration.screenResolutionProfile.getOffsetButtonDungeonReRun(), //
                 0xFFFFFF);
-
+        // Kaleido
+        Metas.Persuade.Labels.kaleido = BwMatrixMeta.from(//
+                "labels/persuade.kaleido?",
+                Configuration.screenResolutionProfile.getOffsetLabelPersuadeKaleido(), //
+                0xFFFF00
+        );
         // Fishing
         Metas.Fishing.Labels.fishing = BwMatrixMeta.from(//
                 "labels/fishing?",
