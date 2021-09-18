@@ -595,6 +595,7 @@ public abstract class AbstractApplication {
 	private static final int detectDcSleepSecs = 60;
 	private static final int reactiveAutoSleepSecs = 10;
 	private static final int closeEnterGameDialogNewsSleepSecs = 60;
+	private static final int persuadeSleepSecs = 60;
 
 	protected void internalDoSmallTasks(AtomicBoolean masterSwitch, SmallTasks st) {
 		try {
@@ -603,6 +604,8 @@ public abstract class AbstractApplication {
 			long nextReactiveAuto = addSec(reactiveAutoSleepSecs);
 			final AtomicInteger continousRed = new AtomicInteger(0);
 			long nextCloseEnterGameDialogNews = addSec(closeEnterGameDialogNewsSleepSecs);
+			final AtomicInteger continousPersuadeScreen = new AtomicInteger(0);
+			long nextPersuade = addSec(persuadeSleepSecs);
 			while (!masterSwitch.get()) {
 				sleep(1_000);
 
@@ -620,6 +623,9 @@ public abstract class AbstractApplication {
 
 				if (st.closeEnterGameNewsDialog && nextCloseEnterGameDialogNews <= System.currentTimeMillis())
 					nextCloseEnterGameDialogNews = closeEnterGameDialogNews();
+				
+				if (st.persuade && nextPersuade <= System.currentTimeMillis())
+					nextPersuade = doPersuade(continousPersuadeScreen);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -638,6 +644,7 @@ public abstract class AbstractApplication {
 		public final boolean reactiveAuto;
 		public final boolean autoExit;
 		public final boolean closeEnterGameNewsDialog;
+		public final boolean persuade;
 
 		private SmallTasks(Builder b) {
 			this.clickTalk = b.f(0);
@@ -645,6 +652,7 @@ public abstract class AbstractApplication {
 			this.reactiveAuto = b.f(2);
 			this.autoExit = b.f(3);
 			this.closeEnterGameNewsDialog = b.f(4);
+			this.persuade = b.f(5);
 		}
 
 		public static Builder builder() {
@@ -686,7 +694,27 @@ public abstract class AbstractApplication {
 			public Builder closeEnterGameNewsDialog() {
 				return this.set(4);
 			}
+
+			public Builder persuade() {
+				return this.set(5);
+			}
 		}
+	}
+	
+	private long doPersuade(AtomicInteger continousPersuadeScreen) {
+		Point pPersuadeButton = findImage(BwMatrixMeta.Metas.Globally.Buttons.persuade);
+		if (pPersuadeButton != null) {
+			int continous = continousPersuadeScreen.addAndGet(1);
+			if (continous > 0) {
+				if (continous % 10 == 1)
+					Telegram.sendMessage("Found persuade screen", true);
+			} else {
+				info("Found persuade screen");
+			}
+		} else {
+			continousPersuadeScreen.set(0);
+		}
+		return addSec(persuadeSleepSecs);
 	}
 
 	private long doClickTalk() {
