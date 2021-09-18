@@ -13,6 +13,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static bh.bot.common.Log.err;
+
 public class ImageUtil {
     public static BufferedImageInfo loadMxImageFromResource(String path) throws IOException {
         if (!path.toLowerCase().trim().endsWith("-mx.bmp"))
@@ -125,7 +127,12 @@ public class ImageUtil {
             tp = new BufferedImage(mx.getWidth(), mx.getHeight(), mx.getType());
             for (int y = 0; y < tp.getHeight(); y++)
                 for (int x = 0; x < tp.getWidth(); x++)
-                    tp.setRGB(x, y, bi.getRGB(x + minX, y + minY));
+                	try {
+                        tp.setRGB(x, y, bi.getRGB(x + minX, y + minY));
+                	} catch (ArrayIndexOutOfBoundsException ex) {
+                		err("Problem while moving pixel from bi %d,%d to tp %d,%d (minX = %d, minY = %d)", x, y, x + minX, y + minY, minX, minY);
+                		throw ex;
+                	}
 
             return new TestTransformMxResult(bi, mx, tp, new Offset(minX, minY));
         } finally {

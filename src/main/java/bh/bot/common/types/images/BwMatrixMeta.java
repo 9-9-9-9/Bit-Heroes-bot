@@ -210,6 +210,7 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta close;
                 public static BwMatrixMeta mapButtonOnFamiliarUi;
                 public static BwMatrixMeta persuade;
+                public static BwMatrixMeta persuadeBribe;
             }
 
             public static class Dialogs {
@@ -385,6 +386,11 @@ public class BwMatrixMeta {
         Metas.Globally.Buttons.persuade = BwMatrixMeta.from(//
                 "buttons/globally.persuade?",
                 Configuration.screenResolutionProfile.getOffsetButtonPersuade(), //
+                0xFFFFFF
+        );
+        Metas.Globally.Buttons.persuadeBribe = BwMatrixMeta.from(//
+                "buttons/globally.persuade-bribe?",
+                Configuration.screenResolutionProfile.getOffsetButtonBribePersuade(), //
                 0xFFFFFF
         );
         Metas.Globally.Dialogs.confirmQuitBattle = BwMatrixMeta.from(//

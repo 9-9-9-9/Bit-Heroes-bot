@@ -703,7 +703,8 @@ public abstract class AbstractApplication {
 	
 	private long doPersuade(AtomicInteger continousPersuadeScreen) {
 		Point pPersuadeButton = findImage(BwMatrixMeta.Metas.Globally.Buttons.persuade);
-		if (pPersuadeButton != null) {
+		Point pBribeButton = findImage(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe);
+		if (pPersuadeButton != null || pBribeButton != null) {
 			int continous = continousPersuadeScreen.addAndGet(1);
 			if (continous > 0) {
 				if (continous % 10 == 1)
