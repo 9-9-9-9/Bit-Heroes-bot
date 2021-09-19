@@ -1,6 +1,7 @@
 package bh.bot.common.utils;
 
 import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.info;
 import static bh.bot.common.Log.isOnDebugMode;
 import static bh.bot.common.Log.warn;
 
@@ -64,9 +65,11 @@ public class VersionUtil {
 					int compare = appVer.compareTo(sematicVersion);
 					
 					if (compare < 0) {
-						warn( //
-								"%s has new update v%s, please go to download new version at https://github.com/9-9-9-9/Bit-Heroes-bot/releases", //
-								Main.botName, sematicVersion.toString() //
+						info( //
+							ColorizeUtil.formatError, // 
+							"** NEW UPDATE AVAILABLE ** %s v%s is now available at https://github.com/9-9-9-9/Bit-Heroes-bot/releases", //
+							Main.botName, //
+							sematicVersion.toString() //
 						);
 						return true;
 					}
