@@ -3,7 +3,6 @@ package bh.bot.common.utils;
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.Log.isOnDebugMode;
-import static bh.bot.common.Log.warn;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

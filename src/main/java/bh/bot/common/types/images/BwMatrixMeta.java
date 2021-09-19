@@ -428,12 +428,14 @@ public class BwMatrixMeta {
                 "buttons/dungeons.rerun?",
                 Configuration.screenResolutionProfile.getOffsetButtonDungeonReRun(), //
                 0xFFFFFF);
-        // Kaleido
+        
+        // Persuade
         Metas.Persuade.Labels.kaleido = BwMatrixMeta.from(//
                 "labels/persuade.kaleido?",
                 Configuration.screenResolutionProfile.getOffsetLabelPersuadeKaleido(), //
                 0xFFFF00
         );
+        
         // Fishing
         Metas.Fishing.Labels.fishing = BwMatrixMeta.from(//
                 "labels/fishing?",
