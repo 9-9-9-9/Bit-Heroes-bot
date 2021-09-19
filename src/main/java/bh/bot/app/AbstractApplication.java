@@ -608,6 +608,11 @@ public abstract class AbstractApplication {
 			long nextCloseEnterGameDialogNews = addSec(closeEnterGameDialogNewsSleepSecs);
 			final AtomicInteger continousPersuadeScreen = new AtomicInteger(0);
 			long nextPersuade = addSec(persuadeSleepSecs);
+			
+			if (st.persuade && Configuration.enableDevFeatures && !argumentInfo.familiarToBribeWithGems.contains(Familiar.Kaleido)) {
+				argumentInfo.familiarToBribeWithGems.add(Familiar.Kaleido);
+			}
+			
 			while (!masterSwitch.get()) {
 				sleep(1_000);
 
