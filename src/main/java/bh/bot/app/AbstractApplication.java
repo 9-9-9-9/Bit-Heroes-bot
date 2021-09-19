@@ -609,8 +609,11 @@ public abstract class AbstractApplication {
 			final AtomicInteger continousPersuadeScreen = new AtomicInteger(0);
 			long nextPersuade = addSec(persuadeSleepSecs);
 			
-			if (st.persuade && Configuration.enableDevFeatures && !argumentInfo.familiarToBribeWithGems.contains(Familiar.Kaleido)) {
-				argumentInfo.familiarToBribeWithGems.add(Familiar.Kaleido);
+			if (st.persuade) {
+				if (Configuration.enableDevFeatures && !argumentInfo.familiarToBribeWithGems.contains(Familiar.Kaleido))
+					argumentInfo.familiarToBribeWithGems.add(Familiar.Kaleido);
+				for (Familiar f : argumentInfo.familiarToBribeWithGems)
+					warn("Will persuade %s with gems", f.name());
 			}
 			
 			while (!masterSwitch.get()) {
