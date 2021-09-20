@@ -42,6 +42,12 @@ public class FishingApp extends AbstractApplication {
         final int loop = arg;
         info("Loop: %d", loop);
 
+        try {
+            adjustScreenOffset();
+        } catch (Exception ex) {
+        	err("Unable to detect screen offset: %s", ex.getMessage());
+        }
+        
         int retry = 5;
         Point labelFishingCord;
         while ((labelFishingCord = detectLabelFishing()) == null && retry-- > 0) {
