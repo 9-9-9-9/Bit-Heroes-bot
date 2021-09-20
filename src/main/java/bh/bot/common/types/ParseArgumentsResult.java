@@ -28,6 +28,7 @@ public class ParseArgumentsResult {
     public boolean eRaid;
     public ScreenResolutionProfile screenResolutionProfile;
     public String cfgProfileName;
+    public ArrayList<Familiar> familiarToBribeWithGems;
 
     @SuppressWarnings("rawtypes")
     public ParseArgumentsResult(Class<? extends AbstractApplication> applicationClass, String[] arguments, ArrayList<FlagPattern> usingFlags) {

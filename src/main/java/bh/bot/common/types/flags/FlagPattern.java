@@ -20,9 +20,8 @@ public abstract class FlagPattern<T> {
 
     public final ArrayList<T> parseParams() throws InvalidFlagException {
         ArrayList<T> result = new ArrayList<>();
-        for (String rawFlag : rawFlags) {
+        for (String rawFlag : rawFlags)
             result.add(parseParam(rawFlag));
-        }
         return result;
     }
 
@@ -30,6 +29,12 @@ public abstract class FlagPattern<T> {
         if (!isAllowParam())
             throw new NotSupportedException(String.format("Flag '%s' does not support parameter", getCode()));
 
+        if (isAllowEmptyParam() && !raw.contains("=")) {
+        	if (!raw.equals(getCode()))
+                throw new InvalidFlagException("Invalid flag header (passing wrong flag?)");
+        	return getDefaultValueWhenEmptyParam();
+        }
+        
         if (!raw.contains("="))
             throw new InvalidFlagException(String.format("Flag '%s=?' expected parameter but doesn't contains parameter", getCode()));
 
@@ -67,8 +72,8 @@ public abstract class FlagPattern<T> {
     public final boolean isThisFlag(String raw) throws InvalidFlagException {
         String prefix = String.format("--%s", getName());
         if (raw.equals(prefix)) {
-            if (isAllowParam())
-                throw new InvalidFlagException(String.format("Flag '%s' is invalid, must contains parameter", raw));
+            if (isAllowParam() && !isAllowEmptyParam())
+                throw new InvalidFlagException(String.format("Flag '%s' is invalid, must contains parameter or have to allow empty param", raw));
             countMatch++;
             if (countMatch > 1 && !isAllowMultiple())
                 throw new NotSupportedException(String.format("Flag '--%s' can not be declared multiple times", getName()));
@@ -87,6 +92,14 @@ public abstract class FlagPattern<T> {
 
     public boolean isAllowParam() {
         return false;
+    }
+    
+    public boolean isAllowEmptyParam() {
+        return false;
+    }
+    
+    public T getDefaultValueWhenEmptyParam() {
+    	throw new NotImplementedException();
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

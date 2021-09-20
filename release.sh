@@ -80,6 +80,7 @@ cat ./README.release.md >> ./release/README.md
 
 # Remove secret
 rm -f ./release/bh-client/*.html
+rm -f ./release/readonly.*.properties
 
 # Compress output
 FILE=Bit-Heroes-99bot-Release-v$VERSION.zip

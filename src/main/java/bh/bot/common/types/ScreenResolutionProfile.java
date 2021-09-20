@@ -193,6 +193,12 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetDialogNews();
 
+	public abstract Offset getOffsetButtonPersuade();
+	
+	public abstract Offset getOffsetButtonBribePersuade();
+	
+	public abstract Offset getOffsetLabelPersuadeKaleido();
+
 	public static class WebProfile extends ScreenResolutionProfile {
 
 		@Override
@@ -643,6 +649,22 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetDialogNews() {
 			return new Offset(356, 77);
+		}
+
+		@Override
+		public Offset getOffsetButtonPersuade() {
+			return new Offset(139, 329);
+		}
+
+		@Override
+		public Offset getOffsetButtonBribePersuade() {
+			return new Offset(567, 329);
+		}
+
+		@Override
+		public Offset getOffsetLabelPersuadeKaleido() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 
@@ -1096,6 +1118,21 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetDialogNews() {
 			return new Offset(359, 69);
+		}
+
+		@Override
+		public Offset getOffsetButtonPersuade() {
+			return new Offset(155, 305);
+		}
+
+		@Override
+		public Offset getOffsetButtonBribePersuade() {
+			return new Offset(556, 305);
+		}
+
+		@Override
+		public Offset getOffsetLabelPersuadeKaleido() {
+			return new Offset(202, 70);
 		}
 	}
 }

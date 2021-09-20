@@ -46,9 +46,11 @@ import bh.bot.common.OS;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotImplementedException;
+import bh.bot.common.types.Familiar;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.flags.FlagBribe;
 import bh.bot.common.types.flags.FlagCloseGameWindowAfterExit;
 import bh.bot.common.types.flags.FlagDoExpedition;
 import bh.bot.common.types.flags.FlagDoGauntlet;
@@ -271,6 +273,7 @@ public class Main {
 		// Parse param
 		int exitAfter = 0;
 		String cfgProfileName = null;
+		ArrayList<Familiar> familiarToBribeWithGems = null;
 		for (FlagPattern flagPattern : usingFlagPatterns) {
 			if (!flagPattern.isAllowParam())
 				continue;
@@ -284,11 +287,19 @@ public class Main {
 				cfgProfileName = ((FlagProfileName) flagPattern).parseParams().get(0);
 				continue;
 			}
+			
+			if (flagPattern instanceof FlagBribe) {
+				familiarToBribeWithGems = ((FlagBribe) flagPattern).parseParams();
+				continue;
+			}
 
 			throw new NotImplementedException(
 					String.format("Not implemented extracting param for flag '--%s' (Class: %s)", flagPattern.getName(),
 							flagPattern.getClass().getSimpleName()));
 		}
+		
+		if (familiarToBribeWithGems == null)
+			familiarToBribeWithGems = new ArrayList<>();
 
 		info("Application will exit after %s", TimeUtil.niceTimeLong(exitAfter));
 
@@ -337,6 +348,7 @@ public class Main {
 		li.disableTelegramNoti = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagMuteNoti);
 		li.screenResolutionProfile = screenResolutionProfile;
 		li.cfgProfileName = cfgProfileName;
+		li.familiarToBribeWithGems = familiarToBribeWithGems;
 		// events
 		li.ePvp = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoPvp);
 		li.eWorldBoss = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);

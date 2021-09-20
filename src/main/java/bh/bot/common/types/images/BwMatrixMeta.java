@@ -32,7 +32,7 @@ public class BwMatrixMeta {
     private final int[] lastMatch = new int[]{-1, -1};
     private final byte tolerant;
     private final String imageNameCode;
-    private final boolean notAvailable;
+    public final boolean notAvailable;
     private final Short[][] originalTpPixelPart;
 
     public BwMatrixMeta(BufferedImageInfo mxBii, Offset coordinateOffset, int blackPixelRgb, BufferedImage tpBi) {
@@ -209,6 +209,8 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta radioButton;
                 public static BwMatrixMeta close;
                 public static BwMatrixMeta mapButtonOnFamiliarUi;
+                public static BwMatrixMeta persuade;
+                public static BwMatrixMeta persuadeBribe;
             }
 
             public static class Dialogs {
@@ -217,6 +219,12 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta areYouStillThere;
                 public static BwMatrixMeta areYouSureWantToExit;
                 public static BwMatrixMeta news;
+            }
+        }
+
+        public static class Persuade {
+            public static class Labels {
+            	public static BwMatrixMeta kaleido;
             }
         }
 
@@ -381,6 +389,16 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetButtonMapOnFamiliarUi(), //
                 0x000000
         );
+        Metas.Globally.Buttons.persuade = BwMatrixMeta.from(//
+                "buttons/globally.persuade?",
+                Configuration.screenResolutionProfile.getOffsetButtonPersuade(), //
+                0xFFFFFF
+        );
+        Metas.Globally.Buttons.persuadeBribe = BwMatrixMeta.from(//
+                "buttons/globally.persuade-bribe?",
+                Configuration.screenResolutionProfile.getOffsetButtonBribePersuade(), //
+                0xFFFFFF
+        );
         Metas.Globally.Dialogs.confirmQuitBattle = BwMatrixMeta.from(//
                 "dialogs/globally.confirm-quit-battle?",
                 Configuration.screenResolutionProfile.getOffsetDialogConfirmQuitBattle(), //
@@ -410,7 +428,14 @@ public class BwMatrixMeta {
                 "buttons/dungeons.rerun?",
                 Configuration.screenResolutionProfile.getOffsetButtonDungeonReRun(), //
                 0xFFFFFF);
-
+        
+        // Persuade
+        Metas.Persuade.Labels.kaleido = BwMatrixMeta.from(//
+                "labels/persuade.kaleido?",
+                Configuration.screenResolutionProfile.getOffsetLabelPersuadeKaleido(), //
+                0xFFFF00
+        );
+        
         // Fishing
         Metas.Fishing.Labels.fishing = BwMatrixMeta.from(//
                 "labels/fishing?",

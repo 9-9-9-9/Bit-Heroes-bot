@@ -1,8 +1,9 @@
 package bh.bot.common.utils;
 
 import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.dev;
+import static bh.bot.common.Log.info;
 import static bh.bot.common.Log.isOnDebugMode;
-import static bh.bot.common.Log.warn;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -34,7 +35,7 @@ public class VersionUtil {
 				int responseCode = httpURLConnection.getResponseCode();
 
 				if (responseCode != 200 && responseCode != 304) {
-					debug("VersionUtil::checkForLatestVersion response code %d", responseCode);
+					dev("VersionUtil::checkForLatestVersion response code %d", responseCode);
 					return false;
 				}
 
@@ -59,15 +60,20 @@ public class VersionUtil {
 					String tagName = obj.getString("tag_name");
 					if (tagName == null || !tagName.startsWith("release-"))
 						continue;
-					
+
 					SematicVersion sematicVersion = new SematicVersion(tagName.substring(8));
 					int compare = appVer.compareTo(sematicVersion);
-					
+
 					if (compare < 0) {
-						warn( //
-								"%s has new update v%s, please go to download new version at https://github.com/9-9-9-9/Bit-Heroes-bot/releases", //
-								Main.botName, sematicVersion.toString() //
+						String msg = String.format( //
+								"** NEW UPDATE AVAILABLE ** %s v%s is now available at https://github.com/9-9-9-9/Bit-Heroes-bot/releases", //
+								Main.botName, //
+								sematicVersion.toString() //
 						);
+						info(ColorizeUtil.formatAsk, msg);
+						info(ColorizeUtil.formatError, msg);
+						info(ColorizeUtil.formatWarning, msg);
+						info(ColorizeUtil.formatInfo, msg);
 						return true;
 					}
 				}
