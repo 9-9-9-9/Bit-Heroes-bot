@@ -1,1 +1,1 @@
-java -jar BitHeroes.jar %* --steam
+call _.bat %* --steam

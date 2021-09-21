@@ -8,8 +8,7 @@ echo F|xcopy target\99bot-*-jar-with-dependencies.jar BitHeroes.jar /Y
 if not exist user-config.properties echo. 2>user-config.properties
 
 rem Generating mini client
-del mini-game-on-chrome.bat >nul 2>&1
-java -jar BitHeroes.jar client
+call client.bat
 
 :to_exit
 	rem Wrong working directory

@@ -1,1 +1,1 @@
-java -jar BitHeroes.jar --help
+call _.bat --help
