@@ -1,1 +1,1 @@
-java -jar BitHeroes.jar setting
+call _.bat setting
