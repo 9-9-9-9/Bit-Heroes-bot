@@ -9,7 +9,7 @@
 
 java -jar BitHeroes.jar %*
 
-goto L_EXIT
+@goto L_EXIT
 
 :L_EXIT
-	pause
+	@pause
