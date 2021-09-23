@@ -45,7 +45,7 @@ And some extra functions support developers on developing this bot
 1. Configure follow [instruction on Wiki (click me)](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Basic-setup)
 2. Launch bot:
   - Steam on Windows: `steam.bot.bat`
-  - Mini-client/Web on Windows: `bot.bat`
+  - Mini-client/Web on Windows: `web.bot.bat`
   - Linux/MacOS: `./bot.sh`
   
 Tips 1: you can launch app with flags directly via command-line after got familiar with 99bot:
