@@ -608,14 +608,14 @@ public abstract class AbstractApplication {
 			long nextCloseEnterGameDialogNews = addSec(closeEnterGameDialogNewsSleepSecs);
 			final AtomicInteger continousPersuadeScreen = new AtomicInteger(0);
 			long nextPersuade = addSec(persuadeSleepSecs);
-			
+
 			if (st.persuade) {
 				if (Configuration.enableDevFeatures && !argumentInfo.familiarToBribeWithGems.contains(Familiar.Kaleido))
 					argumentInfo.familiarToBribeWithGems.add(Familiar.Kaleido);
 				for (Familiar f : argumentInfo.familiarToBribeWithGems)
 					warn("Will persuade %s with gems", f.name());
 			}
-			
+
 			while (!masterSwitch.get()) {
 				sleep(1_000);
 
@@ -633,7 +633,7 @@ public abstract class AbstractApplication {
 
 				if (st.closeEnterGameNewsDialog && nextCloseEnterGameDialogNews <= System.currentTimeMillis())
 					nextCloseEnterGameDialogNews = closeEnterGameDialogNews();
-				
+
 				if (st.persuade && nextPersuade <= System.currentTimeMillis())
 					nextPersuade = doPersuade(continousPersuadeScreen);
 			}
@@ -710,7 +710,8 @@ public abstract class AbstractApplication {
 			}
 		}
 	}
-	
+
+	private List<Tuple2<BwMatrixMeta, Familiar>> persuadeTargets = null;
 	private long doPersuade(AtomicInteger continousPersuadeScreen) {
 		Point pBribeButton = findImage(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe);
 		Point pPersuadeButton = pBribeButton != null ? null : findImage(BwMatrixMeta.Metas.Globally.Buttons.persuade);
@@ -720,13 +721,14 @@ public abstract class AbstractApplication {
 				if (continous % 10 == 1)
 					Telegram.sendMessage("Found persuade screen", true);
 
-				List<Tuple2<BwMatrixMeta, Familiar>> targets = Arrays.asList(
-						new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.kaleido, Familiar.Kaleido)
-				);
+				if (persuadeTargets == null)
+					persuadeTargets = Arrays.asList(
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.kaleido, Familiar.Kaleido)
+					);
 
 				boolean doPersuadeGold = true;
 
-				for (Tuple2<BwMatrixMeta, Familiar> target : targets) {
+				for (Tuple2<BwMatrixMeta, Familiar> target : persuadeTargets) {
 					PersuadeState ps = persuade(target._1, target._2, pPersuadeButton, pBribeButton);
 					if (ps == PersuadeState.NotAvailable) {
 						doPersuadeGold = false;
@@ -751,21 +753,21 @@ public abstract class AbstractApplication {
 		}
 		return addSec(persuadeSleepSecs);
 	}
-	
+
 	private PersuadeState persuade(BwMatrixMeta im, Familiar familiar, Point pPersuadeButton, Point pBribeButton) {
 		String name = familiar.name().toUpperCase();
-		
+
 		if (im.notAvailable) {
 			warn("Persuading %s has not yet been implemented for this profile", name);
 			return PersuadeState.NotAvailable;
 		}
-		
+
 		if (!argumentInfo.familiarToBribeWithGems.contains(familiar)) {
 			persuade(true, pPersuadeButton, pBribeButton);
 			info("Bribe %s with gold", name);
 			return PersuadeState.SuccessGold;
 		}
-		
+
 		Point pFamiliar = findImage(im);
 		if (pFamiliar == null)
 			return PersuadeState.NotTargetFamiliar;
@@ -785,7 +787,7 @@ public abstract class AbstractApplication {
 	private enum PersuadeState {
 		NotAvailable, SuccessGold, SuccessGem, NotTargetFamiliar
 	}
-	
+
 	private void persuade(boolean gold, Point pPersuadeButton, Point pBribeButton) {
 		Point p = null;
 		if (gold) {
@@ -801,10 +803,10 @@ public abstract class AbstractApplication {
 				p = pBribeButton;
 			}
 		}
-		
+
 		if (p == null)
 			throw new InvalidDataException("Implemented wrongly");
-		
+
 		mouseMoveAndClickAndHide(p);
 		sleep(5_000);
 		Keyboard.sendEnter();
