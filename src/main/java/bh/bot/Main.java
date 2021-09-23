@@ -194,6 +194,8 @@ public class Main {
 					break;
 				lArgs.add(newFlag);
 			}
+		} else {
+			info(ColorizeUtil.formatAsk, "FYI: command-line builder is available at: cb.bh99bot.com");
 		}
 
 		return lArgs.toArray(new String[0]);
