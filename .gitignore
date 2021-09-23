@@ -33,6 +33,7 @@ c.*.bat
 c.*.sh
 *.c.bat
 *.c.sh
+deploy.sh
 
 reconnect.bmp
 reconnect-hl.bmp
