@@ -139,7 +139,7 @@
 				}
 
 				if (el[0].checked === true) {
-					flag += ' --' + f.code;
+					flag += ' --' + f.code + (isBlank(f.val) ? '' : ('=' + f.val));
 				}
 			});
 
