@@ -12,4 +12,5 @@ public @interface AppMeta {
     String argType() default "";
     String argAsk() default "";
     String argDefault() default "";
+    boolean argRequired() default false;
 }

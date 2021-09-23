@@ -531,6 +531,11 @@ public class AfkApp extends AbstractApplication {
     }
 
     @Override
+    public String getArgHint() {
+        return String.format("Argument is combination of the following values: %s. For example %s%s%s is PVP + World Boss + Raid", shortDescArg, codePvp, codeWorldBoss1, codeRaid);
+    }
+
+    @Override
     protected String getLimitationExplain() {
         return "This AFK function does not support select level/mode, how many badge/ticket/... to consumes and can only everything by default so please chose everything first manually then use this";
     }

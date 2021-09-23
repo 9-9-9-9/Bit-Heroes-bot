@@ -229,6 +229,10 @@ public abstract class AbstractApplication {
 
 	protected abstract String getDescription();
 
+	public String getArgHint() {
+		return null;
+	}
+
 	@SuppressWarnings("rawtypes")
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder(getAppName());

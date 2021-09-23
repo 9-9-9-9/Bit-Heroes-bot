@@ -59,6 +59,8 @@ public class GenerateMetaApp extends AbstractApplication {
             appInfo.argType = anAppMeta.argType();
             appInfo.argAsk = anAppMeta.argAsk();
             appInfo.argDefault = anAppMeta.argDefault();
+            appInfo.argRequired = anAppMeta.argRequired();
+            appInfo.argHint = x.getArgHint();
 
             if (StringUtil.isBlank(appInfo.argType))
                 throw new InvalidDataException("Arg type is required in @AppMeta");
@@ -129,6 +131,8 @@ public class GenerateMetaApp extends AbstractApplication {
         private String argType;
         private String argAsk;
         private String argDefault;
+        private boolean argRequired;
+        private String argHint;
 
         public String getName() {
             return name;
@@ -176,6 +180,22 @@ public class GenerateMetaApp extends AbstractApplication {
 
         public void setArgAsk(String argAsk) {
             this.argAsk = argAsk;
+        }
+
+        public boolean isArgRequired() {
+            return argRequired;
+        }
+
+        public void setArgRequired(boolean argRequired) {
+            this.argRequired = argRequired;
+        }
+
+        public String getArgHint() {
+            return argHint;
+        }
+
+        public void setArgHint(String argHint) {
+            this.argHint = argHint;
         }
     }
 

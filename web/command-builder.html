@@ -30,7 +30,7 @@
 			padding: 30px;
 		}
 
-		div.hidden {
+		.hidden {
 			display: none;
 		}
 
@@ -83,10 +83,29 @@
 			$('#command').val('');
 
 			const app = findApp(appCode);
-
 			selectedApp = app;
+
+			$('#arg').val(app.argDefault);
+
+			if (!isBlank(selectedApp.argHint))
+				$('#arg-hint').text(app.argHint);
+			else
+				$('#arg-hint').text('');
+
 			$('div#builder > h2#name').text(selectedApp.name);
 			$('div#builder > h5#code > i > span').text(selectedApp.code);
+
+			if (!isBlank(selectedApp.argAsk)) {
+				if (selectedApp.argRequired !== true) {
+					$('#notice-arg').addClass("hidden");
+				} else {
+					$('#notice-arg').removeClass("hidden");
+				}
+				$('#ask-arg').text(selectedApp.argAsk);
+			} else {
+				$('#notice-arg').addClass("hidden");
+				$('#ask-arg').text('');
+			}
 
 			validFlags = getFlagInfos(app);
 
@@ -94,22 +113,40 @@
 		};
 
 		var buildCommand = () => {
-			$('#command').val('java -jar BitHeroes.jar ' + selectedApp.code);
+			$('#command').val('');
+			
+			const arg = $('#arg').val();
+
+			if (selectedApp.argRequired && isBlank(arg)) {
+				alert('Argument is required');
+				return;
+			}
+
+			$('#command').val('java -jar BitHeroes.jar ' + selectedApp.code + (isBlank(arg) ? "" : (" " + arg)));
 		};
+
+		const isBlank = (text) => {
+			return text === undefined || text === null || text.length == 0;
+		}
 	</script>
 </head>
 
 <body>
 	<ul class="nav">
 	</ul>
-	<hr />
 	<div id="builder" class="hidden">
+		<hr />
 		<h2 id="name"></h2>
 		<h5 id="code" class="text-secondary"><i>Function code: <span></span></i></h5>
-		<hr/>
+		<hr />
+		<p id="notice-arg" class="text-secondary hidden"><i>Parameter is required</i></p>
+		<p id="ask-arg"></p>
+		<input id="arg">
+		<p id="arg-hint" class="text-secondary"></p>
+		<hr />
 		<p class="btn btn-primary" id="build" onclick="buildCommand()">Build command-line</p>
-		<br/>
-		<input id="command" disabled="true" />
+		<br />
+		<input id="command" disabled="true">
 	</div>
 </body>
 
