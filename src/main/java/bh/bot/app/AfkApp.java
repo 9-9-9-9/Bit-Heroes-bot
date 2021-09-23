@@ -37,7 +37,7 @@ import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 import static bh.bot.common.utils.ThreadUtil.waitDone;
 
-@AppMeta(code = "afk", name = "AFK", displayOrder = 1)
+@AppMeta(code = "afk", name = "AFK", displayOrder = 1, argType = "afk", argAsk = "Task combination (optional)", argDefault = "pbr")
 public class AfkApp extends AbstractApplication {
     private InteractionUtil.Screen.Game gameScreenInteractor;
     private final AtomicLong blockPvpUntil = new AtomicLong(0);
@@ -528,6 +528,11 @@ public class AfkApp extends AbstractApplication {
     @Override
     protected String getDescription() {
         return "AFK automatically consume PVP/World Boss/GVG/Invasion/Trials/Gauntlet turns, thus you can away from keyboard. Argument is combination of " + shortDescArg;
+    }
+
+    @Override
+    public String getArgHint() {
+        return String.format("Argument is combination of the following values: %s. For example %s%s%s is PVP + World Boss + Raid", shortDescArg, codePvp, codeWorldBoss1, codeRaid);
     }
 
     @Override

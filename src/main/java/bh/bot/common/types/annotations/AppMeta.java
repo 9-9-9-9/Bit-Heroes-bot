@@ -9,4 +9,8 @@ public @interface AppMeta {
     String name();
     boolean dev() default false;
     double displayOrder() default Double.MAX_VALUE;
+    String argType() default "";
+    String argAsk() default "";
+    String argDefault() default "";
+    boolean argRequired() default false;
 }

@@ -1,5 +1,8 @@
 package bh.bot.common.types.flags;
 
+import bh.bot.common.types.annotations.FlagMeta;
+
+@FlagMeta(cbDesc = "Display help for this function", displayOrder = 10)
 public class FlagPrintHelpMessage extends FlagPattern.NonParamFlag {
     @Override
     public String getName() {

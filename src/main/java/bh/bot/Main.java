@@ -19,8 +19,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import bh.bot.app.dev.*;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
 import bh.bot.app.AbstractApplication;
@@ -29,10 +31,6 @@ import bh.bot.app.FishingApp;
 import bh.bot.app.GenMiniClient;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.SettingApp;
-import bh.bot.app.dev.ExtractMatrixApp;
-import bh.bot.app.dev.ImportTpImageApp;
-import bh.bot.app.dev.ScreenCaptureApp;
-import bh.bot.app.dev.TestApp;
 import bh.bot.app.farming.ExpeditionApp;
 import bh.bot.app.farming.GauntletApp;
 import bh.bot.app.farming.GvgApp;
@@ -112,7 +110,8 @@ public class Main {
 					ImportTpImageApp.class, //
 //
 					ScreenCaptureApp.class, //
-					TestApp.class//
+					TestApp.class, //
+					GenerateMetaApp.class
 			);
 
 			if (args.length == 0 || Arrays.stream(args).allMatch(x -> x.trim().startsWith("--")))
@@ -195,6 +194,8 @@ public class Main {
 					break;
 				lArgs.add(newFlag);
 			}
+		} else {
+			info(ColorizeUtil.formatAsk, "FYI: command-line builder is available at: cb.bh99bot.com");
 		}
 
 		return lArgs.toArray(new String[0]);
@@ -239,8 +240,7 @@ public class Main {
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
 		}
 
-		info(ColorizeUtil.formatAsk,
-				"Please give me a Star at my github repository https://github.com/9-9-9-9/Bit-Heroes-bot thank you");
+		info(Ansi.ansi().fgBrightMagenta().a("Please give me a Star").fgBrightCyan().a(" at my github repository https://github.com/9-9-9-9/Bit-Heroes-bot ").fgBrightMagenta().a("thank you").reset().toString());
 		info(ColorizeUtil.formatAsk, "Visit our repository often to update latest version");
 		instance.run(parseArgumentsResult);
 	}
@@ -301,7 +301,8 @@ public class Main {
 		if (familiarToBribeWithGems == null)
 			familiarToBribeWithGems = new ArrayList<>();
 
-		info("Application will exit after %s", TimeUtil.niceTimeLong(exitAfter));
+		if (exitAfter > 0)
+			info("Application will exit after %s", TimeUtil.niceTimeLong(exitAfter));
 
 		// Validate flags
 		for (FlagPattern flagPattern : usingFlagPatterns)

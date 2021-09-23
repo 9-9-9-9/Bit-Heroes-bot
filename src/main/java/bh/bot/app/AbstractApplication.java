@@ -79,6 +79,7 @@ import bh.bot.common.utils.StringUtil;
 import bh.bot.common.utils.TimeUtil;
 import bh.bot.common.utils.ValidationUtil;
 import bh.bot.common.utils.VersionUtil;
+import org.fusesource.jansi.Ansi;
 
 public abstract class AbstractApplication {
 	protected ParseArgumentsResult argumentInfo;
@@ -227,6 +228,10 @@ public abstract class AbstractApplication {
 	protected abstract String getUsage();
 
 	protected abstract String getDescription();
+
+	public String getArgHint() {
+		return null;
+	}
 
 	@SuppressWarnings("rawtypes")
 	public String getHelp() {
@@ -608,14 +613,14 @@ public abstract class AbstractApplication {
 			long nextCloseEnterGameDialogNews = addSec(closeEnterGameDialogNewsSleepSecs);
 			final AtomicInteger continousPersuadeScreen = new AtomicInteger(0);
 			long nextPersuade = addSec(persuadeSleepSecs);
-			
+
 			if (st.persuade) {
 				if (Configuration.enableDevFeatures && !argumentInfo.familiarToBribeWithGems.contains(Familiar.Kaleido))
 					argumentInfo.familiarToBribeWithGems.add(Familiar.Kaleido);
 				for (Familiar f : argumentInfo.familiarToBribeWithGems)
 					warn("Will persuade %s with gems", f.name());
 			}
-			
+
 			while (!masterSwitch.get()) {
 				sleep(1_000);
 
@@ -633,7 +638,7 @@ public abstract class AbstractApplication {
 
 				if (st.closeEnterGameNewsDialog && nextCloseEnterGameDialogNews <= System.currentTimeMillis())
 					nextCloseEnterGameDialogNews = closeEnterGameDialogNews();
-				
+
 				if (st.persuade && nextPersuade <= System.currentTimeMillis())
 					nextPersuade = doPersuade(continousPersuadeScreen);
 			}
@@ -710,7 +715,8 @@ public abstract class AbstractApplication {
 			}
 		}
 	}
-	
+
+	private List<Tuple2<BwMatrixMeta, Familiar>> persuadeTargets = null;
 	private long doPersuade(AtomicInteger continousPersuadeScreen) {
 		Point pBribeButton = findImage(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe);
 		Point pPersuadeButton = pBribeButton != null ? null : findImage(BwMatrixMeta.Metas.Globally.Buttons.persuade);
@@ -719,12 +725,31 @@ public abstract class AbstractApplication {
 			if (continous > 0) {
 				if (continous % 10 == 1)
 					Telegram.sendMessage("Found persuade screen", true);
-				
-				if (persuade(BwMatrixMeta.Metas.Persuade.Labels.kaleido, Familiar.Kaleido, pPersuadeButton, pBribeButton)) {
-					//
-				} else {
-					persuade(true, pPersuadeButton, pBribeButton);
+
+				if (persuadeTargets == null)
+					persuadeTargets = Arrays.asList(
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.kaleido, Familiar.Kaleido)
+					);
+
+				boolean doPersuadeGold = true;
+
+				for (Tuple2<BwMatrixMeta, Familiar> target : persuadeTargets) {
+					PersuadeState ps = persuade(target._1, target._2, pPersuadeButton, pBribeButton);
+					if (ps == PersuadeState.NotAvailable) {
+						doPersuadeGold = false;
+						break;
+					}
+					if (ps == PersuadeState.SuccessGem || ps == PersuadeState.SuccessGold) {
+						doPersuadeGold = false;
+						break;
+					}
+					if (ps == PersuadeState.NotTargetFamiliar) {
+						continue;
+					}
 				}
+
+				if (doPersuadeGold)
+					persuade(true, pPersuadeButton, pBribeButton);
 			} else {
 				info("Found persuade screen");
 			}
@@ -733,24 +758,25 @@ public abstract class AbstractApplication {
 		}
 		return addSec(persuadeSleepSecs);
 	}
-	
-	private boolean persuade(BwMatrixMeta im, Familiar familiar, Point pPersuadeButton, Point pBribeButton) {
+
+	private PersuadeState persuade(BwMatrixMeta im, Familiar familiar, Point pPersuadeButton, Point pBribeButton) {
 		String name = familiar.name().toUpperCase();
-		
+
 		if (im.notAvailable) {
 			warn("Persuading %s has not yet been implemented for this profile", name);
-			return false;
+			return PersuadeState.NotAvailable;
 		}
-		
+
 		if (!argumentInfo.familiarToBribeWithGems.contains(familiar)) {
 			persuade(true, pPersuadeButton, pBribeButton);
 			info("Bribe %s with gold", name);
-			return true;
+			return PersuadeState.SuccessGold;
 		}
-		
+
 		Point pFamiliar = findImage(im);
 		if (pFamiliar == null)
-			return false;
+			return PersuadeState.NotTargetFamiliar;
+
 		try {
 			persuade(false, pPersuadeButton, pBribeButton);
 			warn(name);
@@ -760,9 +786,13 @@ public abstract class AbstractApplication {
 			err(name);
 			Telegram.sendMessage(String.format("%s failure: %s", name, e.getMessage()), true);
 		}
-		return true;
+		return PersuadeState.SuccessGem;
 	}
-	
+
+	private enum PersuadeState {
+		NotAvailable, SuccessGold, SuccessGem, NotTargetFamiliar
+	}
+
 	private void persuade(boolean gold, Point pPersuadeButton, Point pBribeButton) {
 		Point p = null;
 		if (gold) {
@@ -778,10 +808,10 @@ public abstract class AbstractApplication {
 				p = pBribeButton;
 			}
 		}
-		
+
 		if (p == null)
 			throw new InvalidDataException("Implemented wrongly");
-		
+
 		mouseMoveAndClickAndHide(p);
 		sleep(5_000);
 		Keyboard.sendEnter();
@@ -987,7 +1017,7 @@ public abstract class AbstractApplication {
 			info("Found %d world bosses, selected %s", result._1.length,
 					UserConfig.getWorldBossLevelDesc(selectedLevel));
 			if (selectedLevel != userConfig.worldBossLevel) {
-				err("Failure on selecting world boss level");
+				err("Failure on selecting world boss level\nThis problem probably caused by the game client itself, please manually select another World Boss (except the first one) and press Summon, need time it should be OK");
 				spamEscape(1);
 				return false;
 			}
@@ -1020,7 +1050,7 @@ public abstract class AbstractApplication {
 			selectedLevel = result._2 + 1;
 			info("Found %d raid levels, selected %s", result._1.length, UserConfig.getRaidLevelDesc(selectedLevel));
 			if (selectedLevel != userConfig.raidLevel) {
-				err("Failure on selecting raid level");
+				err("Failure on selecting raid level\nThis problem probably caused by the game client itself, please manually select another Raid (not R1-T4) and press Summon, need time it should be OK");
 				spamEscape(1);
 				return false;
 			}
@@ -1259,9 +1289,7 @@ public abstract class AbstractApplication {
 	}
 
 	protected void printWarningExpeditionImplementation() {
-		warn("Inferno Dimension has not yet been implemented");
-		warn("Jammie Dimension has not yet been implemented");
-		warn("Battle Bards has not yet been implemented");
-		warn("Currently, Expedition only supports Idol & Hallowed Dimension");
+		info(Ansi.ansi().fgBrightYellow().a("** WARNING ** ").fgBrightGreen().a("Currently").fgBrightYellow().a(", ").fgBrightCyan().a("Expedition ").fgBrightGreen().a("only supports").fgBrightCyan().a(" Idol").fgBrightYellow().a(" & ").fgBrightCyan().a("Hallowed").fgBrightYellow().a(" Dimensions").reset().toString());
+		info(Ansi.ansi().fgBrightYellow().a("** WARNING ** The other dimensions ").fgBrightGreen().a("not yet implemented").fgBrightYellow().a(" but will available asap: ").fgBrightMagenta().a("Battle Bards").fgBrightYellow().a(" & ").fgBrightMagenta().a("Inferno").fgBrightYellow().a(" & ").fgBrightMagenta().a("Jammie").fgBrightYellow().a(" Dimensions").reset().toString());
 	}
 }

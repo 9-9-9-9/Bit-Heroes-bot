@@ -3,7 +3,7 @@ Upgrade notes:
   - `user-config.properties` and `readonly.*.user-config.properties` files, it contains your configurations
   - `chrome-user-dir` directory, that folder was created by chrome to do temp cache and also save your game's setting. By specify an external directory into the key `external.mini-client.user.dir` of the `user-config.properties` file, next time when you upgrade this bot, you don't need to move this folder
 ___
-## 99 bot for Bit Heroes
+## [bh99bot.com](http://bh99bot.com) is the bot for Bit Heroes
 ##### on Linux / Windows / ~~MacOS~~
 
 > Hi, I'm 99bot, please give this repo a Star, thanks

@@ -1,4 +1,4 @@
-## This is bot for Bit Heroes, called 99bot
+## [bh99bot.com](http://bh99bot.com) is the bot for Bit Heroes
 ##### on Linux / Windows / ~~MacOS~~
 [![Github Open Issues](https://img.shields.io/github/issues/9-9-9-9/Bit-Heroes-bot.svg)](https://github.com/9-9-9-9/Bit-Heroes-bot/issues)
 [![Github All Releases](https://img.shields.io/github/downloads/9-9-9-9/Bit-Heroes-bot/total.svg)](https://github.com/9-9-9-9/Bit-Heroes-bot/releases)
@@ -45,7 +45,7 @@ And some extra functions support developers on developing this bot
 1. Configure follow [instruction on Wiki (click me)](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Basic-setup)
 2. Launch bot:
   - Steam on Windows: `steam.bot.bat`
-  - Mini-client/Web on Windows: `bot.bat`
+  - Mini-client/Web on Windows: `web.bot.bat`
   - Linux/MacOS: `./bot.sh`
   
 Tips 1: you can launch app with flags directly via command-line after got familiar with 99bot:

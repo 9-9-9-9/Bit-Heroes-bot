@@ -66,7 +66,7 @@ public class VersionUtil {
 
 					if (compare < 0) {
 						String msg = String.format( //
-								"** NEW UPDATE AVAILABLE ** %s v%s is now available at https://github.com/9-9-9-9/Bit-Heroes-bot/releases", //
+								"** NEW UPDATE AVAILABLE ** %s v%s is now available at http://download.bh99bot.com", //
 								Main.botName, //
 								sematicVersion.toString() //
 						);

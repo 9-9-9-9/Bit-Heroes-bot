@@ -6,8 +6,10 @@ import bh.bot.app.farming.ExpeditionApp;
 import bh.bot.app.farming.RaidApp;
 import bh.bot.app.farming.WorldBossApp;
 import bh.bot.common.exceptions.InvalidFlagException;
+import bh.bot.common.types.annotations.FlagMeta;
 import bh.bot.common.utils.ValidationUtil;
 
+@FlagMeta(cbVal = "1", checked = true, displayOrder = 2)
 public class FlagProfileName extends FlagPattern<String> {
     public static final String formatDesc = "a-z 0-9 and can contains '-' or '_' character";
 

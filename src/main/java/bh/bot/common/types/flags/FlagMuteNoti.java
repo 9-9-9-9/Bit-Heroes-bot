@@ -1,5 +1,8 @@
 package bh.bot.common.types.flags;
 
+import bh.bot.common.types.annotations.FlagMeta;
+
+@FlagMeta(displayOrder = 10)
 public class FlagMuteNoti extends FlagPattern.NonParamFlag {
     @Override
     public String getName() {

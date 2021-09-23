@@ -16,7 +16,7 @@ import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
-@AppMeta(code = "rerun", name = "ReRun", displayOrder = 2)
+@AppMeta(code = "rerun", name = "ReRun", displayOrder = 2, argType = "number", argAsk = "How many times do you want to click the ReRun button?", argDefault = "100", argRequired = true)
 public class ReRunApp extends AbstractApplication {
 
     private int longTimeNoSee = Configuration.Timeout.defaultLongTimeNoSeeInMinutes * 60_000;
