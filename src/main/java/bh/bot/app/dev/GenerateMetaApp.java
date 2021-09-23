@@ -57,6 +57,7 @@ public class GenerateMetaApp extends AbstractApplication {
             appInfo.code = anAppMeta.code();
             appInfo.flags = supportedFlags.stream().filter(f -> f.isSupportedByApp(x)).map(f -> f.getName()).collect(Collectors.toList());
             appInfo.argType = anAppMeta.argType();
+            appInfo.argAsk = anAppMeta.argAsk();
             appInfo.argDefault = anAppMeta.argDefault();
 
             if (StringUtil.isBlank(appInfo.argType))
@@ -64,6 +65,9 @@ public class GenerateMetaApp extends AbstractApplication {
 
             if (StringUtil.isBlank(appInfo.argDefault) && !appInfo.argType.equals("none"))
                 throw new InvalidDataException("Arg default value is required in @AppMeta");
+
+            if (StringUtil.isBlank(appInfo.argAsk) && !appInfo.argType.equals("none"))
+                throw new InvalidDataException("Arg asking is required in @AppMeta");
 
             return appInfo;
         }).collect(Collectors.toList());
@@ -123,6 +127,7 @@ public class GenerateMetaApp extends AbstractApplication {
         private String code;
         private List<String> flags;
         private String argType;
+        private String argAsk;
         private String argDefault;
 
         public String getName() {
@@ -163,6 +168,14 @@ public class GenerateMetaApp extends AbstractApplication {
 
         public void setArgDefault(String argDefault) {
             this.argDefault = argDefault;
+        }
+
+        public String getArgAsk() {
+            return argAsk;
+        }
+
+        public void setArgAsk(String argAsk) {
+            this.argAsk = argAsk;
         }
     }
 
