@@ -4,8 +4,10 @@ import bh.bot.app.*;
 import bh.bot.app.farming.AbstractDoFarmingApp;
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.types.annotations.FlagMeta;
 import bh.bot.common.utils.TimeUtil;
 
+@FlagMeta(cbDesc = "Exit bot after 3 hours", cbVal = "3h", checked = true, displayOrder = 5)
 public class FlagExitAfterAmountOfSeconds extends FlagPattern<Integer> {
     private static final byte minimumValue = 60;
 

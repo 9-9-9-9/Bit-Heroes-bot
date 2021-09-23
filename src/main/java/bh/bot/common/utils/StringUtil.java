@@ -15,4 +15,12 @@ public class StringUtil {
         text = text.trim().toLowerCase();
         return text.equals("true") || text.equals("yes") || text.equals("y");
     }
+
+    public static String firstNotBlank(String...args) {
+        for (String arg : args)
+            if (isNotBlank(arg))
+                return arg;
+
+        return null;
+    }
 }

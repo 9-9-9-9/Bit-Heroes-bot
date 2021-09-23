@@ -7,7 +7,9 @@ import bh.bot.app.ReRunApp;
 import bh.bot.app.farming.AbstractDoFarmingApp;
 import bh.bot.common.OS;
 import bh.bot.common.types.Platform;
+import bh.bot.common.types.annotations.FlagMeta;
 
+@FlagMeta(cbDesc = "Shutdown your computer within 2 minutes after bot exited")
 public class FlagShutdownAfterExit extends FlagPattern.NonParamFlag {
     public static final byte shutdownAfterXMinutes = 2;
 

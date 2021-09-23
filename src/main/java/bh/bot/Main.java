@@ -19,6 +19,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import bh.bot.app.dev.*;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.fusesource.jansi.Ansi;
@@ -30,10 +31,6 @@ import bh.bot.app.FishingApp;
 import bh.bot.app.GenMiniClient;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.SettingApp;
-import bh.bot.app.dev.ExtractMatrixApp;
-import bh.bot.app.dev.ImportTpImageApp;
-import bh.bot.app.dev.ScreenCaptureApp;
-import bh.bot.app.dev.TestApp;
 import bh.bot.app.farming.ExpeditionApp;
 import bh.bot.app.farming.GauntletApp;
 import bh.bot.app.farming.GvgApp;
@@ -113,7 +110,8 @@ public class Main {
 					ImportTpImageApp.class, //
 //
 					ScreenCaptureApp.class, //
-					TestApp.class//
+					TestApp.class, //
+					GenerateMetaApp.class
 			);
 
 			if (args.length == 0 || Arrays.stream(args).allMatch(x -> x.trim().startsWith("--")))
@@ -301,7 +299,8 @@ public class Main {
 		if (familiarToBribeWithGems == null)
 			familiarToBribeWithGems = new ArrayList<>();
 
-		info("Application will exit after %s", TimeUtil.niceTimeLong(exitAfter));
+		if (exitAfter > 0)
+			info("Application will exit after %s", TimeUtil.niceTimeLong(exitAfter));
 
 		// Validate flags
 		for (FlagPattern flagPattern : usingFlagPatterns)
