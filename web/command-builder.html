@@ -81,6 +81,9 @@
 
 		var prepare = (appCode) => {
 			$('#command').val('');
+			$('#command-hint').text('');
+			$('#flags').html('');
+			$('#run-hint').addClass('hidden');
 
 			const app = findApp(appCode);
 			selectedApp = app;
@@ -107,14 +110,19 @@
 				$('#ask-arg').text('');
 			}
 
-			validFlags = getFlagInfos(app);
+			validFlags = getFlagInfos(app).sort(sortF);
+
+			validFlags.forEach(flag => {
+				$('#flags').append('<p><input type="checkbox"' + (flag.checked === true ? ' checked' : '') + ' id="flag-' + flag.code + '"> [--' + flag.code + (isBlank(flag.val) ? '' : ('=' + flag.val)) + '] ' + flag.desc + '</input></p>');
+			});
 
 			$('div#builder').removeClass('hidden');
 		};
 
 		var buildCommand = () => {
 			$('#command').val('');
-			
+			$('#command-hint').val('');
+
 			const arg = $('#arg').val();
 
 			if (selectedApp.argRequired && isBlank(arg)) {
@@ -122,12 +130,40 @@
 				return;
 			}
 
-			$('#command').val('java -jar BitHeroes.jar ' + selectedApp.code + (isBlank(arg) ? "" : (" " + arg)));
+			let flag = '';
+			validFlags.forEach(f => {
+				const el = $('#flag-' + f.code);
+				if (el.length == 0) {
+					console.log('skip ' + f.code);
+					return;
+				}
+
+				if (el[0].checked === true) {
+					flag += ' --' + f.code;
+				}
+			});
+
+			const cmd = 'java -jar BitHeroes.jar ' + selectedApp.code + (isBlank(arg) ? "" : (" " + arg)) + flag;
+			$('#command').val(cmd);
+			$('#command-hint').text(cmd);
+			$('#run-hint').removeClass('hidden');
 		};
 
 		const isBlank = (text) => {
 			return text === undefined || text === null || text.length == 0;
 		}
+
+		const sortF = (a, b) => {
+			return a.order - b.order;
+		};
+
+		const copyIt = () => {
+			var copyText = document.getElementById('command');
+			copyText.select();
+			copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+			document.execCommand('copy');
+		};
 	</script>
 </head>
 
@@ -144,9 +180,19 @@
 		<input id="arg">
 		<p id="arg-hint" class="text-secondary"></p>
 		<hr />
+		Flags:
+		<div id="flags"></div>
+		<hr />
 		<p class="btn btn-primary" id="build" onclick="buildCommand()">Build command-line</p>
 		<br />
-		<input id="command" disabled="true">
+		<input id="command"> <button onclick="copyIt()">Copy it</button>
+		<i>
+			<p id="command-hint" class="text-secondary"></p>
+		</i>
+		<div id="run-hint" class="hidden">
+			<p><span class="badge bg-secondary">Windows</span> open Windows Command Prompt at bot&apos;s folder and paste the generated command-line one into it</p>
+			<p><span class="badge bg-secondary">Linux/MacOS</span> open Terminal at bot&apos;s folder and paste the generated command-line one into it</p>
+		</div>
 	</div>
 </body>
 
