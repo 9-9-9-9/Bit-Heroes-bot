@@ -798,8 +798,13 @@ public abstract class AbstractApplication {
 	}
 
 	private long detectDisconnected(AtomicBoolean masterSwitch) {
-		if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.reconnect))
-			masterSwitch.set(true);
+		if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.reconnect)) {
+			try {
+				Telegram.sendMessage("Disconnected", true);
+			} finally {
+				masterSwitch.set(true);
+			}
+		}
 		return addSec(detectDcSleepSecs);
 	}
 
