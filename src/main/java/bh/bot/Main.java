@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
 import bh.bot.app.AbstractApplication;
@@ -239,8 +240,7 @@ public class Main {
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
 		}
 
-		info(ColorizeUtil.formatAsk,
-				"Please give me a Star at my github repository https://github.com/9-9-9-9/Bit-Heroes-bot thank you");
+		info(Ansi.ansi().fgBrightMagenta().a("Please give me a Star").fgBrightCyan().a(" at my github repository https://github.com/9-9-9-9/Bit-Heroes-bot ").fgBrightMagenta().a("thank you").reset().toString());
 		info(ColorizeUtil.formatAsk, "Visit our repository often to update latest version");
 		instance.run(parseArgumentsResult);
 	}

@@ -79,6 +79,7 @@ import bh.bot.common.utils.StringUtil;
 import bh.bot.common.utils.TimeUtil;
 import bh.bot.common.utils.ValidationUtil;
 import bh.bot.common.utils.VersionUtil;
+import org.fusesource.jansi.Ansi;
 
 public abstract class AbstractApplication {
 	protected ParseArgumentsResult argumentInfo;
@@ -1284,9 +1285,7 @@ public abstract class AbstractApplication {
 	}
 
 	protected void printWarningExpeditionImplementation() {
-		warn("Inferno Dimension has not yet been implemented");
-		warn("Jammie Dimension has not yet been implemented");
-		warn("Battle Bards has not yet been implemented");
-		warn("Currently, Expedition only supports Idol & Hallowed Dimension");
+		info(Ansi.ansi().fgBrightYellow().a("** WARNING ** ").fgBrightGreen().a("Currently").fgBrightYellow().a(", ").fgBrightCyan().a("Expedition ").fgBrightGreen().a("only supports").fgBrightCyan().a(" Idol").fgBrightYellow().a(" & ").fgBrightCyan().a("Hallowed").fgBrightYellow().a(" Dimensions").reset().toString());
+		info(Ansi.ansi().fgBrightYellow().a("** WARNING ** The other dimensions ").fgBrightGreen().a("not yet implemented").fgBrightYellow().a(" but will available asap: ").fgBrightMagenta().a("Battle Bards").fgBrightYellow().a(" & ").fgBrightMagenta().a("Inferno").fgBrightYellow().a(" & ").fgBrightMagenta().a("Jammie").fgBrightYellow().a(" Dimensions").reset().toString());
 	}
 }

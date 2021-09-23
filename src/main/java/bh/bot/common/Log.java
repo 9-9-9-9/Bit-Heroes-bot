@@ -119,6 +119,4 @@ public class Log {
             return text;
         return formatter.apply(ansi()).a(text).reset().toString();
     }
-    
-    
 }
