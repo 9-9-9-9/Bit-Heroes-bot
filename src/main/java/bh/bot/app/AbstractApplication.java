@@ -719,12 +719,30 @@ public abstract class AbstractApplication {
 			if (continous > 0) {
 				if (continous % 10 == 1)
 					Telegram.sendMessage("Found persuade screen", true);
-				
-				if (persuade(BwMatrixMeta.Metas.Persuade.Labels.kaleido, Familiar.Kaleido, pPersuadeButton, pBribeButton)) {
-					//
-				} else {
-					persuade(true, pPersuadeButton, pBribeButton);
+
+				List<Tuple2<BwMatrixMeta, Familiar>> targets = Arrays.asList(
+						new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.kaleido, Familiar.Kaleido)
+				);
+
+				boolean doPersuadeGold = true;
+
+				for (Tuple2<BwMatrixMeta, Familiar> target : targets) {
+					PersuadeState ps = persuade(target._1, target._2, pPersuadeButton, pBribeButton);
+					if (ps == PersuadeState.NotAvailable) {
+						doPersuadeGold = false;
+						break;
+					}
+					if (ps == PersuadeState.SuccessGem || ps == PersuadeState.SuccessGold) {
+						doPersuadeGold = false;
+						break;
+					}
+					if (ps == PersuadeState.NotTargetFamiliar) {
+						continue;
+					}
 				}
+
+				if (doPersuadeGold)
+					persuade(true, pPersuadeButton, pBribeButton);
 			} else {
 				info("Found persuade screen");
 			}
@@ -734,23 +752,24 @@ public abstract class AbstractApplication {
 		return addSec(persuadeSleepSecs);
 	}
 	
-	private boolean persuade(BwMatrixMeta im, Familiar familiar, Point pPersuadeButton, Point pBribeButton) {
+	private PersuadeState persuade(BwMatrixMeta im, Familiar familiar, Point pPersuadeButton, Point pBribeButton) {
 		String name = familiar.name().toUpperCase();
 		
 		if (im.notAvailable) {
 			warn("Persuading %s has not yet been implemented for this profile", name);
-			return false;
+			return PersuadeState.NotAvailable;
 		}
 		
 		if (!argumentInfo.familiarToBribeWithGems.contains(familiar)) {
 			persuade(true, pPersuadeButton, pBribeButton);
 			info("Bribe %s with gold", name);
-			return true;
+			return PersuadeState.SuccessGold;
 		}
 		
 		Point pFamiliar = findImage(im);
 		if (pFamiliar == null)
-			return false;
+			return PersuadeState.NotTargetFamiliar;
+
 		try {
 			persuade(false, pPersuadeButton, pBribeButton);
 			warn(name);
@@ -760,7 +779,11 @@ public abstract class AbstractApplication {
 			err(name);
 			Telegram.sendMessage(String.format("%s failure: %s", name, e.getMessage()), true);
 		}
-		return true;
+		return PersuadeState.SuccessGem;
+	}
+
+	private enum PersuadeState {
+		NotAvailable, SuccessGold, SuccessGem, NotTargetFamiliar
 	}
 	
 	private void persuade(boolean gold, Point pPersuadeButton, Point pBribeButton) {
