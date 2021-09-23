@@ -1012,7 +1012,7 @@ public abstract class AbstractApplication {
 			info("Found %d world bosses, selected %s", result._1.length,
 					UserConfig.getWorldBossLevelDesc(selectedLevel));
 			if (selectedLevel != userConfig.worldBossLevel) {
-				err("Failure on selecting world boss level");
+				err("Failure on selecting world boss level\nThis problem probably caused by the game client itself, please manually select another World Boss (except the first one) and press Summon, need time it should be OK");
 				spamEscape(1);
 				return false;
 			}
@@ -1045,7 +1045,7 @@ public abstract class AbstractApplication {
 			selectedLevel = result._2 + 1;
 			info("Found %d raid levels, selected %s", result._1.length, UserConfig.getRaidLevelDesc(selectedLevel));
 			if (selectedLevel != userConfig.raidLevel) {
-				err("Failure on selecting raid level");
+				err("Failure on selecting raid level\nThis problem probably caused by the game client itself, please manually select another Raid (not R1-T4) and press Summon, need time it should be OK");
 				spamEscape(1);
 				return false;
 			}
