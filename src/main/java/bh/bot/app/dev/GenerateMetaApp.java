@@ -4,12 +4,14 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
 import bh.bot.app.FishingApp;
 import bh.bot.app.ReRunApp;
+import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.annotations.FlagMeta;
 import bh.bot.common.types.flags.FlagPattern;
 import bh.bot.common.types.flags.Flags;
 import bh.bot.common.utils.StringUtil;
 import org.json.JSONObject;
+import org.omg.CORBA.DynAnyPackage.Invalid;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,6 +56,15 @@ public class GenerateMetaApp extends AbstractApplication {
             appInfo.name = anAppMeta.name();
             appInfo.code = anAppMeta.code();
             appInfo.flags = supportedFlags.stream().filter(f -> f.isSupportedByApp(x)).map(f -> f.getName()).collect(Collectors.toList());
+            appInfo.argType = anAppMeta.argType();
+            appInfo.argDefault = anAppMeta.argDefault();
+
+            if (StringUtil.isBlank(appInfo.argType))
+                throw new InvalidDataException("Arg type is required in @AppMeta");
+
+            if (StringUtil.isBlank(appInfo.argDefault) && !appInfo.argType.equals("none"))
+                throw new InvalidDataException("Arg default value is required in @AppMeta");
+
             return appInfo;
         }).collect(Collectors.toList());
 
@@ -111,6 +122,8 @@ public class GenerateMetaApp extends AbstractApplication {
         private String name;
         private String code;
         private List<String> flags;
+        private String argType;
+        private String argDefault;
 
         public String getName() {
             return name;
@@ -134,6 +147,22 @@ public class GenerateMetaApp extends AbstractApplication {
 
         public void setFlags(List<String> flags) {
             this.flags = flags;
+        }
+
+        public String getArgType() {
+            return argType;
+        }
+
+        public void setArgType(String argType) {
+            this.argType = argType;
+        }
+
+        public String getArgDefault() {
+            return argDefault;
+        }
+
+        public void setArgDefault(String argDefault) {
+            this.argDefault = argDefault;
         }
     }
 

@@ -37,7 +37,7 @@ import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 import static bh.bot.common.utils.ThreadUtil.waitDone;
 
-@AppMeta(code = "afk", name = "AFK", displayOrder = 1)
+@AppMeta(code = "afk", name = "AFK", displayOrder = 1, argType = "afk", argDefault = "pbr")
 public class AfkApp extends AbstractApplication {
     private InteractionUtil.Screen.Game gameScreenInteractor;
     private final AtomicLong blockPvpUntil = new AtomicLong(0);

@@ -26,7 +26,7 @@ import static bh.bot.common.utils.InteractionUtil.Screen.getPixelColor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 import static bh.bot.common.utils.ThreadUtil.waitDone;
 
-@AppMeta(code = "fishing", name = "Fishing", displayOrder = 3)
+@AppMeta(code = "fishing", name = "Fishing", displayOrder = 3, argType = "number", argDefault = "100")
 public class FishingApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
