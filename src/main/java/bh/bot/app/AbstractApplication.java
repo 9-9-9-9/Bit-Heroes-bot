@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
+import bh.bot.common.types.flags.*;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
 import bh.bot.Main;
@@ -60,11 +61,6 @@ import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
-import bh.bot.common.types.flags.FlagPattern;
-import bh.bot.common.types.flags.FlagProfileName;
-import bh.bot.common.types.flags.FlagResolution;
-import bh.bot.common.types.flags.FlagShutdownAfterExit;
-import bh.bot.common.types.flags.Flags;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
@@ -164,10 +160,25 @@ public abstract class AbstractApplication {
 	private void tryToCloseGameWindow(boolean closeGameWindowAfterExit) {
 		if (!closeGameWindowAfterExit)
 			return;
+
 		try {
-			getJnaInstance().tryToCloseGameWindow();
-		} catch (Exception ignored) {
+			int waitXMinutes = FlagCloseGameWindowAfterExit.waitXMinutes;
+			long deadline = addSec(waitXMinutes * 60);
+
+			long timeLeft;
+			while ((timeLeft = deadline - System.currentTimeMillis()) > 0) {
+				info(ColorizeUtil.formatError,  "Game window is going to be closed after %d minute%s", waitXMinutes, waitXMinutes > 1 ? "s" : "");
+				waitXMinutes--;
+				sleep((int) Math.min(60_000, timeLeft + 1));
+			}
+		} catch (Exception ignored2) {
 			//
+		} finally {
+			try {
+				getJnaInstance().tryToCloseGameWindow();
+			} catch (Exception ignored) {
+				//
+			}
 		}
 	}
 
