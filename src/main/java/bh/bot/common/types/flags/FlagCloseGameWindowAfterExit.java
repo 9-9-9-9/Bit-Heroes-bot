@@ -2,7 +2,7 @@ package bh.bot.common.types.flags;
 
 import bh.bot.common.types.annotations.FlagMeta;
 
-@FlagMeta(cbDesc = "Close game window when bot is going to exit (wait 10 minutes)", displayOrder = 5)
+@FlagMeta(cbDesc = "Close game window when bot is going to exit (from v1.7.3 will wait 10 minutes before close)", displayOrder = 5)
 public class FlagCloseGameWindowAfterExit extends FlagPattern.NonParamFlag {
     public static final byte waitXMinutes = 10;
 
