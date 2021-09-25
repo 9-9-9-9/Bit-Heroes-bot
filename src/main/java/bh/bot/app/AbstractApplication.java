@@ -66,6 +66,8 @@ import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.types.tuples.Tuple4;
 import bh.bot.common.utils.ColorizeUtil;
+import bh.bot.common.utils.ColorizeUtil.Cu;
+import bh.bot.common.utils.Extensions;
 import bh.bot.common.utils.ImageUtil;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.InteractionUtil.Keyboard;
@@ -75,7 +77,6 @@ import bh.bot.common.utils.StringUtil;
 import bh.bot.common.utils.TimeUtil;
 import bh.bot.common.utils.ValidationUtil;
 import bh.bot.common.utils.VersionUtil;
-import org.fusesource.jansi.Ansi;
 
 public abstract class AbstractApplication {
 	protected ParseArgumentsResult argumentInfo;
@@ -774,7 +775,7 @@ public abstract class AbstractApplication {
 		String name = familiar.name().toUpperCase();
 
 		if (im.notAvailable) {
-			warn("Persuading %s has not yet been implemented for this profile", name);
+			warn("Persuading %s has not yet been implemented for this resolution profile", name);
 			return PersuadeState.NotAvailable;
 		}
 
@@ -1227,10 +1228,10 @@ public abstract class AbstractApplication {
 
 	protected String readCfgProfileName(String ask, String desc) {
 		StringBuilder sb = new StringBuilder();
+		boolean hasExistingProfile = false;
 		try {
 			final String prefix = "readonly.";
 			final String suffix = ".user-config.properties";
-			boolean foundAny = false;
 			for (File file : Arrays.stream(Objects.requireNonNull(new File(".").listFiles())).filter(File::isFile)
 					.sorted().collect(Collectors.toList())) {
 				String name = file.getName();
@@ -1248,8 +1249,8 @@ public abstract class AbstractApplication {
 				if (cfgProfileName.length() > 0) {
 					if (!ValidationUtil.isValidUserProfileName(cfgProfileName))
 						continue;
-					if (!foundAny) {
-						foundAny = true;
+					if (!hasExistingProfile) {
+						hasExistingProfile = true;
 						sb.append("Existing profiles:\n");
 					}
 					sb.append("  ");
@@ -1257,12 +1258,16 @@ public abstract class AbstractApplication {
 					sb.append('\n');
 				}
 			}
-			if (foundAny)
+			if (hasExistingProfile)
 				sb.append('\n');
 		} catch (Exception ex) {
 			err("Problem while trying to list existing files in current directory: %s", ex.getMessage());
 		}
 		sb.append(ask);
+
+		if (!hasExistingProfile)
+			sb.append(Cu.i().red("\nYou haven't configurated any profile, please launch ").yellow(Extensions.scriptFileName("setting")).red(" to make one").reset().toString());
+		
 		return readInput(sb.toString(), desc, s -> {
 			s = s.trim().toLowerCase();
 			if (!ValidationUtil.isValidUserProfileName(s))
@@ -1300,7 +1305,7 @@ public abstract class AbstractApplication {
 	}
 
 	protected void printWarningExpeditionImplementation() {
-		info(Ansi.ansi().fgBrightYellow().a("** WARNING ** ").fgBrightGreen().a("Currently").fgBrightYellow().a(", ").fgBrightCyan().a("Expedition ").fgBrightGreen().a("only supports").fgBrightCyan().a(" Idol").fgBrightYellow().a(" & ").fgBrightCyan().a("Hallowed").fgBrightYellow().a(" Dimensions").reset().toString());
-		info(Ansi.ansi().fgBrightYellow().a("** WARNING ** The other dimensions ").fgBrightGreen().a("not yet implemented").fgBrightYellow().a(" but will available asap: ").fgBrightMagenta().a("Battle Bards").fgBrightYellow().a(" & ").fgBrightMagenta().a("Inferno").fgBrightYellow().a(" & ").fgBrightMagenta().a("Jammie").fgBrightYellow().a(" Dimensions").reset().toString());
+		info(Cu.i().yellow("** WARNING ** ").green("Currently").yellow(", ").cyan("Expedition ").green("only supports").cyan(" Idol").yellow(" & ").cyan("Hallowed").yellow(" Dimensions").reset().toString());
+		info(Cu.i().yellow("** WARNING ** The other dimensions ").green("not yet implemented").yellow(" but will available asap: ").magenta("Battle Bards").yellow(" & ").magenta("Inferno").yellow(" & ").magenta("Jammie").yellow(" Dimensions").reset().toString());
 	}
 }

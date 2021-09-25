@@ -30,4 +30,59 @@ public class ColorizeUtil {
 	public static final Function<Ansi, Ansi> formatWarning = ansi -> ansi.fgBrightYellow();
 	
 	public static final Function<Ansi, Ansi> formatError = ansi -> ansi.fgBrightRed();
+	
+	public static class Cu {
+		private final Ansi ansi = Ansi.ansi();
+
+		private Cu() {
+		}
+
+		public Cu blue(String text) {
+			ansi.fgBrightBlue().a(text);
+			return this;
+		}
+
+		public Cu cyan(String text) {
+			ansi.fgBrightCyan().a(text);
+			return this;
+		}
+
+		public Cu green(String text) {
+			ansi.fgBrightGreen().a(text);
+			return this;
+		}
+
+		public Cu magenta(String text) {
+			ansi.fgBrightMagenta().a(text);
+			return this;
+		}
+
+		public Cu red(String text) {
+			ansi.fgBrightRed().a(text);
+			return this;
+		}
+
+		public Cu yellow(String text) {
+			ansi.fgBrightYellow().a(text);
+			return this;
+		}
+
+		public Cu reset() {
+			ansi.reset();
+			return this;
+		}
+
+		public Ansi ansi() {
+			return ansi;
+		}
+
+		@Override
+		public String toString() {
+			return ansi.toString();
+		}
+
+		public static Cu i() {
+			return new Cu();
+		}
+	}
 }

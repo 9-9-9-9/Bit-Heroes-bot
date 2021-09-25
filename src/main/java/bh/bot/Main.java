@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import bh.bot.app.dev.*;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
 import bh.bot.app.AbstractApplication;
@@ -76,6 +75,7 @@ import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.TimeUtil;
 import bh.bot.common.utils.VersionUtil;
+import bh.bot.common.utils.ColorizeUtil.Cu;
 
 @SuppressWarnings("deprecation")
 public class Main {
@@ -240,7 +240,7 @@ public class Main {
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
 		}
 
-		info(Ansi.ansi().fgBrightMagenta().a("Please give me a Star").fgBrightCyan().a(" at my github repository https://github.com/9-9-9-9/Bit-Heroes-bot ").fgBrightMagenta().a("thank you").reset().toString());
+		info(Cu.i().magenta("Please give me a Star").cyan(" at my github repository https://github.com/9-9-9-9/Bit-Heroes-bot ").magenta("thank you").reset().toString());
 		info(ColorizeUtil.formatAsk, "Visit our repository often to update latest version");
 		instance.run(parseArgumentsResult);
 	}
