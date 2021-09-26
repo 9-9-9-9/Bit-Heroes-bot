@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 
-@AppMeta(code = "world-boss", name = "World Boss", displayOrder = 6)
+@AppMeta(code = "world-boss", name = "World Boss (Solo)", displayOrder = 6)
 public class WorldBossApp extends AbstractDoFarmingApp {
     private final Supplier<Boolean> isWorldBossBlocked = () -> false;
     private UserConfig userConfig;
