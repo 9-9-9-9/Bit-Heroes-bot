@@ -43,6 +43,7 @@ cat <<EOF > ./release/user-config.properties
 # Configure telegram
 #telegram.token=
 #telegram.channel-id=
+#telegram.instance-id=
 
 # Tolerant
 #tolerant.position=40
