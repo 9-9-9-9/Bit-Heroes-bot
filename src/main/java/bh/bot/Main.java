@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import bh.bot.app.dev.*;
+import bh.bot.common.types.flags.*;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.fusesource.jansi.AnsiConsole;
@@ -47,28 +48,6 @@ import bh.bot.common.types.Familiar;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppMeta;
-import bh.bot.common.types.flags.FlagBribe;
-import bh.bot.common.types.flags.FlagCloseGameWindowAfterExit;
-import bh.bot.common.types.flags.FlagDoExpedition;
-import bh.bot.common.types.flags.FlagDoGauntlet;
-import bh.bot.common.types.flags.FlagDoGvG;
-import bh.bot.common.types.flags.FlagDoInvasion;
-import bh.bot.common.types.flags.FlagDoPvp;
-import bh.bot.common.types.flags.FlagDoRaid;
-import bh.bot.common.types.flags.FlagDoTrials;
-import bh.bot.common.types.flags.FlagDoWorldBoss;
-import bh.bot.common.types.flags.FlagExitAfkAfterIfWaitResourceGeneration;
-import bh.bot.common.types.flags.FlagExitAfterAmountOfSeconds;
-import bh.bot.common.types.flags.FlagMuteNoti;
-import bh.bot.common.types.flags.FlagPattern;
-import bh.bot.common.types.flags.FlagPrintHelpMessage;
-import bh.bot.common.types.flags.FlagProfileName;
-import bh.bot.common.types.flags.FlagSaveDebugImages;
-import bh.bot.common.types.flags.FlagShowDebugMessages;
-import bh.bot.common.types.flags.FlagShutdownAfterExit;
-import bh.bot.common.types.flags.FlagSteamResolution800x480;
-import bh.bot.common.types.flags.FlagWebResolution800x520;
-import bh.bot.common.types.flags.Flags;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ColorizeUtil;
@@ -274,6 +253,7 @@ public class Main {
 		int exitAfter = 0;
 		String cfgProfileName = null;
 		ArrayList<Familiar> familiarToBribeWithGems = null;
+		int timerLoopMain = -1;
 		for (FlagPattern flagPattern : usingFlagPatterns) {
 			if (!flagPattern.isAllowParam())
 				continue;
@@ -287,9 +267,14 @@ public class Main {
 				cfgProfileName = ((FlagProfileName) flagPattern).parseParams().get(0);
 				continue;
 			}
-			
+
 			if (flagPattern instanceof FlagBribe) {
 				familiarToBribeWithGems = ((FlagBribe) flagPattern).parseParams();
+				continue;
+			}
+
+			if (flagPattern instanceof FlagAlterTimerLoop) {
+				timerLoopMain = ((FlagAlterTimerLoop) flagPattern).parseParams().get(0);
 				continue;
 			}
 
@@ -338,6 +323,7 @@ public class Main {
 
 		ParseArgumentsResult li = new ParseArgumentsResult(applicationClassFromAppCode, args, usingFlagPatterns);
 		li.exitAfterXSecs = exitAfter;
+		li.timerLoopMain = timerLoopMain;
 		li.exitAfkIfWaitForResourceGeneration = usingFlagPatterns.stream()
 				.anyMatch(x -> x instanceof FlagExitAfkAfterIfWaitResourceGeneration);
 		li.shutdownAfterExit = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShutdownAfterExit);

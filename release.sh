@@ -49,6 +49,9 @@ cat <<EOF > ./release/user-config.properties
 #tolerant.position=40
 #tolerant.color=0
 
+# Alter time wait between loop of checking images, if you believe your PC is fast, you can use this key for a faster progression. Default timer for most function is 5 seconds, accepted format is: <number> = number of seconds / <number>s = number of seconds / <number>ms = number of milliseconds, eg: 50ms = loop every 50 milliseconds, or 5000ms equals to 5 seconds
+#timers.loop.main=1s
+
 # Google Chrome path, for Windows only
 #external.application.chrome.path=C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe
 

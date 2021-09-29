@@ -1,6 +1,7 @@
 package bh.bot.common.utils;
 
 import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.types.tuples.Tuple3;
 
 import java.util.regex.Pattern;
 
@@ -84,5 +85,24 @@ public class TimeUtil {
             sb.append(sec).append(" seconds");
         
         return sb.toString().trim();
+    }
+
+    public static Tuple3<Boolean, String, Integer> tryParseTimeConfig(String text, int defaultValue) {
+        if (StringUtil.isBlank(text))
+            return new Tuple3<>(false, "Blank value", defaultValue);
+
+        String normalized = text.toLowerCase().trim();
+
+        final String p1 = "\\d+(s|ms)?";
+        if (!Pattern.compile(p1).matcher(normalized).matches())
+            return new Tuple3<>(false, "Not a valid format, requires regex: " + p1, defaultValue);
+
+        if (!normalized.endsWith("s"))
+            return new Tuple3<>(true, null, Integer.parseInt(normalized) * 1_000);
+
+        if (normalized.endsWith("ms"))
+            return new Tuple3<>(true, null, Integer.parseInt(normalized.substring(0, normalized.length() - 2)));
+
+        return new Tuple3<>(true, null, Integer.parseInt(normalized.substring(0, normalized.length() - 1)) * 1_000);
     }
 }
