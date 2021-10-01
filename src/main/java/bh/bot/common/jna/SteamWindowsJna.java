@@ -132,19 +132,28 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 		}
 	}
 
+	@SuppressWarnings("SpellCheckingInspection")
 	private static final int SWP_NOSIZE = 0x0001;
+	@SuppressWarnings("SpellCheckingInspection")
 	private static final int SWP_NOMOVE = 0x0002;
+
+	@SuppressWarnings("SpellCheckingInspection")
+	private static final HWND HWND_TOPMOST = new HWND(new Pointer(-1));
+
 	@Override
 	public void setGameWindowOnTop(HWND hwnd) {
-        HWND topMost = new HWND(new Pointer(-1));
-        User32.INSTANCE.SetWindowPos(hwnd, topMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+		try {
+			User32.INSTANCE.SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+		} catch (Exception ex) {
+			dev("Problem while trying to set game window on top");
+			dev(ex);
+		}
 	}
 	
 	@Override
 	public boolean resizeWindowToSupportedResolution(HWND hwnd, int w, int h) {
         try {
-            HWND topMost = new HWND(new Pointer(-1));
-    		return User32.INSTANCE.SetWindowPos(hwnd, topMost, 0, 0, w, h, SWP_NOMOVE);
+    		return User32.INSTANCE.SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, w, h, SWP_NOMOVE);
         } catch (Exception ex) {
         	dev("Problem while trying to resize game window");
         	dev(ex);
