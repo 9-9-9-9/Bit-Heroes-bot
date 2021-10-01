@@ -2,6 +2,7 @@ package bh.bot.app.farming;
 
 import bh.bot.Main;
 import bh.bot.app.AbstractApplication;
+import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.images.BwMatrixMeta;
@@ -86,9 +87,10 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
             List<NextAction> internalPredefinedImageActions = getInternalPredefinedImageActions();
             int continuousNotFound = 0;
             final Point coordinateHideMouse = new Point(0, 0);
+            final int mainLoopTimer = Configuration.Timers.Loop.getMainLoopTimer(5_000);
             ML:
             while (!masterSwitch.get() && loopCount > 0) {
-                sleep(5_000);
+                sleep(mainLoopTimer);
 
                 if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmStartNotFullTeam)) {
                     debug("confirmStartNotFullTeam");

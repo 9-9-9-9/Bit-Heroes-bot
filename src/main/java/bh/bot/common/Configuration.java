@@ -28,9 +28,12 @@ import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.ScreenResolutionProfile.WebProfile;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.flags.FlagAlterTimerLoop;
 import bh.bot.common.types.flags.FlagProfileName;
 import bh.bot.common.types.tuples.Tuple2;
+import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.StringUtil;
+import bh.bot.common.utils.TimeUtil;
 import bh.bot.common.utils.ValidationUtil;
 
 public class Configuration {
@@ -41,6 +44,19 @@ public class Configuration {
     public static AtomicOffset gameScreenOffset;
     public static final boolean enableDevFeatures = new File("im.dev").exists();
     public static boolean noThrowWhenImageNotAvailable = false;
+
+    public static class Timers {
+
+        public static class Loop {
+            public static int main = -1;
+
+            public static int getMainLoopTimer(int defaultTimer) {
+                if (main < 1)
+                    return defaultTimer;
+                return main;
+            }
+        }
+    }
 
     public static class Features {
         public static boolean disableJna = false;
@@ -93,6 +109,13 @@ public class Configuration {
         }
 
         noThrowWhenImageNotAvailable = StringUtil.isTrue(read("dev.no-throw-when-image-not-available"));
+
+        if (parseArgumentsResult.timerLoopMain >= FlagAlterTimerLoop.minimumValue) {
+            Timers.Loop.main = parseArgumentsResult.timerLoopMain;
+        } else {
+            Timers.Loop.main = readTimerConfig("timers.loop.main");
+        }
+
         Features.disableJna = StringUtil.isTrue(read("disable.jna"));
         Features.disableDoCheckGameScreenOffset =
                 Features.disableJna || StringUtil.isTrue(read("disable.jna.disableDoCheckGameScreenOffset"));
@@ -232,6 +255,38 @@ public class Configuration {
 
     public static int readInt(String key) {
         return Integer.parseInt(read(key));
+    }
+
+    public static int readTimerConfig(String key) {
+        String val = read(key);
+        if (StringUtil.isBlank(val))
+            return FlagAlterTimerLoop.defaultValue;
+
+        Tuple3<Boolean, String, Integer> tuple3 = TimeUtil.tryParseTimeConfig(val, FlagAlterTimerLoop.defaultValue);
+        if (tuple3._1) {
+            final int timer = tuple3._3;
+            if (timer < FlagAlterTimerLoop.minimumValue) {
+                err("Minimum value of key '%s' is 50ms this value '%s' will be ignored", key, val);
+                return FlagAlterTimerLoop.defaultValue;
+            }
+
+            if (timer > FlagAlterTimerLoop.maximumValue) {
+                err("Maximum value of key '%s' is %ds (%dms) thus value '%s' will be ignored", key, FlagAlterTimerLoop.maximumValue / 1_000, FlagAlterTimerLoop.maximumValue, val);
+                return FlagAlterTimerLoop.defaultValue;
+            }
+
+            if (timer % 1_000 == 0)
+                warn("Main loop timer was modified to %ds", timer / 1_000);
+            else if (timer > 1_000)
+                warn("Main loop timer was modified to %dms (~%d seconds)", timer, timer /  1_000);
+            else
+                warn("Main loop timer was modified to %dms", timer);
+
+            return timer;
+        }
+
+        err("Failed to parse value '%s' of key '%s'! Reason: %s", val, key, tuple3._2);
+        return FlagAlterTimerLoop.defaultValue;
     }
 
     public static String getFromConfigOrEnv(String cfgKey, String envKey) {

@@ -1,5 +1,7 @@
 package bh.bot.common;
 
+import bh.bot.common.utils.StringUtil;
+
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -17,6 +19,9 @@ public class Telegram {
     private static final String token = Configuration.getFromConfigOrEnv("telegram.token", "TELEGRAM_BOT_KEY");
     //
     private static final String channelId = Configuration.getFromConfigOrEnv("telegram.channel-id", "TELEGRAM_BH_CHANNEL");
+    //
+    private static final String _instanceId = Configuration.read("telegram.instance-id");
+    private static final String instanceId = StringUtil.isBlank(_instanceId) ? "" : String.format(":%s", _instanceId.trim());
     //
     private static boolean isDisabled = isBlank(token) || isBlank(channelId);
 
@@ -59,7 +64,7 @@ public class Telegram {
     }
 
     private static boolean internalSendMessage(String msg, boolean critical) throws Exception {
-        msg = String.format("[%s]%s %s", appName, critical ? " *** CRITICAL ***" : "", msg);
+        msg = String.format("[%s%s]%s %s", appName, instanceId, critical ? " *** CRITICAL ***" : "", msg);
 
         String my_url = "https://api.telegram.org/bot" + token + "/sendMessage";
         URL url = new URL(my_url);

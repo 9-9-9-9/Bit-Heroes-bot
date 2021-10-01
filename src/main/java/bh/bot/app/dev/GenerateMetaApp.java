@@ -11,12 +11,10 @@ import bh.bot.common.types.flags.FlagPattern;
 import bh.bot.common.types.flags.Flags;
 import bh.bot.common.utils.StringUtil;
 import org.json.JSONObject;
-import org.omg.CORBA.DynAnyPackage.Invalid;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;

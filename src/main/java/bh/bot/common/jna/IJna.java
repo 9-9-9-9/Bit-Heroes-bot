@@ -12,4 +12,7 @@ public interface IJna {
 	Rectangle getRectangle(HWND hwnd);
 	Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(HWND hwnd, ScreenResolutionProfile screenResolutionProfile);
 	void tryToCloseGameWindow();
+	void setGameWindowOnTop(HWND hwnd);
+	boolean resizeWindowToSupportedResolution(HWND hwnd, int w, int h);
+	boolean isSupportResizeWindow();
 }

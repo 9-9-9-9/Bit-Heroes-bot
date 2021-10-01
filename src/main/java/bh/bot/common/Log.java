@@ -46,6 +46,11 @@ public class Log {
             println(String.format(format, objs));
     }
 
+    public static void dev(Exception ex) {
+        if (isOnDebugMode || Configuration.enableDevFeatures)
+            ex.printStackTrace();
+    }
+
     public static void printIfIncorrectImgPosition(Offset imCoordinateOffset, Point actualCoordinate) {
         if (!Configuration.enableDevFeatures)
             return;
