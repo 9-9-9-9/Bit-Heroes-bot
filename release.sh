@@ -75,6 +75,7 @@ cp ./steam.bot.bat ./release/
 cp ./client.bat ./release/
 cp ./help.bat ./release/
 cp ./setting.bat ./release/
+cp ./manual.bat ./release/
 
 # Include README.md
 echo '[![Github Release](https://img.shields.io/github/downloads/9-9-9-9/Bit-Heroes-bot/release-'$VERSION'/total?style=social)](https://github.com/9-9-9-9/Bit-Heroes-bot/releases/tag/release-'$VERSION')' > ./release/README.md 
