@@ -3,12 +3,15 @@ package bh.bot.app.dev;
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.jna.IJna;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.TimeUtil;
+
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinDef.HWND;
@@ -31,7 +34,7 @@ public class TestApp extends AbstractApplication {
     protected void internalRun(String[] args) {
         adjustScreenOffset();
 
-        findAttendablePlaces();
+        //
     }
 
     private static void testParseTime() {

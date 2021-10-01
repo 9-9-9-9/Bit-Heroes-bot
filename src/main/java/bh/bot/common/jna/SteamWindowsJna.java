@@ -4,6 +4,8 @@ import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.RECT;
 
@@ -13,6 +15,8 @@ import bh.bot.common.types.Offset;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.tuples.Tuple4;
+
+import static bh.bot.common.Log.dev;
 
 public class SteamWindowsJna extends AbstractWindowsJna {
 	public SteamWindowsJna() {
@@ -39,24 +43,19 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 				return new Tuple4<>(false, "Can not detect Steam window", null, null);
 		}
 
-		final RECT lpRectC = new RECT();
+		final int ew = screenResolutionProfile.getSupportedGameResolutionWidth();
+		final int eh = screenResolutionProfile.getSupportedGameResolutionHeight();
+
+		RECT lpRectC = new RECT();
 		if (!user32.GetClientRect(hwnd, lpRectC))
 			return new Tuple4<>(false, String.format("Unable to GetClientRect, err code: %d",
 					com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()), null, null);
 
-		final int cw = Math.abs(lpRectC.right - lpRectC.left);
-		final int ch = Math.abs(lpRectC.bottom - lpRectC.top);
+		int cw = Math.abs(lpRectC.right - lpRectC.left);
+		int ch = Math.abs(lpRectC.bottom - lpRectC.top);
 		if (cw <= 0 || ch <= 0)
 			return new Tuple4<>(false, "Window has minimized", null, null);
-
-		final int ew = screenResolutionProfile.getSupportedGameResolutionWidth();
-		final int eh = screenResolutionProfile.getSupportedGameResolutionHeight();
-		if (ew != cw || eh != ch)
-			return new Tuple4<>(false,
-					String.format("JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d", ew,
-							eh, cw, ch),
-					null, null);
-
+		
 		Rectangle rect = getRectangle(hwnd);
 		if (rect == null)
 			return new Tuple4<>(false, String.format("Unable to GetWindowRect, err code: %d",
@@ -64,15 +63,47 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 
 		if (rect.width <= 0 || rect.height <= 0)
 			return new Tuple4<>(false, "Window has minimized", null, null);
-		if (rect.width < ew || rect.height < eh)
-			return new Tuple4<>(false,
-					String.format("JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d", ew,
-							eh, rect.width, rect.height),
-					null, null);
+		
 		final int ww = rect.width;
 		final int wh = rect.height;
 		final int borderLeftSize = (ww - cw) / 2;
 		final int borderTopSize = wh - ch - borderLeftSize;
+		
+		if (ew != cw || eh != ch) {
+			if (!isSupportResizeWindow() || !resizeWindowToSupportedResolution(hwnd, borderLeftSize * 2 + ew, borderTopSize + borderLeftSize + eh)) {
+				return new Tuple4<>(false,
+						String.format("JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d", ew,
+								eh, cw, ch),
+						null, null);
+			}
+
+			rect = getRectangle(hwnd);
+			if (rect == null)
+				return new Tuple4<>(false, String.format("(Post resize) Unable to GetWindowRect, err code: %d",
+						com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()), null, null);
+			if (rect.width < ew || rect.height < eh)
+				return new Tuple4<>(false,
+						String.format("(Post resize) JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d", ew,
+								eh, rect.width, rect.height),
+						null, null);
+			
+
+			lpRectC = new RECT();
+			if (!user32.GetClientRect(hwnd, lpRectC))
+				return new Tuple4<>(false, String.format("(Post resize) Unable to GetClientRect, err code: %d",
+						com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()), null, null);
+
+			cw = Math.abs(lpRectC.right - lpRectC.left);
+			ch = Math.abs(lpRectC.bottom - lpRectC.top);
+			
+			if (ew != cw || eh != ch) {
+				return new Tuple4<>(false,
+						String.format("(Post resize) JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d", ew,
+								eh, cw, ch),
+						null, null);
+			}
+		}
+		
 		Offset offset = new Offset(rect.x + borderLeftSize, rect.y + borderTopSize);
 		if (offset.X < 0 || offset.Y < 0)
 			return new Tuple4<>(false,
@@ -99,5 +130,30 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 		} catch (Exception ignored) {
 			//
 		}
+	}
+
+	private static final int SWP_NOSIZE = 0x0001;
+	private static final int SWP_NOMOVE = 0x0002;
+	@Override
+	public void setGameWindowOnTop(HWND hwnd) {
+        HWND topMost = new HWND(new Pointer(-1));
+        User32.INSTANCE.SetWindowPos(hwnd, topMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+	}
+	
+	@Override
+	public boolean resizeWindowToSupportedResolution(HWND hwnd, int w, int h) {
+        try {
+            HWND topMost = new HWND(new Pointer(-1));
+    		return User32.INSTANCE.SetWindowPos(hwnd, topMost, 0, 0, w, h, SWP_NOMOVE);
+        } catch (Exception ex) {
+        	dev("Problem while trying to resize game window");
+        	dev(ex);
+        	return false;
+        }
+	}
+	
+	@Override
+	public boolean isSupportResizeWindow() {
+		return true;
 	}
 }

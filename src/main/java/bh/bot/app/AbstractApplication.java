@@ -1170,6 +1170,7 @@ public abstract class AbstractApplication {
 						warn("Unable to perform auto adjust game screen offset due to error: %s", result._2);
 						continue;
 					}
+					
 					if (result._4.X != x || result._4.Y != y) {
 						Configuration.gameScreenOffset.set(result._4);
 						x = result._4.X;
@@ -1178,6 +1179,10 @@ public abstract class AbstractApplication {
 								x, y);
 					} else {
 						debug("screen offset not change");
+					}
+					
+					if (jna instanceof SteamWindowsJna && gameWindowHwndByJna != null) {
+						jna.setGameWindowOnTop(gameWindowHwndByJna);
 					}
 				} catch (Exception ex2) {
 					warn("Unable to perform auto adjust game screen offset due to error: %s", ex2.getMessage());
