@@ -31,7 +31,7 @@ public class TestApp extends AbstractApplication {
     protected void internalRun(String[] args) {
         adjustScreenOffset();
 
-        testParseTime();
+        findAttendablePlaces();
     }
 
     private static void testParseTime() {

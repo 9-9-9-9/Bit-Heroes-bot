@@ -9,7 +9,6 @@ import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.StringUtil;
 import bh.bot.common.utils.TimeUtil;
 
-import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.warn;
 
 @FlagMeta(displayOrder = 6)
