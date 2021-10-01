@@ -467,7 +467,7 @@ public class AfkApp extends AbstractApplication {
                     MenuItem.from("Trials/Gauntlet", AttendablePlaces.trials, AttendablePlaces.gauntlet),
                     MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid),
                     MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid,
-                            AttendablePlaces.expedition, AttendablePlaces.trials),
+                            AttendablePlaces.invasion, AttendablePlaces.trials),
                     MenuItem.from("All", allAttendablePlaces.toArray(new AttendablePlace[0]))
             ).collect(Collectors.toList());
 
