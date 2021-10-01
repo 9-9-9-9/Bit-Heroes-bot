@@ -56,7 +56,7 @@ public class FlagAlterTimerLoop extends FlagPattern<Integer> {
 
     @Override
     public String getDescription() {
-        return "(advanced) alter time wait between loop of checking images, if you believe your PC is fast, you can use this flag for a faster progression. Default timer for most function is 5 seconds, accepted format is: <number> = number of seconds / <number>s = number of seconds / <number>ms = number of milliseconds, eg: 50ms = loop every 50 milliseconds, or 5000ms equals to 5 seconds";
+        return "(advanced) alter time wait between loop of checking images, if you believe your PC is fast, you can use this flag for a faster progression. Default timer for most functions is 5 seconds, accepted formats are: <number> = number of seconds / <number>s = number of seconds / <number>ms = number of milliseconds, eg: 50ms = loop every 50 milliseconds, or 5000ms equals to 5 seconds";
     }
 
     @Override
