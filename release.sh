@@ -87,7 +87,7 @@ rm -f ./release/bh-client/*.html
 rm -f ./release/readonly.*.properties
 
 # Compress output
-FILE=Bit-Heroes-99bot-Release-v$VERSION.zip
+FILE=download-this-file.zip
 rm -f $FILE
 
 DIR=./99bot-v$VERSION
