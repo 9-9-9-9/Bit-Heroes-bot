@@ -87,10 +87,10 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
             List<NextAction> internalPredefinedImageActions = getInternalPredefinedImageActions();
             int continuousNotFound = 0;
             final Point coordinateHideMouse = new Point(0, 0);
-            final int mainLoopTimer = Configuration.Timers.Loop.getMainLoopTimer(5_000);
+            final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
             ML:
             while (!masterSwitch.get() && loopCount > 0) {
-                sleep(mainLoopTimer);
+                sleep(mainLoopInterval);
 
                 if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmStartNotFullTeam)) {
                     debug("confirmStartNotFullTeam");
@@ -174,6 +174,11 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
     }
 
     protected abstract java.util.List<NextAction> getInternalPredefinedImageActions();
+
+    @Override
+    protected int getDefaultMainLoopInterval() {
+        return 5_000;
+    }
 
     public static class NextAction {
         public final BwMatrixMeta image;

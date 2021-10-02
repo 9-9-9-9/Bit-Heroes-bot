@@ -57,11 +57,13 @@ public class ReRunApp extends AbstractApplication {
     private void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
         info(ColorizeUtil.formatInfo, "\n\nStarting ReRun");
         try {
+            final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
+
             moveCursor(new Point(950, 100));
             long lastFound = System.currentTimeMillis();
             boolean clickedOnPreviousRound = false;
             while (loopCount > 0 && !masterSwitch.get()) {
-                sleep(10_000);
+                sleep(mainLoopInterval);
                 if (clickImage(BwMatrixMeta.Metas.Dungeons.Buttons.rerun)) {
                     loopCount--;
                     lastFound = System.currentTimeMillis();
@@ -128,5 +130,10 @@ public class ReRunApp extends AbstractApplication {
     @Override
     protected String getLimitationExplain() {
         return "This function only supports clicking the ReRun button, that means you have to enter Dungeon/Raid manually, turn on the Auto and when the ReRun button appears, it will be automatically clicked";
+    }
+
+    @Override
+    protected int getDefaultMainLoopInterval() {
+        return 10_000;
     }
 }

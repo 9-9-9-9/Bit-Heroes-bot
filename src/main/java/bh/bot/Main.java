@@ -253,7 +253,7 @@ public class Main {
 		int exitAfter = 0;
 		String cfgProfileName = null;
 		ArrayList<Familiar> familiarToBribeWithGems = null;
-		int timerLoopMain = -1;
+		int mainLoopInterval = -1;
 		for (FlagPattern flagPattern : usingFlagPatterns) {
 			if (!flagPattern.isAllowParam())
 				continue;
@@ -273,8 +273,8 @@ public class Main {
 				continue;
 			}
 
-			if (flagPattern instanceof FlagAlterTimerLoop) {
-				timerLoopMain = ((FlagAlterTimerLoop) flagPattern).parseParams().get(0);
+			if (flagPattern instanceof FlagAlterLoopInterval) {
+				mainLoopInterval = ((FlagAlterLoopInterval) flagPattern).parseParams().get(0);
 				continue;
 			}
 
@@ -323,7 +323,7 @@ public class Main {
 
 		ParseArgumentsResult li = new ParseArgumentsResult(applicationClassFromAppCode, args, usingFlagPatterns);
 		li.exitAfterXSecs = exitAfter;
-		li.timerLoopMain = timerLoopMain;
+		li.mainLoopInterval = mainLoopInterval;
 		li.exitAfkIfWaitForResourceGeneration = usingFlagPatterns.stream()
 				.anyMatch(x -> x instanceof FlagExitAfkAfterIfWaitResourceGeneration);
 		li.shutdownAfterExit = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShutdownAfterExit);

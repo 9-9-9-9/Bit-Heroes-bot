@@ -11,7 +11,7 @@ public class ParseArgumentsResult {
     @SuppressWarnings("rawtypes")
     public final ArrayList<FlagPattern> usingFlags;
     public int exitAfterXSecs;
-    public int timerLoopMain;
+    public int mainLoopInterval;
     public boolean exitAfkIfWaitForResourceGeneration;
     public boolean shutdownAfterExit;
     public boolean closeGameWindowAfterExit;

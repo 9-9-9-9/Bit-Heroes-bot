@@ -49,8 +49,8 @@ cat <<EOF > ./release/user-config.properties
 #tolerant.position=40
 #tolerant.color=0
 
-# Alter time wait between loop of checking images, if you believe your PC is fast, you can use this key for a faster progression. Default timer for most function is 5 seconds, accepted format is: <number> = number of seconds / <number>s = number of seconds / <number>ms = number of milliseconds, eg: 50ms = loop every 50 milliseconds, or 5000ms equals to 5 seconds
-#timers.loop.main=1s
+# Alter interval between loops of checking images, if you believe your PC is fast, you can use this key for a faster progression. Default interval for most functions is 5 seconds (please see at --help of each function), accepted format is: "number" = number of seconds / "number" + "s" = number of seconds / "number" + "ms" = number of milliseconds, eg: 50ms = loop every 50 milliseconds, or 5000ms equals to 5 seconds
+#interval.loop.main=1s
 
 # Google Chrome path, for Windows only
 #external.application.chrome.path=C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe
@@ -75,6 +75,7 @@ cp ./steam.bot.bat ./release/
 cp ./client.bat ./release/
 cp ./help.bat ./release/
 cp ./setting.bat ./release/
+cp ./manual.bat ./release/
 
 # Include README.md
 echo '[![Github Release](https://img.shields.io/github/downloads/9-9-9-9/Bit-Heroes-bot/release-'$VERSION'/total?style=social)](https://github.com/9-9-9-9/Bit-Heroes-bot/releases/tag/release-'$VERSION')' > ./release/README.md 
@@ -86,7 +87,7 @@ rm -f ./release/bh-client/*.html
 rm -f ./release/readonly.*.properties
 
 # Compress output
-FILE=Bit-Heroes-99bot-Release-v$VERSION.zip
+FILE=download-this-file.zip
 rm -f $FILE
 
 DIR=./99bot-v$VERSION

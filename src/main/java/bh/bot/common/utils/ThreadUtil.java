@@ -27,7 +27,8 @@ public class ThreadUtil {
 		Date today = Calendar.getInstance().getTime();
 		String now = df.format(today);
 
-		info("waitDone finished at %s", now);
+		debug("waitDone");
+		info("Finished at %s", now);
 		debug("ExecutorService is shutting down now");
 		pool.shutdownNow();
 	}
