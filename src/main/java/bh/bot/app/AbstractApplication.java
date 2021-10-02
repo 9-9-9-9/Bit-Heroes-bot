@@ -1,12 +1,7 @@
 package bh.bot.app;
 
 import static bh.bot.Main.readInput;
-import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.info;
-import static bh.bot.common.Log.optionalDebug;
-import static bh.bot.common.Log.printIfIncorrectImgPosition;
-import static bh.bot.common.Log.warn;
+import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.ImageUtil.freeMem;
 import static bh.bot.common.utils.InteractionUtil.Keyboard.sendEscape;
@@ -766,8 +761,10 @@ public abstract class AbstractApplication {
 		if (pPersuadeButton != null || pBribeButton != null) {
 			int continous = continousPersuadeScreen.addAndGet(1);
 			if (continous > 0) {
-				if (continous % 10 == 1)
+				if (continous % 10 == 1) {
 					Telegram.sendMessage("Found persuade screen", true);
+					saveCurrentScreenShot(true);
+				}
 
 				if (persuadeTargets == null)
 					persuadeTargets = Arrays.asList(
@@ -802,6 +799,28 @@ public abstract class AbstractApplication {
 			continousPersuadeScreen.set(0);
 		}
 		return addSec(persuadeSleepSecs);
+	}
+
+	private void saveCurrentScreenShot(boolean ignoreError) {
+		try {
+			int x = Configuration.gameScreenOffset.X.get();
+			int y = Configuration.gameScreenOffset.Y.get();
+			int w = Configuration.screenResolutionProfile.getSupportedGameResolutionWidth();
+			int h = Configuration.screenResolutionProfile.getSupportedGameResolutionHeight();
+
+			BufferedImage sc = InteractionUtil.Screen.captureScreen(x, y, w, h);
+			try {
+				saveImage(sc, "persuade");
+			} catch (Exception ex2) {
+				ImageUtil.freeMem(sc);
+				throw ex2;
+			}
+		} catch (Exception ex) {
+			if (ignoreError)
+				dev("Ignored error upon saving current screenshot during persuade: %s", ex.getMessage());
+			else
+				throw ex;
+		}
 	}
 
 	private PersuadeState persuade(BwMatrixMeta im, Familiar familiar, Point pPersuadeButton, Point pBribeButton) {
