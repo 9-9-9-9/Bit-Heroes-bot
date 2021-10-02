@@ -28,7 +28,7 @@ import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.ScreenResolutionProfile.WebProfile;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
-import bh.bot.common.types.flags.FlagAlterTimerLoop;
+import bh.bot.common.types.flags.FlagAlterLoopInterval;
 import bh.bot.common.types.flags.FlagProfileName;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
@@ -45,14 +45,14 @@ public class Configuration {
     public static final boolean enableDevFeatures = new File("im.dev").exists();
     public static boolean noThrowWhenImageNotAvailable = false;
 
-    public static class Timers {
+    public static class Interval {
 
         public static class Loop {
             public static int main = -1;
 
-            public static int getMainLoopTimer(int defaultTimer) {
+            public static int getMainLoopInterval(int defaultIntervalValue) {
                 if (main < 1)
-                    return defaultTimer;
+                    return defaultIntervalValue;
                 return main;
             }
         }
@@ -110,10 +110,10 @@ public class Configuration {
 
         noThrowWhenImageNotAvailable = StringUtil.isTrue(read("dev.no-throw-when-image-not-available"));
 
-        if (parseArgumentsResult.timerLoopMain >= FlagAlterTimerLoop.minimumValue) {
-            Timers.Loop.main = parseArgumentsResult.timerLoopMain;
+        if (parseArgumentsResult.mainLoopInterval >= FlagAlterLoopInterval.minimumValue) {
+            Interval.Loop.main = parseArgumentsResult.mainLoopInterval;
         } else {
-            Timers.Loop.main = readTimerConfig("timers.loop.main");
+            Interval.Loop.main = readIntervalConfig("interval.loop.main");
         }
 
         Features.disableJna = StringUtil.isTrue(read("disable.jna"));
@@ -257,36 +257,36 @@ public class Configuration {
         return Integer.parseInt(read(key));
     }
 
-    public static int readTimerConfig(String key) {
+    public static int readIntervalConfig(String key) {
         String val = read(key);
         if (StringUtil.isBlank(val))
-            return FlagAlterTimerLoop.defaultValue;
+            return FlagAlterLoopInterval.defaultValue;
 
-        Tuple3<Boolean, String, Integer> tuple3 = TimeUtil.tryParseTimeConfig(val, FlagAlterTimerLoop.defaultValue);
+        Tuple3<Boolean, String, Integer> tuple3 = TimeUtil.tryParseTimeConfig(val, FlagAlterLoopInterval.defaultValue);
         if (tuple3._1) {
-            final int timer = tuple3._3;
-            if (timer < FlagAlterTimerLoop.minimumValue) {
+            final int interval = tuple3._3;
+            if (interval < FlagAlterLoopInterval.minimumValue) {
                 err("Minimum value of key '%s' is 50ms this value '%s' will be ignored", key, val);
-                return FlagAlterTimerLoop.defaultValue;
+                return FlagAlterLoopInterval.defaultValue;
             }
 
-            if (timer > FlagAlterTimerLoop.maximumValue) {
-                err("Maximum value of key '%s' is %ds (%dms) thus value '%s' will be ignored", key, FlagAlterTimerLoop.maximumValue / 1_000, FlagAlterTimerLoop.maximumValue, val);
-                return FlagAlterTimerLoop.defaultValue;
+            if (interval > FlagAlterLoopInterval.maximumValue) {
+                err("Maximum value of key '%s' is %ds (%dms) thus value '%s' will be ignored", key, FlagAlterLoopInterval.maximumValue / 1_000, FlagAlterLoopInterval.maximumValue, val);
+                return FlagAlterLoopInterval.defaultValue;
             }
 
-            if (timer % 1_000 == 0)
-                warn("Main loop timer was modified to %ds", timer / 1_000);
-            else if (timer > 1_000)
-                warn("Main loop timer was modified to %dms (~%d seconds)", timer, timer /  1_000);
+            if (interval % 1_000 == 0)
+                warn("Main loop interval was modified to %ds", interval / 1_000);
+            else if (interval > 1_000)
+                warn("Main loop interval was modified to %dms (~%d seconds)", interval, interval /  1_000);
             else
-                warn("Main loop timer was modified to %dms", timer);
+                warn("Main loop interval was modified to %dms", interval);
 
-            return timer;
+            return interval;
         }
 
         err("Failed to parse value '%s' of key '%s'! Reason: %s", val, key, tuple3._2);
-        return FlagAlterTimerLoop.defaultValue;
+        return FlagAlterLoopInterval.defaultValue;
     }
 
     public static String getFromConfigOrEnv(String cfgKey, String envKey) {

@@ -145,8 +145,9 @@ public class FishingApp extends AbstractApplication {
 
             boolean requestedToExit = false;
 
+            final int mainLoopInterval = getDefaultMainLoopInterval();
             while (!masterSwitch.get()) {
-                sleep(50);
+                sleep(mainLoopInterval);
 
                 if (loopCount < 1 && !requestedToExit)
                     requestedToExit = true;
@@ -370,5 +371,10 @@ public class FishingApp extends AbstractApplication {
     @Override
     protected String getLimitationExplain() {
         return "To start using this function, you have to be ready in fishing state, and the Start button is clearly visible on the screen";
+    }
+
+    @Override
+    protected int getDefaultMainLoopInterval() {
+        return 50;
     }
 }

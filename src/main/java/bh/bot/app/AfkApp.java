@@ -192,7 +192,7 @@ public class AfkApp extends AbstractApplication {
             final ArrayList<AttendablePlace> toBeRemoved = new ArrayList<>();
 
             final byte minutesSleepWaitingResourceGeneration = 5;
-            final int loopSleep = Configuration.Timers.Loop.getMainLoopTimer(5_000);
+            final int loopSleep = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
             dev("loopSleep %d", loopSleep);
             final int originalCheckAreYouStillThereAfter = 20_000 / loopSleep;
             int checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
@@ -617,5 +617,10 @@ public class AfkApp extends AbstractApplication {
             }
         }
         return result;
+    }
+
+    @Override
+    protected int getDefaultMainLoopInterval() {
+        return 5_000;
     }
 }

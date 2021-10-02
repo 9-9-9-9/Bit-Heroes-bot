@@ -70,7 +70,7 @@ public class WorldBossApp extends AbstractDoFarmingApp {
     }
 
     @Override
-    protected int getDefaultTimer() {
+    protected int getDefaultMainLoopInterval() {
         return 2_000;
     }
 }

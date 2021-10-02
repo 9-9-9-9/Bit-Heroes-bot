@@ -285,6 +285,36 @@ public abstract class AbstractApplication {
 			for (FlagPattern globalFlag : flagsResolution)
 				sb.append(globalFlag);
 		}
+		int defaultMainLoopInterval = getDefaultMainLoopInterval();
+		if (defaultMainLoopInterval > 0) {
+			sb.append("\nDefault main loop interval is ");
+			if (defaultMainLoopInterval < 1_000) {
+				sb.append(defaultMainLoopInterval);
+				sb.append(" milliseconds");
+			} else if (defaultMainLoopInterval % 1_000 == 0) {
+				sb.append(defaultMainLoopInterval / 1_000);
+				sb.append(" seconds (");
+				sb.append(defaultMainLoopInterval);
+				sb.append(" milliseconds)");
+			} else {
+				sb.append("around ");
+				sb.append(Math.round((double)defaultMainLoopInterval / 1_000));
+				sb.append(" seconds (");
+				sb.append(defaultMainLoopInterval);
+				sb.append(" milliseconds)");
+			}
+
+			FlagAlterLoopInterval flagAlterLoopInterval = new FlagAlterLoopInterval();
+			if (flagAlterLoopInterval.isSupportedByApp(this)) {
+				sb.append(" and able to be altered using flag ");
+				sb.append(flagAlterLoopInterval.getCode());
+			} else {
+				sb.append(" <this function does not support flag ");
+				sb.append(flagAlterLoopInterval.getCode());
+				sb.append(">");
+			}
+		}
+
 		return sb.toString();
 	}
 
@@ -1312,5 +1342,9 @@ public abstract class AbstractApplication {
 	protected void printWarningExpeditionImplementation() {
 		info(Cu.i().yellow("** WARNING ** ").green("Currently").yellow(", ").cyan("Expedition ").green("only supports").cyan(" Idol").yellow(" & ").cyan("Hallowed").yellow(" Dimensions").reset().toString());
 		info(Cu.i().yellow("** WARNING ** The other dimensions ").green("not yet implemented").yellow(" but will available asap: ").magenta("Battle Bards").yellow(" & ").magenta("Inferno").yellow(" & ").magenta("Jammie").yellow(" Dimensions").reset().toString());
+	}
+
+	protected int getDefaultMainLoopInterval() {
+		return 0;
 	}
 }
