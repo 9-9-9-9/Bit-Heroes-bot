@@ -87,7 +87,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
             List<NextAction> internalPredefinedImageActions = getInternalPredefinedImageActions();
             int continuousNotFound = 0;
             final Point coordinateHideMouse = new Point(0, 0);
-            final int mainLoopTimer = Configuration.Timers.Loop.getMainLoopTimer(5_000);
+            final int mainLoopTimer = Configuration.Timers.Loop.getMainLoopTimer(getDefaultTimer());
             ML:
             while (!masterSwitch.get() && loopCount > 0) {
                 sleep(mainLoopTimer);
@@ -174,6 +174,10 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
     }
 
     protected abstract java.util.List<NextAction> getInternalPredefinedImageActions();
+
+    protected int getDefaultTimer() {
+        return 5_000;
+    }
 
     public static class NextAction {
         public final BwMatrixMeta image;
