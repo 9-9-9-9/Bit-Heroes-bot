@@ -645,6 +645,7 @@ public abstract class AbstractApplication {
 	private static final int reactiveAutoSleepSecs = 10;
 	private static final int closeEnterGameDialogNewsSleepSecs = 60;
 	private static final int persuadeSleepSecs = 60;
+	private static final int persuadeSleepSecs2 = 20;
 
 	protected void internalDoSmallTasks(AtomicBoolean masterSwitch, SmallTasks st) {
 		try {
@@ -792,6 +793,8 @@ public abstract class AbstractApplication {
 
 				if (doPersuadeGold)
 					persuade(true, pPersuadeButton, pBribeButton);
+
+				return addSec(persuadeSleepSecs2);
 			} else {
 				info("Found persuade screen");
 			}
