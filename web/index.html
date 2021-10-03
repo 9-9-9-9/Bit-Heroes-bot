@@ -1,7 +1,8 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>BitHeroes bot</title>
+		<title>BitHeroes bot</title>
+		<link rel="icon" type="image/png" href="./img/favicon.ico"/>
 		<meta name="title" content="BitHeroes bot">
 		<meta name="description" content="Bot for Kongregate's BitHeroes">
 		<meta name="robots" content="index, follow" />
@@ -17,27 +18,50 @@
         <style>
 			body {
 				padding: 20px;
+				background-color: #2a3c47;
+				color: #d8d7d7;
 			}
 
 			ul > li {
 				font-size: 1.4rem;
 			}
 
-			a {
+			a, a:hover {
 				text-decoration: none;
+				color: #abc5ec;
+			}
+
+			img#logo {
+				max-width: 100%;
+			}
+
+			img#logo2 {
+				max-width: 100%;
+				opacity: 0.1;
+				position: absolute;
+				left: 0;
+				top: 0;
+				height: 100%;
+				width: auto;
+				z-index: -10;
+			}
+
+			.text-success-c {
+				color: #9dd2a8;
 			}
         </style>
     </head>
     <body>
+		<img src="./img/bh99bot.png" id="logo2" />
 		<h2>99bot is an <strong>open source</strong> bot for Kongregate&apos;s Bit Heroes game</h2>
-		<p>distributed under GPL-3.0 License, it&apos;s <span class="text-success"><strong>totally free to use</strong></span></p>
-		<p>Supported game resolutions: <span class="text-success"><strong>800<span class="text-secondary">x</span>480</strong></span> of Steam and <span class="text-success"><strong>800<span class="text-secondary">x</span>520</strong></span> of Web</p>
+		<p>distributed under GPL-3.0 License, it&apos;s <span class="text-success-c"><strong>totally free to use</strong></span></p>
+		<p>Supported game resolutions: <span class="text-success-c"><strong>800<span class="text-secondary">x</span>480</strong></span> of Steam and <span class="text-success-c"><strong>800<span class="text-secondary">x</span>520</strong></span> of Web</p>
 		<p>Supported OS: <span class="badge bg-primary">Windows</span> + <span class="badge bg-primary">Linux</span> + <a href="https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Notes-for-MacOS-users" target="_blank" class="badge bg-primary">MacOS ?</a></p>
 		<h4>Full source code is available on <a href="https://github.com/9-9-9-9/Bit-Heroes-bot">my GitHub repository</a></h4>
 		<h4>and dont forget to give me a <a href="https://github.com/9-9-9-9/Bit-Heroes-bot/stargazers" target="_blank"><img alt="GitHub Star" src="https://img.shields.io/github/stars/9-9-9-9/Bit-Heroes-bot?style=social" /></a></h4>
 		<ul>
-			<li><a href="./download.html"><span>Download<span style="color:black;">.bh99bot.com</span> </span><img alt="Download" src="https://img.shields.io/github/downloads/9-9-9-9/Bit-Heroes-bot/total?color=green&label=total"/></a></li>
-			<li><a href="https://github.com/9-9-9-9/Bit-Heroes-bot/wiki" target="_blank">Wiki<span style="color:black;">.bh99bot.com</span></a></li>
+			<li><a href="./download.html"><span>Download<span style="color:#d8d7d7;">.bh99bot.com</span> </span><img alt="Download" src="https://img.shields.io/github/downloads/9-9-9-9/Bit-Heroes-bot/total?color=green&label=total"/></a></li>
+			<li><a href="https://github.com/9-9-9-9/Bit-Heroes-bot/wiki" target="_blank">Wiki<span style="color:#d8d7d7;">.bh99bot.com</span></a></li>
 			<li><a href="https://github.com/9-9-9-9/Bit-Heroes-bot/blob/master/README.release.md" target="_blank">README.md from git repo</a></li>
 			<li><a href="./command-builder.html"><span class="badge bg-secondary">Advanced</span> Command-line builder</a></li>
 		</ul>
@@ -47,5 +71,6 @@
 			<li><a href="https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22rerun%22" target="_blank">ReRun</a></li>
 			<li><a href="https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22afk%22" target="_blank">AFK</a></li>
 		</ul>
+		<!--img src="./img/bh99bot.png" id="logo" /-->
     </body>
 </html>
