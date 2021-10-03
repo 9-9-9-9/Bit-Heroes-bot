@@ -27,6 +27,7 @@ import static bh.bot.common.Log.warn;
 public class ImportTpImageApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
+    	
         Configuration.Tolerant.colorBw = 60;
         warn("Forced value of Configuration.Tolerant.colorBw to %d", Configuration.Tolerant.colorBw);
 
@@ -38,6 +39,8 @@ public class ImportTpImageApp extends AbstractApplication {
         info("Input file: %s", args[1]);
 
         try {
+            BufferedImage bi = loadImageFromFile(args[1]);
+            
             String profileName;
             String filePath;
             final List<Opt> opts = Arrays.asList(new Opt("Button", "buttons"), new Opt("Dialog", "dialogs"),
@@ -102,8 +105,6 @@ public class ImportTpImageApp extends AbstractApplication {
                             String.format("Target file is already exists: %s", targetFile.getAbsolutePath()), null);
                 return new Tuple3<>(true, null, targetFile.getAbsolutePath());
             });
-
-            BufferedImage bi = loadImageFromFile(args[1]);
 
             ImageUtil.TestTransformMxResult testTransformMxResult = ImageUtil.testTransformMx(bi, rgb, tolerant);
 

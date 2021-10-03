@@ -500,7 +500,7 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetDialogAreYouSureWantToExit() {
-			return null;
+			return new Offset(289, 231);
 		}
 
 		@Override
