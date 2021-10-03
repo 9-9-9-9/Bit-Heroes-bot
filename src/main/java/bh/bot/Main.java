@@ -135,20 +135,28 @@ public class Main {
 		if (lArgs.stream().anyMatch(x -> x.equalsIgnoreCase(flagHelp.getCode())))
 			return lArgs.toArray(new String[0]);
 
-		FlagSteamResolution800x480 flagSteam = new FlagSteamResolution800x480();
-		if (flagSteam.isSupportedOnCurrentOsPlatform()) {
-			String flagSteamCode = flagSteam.getCode();
-			if (lArgs.stream().noneMatch(x -> x.equalsIgnoreCase(flagSteamCode))) {
-				boolean enableSteam = readYesNoInput("Steam client?",
-						"Press 'Y' to launch this app on Steam mode (800x480) or press 'N' to launch this app on Mini-client mode (800x520)");
-				if (enableSteam)
-					lArgs.add(flagSteamCode);
-			}
+		FlagPlayOnSteam flagPlayOnSteam = new FlagPlayOnSteam();
+		FlagPlayOnWeb flagPlayOnWeb = new FlagPlayOnWeb();
+		if (flagPlayOnSteam.isSupportedOnCurrentOsPlatform()) {
+			lArgs.add(readInput("Steam or Web?\n\t1. Steam\n\t2.Web", null, s -> {
+				try {
+					int opt = Integer.parseInt(s.trim());
+					if (opt == 1)
+						return new Tuple3<>(true, null, flagPlayOnSteam.getCode());
+					if (opt == 2)
+						return new Tuple3<>(true, null, flagPlayOnWeb.getCode());
+				} catch (NumberFormatException ex) {
+					// ignored
+				}
+				return new Tuple3<>(false, "Wrong answer, must be <1> for Steam or <2> or Web", null);
+			}));
+		} else {
+			lArgs.add(flagPlayOnWeb.getCode());
 		}
 
 		boolean addMoreFlags = readYesNoInput("Do you want to add some add some flags? (Y/N, empty is No)",
 				String.format(
-						"You can pass flags like '--exit=3600'/'--steam'/'--all'/'--help'... here. For list of supported flags available for each function, please run file '%s'",
+						"You can pass flags like '--exit=3600'/'--ear'/'--help'... here. For list of supported flags available for each function, please run file '%s'",
 						scriptFileName("help")),
 				true);
 		if (addMoreFlags) {
@@ -177,7 +185,7 @@ public class Main {
 			info(ColorizeUtil.formatAsk, "FYI: command-line builder is available at: cb.bh99bot.com");
 		}
 
-		return lArgs.toArray(new String[0]);
+		return lArgs.stream().distinct().collect(Collectors.toList()).toArray(new String[0]);
 	}
 
 	private static void process(String[] args) throws Exception {
@@ -293,24 +301,36 @@ public class Main {
 		for (FlagPattern flagPattern : usingFlagPatterns)
 			if (!flagPattern.isSupportedOnCurrentOsPlatform())
 				throw new InvalidFlagException(
-						String.format("Flag '--%s' is not supported on %s", flagPattern.getName(), OS.name));
+						String.format("Flag '%s' is not supported on %s", flagPattern.getCode(), OS.name));
 
-		ScreenResolutionProfile screenResolutionProfile;
-		boolean is800x480Resolution = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSteamResolution800x480);
-		boolean is800x520Resolution = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagWebResolution800x520);
-		if (is800x480Resolution && is800x520Resolution) {
-			err("Ambiguous profile, must specify only one of 2 profiles:");
-			err("  '--web' which supports game resolution 800x520");
-			err("  '--steam' which supports game resolution 800x480");
+		ScreenResolutionProfile screenResolutionProfile = new ScreenResolutionProfile.Profile800x520();
+		boolean isSteam = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagPlayOnSteam);
+		boolean isWeb = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagPlayOnWeb);
+		if (isSteam && isWeb) {
+			err("Ambiguous flags! Can not use both flags at the same time:");
+			err("  '--web' for controlling web-version BitHeroes");
+			err("  '--steam' for controlling Steam-version BitHeroes");
 			System.exit(EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
 		}
 
-		if (!is800x480Resolution && !is800x520Resolution) {
-			info("No screen profile specified, `--web` profile has been chosen by default");
-			screenResolutionProfile = new ScreenResolutionProfile.WebProfile();
-		} else {
-			screenResolutionProfile = is800x480Resolution ? new ScreenResolutionProfile.SteamProfile()
-					: new ScreenResolutionProfile.WebProfile();
+		if (!isSteam && !isWeb) {
+			if (OS.isWin) {
+				isSteam = readInput("Steam or Web?\n\t1. Steam\n\t2.Web", null, s -> {
+					try {
+						int opt = Integer.parseInt(s.trim());
+						if (opt == 1)
+							return new Tuple3<>(true, null, true);
+						if (opt == 2)
+							return new Tuple3<>(true, null, false);
+					} catch (NumberFormatException ex) {
+						// ignored
+					}
+					return new Tuple3<>(false, "Wrong answer, must be <1> for Steam or <2> or Web", null);
+				});
+				isWeb = !isSteam;
+			} else {
+				isWeb = true;
+			}
 		}
 
 		args = Arrays.stream(args).skip(1).filter(x -> !x.startsWith("--")).toArray(String[]::new);
@@ -322,6 +342,8 @@ public class Main {
 			throw new IllegalArgumentException("First argument must be a valid app code");
 
 		ParseArgumentsResult li = new ParseArgumentsResult(applicationClassFromAppCode, args, usingFlagPatterns);
+		li.steam = isSteam;
+		li.web = isWeb;
 		li.exitAfterXSecs = exitAfter;
 		li.mainLoopInterval = mainLoopInterval;
 		li.exitAfkIfWaitForResourceGeneration = usingFlagPatterns.stream()

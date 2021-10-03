@@ -3,9 +3,8 @@ package bh.bot.common.types.flags;
 import bh.bot.common.types.Platform;
 import bh.bot.common.types.annotations.FlagMeta;
 
-@FlagMeta(cbDesc = "Using Steam with game resolution 800x480", checked = true, displayOrder = 1)
-@Deprecated
-public class FlagSteamResolution800x480 extends FlagResolution {
+@FlagMeta(cbDesc = "Specific that you want to use this bot to control BitHeroes on Steam", checked = true, displayOrder = 1)
+public class FlagPlayOnSteam extends FlagResolution {
     @Override
     public String getName() {
         return "steam";
@@ -13,7 +12,7 @@ public class FlagSteamResolution800x480 extends FlagResolution {
 
     @Override
     public String getDescription() {
-        return "(Deprecated from version 2.0.0 due to game window will be resized to 800x520 resolution) When game resolution 800x480 while playing on Steam client";
+        return "Specific that you want to use this bot to control BitHeroes on Steam";
     }
 
     public Platform[] getSupportedOsPlatforms() {

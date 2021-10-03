@@ -10,6 +10,8 @@ public class ParseArgumentsResult {
     public final String[] arguments;
     @SuppressWarnings("rawtypes")
     public final ArrayList<FlagPattern> usingFlags;
+    public boolean web;
+    public boolean steam;
     public int exitAfterXSecs;
     public int mainLoopInterval;
     public boolean exitAfkIfWaitForResourceGeneration;

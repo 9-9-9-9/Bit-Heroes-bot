@@ -3,6 +3,7 @@ package bh.bot.common.types;
 import java.awt.Rectangle;
 
 import bh.bot.common.exceptions.NotImplementedException;
+import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.tuples.Tuple4;
 
 @SuppressWarnings("SpellCheckingInspection")
@@ -199,11 +200,12 @@ public abstract class ScreenResolutionProfile {
 	
 	public abstract Offset getOffsetLabelPersuadeKaleido();
 
-	public static class WebProfile extends ScreenResolutionProfile {
+	public static class Profile800x520 extends ScreenResolutionProfile {
+		public static final String profileName = "800x520";
 
 		@Override
 		public String getName() {
-			return "web";
+			return profileName;
 		}
 
 		@Override
@@ -668,7 +670,23 @@ public abstract class ScreenResolutionProfile {
 		}
 	}
 
+	@Deprecated
+	public static class WebProfile extends Profile800x520 {
+		private WebProfile() {
+			throw new NotSupportedException("Deprecated! This class can not be initialized");
+		}
+
+		@Override
+		public String getName() {
+			return "web";
+		}
+	}
+
+	@Deprecated
 	public static class SteamProfile extends ScreenResolutionProfile {
+		private SteamProfile() {
+			throw new NotSupportedException("Deprecated! This class can not be initialized");
+		}
 
 		@Override
 		public String getName() {

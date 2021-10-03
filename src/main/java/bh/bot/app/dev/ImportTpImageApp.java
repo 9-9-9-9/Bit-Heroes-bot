@@ -3,6 +3,7 @@ package bh.bot.app.dev;
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ImageUtil;
@@ -41,6 +42,8 @@ public class ImportTpImageApp extends AbstractApplication {
             String filePath;
             final List<Opt> opts = Arrays.asList(new Opt("Button", "buttons"), new Opt("Dialog", "dialogs"),
                     new Opt("Label", "labels"));
+
+            /*
             profileName = readInput("Which profile?\n  1. Web\n  2. Steam", null, s -> {
                 s = s.trim();
                 if (s.equals("1"))
@@ -49,6 +52,9 @@ public class ImportTpImageApp extends AbstractApplication {
                     return new Tuple3<>(true, null, "steam");
                 return new Tuple3<>(false, "Not supported", null);
             });
+             */
+
+            profileName = ScreenResolutionProfile.Profile800x520.profileName;
 
             String group = readInput("Group?", "eg: globally", s -> {
                 s = s.trim();
