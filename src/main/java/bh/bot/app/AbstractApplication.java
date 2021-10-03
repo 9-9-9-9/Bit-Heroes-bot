@@ -141,16 +141,17 @@ public abstract class AbstractApplication {
 	}
 
 	private void launchThreadCheckVersion() {
+		CompletableFuture.runAsync(() -> {
+			VersionUtil.quitIfCurrentVersionIsRejected();
+		});
+
 		if (skipCheckVersion())
 			return;
 
 		if (RandomUtil.nextInt(10) % 3 == 0)
-			CompletableFuture.runAsync(new Runnable() {
-				@Override
-				public void run() {
-					if (!VersionUtil.checkForLatestVersion())
-						warn("Failure on checking for latest version of %s", Main.botName);
-				}
+			CompletableFuture.runAsync(() -> {
+				if (!VersionUtil.checkForLatestVersion())
+					warn("Failure on checking for latest version of %s", Main.botName);
 			});
 	}
 

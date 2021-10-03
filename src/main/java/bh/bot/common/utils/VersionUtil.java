@@ -1,10 +1,5 @@
 package bh.bot.common.utils;
 
-import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.dev;
-import static bh.bot.common.Log.info;
-import static bh.bot.common.Log.isOnDebugMode;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -15,6 +10,8 @@ import org.json.JSONObject;
 
 import bh.bot.Main;
 import bh.bot.common.exceptions.InvalidDataException;
+
+import static bh.bot.common.Log.*;
 
 public class VersionUtil {
 	private static SematicVersion appVer = null;
@@ -87,6 +84,71 @@ public class VersionUtil {
 			if (isOnDebugMode())
 				ex.printStackTrace();
 			return false;
+		}
+	}
+
+	public static void quitIfCurrentVersionIsRejected() {
+		if (appVer == null) {
+			dev("VersionUtil::quitIfCurrentVersionIsRejected appVer has not been set");
+			return;
+		}
+
+		try {
+			URL url = new URL("https://bh99bot.com/json/reject-versions.json");
+			HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+			httpURLConnection.setRequestMethod("GET");
+			try {
+				int responseCode = httpURLConnection.getResponseCode();
+
+				if (responseCode != 200 && responseCode != 304) {
+					dev("VersionUtil::quitIfCurrentVersionIsRejected response code %d", responseCode);
+					return;
+				}
+
+				StringBuffer response = new StringBuffer();
+				try (InputStreamReader isr = new InputStreamReader(httpURLConnection.getInputStream());
+					 BufferedReader in = new BufferedReader(isr)) {
+					String inputLine;
+
+					while ((inputLine = in.readLine()) != null)
+						response.append(inputLine);
+				}
+
+				String data = response.toString();
+
+				JSONArray array = new JSONArray(data);
+
+				if (array == null || array.length() < 1)
+					return;
+
+				for (int i = 0; i < array.length(); i++) {
+					try {
+						String v = array.getString(i);
+						debug("array[%d]=%s", i, v);
+						SematicVersion sematicVersion = new SematicVersion(v);
+
+						if (sematicVersion.compareTo(appVer) == 0) {
+							try {
+								String msg = String.format("You're using %s v%s which may contains serious bugs and not allowed to run anymore", Main.botName, appVer.toString());
+								for (int j = 0; j < 100; j++) {
+									err(msg);
+									warn("Please download latest version at 'bh99bot.com'");
+								}
+							} finally {
+								System.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
+							}
+						}
+
+					} catch (Exception ex2) {
+						dev("Can not parse version at index %d", i);
+					}
+				}
+			} finally {
+				httpURLConnection.disconnect();
+			}
+		} catch (Throwable t) {
+			if (isOnDebugMode())
+				t.printStackTrace();
 		}
 	}
 

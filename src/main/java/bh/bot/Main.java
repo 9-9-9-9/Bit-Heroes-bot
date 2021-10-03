@@ -436,5 +436,6 @@ public class Main {
 	public static final int EXIT_CODE_UNABLE_DETECTING_FISHING_ANCHOR = 9;
 	public static final int EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION = 11;
 	public static final int EXIT_CODE_REQUIRE_SUDO = 12;
+	public static final int EXIT_CODE_VERSION_IS_REJECTED = 13;
 	public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }
