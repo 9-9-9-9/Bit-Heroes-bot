@@ -864,10 +864,13 @@ public abstract class AbstractApplication {
 	}
 
 	private void persuade(boolean gold, Point pPersuadeButton, Point pBribeButton) {
+		if (pPersuadeButton != null)
+			dev("Persuade: %-3d.%3d", pPersuadeButton.x, pPersuadeButton.y);
+		if (pBribeButton != null)
+			dev("Bribe: %-3d.%3d", pBribeButton.x, pBribeButton.y);
 		Point p = null;
 		if (gold) {
 			if (pPersuadeButton != null) {
-				dev("");
 				p = pPersuadeButton;
 			} else if (pBribeButton != null) {
 				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe, pBribeButton, Configuration.screenResolutionProfile.getOffsetButtonPersuade());
