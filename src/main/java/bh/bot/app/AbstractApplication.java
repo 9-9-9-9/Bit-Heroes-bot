@@ -872,10 +872,10 @@ public abstract class AbstractApplication {
 				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe, pBribeButton, Configuration.screenResolutionProfile.getOffsetButtonBribePersuade());
 			}
 		} else {
-			if (pPersuadeButton != null) {
-				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuade, pPersuadeButton, Configuration.screenResolutionProfile.getOffsetButtonPersuade());
-			} else if (pBribeButton != null) {
+			if (pBribeButton != null) {
 				p = pBribeButton;
+			} else if (pPersuadeButton != null) {
+				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuade, pPersuadeButton, Configuration.screenResolutionProfile.getOffsetButtonPersuade());
 			}
 		}
 
