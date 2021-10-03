@@ -1,5 +1,6 @@
 package bh.bot.common.jna;
 
+import bh.bot.common.Configuration;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
@@ -33,7 +34,7 @@ public class MiniClientWindowsJna extends AbstractWindowsJna {
 	@Override
 	public Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(HWND hwnd,
 																			 ScreenResolutionProfile screenResolutionProfile) {
-		if (screenResolutionProfile instanceof SteamProfile)
+		if (Configuration.isSteamProfile)
 			throw new IllegalArgumentException("Does not support steam profile");
 
 		if (hwnd == null) {

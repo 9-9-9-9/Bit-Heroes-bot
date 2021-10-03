@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import bh.bot.common.Configuration;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
@@ -34,7 +35,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 	@Override
 	public Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(HWND hwnd,
 			ScreenResolutionProfile screenResolutionProfile) {
-		if (!(screenResolutionProfile instanceof SteamProfile))
+		if (!Configuration.isSteamProfile)
 			throw new IllegalArgumentException("Not steam profile");
 
 		if (hwnd == null) {
