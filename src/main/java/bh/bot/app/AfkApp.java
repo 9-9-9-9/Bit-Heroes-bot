@@ -193,7 +193,6 @@ public class AfkApp extends AbstractApplication {
 
             final byte minutesSleepWaitingResourceGeneration = 5;
             final int loopSleep = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
-            dev("loopSleep %d", loopSleep);
             final int originalCheckAreYouStillThereAfter = 20_000 / loopSleep;
             int checkAreYouStillThereAfter = originalCheckAreYouStillThereAfter;
             final int originalSleepWhileWaitingResourceRegen = 5 * 60_000 / loopSleep;

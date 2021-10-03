@@ -1,12 +1,7 @@
 package bh.bot.app;
 
 import static bh.bot.Main.readInput;
-import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.info;
-import static bh.bot.common.Log.optionalDebug;
-import static bh.bot.common.Log.printIfIncorrectImgPosition;
-import static bh.bot.common.Log.warn;
+import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.ImageUtil.freeMem;
 import static bh.bot.common.utils.InteractionUtil.Keyboard.sendEscape;
@@ -40,6 +35,7 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
+import bh.bot.common.Log;
 import bh.bot.common.types.flags.*;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
@@ -645,6 +641,7 @@ public abstract class AbstractApplication {
 	private static final int reactiveAutoSleepSecs = 10;
 	private static final int closeEnterGameDialogNewsSleepSecs = 60;
 	private static final int persuadeSleepSecs = 60;
+	private static final int persuadeSleepSecs2 = 20;
 
 	protected void internalDoSmallTasks(AtomicBoolean masterSwitch, SmallTasks st) {
 		try {
@@ -765,8 +762,10 @@ public abstract class AbstractApplication {
 		if (pPersuadeButton != null || pBribeButton != null) {
 			int continous = continousPersuadeScreen.addAndGet(1);
 			if (continous > 0) {
-				if (continous % 10 == 1)
+				if (continous % 10 == 1) {
 					Telegram.sendMessage("Found persuade screen", true);
+					saveCurrentScreenShot(true);
+				}
 
 				if (persuadeTargets == null)
 					persuadeTargets = Arrays.asList(
@@ -790,8 +789,12 @@ public abstract class AbstractApplication {
 					}
 				}
 
-				if (doPersuadeGold)
+				if (doPersuadeGold) {
+					dev("doPersuadeGold");
 					persuade(true, pPersuadeButton, pBribeButton);
+				}
+
+				return addSec(persuadeSleepSecs2);
 			} else {
 				info("Found persuade screen");
 			}
@@ -799,6 +802,28 @@ public abstract class AbstractApplication {
 			continousPersuadeScreen.set(0);
 		}
 		return addSec(persuadeSleepSecs);
+	}
+
+	private void saveCurrentScreenShot(boolean ignoreError) {
+		try {
+			int x = Configuration.gameScreenOffset.X.get();
+			int y = Configuration.gameScreenOffset.Y.get();
+			int w = Configuration.screenResolutionProfile.getSupportedGameResolutionWidth();
+			int h = Configuration.screenResolutionProfile.getSupportedGameResolutionHeight();
+
+			BufferedImage sc = InteractionUtil.Screen.captureScreen(x, y, w, h);
+			try {
+				saveImage(sc, "persuade");
+			} catch (Exception ex2) {
+				ImageUtil.freeMem(sc);
+				throw ex2;
+			}
+		} catch (Exception ex) {
+			if (ignoreError)
+				dev("Ignored error upon saving current screenshot during persuade: %s", ex.getMessage());
+			else
+				throw ex;
+		}
 	}
 
 	private PersuadeState persuade(BwMatrixMeta im, Familiar familiar, Point pPersuadeButton, Point pBribeButton) {
@@ -809,17 +834,20 @@ public abstract class AbstractApplication {
 			return PersuadeState.NotAvailable;
 		}
 
-		if (!argumentInfo.familiarToBribeWithGems.contains(familiar)) {
-			persuade(true, pPersuadeButton, pBribeButton);
-			info("Bribe %s with gold", name);
-			return PersuadeState.SuccessGold;
-		}
-
 		Point pFamiliar = findImage(im);
 		if (pFamiliar == null)
 			return PersuadeState.NotTargetFamiliar;
 
+		info("This is '%s' familiar", name);
+
+		if (!argumentInfo.familiarToBribeWithGems.contains(familiar)) {
+			info("%s is NOT in the list to bribe with gems so going to persuade it with gold", name);
+			persuade(true, pPersuadeButton, pBribeButton);
+			return PersuadeState.SuccessGold;
+		}
+
 		try {
+			info("Going to persuade %s with gems", name);
 			persuade(false, pPersuadeButton, pBribeButton);
 			warn(name);
 			Telegram.sendMessage(name, false);
@@ -836,24 +864,30 @@ public abstract class AbstractApplication {
 	}
 
 	private void persuade(boolean gold, Point pPersuadeButton, Point pBribeButton) {
+		if (pPersuadeButton != null)
+			dev("Persuade: %-3d.%3d", pPersuadeButton.x, pPersuadeButton.y);
+		if (pBribeButton != null)
+			dev("Bribe: %-3d.%3d", pBribeButton.x, pBribeButton.y);
 		Point p = null;
 		if (gold) {
 			if (pPersuadeButton != null) {
 				p = pPersuadeButton;
 			} else if (pBribeButton != null) {
-				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe, pBribeButton, Configuration.screenResolutionProfile.getOffsetButtonBribePersuade());
+				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe, pBribeButton, Configuration.screenResolutionProfile.getOffsetButtonPersuade());
 			}
 		} else {
-			if (pPersuadeButton != null) {
-				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuade, pPersuadeButton, Configuration.screenResolutionProfile.getOffsetButtonPersuade());
-			} else if (pBribeButton != null) {
+			if (pBribeButton != null) {
 				p = pBribeButton;
+			} else if (pPersuadeButton != null) {
+				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuade, pPersuadeButton, Configuration.screenResolutionProfile.getOffsetButtonBribePersuade());
 			}
 		}
 
 		if (p == null)
 			throw new InvalidDataException("Implemented wrongly");
 
+		Log.printStackTrace();
+		dev("persuade: gold=%b, p=%d.%d", gold, p.x, p.y);
 		mouseMoveAndClickAndHide(p);
 		sleep(5_000);
 		Keyboard.sendEnter();
@@ -1099,8 +1133,12 @@ public abstract class AbstractApplication {
 		}
 		sleep(1_000);
 		mouseMoveAndClickAndHide(
-				fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord,
-						Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid()));
+				fromRelativeToAbsoluteBasedOnPreviousResult(
+						BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
+						coord,
+						Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid()
+				)
+		);
 		sleep(5_000);
 		if (UserConfig.isNormalMode(userConfig.raidMode)) {
 			mouseMoveAndClickAndHide(
