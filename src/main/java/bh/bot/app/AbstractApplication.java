@@ -867,15 +867,16 @@ public abstract class AbstractApplication {
 		Point p = null;
 		if (gold) {
 			if (pPersuadeButton != null) {
+				dev("");
 				p = pPersuadeButton;
 			} else if (pBribeButton != null) {
-				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe, pBribeButton, Configuration.screenResolutionProfile.getOffsetButtonBribePersuade());
+				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe, pBribeButton, Configuration.screenResolutionProfile.getOffsetButtonPersuade());
 			}
 		} else {
 			if (pBribeButton != null) {
 				p = pBribeButton;
 			} else if (pPersuadeButton != null) {
-				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuade, pPersuadeButton, Configuration.screenResolutionProfile.getOffsetButtonPersuade());
+				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuade, pPersuadeButton, Configuration.screenResolutionProfile.getOffsetButtonBribePersuade());
 			}
 		}
 
@@ -1129,8 +1130,12 @@ public abstract class AbstractApplication {
 		}
 		sleep(1_000);
 		mouseMoveAndClickAndHide(
-				fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog, coord,
-						Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid()));
+				fromRelativeToAbsoluteBasedOnPreviousResult(
+						BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
+						coord,
+						Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid()
+				)
+		);
 		sleep(5_000);
 		if (UserConfig.isNormalMode(userConfig.raidMode)) {
 			mouseMoveAndClickAndHide(
