@@ -51,7 +51,7 @@ public class MiniClientWindowsJna extends AbstractWindowsJna {
 		Offset offset = new Offset(rect.x, rect.y);
 		if (offset.X < 0 || offset.Y < 0)
 			return new Tuple4<>(false,
-					String.format("Window may have been partially hiden (x=%d, y=%d)", offset.X, offset.Y), rect,
+					String.format("Window may have been partially hidden (x=%d, y=%d)", offset.X, offset.Y), rect,
 					offset);
 
 		return new Tuple4<>(true, null, rect, offset);
