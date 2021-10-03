@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
+import bh.bot.common.Log;
 import bh.bot.common.types.flags.*;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
@@ -842,6 +843,7 @@ public abstract class AbstractApplication {
 			return PersuadeState.NotTargetFamiliar;
 
 		try {
+			info("Going to persuade %s with gems", name);
 			persuade(false, pPersuadeButton, pBribeButton);
 			warn(name);
 			Telegram.sendMessage(name, false);
@@ -876,6 +878,8 @@ public abstract class AbstractApplication {
 		if (p == null)
 			throw new InvalidDataException("Implemented wrongly");
 
+		Log.printStackTrace();
+		dev("persuade: gold=%b, p=%d.%d", gold, p.x, p.y);
 		mouseMoveAndClickAndHide(p);
 		sleep(5_000);
 		Keyboard.sendEnter();
