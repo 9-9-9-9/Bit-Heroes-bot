@@ -236,6 +236,12 @@ public class Main {
 	private static ParseArgumentsResult parseArguments(String[] args) throws InvalidFlagException {
 		String appCode = args[0];
 
+		Class<? extends AbstractApplication> applicationClassFromAppCode = Configuration
+				.getApplicationClassFromAppCode(appCode);
+
+		if (applicationClassFromAppCode == null)
+			throw new IllegalArgumentException("First argument must be a valid app code");
+
 		FlagPattern[] flagPatterns = Flags.allFlags;
 
 		List<String> rawFlags = Arrays.stream(args).map(String::trim).filter(x -> x.startsWith("--"))
@@ -314,7 +320,12 @@ public class Main {
 		}
 
 		if (!isSteam && !isWeb) {
-			if (OS.isWin) {
+			AppMeta anAppMeta = applicationClassFromAppCode.getAnnotation(AppMeta.class);
+
+			if (!anAppMeta.requireClientType()) {
+				isSteam = false;
+				isWeb = true;
+			} else if (OS.isWin) {
 				isSteam = readInput("Steam or Web?\n\t1. Steam\n\t2. Web", null, s -> {
 					try {
 						int opt = Integer.parseInt(s.trim());
@@ -334,12 +345,6 @@ public class Main {
 		}
 
 		args = Arrays.stream(args).skip(1).filter(x -> !x.startsWith("--")).toArray(String[]::new);
-
-		Class<? extends AbstractApplication> applicationClassFromAppCode = Configuration
-				.getApplicationClassFromAppCode(appCode);
-
-		if (applicationClassFromAppCode == null)
-			throw new IllegalArgumentException("First argument must be a valid app code");
 
 		ParseArgumentsResult li = new ParseArgumentsResult(applicationClassFromAppCode, args, usingFlagPatterns);
 		li.steam = isSteam;

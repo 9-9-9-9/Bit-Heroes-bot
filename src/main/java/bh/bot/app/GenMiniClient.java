@@ -25,7 +25,7 @@ import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.Extensions;
 
-@AppMeta(code = "client", name = "Generate mini-client", displayOrder = 4)
+@AppMeta(code = "client", name = "Generate mini-client", requireClientType = false, displayOrder = 4)
 public class GenMiniClient extends AbstractApplication {
     private static final String requireChromeUserDirName = "chrome-user-dir";
 
@@ -348,10 +348,5 @@ public class GenMiniClient extends AbstractApplication {
     @Override
     protected boolean skipCheckVersion() {
     	return true;
-    }
-
-    @Override
-    protected boolean requireSpecificClientType() {
-        return false;
     }
 }

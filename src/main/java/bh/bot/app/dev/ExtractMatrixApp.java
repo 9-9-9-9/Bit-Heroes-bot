@@ -16,7 +16,7 @@ import static bh.bot.common.Log.info;
 import static bh.bot.common.Log.warn;
 
 @SuppressWarnings("DeprecatedIsStillUsed")
-@AppMeta(code = "matrix", name = "Matrix", dev = true)
+@AppMeta(code = "matrix", name = "Matrix", requireClientType = false, dev = true)
 @Deprecated
 /*
   Please use class ImportTpImageApp (app code: `tp`)
@@ -127,11 +127,6 @@ public class ExtractMatrixApp extends AbstractApplication {
 
     @Override
     protected boolean isRequiredToLoadImages() {
-        return false;
-    }
-
-    @Override
-    protected boolean requireSpecificClientType() {
         return false;
     }
 }

@@ -17,7 +17,7 @@ import java.util.function.Function;
 import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.info;
 
-@AppMeta(code = "keeppix", name = "KeepPix", dev = true)
+@AppMeta(code = "keeppix", name = "KeepPix", requireClientType = false, dev = true)
 @Deprecated
 public class KeepPixApp extends AbstractApplication {
     @Override
@@ -121,10 +121,5 @@ public class KeepPixApp extends AbstractApplication {
     @Override
     protected String getLimitationExplain() {
         return null;
-    }
-
-    @Override
-    protected boolean requireSpecificClientType() {
-        return false;
     }
 }

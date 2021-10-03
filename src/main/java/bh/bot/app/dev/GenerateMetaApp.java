@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AppMeta(code = "gen-meta", name = "Generate meta", dev = true, displayOrder = 100)
+@AppMeta(code = "gen-meta", name = "Generate meta", requireClientType = false, dev = true, displayOrder = 100)
 public class GenerateMetaApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
@@ -99,11 +99,6 @@ public class GenerateMetaApp extends AbstractApplication {
     @Override
     protected String getLimitationExplain() {
         return "developers only";
-    }
-
-    @Override
-    protected boolean requireSpecificClientType() {
-        return false;
     }
 
     public static class Meta {

@@ -7,6 +7,7 @@ import java.lang.annotation.*;
 public @interface AppMeta {
     String code();
     String name();
+    boolean requireClientType() default true;
     boolean dev() default false;
     double displayOrder() default Double.MAX_VALUE;
     String argType() default "";

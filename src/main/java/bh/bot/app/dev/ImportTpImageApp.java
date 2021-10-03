@@ -23,7 +23,7 @@ import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.Log.warn;
 
-@AppMeta(code = "tp", name = "Import Tolerant-Pixel", dev = true, displayOrder = 100)
+@AppMeta(code = "tp", name = "Import Tolerant-Pixel", requireClientType = false, dev = true, displayOrder = 100)
 public class ImportTpImageApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
@@ -145,11 +145,6 @@ public class ImportTpImageApp extends AbstractApplication {
 
     @Override
     protected boolean isRequiredToLoadImages() {
-        return false;
-    }
-
-    @Override
-    protected boolean requireSpecificClientType() {
         return false;
     }
 }
