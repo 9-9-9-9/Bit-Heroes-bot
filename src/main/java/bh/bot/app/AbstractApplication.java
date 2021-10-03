@@ -789,8 +789,10 @@ public abstract class AbstractApplication {
 					}
 				}
 
-				if (doPersuadeGold)
+				if (doPersuadeGold) {
+					dev("doPersuadeGold");
 					persuade(true, pPersuadeButton, pBribeButton);
+				}
 
 				return addSec(persuadeSleepSecs2);
 			} else {
@@ -832,15 +834,17 @@ public abstract class AbstractApplication {
 			return PersuadeState.NotAvailable;
 		}
 
-		if (!argumentInfo.familiarToBribeWithGems.contains(familiar)) {
-			persuade(true, pPersuadeButton, pBribeButton);
-			info("Bribe %s with gold", name);
-			return PersuadeState.SuccessGold;
-		}
-
 		Point pFamiliar = findImage(im);
 		if (pFamiliar == null)
 			return PersuadeState.NotTargetFamiliar;
+
+		info("This is '%s' familiar", name);
+
+		if (!argumentInfo.familiarToBribeWithGems.contains(familiar)) {
+			info("%s is NOT in the list to bribe with gems so going to persuade it with gold", name);
+			persuade(true, pPersuadeButton, pBribeButton);
+			return PersuadeState.SuccessGold;
+		}
 
 		try {
 			info("Going to persuade %s with gems", name);
