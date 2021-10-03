@@ -112,4 +112,9 @@ public class SamePixApp extends AbstractApplication {
     protected String getLimitationExplain() {
         return null;
     }
+
+    @Override
+    protected boolean requireSpecificClientType() {
+        return false;
+    }
 }

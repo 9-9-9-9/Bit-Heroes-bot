@@ -9,4 +9,4 @@ del mini-game-on-chrome8.bat >nul 2>&1
 del mini-game-on-chrome9.bat >nul 2>&1
 del mini-game-on-chrome10.bat >nul 2>&1
 
-call _.bat client --web
+call _.bat client

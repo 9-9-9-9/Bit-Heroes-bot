@@ -349,4 +349,9 @@ public class GenMiniClient extends AbstractApplication {
     protected boolean skipCheckVersion() {
     	return true;
     }
+
+    @Override
+    protected boolean requireSpecificClientType() {
+        return false;
+    }
 }

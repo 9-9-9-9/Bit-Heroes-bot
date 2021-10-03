@@ -101,6 +101,11 @@ public class GenerateMetaApp extends AbstractApplication {
         return "developers only";
     }
 
+    @Override
+    protected boolean requireSpecificClientType() {
+        return false;
+    }
+
     public static class Meta {
         private List<AppInfo> apps;
         private List<FlagInfo> flags;

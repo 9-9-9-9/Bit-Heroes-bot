@@ -1386,4 +1386,8 @@ public abstract class AbstractApplication {
 	protected int getDefaultMainLoopInterval() {
 		return 0;
 	}
+
+	protected boolean requireSpecificClientType() {
+		return true;
+	}
 }

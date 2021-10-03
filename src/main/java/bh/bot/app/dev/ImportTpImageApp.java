@@ -147,4 +147,9 @@ public class ImportTpImageApp extends AbstractApplication {
     protected boolean isRequiredToLoadImages() {
         return false;
     }
+
+    @Override
+    protected boolean requireSpecificClientType() {
+        return false;
+    }
 }
