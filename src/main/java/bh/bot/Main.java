@@ -138,7 +138,7 @@ public class Main {
 		FlagPlayOnSteam flagPlayOnSteam = new FlagPlayOnSteam();
 		FlagPlayOnWeb flagPlayOnWeb = new FlagPlayOnWeb();
 		if (flagPlayOnSteam.isSupportedOnCurrentOsPlatform()) {
-			lArgs.add(readInput("Steam or Web?\n\t1. Steam\n\t2.Web", null, s -> {
+			lArgs.add(readInput("Steam or Web?\n\t1. Steam\n\t2. Web", null, s -> {
 				try {
 					int opt = Integer.parseInt(s.trim());
 					if (opt == 1)
@@ -315,7 +315,7 @@ public class Main {
 
 		if (!isSteam && !isWeb) {
 			if (OS.isWin) {
-				isSteam = readInput("Steam or Web?\n\t1. Steam\n\t2.Web", null, s -> {
+				isSteam = readInput("Steam or Web?\n\t1. Steam\n\t2. Web", null, s -> {
 					try {
 						int opt = Integer.parseInt(s.trim());
 						if (opt == 1)
