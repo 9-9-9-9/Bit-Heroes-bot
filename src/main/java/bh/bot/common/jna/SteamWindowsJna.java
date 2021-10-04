@@ -29,7 +29,13 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 
 	@Override
 	public HWND getGameWindow(Object... args) {
-		return user32.FindWindow("UnityWndClass", "Bit Heroes");
+		HWND hwnd = user32.FindWindow("UnityWndClass", "Bit Heroes");
+		if (hwnd == null) {
+			err("Can not detect Steam window!!!");
+			err("Is the BitHeroes running? If yes, you may need to run this bot as administrator");
+			Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+		}
+		return hwnd;
 	}
 
 	@Override
