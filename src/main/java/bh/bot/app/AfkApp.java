@@ -88,13 +88,13 @@ public class AfkApp extends AbstractApplication {
                 } catch (InvalidDataException ex2) {
                     err(ex2.getMessage());
                     printRequiresSetting();
-                    System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
+                    Main.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
                     return;
                 }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
-            System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
+            Main.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
             return;
         }
         //
@@ -506,7 +506,7 @@ public class AfkApp extends AbstractApplication {
 
             if (eventList.size() == 0) {
                 info("None option was selected, exit now");
-                System.exit(0);
+                Main.exit(0);
             }
         }
 

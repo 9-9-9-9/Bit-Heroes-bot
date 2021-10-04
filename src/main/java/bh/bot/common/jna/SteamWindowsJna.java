@@ -43,7 +43,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 			if (hwnd == null) {
 				err("Can not detect Steam window!!!");
 				err("Is the BitHeroes running? If yes, you may need to run this bot as administrator");
-				System.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 			}
 		}
 
@@ -57,7 +57,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 					com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError())
 			);
 			err("Is the BitHeroes running? If yes, you may need to run this bot as administrator");
-			System.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+			Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 		}
 
 		int cw = Math.abs(lpRectC.right - lpRectC.left);
@@ -72,7 +72,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 							com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError())
 			);
 			err("Is the BitHeroes running? If yes, you may need to run this bot as administrator");
-			System.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+			Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 		}
 
 		if (rect.width <= 0 || rect.height <= 0)
@@ -91,7 +91,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 				);
 				err("Unable to resize window!!!");
 				err("You may need to run this bot as administrator");
-				System.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 			}
 
 			rect = getRectangle(hwnd);
@@ -103,7 +103,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 						)
 				);
 				err("Is the BitHeroes running? If yes, you may need to run this bot as administrator");
-				System.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 			}
 
 			if (rect.width < ew || rect.height < eh) {
@@ -114,7 +114,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 						)
 				);
 				err("You may need to run this bot as administrator");
-				System.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 			}
 
 			lpRectC = new RECT();
@@ -126,7 +126,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 						)
 				);
 				err("Is the BitHeroes running? If yes, you may need to run this bot as administrator");
-				System.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 			}
 
 			cw = Math.abs(lpRectC.right - lpRectC.left);
@@ -140,7 +140,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 						)
 				);
 				err("Is the BitHeroes running? If yes, you may need to run this bot as administrator");
-				System.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 			}
 		}
 		

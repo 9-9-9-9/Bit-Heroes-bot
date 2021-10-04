@@ -141,7 +141,7 @@ public class SettingApp extends AbstractApplication {
             }
         } catch (IOException ex) {
             ex.printStackTrace();
-            System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
+            Main.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
         }
     }
 

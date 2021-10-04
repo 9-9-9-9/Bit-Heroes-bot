@@ -28,7 +28,7 @@ public class ExtractMatrixApp extends AbstractApplication {
             if (args.length != 0 && args.length != 3) {
                 info("Invalid number of arguments");
                 info(getHelp());
-                System.exit(Main.EXIT_CODE_INVALID_NUMBER_OF_ARGUMENTS);
+                Main.exit(Main.EXIT_CODE_INVALID_NUMBER_OF_ARGUMENTS);
                 return;
             }
 

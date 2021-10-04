@@ -58,7 +58,7 @@ public class FishingApp extends AbstractApplication {
 
         if (labelFishingCord == null) {
             info("Exiting");
-            System.exit(Main.EXIT_CODE_UNABLE_DETECTING_FISHING_ANCHOR);
+            Main.exit(Main.EXIT_CODE_UNABLE_DETECTING_FISHING_ANCHOR);
         }
 
         debug("labelFishingCord: %3d, %3d", labelFishingCord.x, labelFishingCord.y);

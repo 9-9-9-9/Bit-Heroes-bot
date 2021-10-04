@@ -55,7 +55,7 @@ public class GenMiniClient extends AbstractApplication {
             info(" 6. Copy the output lines and override corresponding values in user-config.properties");
             info(" 7. Run the script '%s'  again", Extensions.scriptFileName("client"));
             info(ColorizeUtil.formatInfo, "Notes: it's able to generate more than one client, just by modify the '1.' prefix of the keys, support up to maximum %d accounts", supportMaximumNumberOfAccounts);
-            System.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
+            Main.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
             return;
         }
 
@@ -80,7 +80,7 @@ public class GenMiniClient extends AbstractApplication {
 
             final String chromeUserDir = getChromeUserDir();
             if (chromeUserDir == null) {
-                System.exit(Main.EXIT_CODE_EXTERNAL_REASON);
+                Main.exit(Main.EXIT_CODE_EXTERNAL_REASON);
                 return;
             }
 
@@ -293,7 +293,7 @@ public class GenMiniClient extends AbstractApplication {
             info("%s=C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe", keyChromePath);
             info("6. Save the file user-config.properties after modified");
             info("7. Run script '.\\client.bat' to generate mini-client");
-            System.exit(Main.EXIT_CODE_EXTERNAL_REASON);
+            Main.exit(Main.EXIT_CODE_EXTERNAL_REASON);
         }
         return chromePathOnWindows;
     }

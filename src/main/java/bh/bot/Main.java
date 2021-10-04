@@ -96,11 +96,11 @@ public class Main {
 			process(args);
 		} catch (InvalidFlagException ex) {
 			err(ex.getMessage());
-			System.exit(EXIT_CODE_INVALID_FLAG);
+			Main.exit(EXIT_CODE_INVALID_FLAG);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			err(ex.getMessage());
-			System.exit(EXIT_CODE_UNHANDLED_EXCEPTION);
+			Main.exit(EXIT_CODE_UNHANDLED_EXCEPTION);
 		}
 	}
 
@@ -314,7 +314,7 @@ public class Main {
 			err("Ambiguous flags! Can not use both flags at the same time:");
 			err("  '--web' for controlling web-version BitHeroes");
 			err("  '--steam' for controlling Steam-version BitHeroes");
-			System.exit(EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
+			Main.exit(EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
 		}
 
 		if (!isSteam && !isWeb) {
@@ -448,7 +448,7 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 			err("Error while reading input, application is going to exit now, please try again later");
-			System.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
+			Main.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
 			return null;
 		}
 	}
@@ -461,6 +461,12 @@ public class Main {
 				.yellow(" to process images. If any corner or any part of the game window was hidden, bot won't work correctly")
 				.reset().toString()
 		);
+	}
+
+	public static void exit(int exitCode) {
+		if (exitCode != 0)
+			info(Cu.i().red("Facing issue? Got bug? Want to ask me a question? Please raise an issue on my GitHub repository at ").cyan("issues.bh99bot.com").reset());
+		System.exit(exitCode);
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;

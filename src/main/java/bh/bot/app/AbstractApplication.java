@@ -99,7 +99,7 @@ public abstract class AbstractApplication {
 				try {
 					if (0 != Runtime.getRuntime().exec("sudo -nv").waitFor()) {
 						err("You must run this bot as sudo to be able to run command '%s' upon completion", command);
-						System.exit(Main.EXIT_CODE_REQUIRE_SUDO);
+						Main.exit(Main.EXIT_CODE_REQUIRE_SUDO);
 					}
 				} catch (Exception ex) {
 					err(ex.getMessage());
@@ -1383,7 +1383,7 @@ public abstract class AbstractApplication {
 		if (!resultLoadUserConfig._1) {
 			err("Profile name could not be found (check existence of file readonly.<profile_name>.user-config.properties)");
 			printRequiresSetting();
-			System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
+			Main.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
 		}
 		return resultLoadUserConfig._2;
 	}
