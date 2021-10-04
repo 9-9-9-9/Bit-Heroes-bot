@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import bh.bot.app.dev.*;
 import bh.bot.common.types.flags.*;
+import bh.bot.common.utils.*;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.fusesource.jansi.AnsiConsole;
@@ -50,10 +51,6 @@ import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
-import bh.bot.common.utils.ColorizeUtil;
-import bh.bot.common.utils.InteractionUtil;
-import bh.bot.common.utils.TimeUtil;
-import bh.bot.common.utils.VersionUtil;
 import bh.bot.common.utils.ColorizeUtil.Cu;
 
 @SuppressWarnings("deprecation")
@@ -453,6 +450,10 @@ public class Main {
 			System.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
 			return null;
 		}
+	}
+
+	public static void showWarningWindowMustClearlyVisible() {
+		warn("Game window must be clearly visible in order for %s to process images. If any corner or any part of the game window was hidden, bot won't work correctly", botName);
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;

@@ -18,8 +18,7 @@ import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.tuples.Tuple4;
 
-import static bh.bot.common.Log.dev;
-import static bh.bot.common.Log.err;
+import static bh.bot.common.Log.*;
 
 public class SteamWindowsJna extends AbstractWindowsJna {
 	public SteamWindowsJna() {
@@ -148,9 +147,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 		
 		Offset offset = new Offset(rect.x + borderLeftSize, rect.y + borderTopSize);
 		if (offset.X < 0 || offset.Y < 0)
-			return new Tuple4<>(false,
-					String.format("Window may have been partially hidden (x=%d, y=%d)", offset.X, offset.Y), rect,
-					offset);
+			Main.showWarningWindowMustClearlyVisible();
 
 		return new Tuple4<>(true, null, rect, offset);
 	}

@@ -109,6 +109,7 @@ public abstract class AbstractApplication {
 				throw new NotSupportedException(String.format("Shutdown command is not supported on %s OS", OS.name));
 
 			launchThreadCheckVersion();
+			showWarningWindowMustClearlyVisible();
 			internalRun(launchInfo.arguments);
 			tryToCloseGameWindow(launchInfo.closeGameWindowAfterExit);
 
@@ -131,6 +132,7 @@ public abstract class AbstractApplication {
 			}
 		} else {
 			launchThreadCheckVersion();
+			showWarningWindowMustClearlyVisible();
 			internalRun(launchInfo.arguments);
 			tryToCloseGameWindow(launchInfo.closeGameWindowAfterExit);
 		}
@@ -153,6 +155,11 @@ public abstract class AbstractApplication {
 				if (!VersionUtil.checkForLatestVersion())
 					warn("Failure on checking for latest version of %s", Main.botName);
 			});
+	}
+
+	private void showWarningWindowMustClearlyVisible() {
+		if (RandomUtil.nextInt(10) % 3 != 0) // 66%
+			Main.showWarningWindowMustClearlyVisible();
 	}
 
 	private void tryToCloseGameWindow(boolean closeGameWindowAfterExit) {

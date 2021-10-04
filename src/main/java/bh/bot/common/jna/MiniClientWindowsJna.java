@@ -1,5 +1,6 @@
 package bh.bot.common.jna;
 
+import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.ScreenResolutionProfile;
@@ -50,9 +51,7 @@ public class MiniClientWindowsJna extends AbstractWindowsJna {
 
 		Offset offset = new Offset(rect.x, rect.y);
 		if (offset.X < 0 || offset.Y < 0)
-			return new Tuple4<>(false,
-					String.format("Window may have been partially hidden (x=%d, y=%d)", offset.X, offset.Y), rect,
-					offset);
+			Main.showWarningWindowMustClearlyVisible();
 
 		return new Tuple4<>(true, null, rect, offset);
 	}
