@@ -3,7 +3,7 @@
 @CALL mvn clean package
 
 @if not %errorlevel%==0 (
-    @echo ** ERROR ** maven build failure
+    echo ** ERROR ** maven build failure
 	pause
     goto EXIT_1
 )
@@ -14,12 +14,12 @@
 @if not exist user-config.properties echo. 2>user-config.properties
 
 @if not exist im.dev (
-    @rem Generating mini client
+    rem Generating mini client
     @call client.bat
 )
 
 :to_exit
-	@rem Wrong working directory
+	rem Wrong working directory
 	@exit /b 2
 	
 :EXIT_1
