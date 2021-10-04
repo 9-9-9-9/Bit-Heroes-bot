@@ -94,6 +94,8 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 			}
 
+			Main.showWarningWindowMustClearlyVisible();
+
 			rect = getRectangle(hwnd);
 			if (rect == null) {
 				err(
