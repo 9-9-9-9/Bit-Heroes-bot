@@ -8,6 +8,8 @@ ___
 
 > Hi, I'm 99bot, please give this repo a Star, thanks
 
+[Checkout some videos on my YouTube channel](http://youtube.bh99bot.com)
+___
 [Wiki version](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
 
 This readme file is for normal users
