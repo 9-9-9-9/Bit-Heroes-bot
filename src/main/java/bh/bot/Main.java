@@ -225,8 +225,8 @@ public class Main {
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
 		}
 
-		info(Cu.i().magenta("Please give me a Star").cyan(" at my github repository https://github.com/9-9-9-9/Bit-Heroes-bot ").magenta("thank you").reset().toString());
-		info(ColorizeUtil.formatAsk, "Visit our repository often to update latest version");
+		info(Cu.i().magenta("Please give me a Star").reset().a(" at my github repository ").cyan("github.com/9-9-9-9/Bit-Heroes-bot").reset().a(" (short url: ").cyan("git.bh99bot.com").reset().a(")").magenta(". Thank you").reset().toString());
+		info(ColorizeUtil.formatAsk, "Visit our repository often to update latest bot version with new features added frequently");
 		instance.run(parseArgumentsResult);
 	}
 
@@ -464,7 +464,7 @@ public class Main {
 	}
 
 	public static void exit(int exitCode) {
-		if (exitCode != 0)
+		if (exitCode != 0 && exitCode != EXIT_CODE_VERSION_IS_REJECTED)
 			info(Cu.i().magenta("Tips: ").yellow("Got ").red("BUG").yellow("? Got ").cyan("ISSUE").yellow("? Want to ").magenta("ASK me").yellow(" a question? Please raise an issue on my GitHub repository (short url: ").cyan("issues.bh99bot.com").yellow(")").reset());
 		System.exit(exitCode);
 	}

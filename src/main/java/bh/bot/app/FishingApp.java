@@ -57,6 +57,7 @@ public class FishingApp extends AbstractApplication {
         }
 
         if (labelFishingCord == null) {
+            warn("The FISHING label (white colored, center top of game window screen) must be clearly visible");
             info("Exiting");
             Main.exit(Main.EXIT_CODE_UNABLE_DETECTING_FISHING_ANCHOR);
         }
