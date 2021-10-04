@@ -465,7 +465,7 @@ public class Main {
 
 	public static void exit(int exitCode) {
 		if (exitCode != 0)
-			info(Cu.i().red("Facing issue? Got bug? Want to ask me a question? Please raise an issue on my GitHub repository at ").cyan("issues.bh99bot.com").reset());
+			info(Cu.i().magenta("Tips: ").yellow("Got ").red("BUG").yellow("? Got ").cyan("ISSUE").yellow("? Want to ").magenta("ASK me").yellow(" a question? Please raise an issue on my GitHub repository (short url: ").cyan("issues.bh99bot.com").yellow(")").reset());
 		System.exit(exitCode);
 	}
 
