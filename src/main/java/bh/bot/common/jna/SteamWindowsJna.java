@@ -31,8 +31,8 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 	public HWND getGameWindow(Object... args) {
 		HWND hwnd = user32.FindWindow("UnityWndClass", "Bit Heroes");
 		if (hwnd == null) {
-			err("Can not detect Steam window!!!");
-			err("Is the BitHeroes running? If yes, you may need to run this bot as administrator");
+			err("Can not detect game window (Steam)!!!");
+			err("Is the BitHeroes running? If yes, probably this err caused by lacking privilege, you may need to run this bot as administrator");
 			Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 		}
 		return hwnd;
@@ -44,14 +44,8 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 		if (!Configuration.isSteamProfile)
 			throw new IllegalArgumentException("Not steam profile");
 
-		if (hwnd == null) {
+		if (hwnd == null)
 			hwnd = getGameWindow();
-			if (hwnd == null) {
-				err("Can not detect Steam window!!!");
-				err("Is the BitHeroes running? If yes, you may need to run this bot as administrator");
-				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
-			}
-		}
 
 		final int ew = screenResolutionProfile.getSupportedGameResolutionWidth();
 		final int eh = screenResolutionProfile.getSupportedGameResolutionHeight();
