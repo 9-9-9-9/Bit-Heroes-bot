@@ -109,7 +109,7 @@ public class Main {
 				.getApplicationClasses(Configuration.enableDevFeatures);
 		StringBuilder sb = new StringBuilder("Available functions:\n");
 		for (int i = 0; i < applicationClasses.size(); i++)
-			sb.append(String.format("  %2d. %s\n", i + 1, applicationClasses.get(i)._2.name()));
+			sb.append(String.format("  %2d. %s%s\n", i + 1, applicationClasses.get(i)._2.dev() ? "(Dev) " : "", applicationClasses.get(i)._2.name()));
 		sb.append("Select a function you want to launch:");
 		AppMeta meta = readInput(sb.toString(), null, s -> {
 			try {
