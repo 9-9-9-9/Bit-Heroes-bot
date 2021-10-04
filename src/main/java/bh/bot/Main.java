@@ -453,7 +453,13 @@ public class Main {
 	}
 
 	public static void showWarningWindowMustClearlyVisible() {
-		warn("Game window must be clearly visible in order for %s to process images. If any corner or any part of the game window was hidden, bot won't work correctly", botName);
+		info(
+			Cu.i()
+				.yellow("** ").red("IMPORTANT").yellow(" ** ")
+				.cyan("Game window must be clearly visible").yellow(" in order for ").yellow(botName)
+				.yellow(" to process images. If any corner or any part of the game window was hidden, bot won't work correctly")
+				.reset().toString()
+		);
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;

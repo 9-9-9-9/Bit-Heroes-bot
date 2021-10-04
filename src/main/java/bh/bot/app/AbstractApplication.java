@@ -158,8 +158,11 @@ public abstract class AbstractApplication {
 	}
 
 	private void showWarningWindowMustClearlyVisible() {
-		if (RandomUtil.nextInt(10) % 3 != 0) // 66%
+		if (RandomUtil.nextInt(10) % 3 != 0) { // 66%
+			if (Configuration.isWebProfile)
+				warn("Do NOT zoom in/out the web page while you playing Bit Heroes on web and keep the original resolution is 800x520. If you do zoom the web page, bot won't work because it can not find the desired images due to expected size was changed");
 			Main.showWarningWindowMustClearlyVisible();
+		}
 	}
 
 	private void tryToCloseGameWindow(boolean closeGameWindowAfterExit) {
