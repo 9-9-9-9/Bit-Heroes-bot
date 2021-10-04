@@ -39,4 +39,9 @@ public class ParseArgumentsResult {
         this.arguments = arguments;
         this.usingFlags = usingFlags;
     }
+
+    public void addFamiliarToBribeWithGems(Familiar familiar) {
+        if (!familiarToBribeWithGems.contains(familiar))
+            familiarToBribeWithGems.add(familiar);
+    }
 }
