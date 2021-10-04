@@ -458,7 +458,7 @@ public class Main {
 			Cu.i()
 				.yellow("** ").red("IMPORTANT").yellow(" ** ")
 				.cyan("Game window must be clearly visible").yellow(" in order for ").yellow(botName)
-				.yellow(" to process images. If any corner or any part of the game window was hidden, bot won't work correctly")
+				.yellow(" to processes images. If any corner or any part of the game window was hidden, bot won't work correctly")
 				.reset().toString()
 		);
 	}
