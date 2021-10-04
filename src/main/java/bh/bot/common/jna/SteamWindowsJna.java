@@ -32,7 +32,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 		HWND hwnd = user32.FindWindow("UnityWndClass", "Bit Heroes");
 		if (hwnd == null) {
 			err("Can not detect game window (Steam)!!!");
-			err("Is the BitHeroes running? If yes, probably this err caused by lacking privilege, you may need to run this bot as administrator");
+			showErrAskIfBhRunningOrReqAdm();
 			Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 		}
 		return hwnd;
@@ -56,7 +56,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 					String.format("Unable to GetClientRect, err code: %d",
 					com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError())
 			);
-			err("Is the BitHeroes running? If yes, you may need to run this bot as administrator");
+			showErrAskIfBhRunningOrReqAdm();
 			Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 		}
 
@@ -71,7 +71,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 					String.format("Unable to GetWindowRect, err code: %d",
 							com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError())
 			);
-			err("Is the BitHeroes running? If yes, you may need to run this bot as administrator");
+			showErrAskIfBhRunningOrReqAdm();
 			Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 		}
 
@@ -90,7 +90,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 								ew, eh, cw, ch)
 				);
 				err("Unable to resize window!!!");
-				err("You may need to run this bot as administrator");
+				showErrReqAdm();
 				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 			}
 
@@ -104,7 +104,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 								com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()
 						)
 				);
-				err("Is the BitHeroes running? If yes, you may need to run this bot as administrator");
+				showErrAskIfBhRunningOrReqAdm();
 				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 			}
 
@@ -115,7 +115,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 								ew, eh, rect.width, rect.height
 						)
 				);
-				err("You may need to run this bot as administrator");
+				showErrReqAdm();
 				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 			}
 
@@ -127,7 +127,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 							com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()
 						)
 				);
-				err("Is the BitHeroes running? If yes, you may need to run this bot as administrator");
+				showErrAskIfBhRunningOrReqAdm();
 				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 			}
 
@@ -141,7 +141,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 								ew, eh, cw, ch
 						)
 				);
-				err("Is the BitHeroes running? If yes, you may need to run this bot as administrator");
+				showErrAskIfBhRunningOrReqAdm();
 				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 			}
 		}
@@ -151,6 +151,14 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 			Main.showWarningWindowMustClearlyVisible();
 
 		return new Tuple4<>(true, null, rect, offset);
+	}
+
+	private void showErrAskIfBhRunningOrReqAdm() {
+		err("Is the BitHeroes running? If yes, probably this err caused by lacking privilege, you may need to run this bot as administrator");
+	}
+
+	private void showErrReqAdm() {
+		err("Probably this err caused by lacking privilege, you may need to run this bot as administrator");
 	}
 
 	@Override
