@@ -148,6 +148,18 @@
 				}
 			});
 
+			const hasWebFlag = flag.indexOf('--web') > -1;
+			const hasSteamFlag = flag.indexOf('--steam') > -1;
+			if (hasWebFlag && hasSteamFlag) {
+				alert('Flags --web and --steam can not be used at the same time');
+				return;
+			}
+
+			if (!hasWebFlag && !hasSteamFlag) {
+				alert('Require either of flags --steam or --web');
+				return;
+			}
+
 			const cmd = 'java -jar BitHeroes.jar ' + selectedApp.code + (isBlank(arg) ? "" : (" " + arg)) + flag;
 			$('#command').val(cmd);
 			$('#command-hint').text(cmd);
