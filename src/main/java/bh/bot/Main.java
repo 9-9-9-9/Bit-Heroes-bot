@@ -179,7 +179,8 @@ public class Main {
 				lArgs.add(newFlag);
 			}
 		} else {
-			info(ColorizeUtil.formatAsk, "FYI: command-line builder is available at: cb.bh99bot.com");
+			info(Cu.i().cyan("FYI: command-line builder is available at: ").green("cb.bh99bot.com").reset());
+			info(Cu.i().cyan("You can also save the command-line into script files name ").green(scriptFileName("<name>.c")).cyan(" and re-use later").reset());
 		}
 
 		return lArgs.stream().distinct().collect(Collectors.toList()).toArray(new String[0]);
