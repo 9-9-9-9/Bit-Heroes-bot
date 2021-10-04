@@ -50,7 +50,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
             if (!readMoreInput()) return;
         } catch (IOException ex) {
             ex.printStackTrace();
-            System.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
+            Main.exit(Main.EXIT_CODE_UNHANDLED_EXCEPTION);
             throw new RuntimeException(ex);
         }
 

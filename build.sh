@@ -12,8 +12,10 @@ cp ./target/99bot-*-jar-with-dependencies.jar ./BitHeroes.jar
 touch user-config.properties
 chmod +x ./*.sh
 
-# Generating mini client
-rm -f ./mini-game-on-chrome*.sh
-rm -f mini
-java -jar ./BitHeroes.jar client
-chmod +x ./mini-game-on-chrome*.sh
+if [ ! -f ./im.dev ]; then
+  # Generating mini client
+  rm -f ./mini-game-on-chrome*.sh
+  rm -f mini
+  java -jar ./BitHeroes.jar client
+  chmod +x ./mini-game-on-chrome*.sh
+fi

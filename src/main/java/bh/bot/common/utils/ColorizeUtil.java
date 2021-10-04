@@ -67,6 +67,11 @@ public class ColorizeUtil {
 			return this;
 		}
 
+		public Cu a(String text) {
+			ansi.a(text);
+			return this;
+		}
+
 		public Cu reset() {
 			ansi.reset();
 			return this;

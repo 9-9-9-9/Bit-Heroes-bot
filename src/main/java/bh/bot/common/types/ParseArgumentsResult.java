@@ -10,6 +10,8 @@ public class ParseArgumentsResult {
     public final String[] arguments;
     @SuppressWarnings("rawtypes")
     public final ArrayList<FlagPattern> usingFlags;
+    public boolean web;
+    public boolean steam;
     public int exitAfterXSecs;
     public int mainLoopInterval;
     public boolean exitAfkIfWaitForResourceGeneration;
@@ -36,5 +38,10 @@ public class ParseArgumentsResult {
         this.applicationClass = applicationClass;
         this.arguments = arguments;
         this.usingFlags = usingFlags;
+    }
+
+    public void addFamiliarToBribeWithGems(Familiar familiar) {
+        if (!familiarToBribeWithGems.contains(familiar))
+            familiarToBribeWithGems.add(familiar);
     }
 }

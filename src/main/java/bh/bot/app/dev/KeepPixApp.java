@@ -17,7 +17,7 @@ import java.util.function.Function;
 import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.info;
 
-@AppMeta(code = "keeppix", name = "KeepPix", dev = true)
+@AppMeta(code = "keeppix", name = "KeepPix", requireClientType = false, dev = true)
 @Deprecated
 public class KeepPixApp extends AbstractApplication {
     @Override
@@ -26,7 +26,7 @@ public class KeepPixApp extends AbstractApplication {
             if (args.length != 0 && args.length != 2) {
                 info("Invalid number of arguments");
                 info(getHelp());
-                System.exit(Main.EXIT_CODE_INVALID_NUMBER_OF_ARGUMENTS);
+                Main.exit(Main.EXIT_CODE_INVALID_NUMBER_OF_ARGUMENTS);
                 return;
             }
 

@@ -18,7 +18,7 @@ if (active_user === undefined || active_user.getGameAttributes() === undefined |
     console.log('1.game.auth.token=' + active_user.getGameAttributes().game_auth_token);
 }
 
-// 6. Copy the output into `user-config.properties` file, make sure to override the correct properties
-// 7. Generate mini client using:
-//  - On Windows: run file `./client.bat`
+// 6. Copy the output into `user-config.properties` file, make sure to override the corresponding keys
+// 7. Generate mini-client using:
+//  - On Windows: run file `client.bat`
 //  - On other OS: run file `./client.sh`

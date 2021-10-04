@@ -1,8 +1,9 @@
 package bh.bot.common.jna;
 
+import bh.bot.Main;
+import bh.bot.common.Configuration;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.ScreenResolutionProfile;
-import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.tuples.Tuple4;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
@@ -33,7 +34,7 @@ public class MiniClientWindowsJna extends AbstractWindowsJna {
 	@Override
 	public Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(HWND hwnd,
 																			 ScreenResolutionProfile screenResolutionProfile) {
-		if (screenResolutionProfile instanceof SteamProfile)
+		if (Configuration.isSteamProfile)
 			throw new IllegalArgumentException("Does not support steam profile");
 
 		if (hwnd == null) {
@@ -49,9 +50,7 @@ public class MiniClientWindowsJna extends AbstractWindowsJna {
 
 		Offset offset = new Offset(rect.x, rect.y);
 		if (offset.X < 0 || offset.Y < 0)
-			return new Tuple4<>(false,
-					String.format("Window may have been partially hiden (x=%d, y=%d)", offset.X, offset.Y), rect,
-					offset);
+			Main.showWarningWindowMustClearlyVisible();
 
 		return new Tuple4<>(true, null, rect, offset);
 	}

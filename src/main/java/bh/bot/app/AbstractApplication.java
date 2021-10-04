@@ -99,7 +99,7 @@ public abstract class AbstractApplication {
 				try {
 					if (0 != Runtime.getRuntime().exec("sudo -nv").waitFor()) {
 						err("You must run this bot as sudo to be able to run command '%s' upon completion", command);
-						System.exit(Main.EXIT_CODE_REQUIRE_SUDO);
+						Main.exit(Main.EXIT_CODE_REQUIRE_SUDO);
 					}
 				} catch (Exception ex) {
 					err(ex.getMessage());
@@ -109,6 +109,7 @@ public abstract class AbstractApplication {
 				throw new NotSupportedException(String.format("Shutdown command is not supported on %s OS", OS.name));
 
 			launchThreadCheckVersion();
+			showWarningWindowMustClearlyVisible();
 			internalRun(launchInfo.arguments);
 			tryToCloseGameWindow(launchInfo.closeGameWindowAfterExit);
 
@@ -131,6 +132,7 @@ public abstract class AbstractApplication {
 			}
 		} else {
 			launchThreadCheckVersion();
+			showWarningWindowMustClearlyVisible();
 			internalRun(launchInfo.arguments);
 			tryToCloseGameWindow(launchInfo.closeGameWindowAfterExit);
 		}
@@ -153,6 +155,14 @@ public abstract class AbstractApplication {
 				if (!VersionUtil.checkForLatestVersion())
 					warn("Failure on checking for latest version of %s", Main.botName);
 			});
+	}
+
+	private void showWarningWindowMustClearlyVisible() {
+		if (RandomUtil.nextInt(10) % 3 != 0) { // 66%
+			if (Configuration.isWebProfile)
+				warn("Do NOT zoom in/out the web page while you playing Bit Heroes on web and keep the original resolution is 800x520. If you do zoom the web page, bot won't work because it can not find the desired images due to expected size was changed");
+			Main.showWarningWindowMustClearlyVisible();
+		}
 	}
 
 	private void tryToCloseGameWindow(boolean closeGameWindowAfterExit) {
@@ -655,8 +665,10 @@ public abstract class AbstractApplication {
 			long nextPersuade = addSec(persuadeSleepSecs);
 
 			if (st.persuade) {
-				if (Configuration.enableDevFeatures && !argumentInfo.familiarToBribeWithGems.contains(Familiar.Kaleido))
-					argumentInfo.familiarToBribeWithGems.add(Familiar.Kaleido);
+				/* TODO temporary do not persuade Kaleido due to texture not available for 800x520 profile
+				if (Configuration.enableDevFeatures)
+					argumentInfo.addFamiliarToBribeWithGems(Familiar.Kaleido);
+				 */
 				for (Familiar f : argumentInfo.familiarToBribeWithGems)
 					warn("Will persuade %s with gems", f.name());
 			}
@@ -1373,7 +1385,7 @@ public abstract class AbstractApplication {
 		if (!resultLoadUserConfig._1) {
 			err("Profile name could not be found (check existence of file readonly.<profile_name>.user-config.properties)");
 			printRequiresSetting();
-			System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
+			Main.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
 		}
 		return resultLoadUserConfig._2;
 	}

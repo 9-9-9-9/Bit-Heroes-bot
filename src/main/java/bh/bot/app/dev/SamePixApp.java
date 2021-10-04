@@ -13,7 +13,7 @@ import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 
-@AppMeta(code = "samepix", name = "SamePix", dev = true)
+@AppMeta(code = "samepix", name = "SamePix", requireClientType = false, dev = true)
 @Deprecated
 public class SamePixApp extends AbstractApplication {
     @Override

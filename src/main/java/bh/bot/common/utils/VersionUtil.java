@@ -135,7 +135,7 @@ public class VersionUtil {
 									warn("Please download latest version at 'bh99bot.com'");
 								}
 							} finally {
-								System.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
+								Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
 							}
 						}
 

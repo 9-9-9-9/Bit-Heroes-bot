@@ -32,7 +32,7 @@ public class WorldBossApp extends AbstractDoFarmingApp {
         } catch (InvalidDataException ex2) {
             err(ex2.getMessage());
             printRequiresSetting();
-            System.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
+            Main.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
             return false;
         }
     }

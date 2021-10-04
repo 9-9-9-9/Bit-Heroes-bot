@@ -16,7 +16,7 @@ import static bh.bot.common.Log.info;
 import static bh.bot.common.Log.warn;
 
 @SuppressWarnings("DeprecatedIsStillUsed")
-@AppMeta(code = "matrix", name = "Matrix", dev = true)
+@AppMeta(code = "matrix", name = "Matrix", requireClientType = false, dev = true)
 @Deprecated
 /*
   Please use class ImportTpImageApp (app code: `tp`)
@@ -28,7 +28,7 @@ public class ExtractMatrixApp extends AbstractApplication {
             if (args.length != 0 && args.length != 3) {
                 info("Invalid number of arguments");
                 info(getHelp());
-                System.exit(Main.EXIT_CODE_INVALID_NUMBER_OF_ARGUMENTS);
+                Main.exit(Main.EXIT_CODE_INVALID_NUMBER_OF_ARGUMENTS);
                 return;
             }
 

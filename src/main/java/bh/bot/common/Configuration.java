@@ -24,8 +24,6 @@ import bh.bot.common.types.AtomicOffset;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
-import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
-import bh.bot.common.types.ScreenResolutionProfile.WebProfile;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.flags.FlagAlterLoopInterval;
@@ -81,20 +79,23 @@ public class Configuration {
 
     public static void loadSystemConfig(final ParseArgumentsResult parseArgumentsResult) throws IOException {
         final ScreenResolutionProfile screenResolutionProfile = parseArgumentsResult.screenResolutionProfile;
-        info("Using '%s' profile which supports %dx%d game resolution", screenResolutionProfile.getName(),
-                screenResolutionProfile.getSupportedGameResolutionWidth(),
-                screenResolutionProfile.getSupportedGameResolutionHeight());
 
         Configuration.screenResolutionProfile = screenResolutionProfile;
-        isSteamProfile = screenResolutionProfile instanceof SteamProfile;
-        isWebProfile = screenResolutionProfile instanceof WebProfile;
+        isSteamProfile = parseArgumentsResult.steam;
+        isWebProfile = parseArgumentsResult.web;
+
         profileName = screenResolutionProfile.getName().trim();
         if (isBlank(profileName))
             throw new InvalidDataException("profileName");
 
-        warn("You must move the Bit Heroes game's window to top left corner of your screen or provide exactly screen offset into the 'offset.screen.x & y' keys. See more: https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Manually-setting-game-screen-coordinate");
         if (isSteamProfile)
-            warn("Your Bit Heroes game window must be 800x480. You can check it by open Settings, see the Windowed option");
+            warn(
+                    "Your Bit Heroes game window resolution will be automatically adjusted to %dx%d",
+                    screenResolutionProfile.getSupportedGameResolutionWidth(),
+                    screenResolutionProfile.getSupportedGameResolutionHeight()
+            );
+        else
+            warn("You must move the Bit Heroes game's window to top left corner of your screen or provide exactly screen offset into the 'offset.screen.x & y' keys. See more: https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Manually-setting-game-screen-coordinate");
 
         properties.load(Configuration.class.getResourceAsStream("/config.properties"));
 

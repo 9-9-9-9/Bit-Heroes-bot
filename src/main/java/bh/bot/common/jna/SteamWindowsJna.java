@@ -4,6 +4,8 @@ import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import bh.bot.Main;
+import bh.bot.common.Configuration;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
@@ -13,10 +15,9 @@ import bh.bot.common.OS;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.ScreenResolutionProfile;
-import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.tuples.Tuple4;
 
-import static bh.bot.common.Log.dev;
+import static bh.bot.common.Log.*;
 
 public class SteamWindowsJna extends AbstractWindowsJna {
 	public SteamWindowsJna() {
@@ -28,28 +29,36 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 
 	@Override
 	public HWND getGameWindow(Object... args) {
-		return user32.FindWindow("UnityWndClass", "Bit Heroes");
+		HWND hwnd = user32.FindWindow("UnityWndClass", "Bit Heroes");
+		if (hwnd == null) {
+			err("Can not detect game window (Steam)!!!");
+			showErrAskIfBhRunningOrReqAdm();
+			Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+		}
+		return hwnd;
 	}
 
 	@Override
 	public Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(HWND hwnd,
 			ScreenResolutionProfile screenResolutionProfile) {
-		if (!(screenResolutionProfile instanceof SteamProfile))
+		if (!Configuration.isSteamProfile)
 			throw new IllegalArgumentException("Not steam profile");
 
-		if (hwnd == null) {
+		if (hwnd == null)
 			hwnd = getGameWindow();
-			if (hwnd == null)
-				return new Tuple4<>(false, "Can not detect Steam window", null, null);
-		}
 
 		final int ew = screenResolutionProfile.getSupportedGameResolutionWidth();
 		final int eh = screenResolutionProfile.getSupportedGameResolutionHeight();
 
 		RECT lpRectC = new RECT();
-		if (!user32.GetClientRect(hwnd, lpRectC))
-			return new Tuple4<>(false, String.format("Unable to GetClientRect, err code: %d",
-					com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()), null, null);
+		if (!user32.GetClientRect(hwnd, lpRectC)) {
+			err(
+					String.format("Unable to GetClientRect, err code: %d",
+					com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError())
+			);
+			showErrAskIfBhRunningOrReqAdm();
+			Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+		}
 
 		int cw = Math.abs(lpRectC.right - lpRectC.left);
 		int ch = Math.abs(lpRectC.bottom - lpRectC.top);
@@ -57,9 +66,14 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 			return new Tuple4<>(false, "Window has minimized", null, null);
 		
 		Rectangle rect = getRectangle(hwnd);
-		if (rect == null)
-			return new Tuple4<>(false, String.format("Unable to GetWindowRect, err code: %d",
-					com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()), null, null);
+		if (rect == null) {
+			err(
+					String.format("Unable to GetWindowRect, err code: %d",
+							com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError())
+			);
+			showErrAskIfBhRunningOrReqAdm();
+			Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+		}
 
 		if (rect.width <= 0 || rect.height <= 0)
 			return new Tuple4<>(false, "Window has minimized", null, null);
@@ -71,46 +85,80 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 		
 		if (ew != cw || eh != ch) {
 			if (!isSupportResizeWindow() || !resizeWindowToSupportedResolution(hwnd, borderLeftSize * 2 + ew, borderTopSize + borderLeftSize + eh)) {
-				return new Tuple4<>(false,
-						String.format("JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d", ew,
-								eh, cw, ch),
-						null, null);
+				err(
+						String.format("JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d",
+								ew, eh, cw, ch)
+				);
+				err("Unable to resize window!!!");
+				showErrReqAdm();
+				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 			}
 
+			Main.showWarningWindowMustClearlyVisible();
+
 			rect = getRectangle(hwnd);
-			if (rect == null)
-				return new Tuple4<>(false, String.format("(Post resize) Unable to GetWindowRect, err code: %d",
-						com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()), null, null);
-			if (rect.width < ew || rect.height < eh)
-				return new Tuple4<>(false,
-						String.format("(Post resize) JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d", ew,
-								eh, rect.width, rect.height),
-						null, null);
-			
+			if (rect == null) {
+				err(
+						String.format(
+								"(Post-Resize) Unable to GetWindowRect, err code: %d",
+								com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()
+						)
+				);
+				showErrAskIfBhRunningOrReqAdm();
+				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+			}
+
+			if (rect.width < ew || rect.height < eh) {
+				err(
+						String.format(
+								"(Post-Resize) JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d",
+								ew, eh, rect.width, rect.height
+						)
+				);
+				showErrReqAdm();
+				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+			}
 
 			lpRectC = new RECT();
-			if (!user32.GetClientRect(hwnd, lpRectC))
-				return new Tuple4<>(false, String.format("(Post resize) Unable to GetClientRect, err code: %d",
-						com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()), null, null);
+			if (!user32.GetClientRect(hwnd, lpRectC)) {
+				err(
+						String.format(
+								"(Post resize) Unable to GetClientRect, err code: %d",
+							com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError()
+						)
+				);
+				showErrAskIfBhRunningOrReqAdm();
+				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+			}
 
 			cw = Math.abs(lpRectC.right - lpRectC.left);
 			ch = Math.abs(lpRectC.bottom - lpRectC.top);
 			
 			if (ew != cw || eh != ch) {
-				return new Tuple4<>(false,
-						String.format("(Post resize) JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d", ew,
-								eh, cw, ch),
-						null, null);
+				err(
+						String.format(
+								"(Post resize) JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d",
+								ew, eh, cw, ch
+						)
+				);
+				showErrAskIfBhRunningOrReqAdm();
+				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
 			}
 		}
 		
 		Offset offset = new Offset(rect.x + borderLeftSize, rect.y + borderTopSize);
 		if (offset.X < 0 || offset.Y < 0)
-			return new Tuple4<>(false,
-					String.format("Window may have been partially hiden (x=%d, y=%d)", offset.X, offset.Y), rect,
-					offset);
+			Main.showWarningWindowMustClearlyVisible();
 
 		return new Tuple4<>(true, null, rect, offset);
+	}
+
+	private void showErrAskIfBhRunningOrReqAdm() {
+		err("Is the BitHeroes running? If yes, probably this err caused by lacking privilege, you may need to run this bot as administrator");
+	}
+
+	private void showErrReqAdm() {
+		err("Probably this err caused by lacking privilege, you may need to run this bot as administrator");
 	}
 
 	@Override

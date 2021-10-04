@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import bh.bot.app.dev.*;
 import bh.bot.common.types.flags.*;
+import bh.bot.common.utils.*;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.fusesource.jansi.AnsiConsole;
@@ -50,10 +51,6 @@ import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
-import bh.bot.common.utils.ColorizeUtil;
-import bh.bot.common.utils.InteractionUtil;
-import bh.bot.common.utils.TimeUtil;
-import bh.bot.common.utils.VersionUtil;
 import bh.bot.common.utils.ColorizeUtil.Cu;
 
 @SuppressWarnings("deprecation")
@@ -99,11 +96,11 @@ public class Main {
 			process(args);
 		} catch (InvalidFlagException ex) {
 			err(ex.getMessage());
-			System.exit(EXIT_CODE_INVALID_FLAG);
+			Main.exit(EXIT_CODE_INVALID_FLAG);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			err(ex.getMessage());
-			System.exit(EXIT_CODE_UNHANDLED_EXCEPTION);
+			Main.exit(EXIT_CODE_UNHANDLED_EXCEPTION);
 		}
 	}
 
@@ -112,7 +109,7 @@ public class Main {
 				.getApplicationClasses(Configuration.enableDevFeatures);
 		StringBuilder sb = new StringBuilder("Available functions:\n");
 		for (int i = 0; i < applicationClasses.size(); i++)
-			sb.append(String.format("  %2d. %s\n", i + 1, applicationClasses.get(i)._2.name()));
+			sb.append(String.format("  %2d. %s%s\n", i + 1, applicationClasses.get(i)._2.dev() ? "(Dev) " : "", applicationClasses.get(i)._2.name()));
 		sb.append("Select a function you want to launch:");
 		AppMeta meta = readInput(sb.toString(), null, s -> {
 			try {
@@ -135,20 +132,28 @@ public class Main {
 		if (lArgs.stream().anyMatch(x -> x.equalsIgnoreCase(flagHelp.getCode())))
 			return lArgs.toArray(new String[0]);
 
-		FlagSteamResolution800x480 flagSteam = new FlagSteamResolution800x480();
-		if (flagSteam.isSupportedOnCurrentOsPlatform()) {
-			String flagSteamCode = flagSteam.getCode();
-			if (lArgs.stream().noneMatch(x -> x.equalsIgnoreCase(flagSteamCode))) {
-				boolean enableSteam = readYesNoInput("Steam client?",
-						"Press 'Y' to launch this app on Steam mode (800x480) or press 'N' to launch this app on Mini-client mode (800x520)");
-				if (enableSteam)
-					lArgs.add(flagSteamCode);
-			}
+		FlagPlayOnSteam flagPlayOnSteam = new FlagPlayOnSteam();
+		FlagPlayOnWeb flagPlayOnWeb = new FlagPlayOnWeb();
+		if (flagPlayOnSteam.isSupportedOnCurrentOsPlatform()) {
+			lArgs.add(readInput("Steam or Web?\n\t1. Steam\n\t2. Web", null, s -> {
+				try {
+					int opt = Integer.parseInt(s.trim());
+					if (opt == 1)
+						return new Tuple3<>(true, null, flagPlayOnSteam.getCode());
+					if (opt == 2)
+						return new Tuple3<>(true, null, flagPlayOnWeb.getCode());
+				} catch (NumberFormatException ex) {
+					// ignored
+				}
+				return new Tuple3<>(false, "Wrong answer, must be <1> for Steam or <2> or Web", null);
+			}));
+		} else {
+			lArgs.add(flagPlayOnWeb.getCode());
 		}
 
 		boolean addMoreFlags = readYesNoInput("Do you want to add some add some flags? (Y/N, empty is No)",
 				String.format(
-						"You can pass flags like '--exit=3600'/'--steam'/'--all'/'--help'... here. For list of supported flags available for each function, please run file '%s'",
+						"You can pass flags like '--exit=3600'/'--ear'/'--help'... here. For list of supported flags available for each function, please run file '%s'",
 						scriptFileName("help")),
 				true);
 		if (addMoreFlags) {
@@ -174,10 +179,11 @@ public class Main {
 				lArgs.add(newFlag);
 			}
 		} else {
-			info(ColorizeUtil.formatAsk, "FYI: command-line builder is available at: cb.bh99bot.com");
+			info(Cu.i().cyan("FYI: command-line builder is available at: ").green("cb.bh99bot.com").reset());
+			info(Cu.i().cyan("You can also save the command-line into script ").green(scriptFileName("<name>.c")).cyan(" and re-use later").reset());
 		}
 
-		return lArgs.toArray(new String[0]);
+		return lArgs.stream().distinct().collect(Collectors.toList()).toArray(new String[0]);
 	}
 
 	private static void process(String[] args) throws Exception {
@@ -219,14 +225,20 @@ public class Main {
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
 		}
 
-		info(Cu.i().magenta("Please give me a Star").cyan(" at my github repository https://github.com/9-9-9-9/Bit-Heroes-bot ").magenta("thank you").reset().toString());
-		info(ColorizeUtil.formatAsk, "Visit our repository often to update latest version");
+		info(Cu.i().magenta("Please give me a Star").reset().a(" at my github repository ").cyan("github.com/9-9-9-9/Bit-Heroes-bot").reset().a(" (short url: ").cyan("git.bh99bot.com").reset().a(")").magenta(". Thank you").reset().toString());
+		info(ColorizeUtil.formatAsk, "Visit our repository often to update latest bot version with new features added frequently");
 		instance.run(parseArgumentsResult);
 	}
 
 	@SuppressWarnings("rawtypes")
 	private static ParseArgumentsResult parseArguments(String[] args) throws InvalidFlagException {
 		String appCode = args[0];
+
+		Class<? extends AbstractApplication> applicationClassFromAppCode = Configuration
+				.getApplicationClassFromAppCode(appCode);
+
+		if (applicationClassFromAppCode == null)
+			throw new IllegalArgumentException("First argument must be a valid app code");
 
 		FlagPattern[] flagPatterns = Flags.allFlags;
 
@@ -293,35 +305,48 @@ public class Main {
 		for (FlagPattern flagPattern : usingFlagPatterns)
 			if (!flagPattern.isSupportedOnCurrentOsPlatform())
 				throw new InvalidFlagException(
-						String.format("Flag '--%s' is not supported on %s", flagPattern.getName(), OS.name));
+						String.format("Flag '%s' is not supported on %s", flagPattern.getCode(), OS.name));
 
-		ScreenResolutionProfile screenResolutionProfile;
-		boolean is800x480Resolution = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagSteamResolution800x480);
-		boolean is800x520Resolution = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagWebResolution800x520);
-		if (is800x480Resolution && is800x520Resolution) {
-			err("Ambiguous profile, must specify only one of 2 profiles:");
-			err("  '--web' which supports game resolution 800x520");
-			err("  '--steam' which supports game resolution 800x480");
-			System.exit(EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
+		ScreenResolutionProfile screenResolutionProfile = new ScreenResolutionProfile.Profile800x520();
+		boolean isSteam = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagPlayOnSteam);
+		boolean isWeb = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagPlayOnWeb);
+		if (isSteam && isWeb) {
+			err("Ambiguous flags! Can not use both flags at the same time:");
+			err("  '--web' for controlling web-version BitHeroes");
+			err("  '--steam' for controlling Steam-version BitHeroes");
+			Main.exit(EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
 		}
 
-		if (!is800x480Resolution && !is800x520Resolution) {
-			info("No screen profile specified, `--web` profile has been chosen by default");
-			screenResolutionProfile = new ScreenResolutionProfile.WebProfile();
-		} else {
-			screenResolutionProfile = is800x480Resolution ? new ScreenResolutionProfile.SteamProfile()
-					: new ScreenResolutionProfile.WebProfile();
+		if (!isSteam && !isWeb) {
+			AppMeta anAppMeta = applicationClassFromAppCode.getAnnotation(AppMeta.class);
+
+			if (!anAppMeta.requireClientType()) {
+				isSteam = false;
+				isWeb = true;
+			} else if (OS.isWin) {
+				isSteam = readInput("Steam or Web?\n\t1. Steam\n\t2. Web", null, s -> {
+					try {
+						int opt = Integer.parseInt(s.trim());
+						if (opt == 1)
+							return new Tuple3<>(true, null, true);
+						if (opt == 2)
+							return new Tuple3<>(true, null, false);
+					} catch (NumberFormatException ex) {
+						// ignored
+					}
+					return new Tuple3<>(false, "Wrong answer, must be <1> for Steam or <2> or Web", null);
+				});
+				isWeb = !isSteam;
+			} else {
+				isWeb = true;
+			}
 		}
 
 		args = Arrays.stream(args).skip(1).filter(x -> !x.startsWith("--")).toArray(String[]::new);
 
-		Class<? extends AbstractApplication> applicationClassFromAppCode = Configuration
-				.getApplicationClassFromAppCode(appCode);
-
-		if (applicationClassFromAppCode == null)
-			throw new IllegalArgumentException("First argument must be a valid app code");
-
 		ParseArgumentsResult li = new ParseArgumentsResult(applicationClassFromAppCode, args, usingFlagPatterns);
+		li.steam = isSteam;
+		li.web = isWeb;
 		li.exitAfterXSecs = exitAfter;
 		li.mainLoopInterval = mainLoopInterval;
 		li.exitAfkIfWaitForResourceGeneration = usingFlagPatterns.stream()
@@ -423,9 +448,25 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 			err("Error while reading input, application is going to exit now, please try again later");
-			System.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
+			Main.exit(Main.EXIT_CODE_FAILURE_READING_INPUT);
 			return null;
 		}
+	}
+
+	public static void showWarningWindowMustClearlyVisible() {
+		info(
+			Cu.i()
+				.yellow("** ").red("IMPORTANT").yellow(" ** ")
+				.cyan("Game window must be clearly visible").yellow(" in order for ").yellow(botName)
+				.yellow(" to processes images. If any corner or any part of the game window was hidden, bot won't work correctly")
+				.reset().toString()
+		);
+	}
+
+	public static void exit(int exitCode) {
+		if (exitCode != 0 && exitCode != EXIT_CODE_VERSION_IS_REJECTED)
+			info(Cu.i().magenta("Tips: ").yellow("Got ").red("BUG").yellow("? Got ").cyan("ISSUE").yellow("? Want to ").magenta("ASK me").yellow(" a question? Please raise an issue on my GitHub repository (short url: ").cyan("issues.bh99bot.com").yellow(")").reset());
+		System.exit(exitCode);
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;
@@ -437,5 +478,6 @@ public class Main {
 	public static final int EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION = 11;
 	public static final int EXIT_CODE_REQUIRE_SUDO = 12;
 	public static final int EXIT_CODE_VERSION_IS_REJECTED = 13;
+	public static final int EXIT_CODE_WINDOW_DETECTION_ISSUE = 14;
 	public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }

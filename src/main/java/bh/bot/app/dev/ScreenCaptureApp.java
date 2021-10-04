@@ -34,7 +34,7 @@ public class ScreenCaptureApp extends AbstractApplication {
 
 	@Override
 	protected String getDescription() {
-		return "Screenshot at specific rectangle based on `offset.screen.x & y` flags, size based on profile --web 800x520 or --steam 800x480";
+		return "Screenshot at specific rectangle based on window coordinate from auto-detect or `offset.screen.x & y` flags";
 	}
 
 	@Override

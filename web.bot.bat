@@ -1,1 +1,1 @@
-call _.bat %*
+call _.bat %* --web
