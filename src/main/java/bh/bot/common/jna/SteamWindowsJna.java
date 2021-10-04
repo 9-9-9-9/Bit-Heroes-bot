@@ -15,7 +15,6 @@ import bh.bot.common.OS;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.ScreenResolutionProfile;
-import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
 import bh.bot.common.types.tuples.Tuple4;
 
 import static bh.bot.common.Log.*;

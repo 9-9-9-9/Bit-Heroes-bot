@@ -24,8 +24,6 @@ import bh.bot.common.types.AtomicOffset;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
-import bh.bot.common.types.ScreenResolutionProfile.SteamProfile;
-import bh.bot.common.types.ScreenResolutionProfile.WebProfile;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.flags.FlagAlterLoopInterval;
