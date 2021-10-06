@@ -665,9 +665,11 @@ public abstract class AbstractApplication {
 			long nextPersuade = addSec(persuadeSleepSecs);
 
 			if (st.persuade) {
+				/*
 				// TODO temporary do not persuade Kaleido due to texture not available for 800x520 profile
 				if (Configuration.enableDevFeatures)
 					argumentInfo.addFamiliarToBribeWithGems(Familiar.Violace);
+				 */
 				for (Familiar f : argumentInfo.familiarToBribeWithGems)
 					warn("Will persuade %s with gems", f.name());
 			}
