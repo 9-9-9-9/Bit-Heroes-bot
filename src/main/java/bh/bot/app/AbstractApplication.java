@@ -781,24 +781,29 @@ public abstract class AbstractApplication {
 				}
 
 				if (persuadeTargets == null)
+					/*
 					persuadeTargets = Arrays.asList(
 							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.kaleido, Familiar.Kaleido)
 					);
+					 */
+					persuadeTargets = new ArrayList<>();
 
 				boolean doPersuadeGold = true;
 
-				for (Tuple2<BwMatrixMeta, Familiar> target : persuadeTargets) {
-					PersuadeState ps = persuade(target._1, target._2, pPersuadeButton, pBribeButton);
-					if (ps == PersuadeState.NotAvailable) {
-						doPersuadeGold = false;
-						break;
-					}
-					if (ps == PersuadeState.SuccessGem || ps == PersuadeState.SuccessGold) {
-						doPersuadeGold = false;
-						break;
-					}
-					if (ps == PersuadeState.NotTargetFamiliar) {
-						continue;
+				if (argumentInfo.familiarToBribeWithGems.size() > 0) {
+					for (Tuple2<BwMatrixMeta, Familiar> target : persuadeTargets) {
+						PersuadeState ps = persuade(target._1, target._2, pPersuadeButton, pBribeButton);
+						if (ps == PersuadeState.NotAvailable) {
+							doPersuadeGold = false;
+							break;
+						}
+						if (ps == PersuadeState.SuccessGem || ps == PersuadeState.SuccessGold) {
+							doPersuadeGold = false;
+							break;
+						}
+						if (ps == PersuadeState.NotTargetFamiliar) {
+							continue;
+						}
 					}
 				}
 
