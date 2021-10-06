@@ -665,10 +665,9 @@ public abstract class AbstractApplication {
 			long nextPersuade = addSec(persuadeSleepSecs);
 
 			if (st.persuade) {
-				/* TODO temporary do not persuade Kaleido due to texture not available for 800x520 profile
+				// TODO temporary do not persuade Kaleido due to texture not available for 800x520 profile
 				if (Configuration.enableDevFeatures)
-					argumentInfo.addFamiliarToBribeWithGems(Familiar.Kaleido);
-				 */
+					argumentInfo.addFamiliarToBribeWithGems(Familiar.Violace);
 				for (Familiar f : argumentInfo.familiarToBribeWithGems)
 					warn("Will persuade %s with gems", f.name());
 			}
@@ -781,12 +780,9 @@ public abstract class AbstractApplication {
 				}
 
 				if (persuadeTargets == null)
-					/*
 					persuadeTargets = Arrays.asList(
-							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.kaleido, Familiar.Kaleido)
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.violace, Familiar.Violace)
 					);
-					 */
-					persuadeTargets = new ArrayList<>();
 
 				boolean doPersuadeGold = true;
 

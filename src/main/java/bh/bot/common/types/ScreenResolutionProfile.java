@@ -3,7 +3,6 @@ package bh.bot.common.types;
 import java.awt.Rectangle;
 
 import bh.bot.common.exceptions.NotImplementedException;
-import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.tuples.Tuple4;
 
 @SuppressWarnings("SpellCheckingInspection")
@@ -199,6 +198,8 @@ public abstract class ScreenResolutionProfile {
 	public abstract Offset getOffsetButtonBribePersuade();
 	
 	public abstract Offset getOffsetLabelPersuadeKaleido();
+	
+	public abstract Offset getOffsetLabelPersuadeViolace();
 
 	public static class Profile800x520 extends ScreenResolutionProfile {
 		public static final String profileName = "800x520";
@@ -667,6 +668,11 @@ public abstract class ScreenResolutionProfile {
 		public Offset getOffsetLabelPersuadeKaleido() {
 			// TODO Auto-generated method stub
 			return null;
+		}
+
+		@Override
+		public Offset getOffsetLabelPersuadeViolace() {
+			return new Offset(189, 78);
 		}
 	}
 }

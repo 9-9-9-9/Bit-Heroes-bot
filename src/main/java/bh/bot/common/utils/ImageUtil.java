@@ -28,7 +28,7 @@ public class ImageUtil {
         return loadImageFromResource(path);
     }
 
-    private static BufferedImageInfo loadImageFromResource(String path) throws IOException {
+    public static BufferedImageInfo loadImageFromResource(String path) throws IOException {
         String fileName = String.format("/game-images/%s/%s", Configuration.profileName, path);
         URL resource = ImageUtil.class.getResource(fileName);
         if (resource == null)

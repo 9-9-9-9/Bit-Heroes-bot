@@ -225,6 +225,7 @@ public class BwMatrixMeta {
         public static class Persuade {
             public static class Labels {
             	public static BwMatrixMeta kaleido;
+            	public static BwMatrixMeta violace;
             }
         }
 
@@ -434,6 +435,11 @@ public class BwMatrixMeta {
                 "labels/persuade.kaleido?",
                 Configuration.screenResolutionProfile.getOffsetLabelPersuadeKaleido(), //
                 0xFFFF00
+        );
+        Metas.Persuade.Labels.violace = BwMatrixMeta.from(//
+                "labels/persuade.violace?",
+                Configuration.screenResolutionProfile.getOffsetLabelPersuadeViolace(), //
+                0xFF807D
         );
         
         // Fishing
