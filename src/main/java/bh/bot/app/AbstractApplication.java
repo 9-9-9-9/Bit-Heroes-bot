@@ -36,7 +36,10 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
 import bh.bot.common.Log;
+import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.flags.*;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.WinBase;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
 import bh.bot.Main;
@@ -73,6 +76,7 @@ import bh.bot.common.utils.StringUtil;
 import bh.bot.common.utils.TimeUtil;
 import bh.bot.common.utils.ValidationUtil;
 import bh.bot.common.utils.VersionUtil;
+import com.sun.jna.platform.win32.WinNT;
 
 public abstract class AbstractApplication {
 	protected ParseArgumentsResult argumentInfo;
@@ -108,10 +112,7 @@ public abstract class AbstractApplication {
 			} else
 				throw new NotSupportedException(String.format("Shutdown command is not supported on %s OS", OS.name));
 
-			launchThreadCheckVersion();
-			showWarningWindowMustClearlyVisible();
-			internalRun(launchInfo.arguments);
-			tryToCloseGameWindow(launchInfo.closeGameWindowAfterExit);
+			wrappedInternalRun1(launchInfo);
 
 			final int shutdownAfterMinutes = FlagShutdownAfterExit.shutdownAfterXMinutes;
 			final int notiEverySec = 30;
@@ -131,11 +132,51 @@ public abstract class AbstractApplication {
 				err("Error occurs while trying to shutdown system");
 			}
 		} else {
-			launchThreadCheckVersion();
-			showWarningWindowMustClearlyVisible();
-			internalRun(launchInfo.arguments);
-			tryToCloseGameWindow(launchInfo.closeGameWindowAfterExit);
+			wrappedInternalRun1(launchInfo);
 		}
+	}
+
+	private void wrappedInternalRun1(ParseArgumentsResult launchInfo) {
+		if (this.getClass().getAnnotation(RequireSingleInstance.class) != null) {
+			if (OS.isWin) {
+				WinNT.HANDLE mutexHandle = null;
+				try {
+					mutexHandle = Kernel32.INSTANCE.CreateMutex(null, true, String.format("%s-MUTEX", Main.botName));
+					if (mutexHandle != null) {
+						// mutex acquired
+					} else {
+						err("'%s' of %s is not allowed to run multiple instances at the same time, please close previous process first!!!", this.getClass().getAnnotation(AppMeta.class).name(), Main.botName);
+					}
+				} catch (Throwable t) {
+					dev(t);
+					dev("Unable to create mutex");
+				}
+
+				try {
+					wrappedInternalRun2(launchInfo);
+				} finally {
+					if (mutexHandle != null)
+						try {
+							Kernel32.INSTANCE.ReleaseMutex(mutexHandle);
+						} catch (Throwable t) {
+							dev(t);
+							dev("Problem why trying to close mutex handle");
+						}
+				}
+			} else {
+				debug("Single instance application currently supports Windows only");
+				wrappedInternalRun2(launchInfo);
+			}
+		} else {
+			wrappedInternalRun2(launchInfo);
+		}
+		tryToCloseGameWindow(launchInfo.closeGameWindowAfterExit);
+	}
+
+	private void wrappedInternalRun2(ParseArgumentsResult launchInfo) {
+		launchThreadCheckVersion();
+		showWarningWindowMustClearlyVisible();
+		internalRun(launchInfo.arguments);
 	}
 
 	protected boolean skipCheckVersion() {

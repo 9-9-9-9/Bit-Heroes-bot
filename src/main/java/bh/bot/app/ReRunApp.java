@@ -4,6 +4,7 @@ import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.ThreadUtil;
@@ -16,6 +17,7 @@ import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 @AppMeta(code = "rerun", name = "ReRun", displayOrder = 2, argType = "number", argAsk = "How many times do you want to click the ReRun button?", argDefault = "100", argRequired = true)
+@RequireSingleInstance
 public class ReRunApp extends AbstractApplication {
 
     private int longTimeNoSee = Configuration.Timeout.defaultLongTimeNoSeeInMinutes * 60_000;

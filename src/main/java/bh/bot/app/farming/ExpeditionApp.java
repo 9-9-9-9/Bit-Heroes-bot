@@ -5,6 +5,7 @@ import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.utils.ColorizeUtil;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import static bh.bot.common.Log.*;
 
 @AppMeta(code = "expedition", name = "Expedition", displayOrder = 10)
+@RequireSingleInstance
 public class ExpeditionApp extends AbstractDoFarmingApp {
     private byte place = UserConfig.getExpeditionPlaceRange()._1;
 
