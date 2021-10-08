@@ -105,6 +105,9 @@ public class ReRunApp extends AbstractApplication {
                 }
 
                 cnt = sleepSecs;
+                if (findImage(BwMatrixMeta.Metas.Dungeons.Buttons.rerun) != null) {
+                    continue;
+                }
                 if (clickImage(BwMatrixMeta.Metas.Raid.Buttons.town)) {
                     masterSwitch.set(true);
                     Telegram.sendMessage("Defeated", true);
