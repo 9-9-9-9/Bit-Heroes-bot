@@ -17,6 +17,8 @@ public class FlagBribe extends FlagPattern<Familiar> {
 			switch (s) {
 			case "kaleido":
 				return Familiar.Kaleido;
+			case "violace":
+				return Familiar.Violace;
 			default:
 				throw new NotSupportedException(String.format("Unknown value '%s' of flag %s", s, getCode()));
 			}

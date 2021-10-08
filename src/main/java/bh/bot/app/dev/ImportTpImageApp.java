@@ -107,6 +107,8 @@ public class ImportTpImageApp extends AbstractApplication {
             });
 
             ImageUtil.TestTransformMxResult testTransformMxResult = ImageUtil.testTransformMx(bi, rgb, tolerant);
+            
+            saveImage(testTransformMxResult.mx, "mx");
 
             File file = new File(filePath);
             if (file.exists())

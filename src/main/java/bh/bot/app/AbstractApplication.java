@@ -665,9 +665,10 @@ public abstract class AbstractApplication {
 			long nextPersuade = addSec(persuadeSleepSecs);
 
 			if (st.persuade) {
-				/* TODO temporary do not persuade Kaleido due to texture not available for 800x520 profile
+				/*
+				// TODO temporary do not persuade Kaleido due to texture not available for 800x520 profile
 				if (Configuration.enableDevFeatures)
-					argumentInfo.addFamiliarToBribeWithGems(Familiar.Kaleido);
+					argumentInfo.addFamiliarToBribeWithGems(Familiar.Violace);
 				 */
 				for (Familiar f : argumentInfo.familiarToBribeWithGems)
 					warn("Will persuade %s with gems", f.name());
@@ -782,23 +783,25 @@ public abstract class AbstractApplication {
 
 				if (persuadeTargets == null)
 					persuadeTargets = Arrays.asList(
-							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.kaleido, Familiar.Kaleido)
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.violace, Familiar.Violace)
 					);
 
 				boolean doPersuadeGold = true;
 
-				for (Tuple2<BwMatrixMeta, Familiar> target : persuadeTargets) {
-					PersuadeState ps = persuade(target._1, target._2, pPersuadeButton, pBribeButton);
-					if (ps == PersuadeState.NotAvailable) {
-						doPersuadeGold = false;
-						break;
-					}
-					if (ps == PersuadeState.SuccessGem || ps == PersuadeState.SuccessGold) {
-						doPersuadeGold = false;
-						break;
-					}
-					if (ps == PersuadeState.NotTargetFamiliar) {
-						continue;
+				if (argumentInfo.familiarToBribeWithGems.size() > 0) {
+					for (Tuple2<BwMatrixMeta, Familiar> target : persuadeTargets) {
+						PersuadeState ps = persuade(target._1, target._2, pPersuadeButton, pBribeButton);
+						if (ps == PersuadeState.NotAvailable) {
+							doPersuadeGold = false;
+							break;
+						}
+						if (ps == PersuadeState.SuccessGem || ps == PersuadeState.SuccessGold) {
+							doPersuadeGold = false;
+							break;
+						}
+						if (ps == PersuadeState.NotTargetFamiliar) {
+							continue;
+						}
 					}
 				}
 
