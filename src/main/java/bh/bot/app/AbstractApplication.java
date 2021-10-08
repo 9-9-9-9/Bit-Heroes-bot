@@ -170,7 +170,8 @@ public abstract class AbstractApplication {
 				// mutex acquired
 				debug("Acquired Mutex handle");
 			} else {
-				err("'%s' of %s is not allowed to run multiple instances at the same time, please close previous process first!!!", this.getClass().getAnnotation(AppMeta.class).name(), Main.botName);
+				err("'%s' of %s is not allowed to run multiple instances at the same time because it may causes unexpected issues, please close previous process first!!!", this.getClass().getAnnotation(AppMeta.class).name(), Main.botName);
+				err("If this message is wrong and you are only running a single instance of %s, please relaunch with flag `%s`", Main.botName, new FlagDisableMutex().getCode());
 				Main.exit(Main.EXIT_CODE_MULTIPLE_INSTANCE_DETECTED);
 			}
 		} catch (Throwable t) {
