@@ -224,7 +224,7 @@ public class AfkApp extends AbstractApplication {
 
                 if (Configuration.isSteamProfile) {
                     if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouSureWantToExit)) {
-                        info("areYouSureWantToExit");
+                        debug("areYouSureWantToExit");
                         sendEscape();
                         continue ML;
                     }
@@ -232,7 +232,7 @@ public class AfkApp extends AbstractApplication {
 
                 if (--checkAreYouStillThereAfter <= 0) {
                     if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouStillThere)) {
-                        info("Knock knock, are you still there?");
+                        debug("Knock knock, are you still there?");
                         sendEnter();
                         sleep(1_000);
                         sendEscape();
