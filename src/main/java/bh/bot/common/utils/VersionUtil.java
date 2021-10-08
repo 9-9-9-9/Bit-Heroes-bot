@@ -129,10 +129,13 @@ public class VersionUtil {
 
 						if (sematicVersion.compareTo(appVer) == 0) {
 							try {
-								String msg = String.format("You're using %s v%s which may contains serious bugs and not allowed to run anymore", Main.botName, appVer.toString());
-								for (int j = 0; j < 100; j++) {
+								String msg = String.format("You're using %s v%s which is an old & suspended version due to one of the following reasons:", Main.botName, appVer.toString());
+								for (int j = 0; j < 20; j++) {
 									err(msg);
-									warn("Please download latest version at 'bh99bot.com'");
+									info(ColorizeUtil.formatError, "  - Game-itself might have changed some textures and this old version bot didn't get updated");
+									info(ColorizeUtil.formatError, "  - This old version might contain critical issue");
+									info(ColorizeUtil.formatError, "  - Other reasons");
+									info(ColorizeUtil.formatWarning, "Please download latest version on our website at 'bh99bot.com'");
 								}
 							} finally {
 								Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);

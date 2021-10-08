@@ -652,7 +652,8 @@ public abstract class AbstractApplication {
 	private static final int reactiveAutoSleepSecs = 10;
 	private static final int closeEnterGameDialogNewsSleepSecs = 60;
 	private static final int persuadeSleepSecs = 60;
-	private static final int persuadeSleepSecs2 = 20;
+	private static final int persuadeSleepSecsIntervalInCaseManual = 30;
+	private static final int persuadeSleepSecsAwaitAction = 20;
 
 	protected void internalDoSmallTasks(AtomicBoolean masterSwitch, SmallTasks st) {
 		try {
@@ -770,6 +771,7 @@ public abstract class AbstractApplication {
 	}
 
 	private List<Tuple2<BwMatrixMeta, Familiar>> persuadeTargets = null;
+	private boolean anyManuallyPersuade = false;
 	private long doPersuade(AtomicInteger continousPersuadeScreen) {
 		Point pBribeButton = findImage(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe);
 		Point pPersuadeButton = pBribeButton != null ? null : findImage(BwMatrixMeta.Metas.Globally.Buttons.persuade);
@@ -810,14 +812,14 @@ public abstract class AbstractApplication {
 					persuade(true, pPersuadeButton, pBribeButton);
 				}
 
-				return addSec(persuadeSleepSecs2);
+				return addSec(persuadeSleepSecsAwaitAction);
 			} else {
 				info("Found persuade screen");
 			}
 		} else {
 			continousPersuadeScreen.set(0);
 		}
-		return addSec(persuadeSleepSecs);
+		return addSec(anyManuallyPersuade ? persuadeSleepSecsIntervalInCaseManual : persuadeSleepSecs);
 	}
 
 	private void saveCurrentScreenShot(boolean ignoreError) {
@@ -907,6 +909,7 @@ public abstract class AbstractApplication {
 		mouseMoveAndClickAndHide(p);
 		sleep(5_000);
 		Keyboard.sendEnter();
+		anyManuallyPersuade = true;
 	}
 
 	private long doClickTalk() {
