@@ -14,6 +14,7 @@ public class ParseArgumentsResult {
     public boolean steam;
     public int exitAfterXSecs;
     public int mainLoopInterval;
+    public boolean disableMutex;
     public boolean exitAfkIfWaitForResourceGeneration;
     public boolean shutdownAfterExit;
     public boolean closeGameWindowAfterExit;

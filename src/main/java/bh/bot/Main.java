@@ -349,6 +349,7 @@ public class Main {
 		li.web = isWeb;
 		li.exitAfterXSecs = exitAfter;
 		li.mainLoopInterval = mainLoopInterval;
+		li.disableMutex = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDisableMutex);
 		li.exitAfkIfWaitForResourceGeneration = usingFlagPatterns.stream()
 				.anyMatch(x -> x instanceof FlagExitAfkAfterIfWaitResourceGeneration);
 		li.shutdownAfterExit = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShutdownAfterExit);

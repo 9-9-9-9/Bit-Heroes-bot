@@ -138,38 +138,17 @@ public abstract class AbstractApplication {
 
 	private void wrappedInternalRun1(ParseArgumentsResult launchInfo) {
 		if (this.getClass().getAnnotation(RequireSingleInstance.class) != null) {
-			debug("This application does not allow running multiple instances");
-			if (OS.isWin) {
-				WinNT.HANDLE mutexHandle = null;
-				try {
-					mutexHandle = Kernel32.INSTANCE.CreateMutex(null, true, String.format("%s-MUTEX", Main.botName));
-					if (mutexHandle != null) {
-						// mutex acquired
-						debug("Acquired Mutex handle");
-					} else {
-						err("'%s' of %s is not allowed to run multiple instances at the same time, please close previous process first!!!", this.getClass().getAnnotation(AppMeta.class).name(), Main.botName);
-						Main.exit(Main.EXIT_CODE_MULTIPLE_INSTANCE_DETECTED);
-					}
-				} catch (Throwable t) {
-					dev(t);
-					dev("Unable to create mutex");
-				}
-
-				try {
-					wrappedInternalRun2(launchInfo);
-				} finally {
-					if (mutexHandle != null)
-						try {
-							debug("Releasing mutex handle");
-							Kernel32.INSTANCE.ReleaseMutex(mutexHandle);
-						} catch (Throwable t) {
-							dev(t);
-							dev("Problem why trying to release mutex handle");
-						}
-				}
-			} else {
-				debug("Single instance application currently supports Windows only");
+			if (launchInfo.disableMutex) {
+				warn("Disabled checking multiple bot instances");
 				wrappedInternalRun2(launchInfo);
+			} else {
+				debug("This application does not allow running multiple instances");
+				if (OS.isWin) {
+					wrappedInternalRun3ForWindows(launchInfo);
+				} else {
+					debug("Single instance application currently supports Windows only");
+					wrappedInternalRun2(launchInfo);
+				}
 			}
 		} else {
 			wrappedInternalRun2(launchInfo);
@@ -181,6 +160,36 @@ public abstract class AbstractApplication {
 		launchThreadCheckVersion();
 		showWarningWindowMustClearlyVisible();
 		internalRun(launchInfo.arguments);
+	}
+
+	private void wrappedInternalRun3ForWindows(ParseArgumentsResult launchInfo) {
+		WinNT.HANDLE mutexHandle = null;
+		try {
+			mutexHandle = Kernel32.INSTANCE.CreateMutex(null, true, String.format("%s-MUTEX", Main.botName));
+			if (mutexHandle != null && Kernel32.INSTANCE.GetLastError() != 183) {
+				// mutex acquired
+				debug("Acquired Mutex handle");
+			} else {
+				err("'%s' of %s is not allowed to run multiple instances at the same time, please close previous process first!!!", this.getClass().getAnnotation(AppMeta.class).name(), Main.botName);
+				Main.exit(Main.EXIT_CODE_MULTIPLE_INSTANCE_DETECTED);
+			}
+		} catch (Throwable t) {
+			dev(t);
+			dev("Unable to create mutex");
+		}
+
+		try {
+			wrappedInternalRun2(launchInfo);
+		} finally {
+			if (mutexHandle != null)
+				try {
+					debug("Releasing mutex handle");
+					Kernel32.INSTANCE.ReleaseMutex(mutexHandle);
+				} catch (Throwable t) {
+					dev(t);
+					dev("Problem why trying to release mutex handle");
+				}
+		}
 	}
 
 	protected boolean skipCheckVersion() {
