@@ -146,6 +146,7 @@ public abstract class AbstractApplication {
 						// mutex acquired
 					} else {
 						err("'%s' of %s is not allowed to run multiple instances at the same time, please close previous process first!!!", this.getClass().getAnnotation(AppMeta.class).name(), Main.botName);
+						Main.exit(Main.EXIT_CODE_MULTIPLE_INSTANCE_DETECTED);
 					}
 				} catch (Throwable t) {
 					dev(t);

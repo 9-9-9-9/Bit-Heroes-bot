@@ -464,8 +464,17 @@ public class Main {
 	}
 
 	public static void exit(int exitCode) {
-		if (exitCode != 0 && exitCode != EXIT_CODE_VERSION_IS_REJECTED)
-			info(Cu.i().magenta("Tips: ").yellow("Got ").red("BUG").yellow("? Got ").cyan("ISSUE").yellow("? Want to ").magenta("ASK me").yellow(" a question? Please raise an issue on my GitHub repository (short url: ").cyan("issues.bh99bot.com").yellow(")").reset());
+		switch (exitCode) {
+			case 0:
+			case EXIT_CODE_VERSION_IS_REJECTED:
+			case EXIT_CODE_MULTIPLE_INSTANCE_DETECTED:
+				// no msg
+				break;
+			default:
+				info(Cu.i().magenta("Tips: ").yellow("Got ").red("BUG").yellow("? Got ").cyan("ISSUE").yellow("? Want to ").magenta("ASK me").yellow(" a question? Please raise an issue on my GitHub repository (short url: ").cyan("issues.bh99bot.com").yellow(")").reset());
+				break;
+		}
+
 		System.exit(exitCode);
 	}
 
@@ -479,5 +488,6 @@ public class Main {
 	public static final int EXIT_CODE_REQUIRE_SUDO = 12;
 	public static final int EXIT_CODE_VERSION_IS_REJECTED = 13;
 	public static final int EXIT_CODE_WINDOW_DETECTION_ISSUE = 14;
+	public static final int EXIT_CODE_MULTIPLE_INSTANCE_DETECTED = 15;
 	public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }
