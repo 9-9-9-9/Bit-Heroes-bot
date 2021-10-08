@@ -666,11 +666,10 @@ public abstract class AbstractApplication {
 			long nextPersuade = addSec(persuadeSleepSecs);
 
 			if (st.persuade) {
-				/*
-				// TODO temporary do not persuade Kaleido due to texture not available for 800x520 profile
+
 				if (Configuration.enableDevFeatures)
-					argumentInfo.addFamiliarToBribeWithGems(Familiar.Violace);
-				 */
+					argumentInfo.addFamiliarToBribeWithGems(Familiar.Ragnar);
+
 				for (Familiar f : argumentInfo.familiarToBribeWithGems)
 					warn("Will persuade %s with gems", f.name());
 			}
@@ -776,6 +775,7 @@ public abstract class AbstractApplication {
 		Point pBribeButton = findImage(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe);
 		Point pPersuadeButton = pBribeButton != null ? null : findImage(BwMatrixMeta.Metas.Globally.Buttons.persuade);
 		if (pPersuadeButton != null || pBribeButton != null) {
+			info("Found Persuade interface");
 			int continous = continousPersuadeScreen.addAndGet(1);
 			if (continous > 0) {
 				if (continous % 10 == 1) {
@@ -785,7 +785,8 @@ public abstract class AbstractApplication {
 
 				if (persuadeTargets == null)
 					persuadeTargets = Arrays.asList(
-							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.violace, Familiar.Violace)
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.violace, Familiar.Violace),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.ragnar, Familiar.Ragnar)
 					);
 
 				boolean doPersuadeGold = true;
