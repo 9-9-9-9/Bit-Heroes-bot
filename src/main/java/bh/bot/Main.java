@@ -483,7 +483,7 @@ public class Main {
 	}
 
 	public static void warningEnergyRefill() {
-		warn("Upon level-up, your current energy will be reset to your max energy value, no matter how much energy you currently have (10/500 => 500/500, 2.000/500 => 500/500). It's a good buff but there's a trap inside. So rich-kids, don't over drink your energy at one, excess energy will fly away for nothing and Kongreedygate won't give you a hand on this X months old profitly bug. GL");
+		warn("Upon level-up, your current energy will be reset to your max energy value, no matter how much energy you currently have (10/500 => 500/500, 2.000/500 => 500/500). It's a good buff but there's a trap inside. So rich-kids, don't over drink your energy at one, excess energy will fly away for nothing and support team won't give you a hand on this bug. GL");
 	}
 
 	private static final File firstLaunchedFile = new File(".fl");
