@@ -158,8 +158,7 @@ public class VersionUtil {
 				httpURLConnection.disconnect();
 			}
 		} catch (Throwable t) {
-			if (isOnDebugMode())
-				t.printStackTrace();
+			dev(t);
 		}
 	}
 
