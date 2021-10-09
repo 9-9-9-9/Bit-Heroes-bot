@@ -90,6 +90,9 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
             int continuousNotFound = 0;
             final Point coordinateHideMouse = new Point(0, 0);
             final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
+
+            Main.warningEnergyRefill();
+
             ML:
             while (!masterSwitch.get() && loopCount > 0) {
                 sleep(mainLoopInterval);

@@ -6,7 +6,13 @@ ___
 ## [bh99bot.com](https://bh99bot.com) is the bot for Bit Heroes
 ##### on Linux / Windows / ~~MacOS~~
 
-> Hi, I'm 99bot, please give this repo a Star, thanks
+Hi, I'm 99bot, please give this repository a Star, thanks
+
+> We play the game, don't let the game play us
+
+> You spend your time for your family and 99bot helps you persuade the Familiars
+
+> Eat duck, eat all the bones. With 99bot, you wont waste any minute of your Bitgor also your sleeping time
 
 [Checkout some videos on my YouTube channel](http://youtube.bh99bot.com)
 ___

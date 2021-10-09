@@ -203,6 +203,8 @@ public class AfkApp extends AbstractApplication {
             final Supplier<Boolean> isWorldBossBlocked = () -> !isNotBlocked(blockWorldBossUntil);
             final Supplier<Boolean> isRaidBlocked = () -> !isNotBlocked(blockRaidUntil);
 
+            Main.warningEnergyRefill();
+
             if (doRaid)
                 info(ColorizeUtil.formatInfo, "Raid: %s of %s", userConfig.getRaidModeDesc(), userConfig.getRaidLevelDesc());
             if (doWorldBoss)

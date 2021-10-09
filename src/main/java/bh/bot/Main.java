@@ -66,6 +66,9 @@ public class Main {
 			forceDisableAnsi = true;
 		}
 		try {
+			info(Cu.i().cyan("You spend your time for your family and ").a(botName).a(" helps you persuade the Familiars ;)").reset());
+			info(Cu.i().magenta("Eat ").red("duck").magenta(" eat all the bones with ").a(botName).a(". Not a minute of your ").red("bitgor").magenta(" wasted").reset());
+
 			Configuration.registerApplicationClasses( //
 					SettingApp.class, //
 //
@@ -477,6 +480,10 @@ public class Main {
 		}
 
 		System.exit(exitCode);
+	}
+
+	public static void warningEnergyRefill() {
+		warn("Upon level-up, your current energy will be reset to your max energy value, no matter how much energy you currently have (10/500 => 500/500, 2.000/500 => 500/500). It's a good buff but there's a trap inside. So rich-kid guys, don't over drink your energy at one, excess energy will fly away for nothing");
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;

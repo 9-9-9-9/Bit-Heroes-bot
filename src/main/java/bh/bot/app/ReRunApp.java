@@ -1,5 +1,6 @@
 package bh.bot.app;
 
+import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
@@ -57,6 +58,7 @@ public class ReRunApp extends AbstractApplication {
 
     private void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
         info(ColorizeUtil.formatInfo, "\n\nStarting ReRun");
+        Main.warningEnergyRefill();
         try {
             final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
 
