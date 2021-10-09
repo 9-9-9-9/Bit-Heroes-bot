@@ -120,7 +120,7 @@ public class VersionUtil {
 
 				JSONArray rejectedVersions = json.getJSONArray("bv"); // by versions
 
-				if (rejectedVersions != null && rejectedVersions.length() > 0) {
+				if (rejectedVersions.length() > 0) {
 					for (int i = 0; i < rejectedVersions.length(); i++) {
 						try {
 							String v = rejectedVersions.getString(i);
@@ -150,9 +150,9 @@ public class VersionUtil {
 				}
 
 				JSONObject rejectedFunctionsByVersion = json.getJSONObject("bf");
-				if (rejectedFunctionsByVersion != null) {
+				if (rejectedFunctionsByVersion != null && rejectedFunctionsByVersion.has(appVer.toString())) {
 					JSONArray rejectedFunctionsOfThisVersion = rejectedFunctionsByVersion.getJSONArray(appVer.toString());
-					if (rejectedFunctionsOfThisVersion != null && rejectedFunctionsOfThisVersion.length() > 0) {
+					if (rejectedFunctionsOfThisVersion.length() > 0) {
 						appCode = normalizeAppCode(appCode);
 
 						for (int i = 0; i < rejectedFunctionsOfThisVersion.length(); i++) {
