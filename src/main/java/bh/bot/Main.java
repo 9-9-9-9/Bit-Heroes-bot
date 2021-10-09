@@ -1,16 +1,10 @@
 package bh.bot;
 
-import static bh.bot.common.Log.enableDebug;
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.info;
-import static bh.bot.common.Log.warn;
+import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.StringUtil.isBlank;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -484,6 +478,21 @@ public class Main {
 
 	public static void warningEnergyRefill() {
 		warn("Upon level-up, your current energy will be reset to your max energy value, no matter how much energy you currently have (10/500 => 500/500, 2.000/500 => 500/500). It's a good buff but there's a trap inside. So rich-kids, don't over drink your energy at one, excess energy will fly away for nothing and Kongreedygate won't give you a hand on this X months old profitly bug. GL");
+	}
+
+	private static final File firstLaunchedFile = new File(".fl");
+	private static void runFirstLaunchCheck(String currentAppVersion) {
+		if (firstLaunchedFile.exists()) {
+			debug("This is not the first time you launched version %s so won't do Main::runFirstLaunchCheck", currentAppVersion);
+			return;
+		}
+
+		try {
+
+		} catch (Throwable t) {
+			err("%s was trying to copy configuration files from previous bot's version but failed", botName);
+			info(Cu.i().red("You may need to copy those files manually: ").yellow("user-config.properties").red(" file, ").yellow("readonly.*.user-config.properties").red(" files").reset());
+		}
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;
