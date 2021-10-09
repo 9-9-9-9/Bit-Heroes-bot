@@ -1,10 +1,13 @@
 {
-  "rejected": {
-    "versions": ["1.7.1","1.7.2","1.7.3","1.7.4"],
-    "functions": {
-      "rerun": {
-        "2.1.0": ["rerun", "afk"]
-      }
+  "versions": [
+    "2.0.3"
+  ],
+  "functions": {
+    "rerun": {
+      "2.0.4": [
+        "rerun",
+        "afk"
+      ]
     }
   }
 }

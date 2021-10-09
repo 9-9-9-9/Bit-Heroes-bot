@@ -114,6 +114,8 @@ public class VersionUtil {
 						response.append(inputLine);
 				}
 
+				boolean stopImmediately = false;
+
 				String data = response.toString();
 
 				JSONArray array = new JSONArray(data);
@@ -128,24 +130,30 @@ public class VersionUtil {
 						SematicVersion sematicVersion = new SematicVersion(v);
 
 						if (sematicVersion.compareTo(appVer) == 0) {
-							try {
-								String msg = String.format("You're using %s v%s which is an old & suspended version due to one of the following reasons:", Main.botName, appVer.toString());
-								for (int j = 0; j < 20; j++) {
-									err(msg);
-									info(ColorizeUtil.formatError, "  - Game-itself might have changed some textures and this old version bot didn't get updated");
-									info(ColorizeUtil.formatError, "  - This old version might contain critical issue");
-									info(ColorizeUtil.formatError, "  - Other reasons");
-									info(ColorizeUtil.formatWarning, "Please download latest version on our website at 'bh99bot.com'");
-								}
-							} finally {
-								Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
-							}
+							stopImmediately = true;
+							break;
 						}
 
 					} catch (Exception ex2) {
 						dev("Can not parse version at index %d", i);
 					}
 				}
+
+				if (stopImmediately) {
+					try {
+						String msg = String.format("You're using %s v%s which is an old & suspended version due to one of the following reasons:", Main.botName, appVer.toString());
+						for (int j = 0; j < 20; j++) {
+							err(msg);
+							info(ColorizeUtil.formatError, "  - Game-itself might have changed some textures and this old version bot didn't get updated");
+							info(ColorizeUtil.formatError, "  - This old version might contain critical issues");
+							info(ColorizeUtil.formatError, "  - Other reasons");
+							info(ColorizeUtil.formatWarning, "Please download latest version on our website at 'bh99bot.com'");
+						}
+					} finally {
+						Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
+					}
+				}
+
 			} finally {
 				httpURLConnection.disconnect();
 			}
