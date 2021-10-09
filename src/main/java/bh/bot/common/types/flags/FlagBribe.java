@@ -21,6 +21,8 @@ public class FlagBribe extends FlagPattern<Familiar> {
 				return Familiar.Violace;
 			case "ragnar":
 				return Familiar.Ragnar;
+			case "oevor":
+				return Familiar.Oevor;
 			default:
 				throw new NotSupportedException(String.format("Unknown value '%s' of flag %s", s, getCode()));
 			}

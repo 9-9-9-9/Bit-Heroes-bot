@@ -227,6 +227,7 @@ public class BwMatrixMeta {
             	public static BwMatrixMeta kaleido;
                 public static BwMatrixMeta violace;
                 public static BwMatrixMeta ragnar;
+                public static BwMatrixMeta oevor;
             }
         }
 
@@ -445,6 +446,11 @@ public class BwMatrixMeta {
         Metas.Persuade.Labels.ragnar = BwMatrixMeta.from(//
                 "labels/persuade.ragnar?",
                 Configuration.screenResolutionProfile.getOffsetLabelPersuadeRagNar(), //
+                0xFF807D
+        );
+        Metas.Persuade.Labels.oevor = BwMatrixMeta.from(//
+                "labels/persuade.oevor?",
+                Configuration.screenResolutionProfile.getOffsetLabelPersuadeOevor(), //
                 0xFF807D
         );
         

@@ -532,8 +532,7 @@ public class Main {
 			err(t);
 			warningUserMustErrOccursWhileFirstLaunchCheck();
 		}
-
-		 */
+		*/
 	}
 
 	private static void warningUserMustErrOccursWhileFirstLaunchCheck() {

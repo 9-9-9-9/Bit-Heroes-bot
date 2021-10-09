@@ -723,7 +723,7 @@ public abstract class AbstractApplication {
 			if (st.persuade) {
 
 				if (Configuration.enableDevFeatures)
-					argumentInfo.addFamiliarToBribeWithGems(Familiar.Ragnar);
+					argumentInfo.addFamiliarToBribeWithGems(Familiar.Oevor);
 
 				for (Familiar f : argumentInfo.familiarToBribeWithGems)
 					warn("Will persuade %s with gems", f.name());
@@ -841,7 +841,8 @@ public abstract class AbstractApplication {
 				if (persuadeTargets == null)
 					persuadeTargets = Arrays.asList(
 							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.violace, Familiar.Violace),
-							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.ragnar, Familiar.Ragnar)
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.ragnar, Familiar.Ragnar),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.oevor, Familiar.Oevor)
 					);
 
 				boolean doPersuadeGold = true;
