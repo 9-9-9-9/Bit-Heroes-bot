@@ -94,7 +94,7 @@ public class VersionUtil {
 		}
 
 		try {
-			URL url = new URL("https://bh99bot.com/json/reject-versions.json");
+			URL url = new URL("https://bh99bot.com/json/reject-versions-2.json");
 			HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
 			httpURLConnection.setRequestMethod("GET");
 			try {
@@ -135,7 +135,7 @@ public class VersionUtil {
 										info(ColorizeUtil.formatError, "  - Game-itself might have changed some textures and this old version bot didn't get updated");
 										info(ColorizeUtil.formatError, "  - This old version might contain critical issues");
 										info(ColorizeUtil.formatError, "  - Other reasons");
-										info(ColorizeUtil.formatWarning, "Please download latest version on our website at 'bh99bot.com'");
+										info(ColorizeUtil.formatWarning, "Please download latest version on our website 'bh99bot.com'");
 									}
 								} finally {
 									Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
@@ -162,13 +162,13 @@ public class VersionUtil {
 
 								if (appCode.equals(f)) {
 									try {
-										String msg = String.format("Function `%s` of this %s v%s was suspended (in this version only) due to one of the following reasons:", appCode, Main.botName, appVer.toString());
+										String msg = String.format("Function `%s` was suspended in this version %s due to one of the following reasons:", appCode, appVer.toString());
 										for (int j = 0; j < 20; j++) {
 											err(msg);
 											info(ColorizeUtil.formatError, "  - Game-itself might have changed some textures and this old version bot didn't get updated");
 											info(ColorizeUtil.formatError, "  - `%s` in old version might contain critical issues", appCode);
 											info(ColorizeUtil.formatError, "  - Other reasons");
-											info(ColorizeUtil.formatWarning, "Please download latest version on our website at 'bh99bot.com'");
+											info(ColorizeUtil.formatWarning, "Please download latest version on our website 'bh99bot.com'");
 										}
 									} finally {
 										Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
