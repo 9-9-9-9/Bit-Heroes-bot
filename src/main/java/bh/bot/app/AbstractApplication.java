@@ -157,7 +157,7 @@ public abstract class AbstractApplication {
 	}
 
 	private void wrappedInternalRun2(ParseArgumentsResult launchInfo) {
-		launchThreadCheckVersion();
+		launchThreadCheckVersion(launchInfo.applicationClass.getAnnotation(AppMeta.class).code());
 		showWarningWindowMustClearlyVisible();
 		internalRun(launchInfo.arguments);
 	}
@@ -197,9 +197,9 @@ public abstract class AbstractApplication {
 		return false;
 	}
 
-	private void launchThreadCheckVersion() {
+	private void launchThreadCheckVersion(final String appCode) {
 		CompletableFuture.runAsync(() -> {
-			VersionUtil.quitIfCurrentVersionIsRejected();
+			VersionUtil.quitIfCurrentVersionIsRejected(appCode);
 		});
 
 		if (skipCheckVersion())

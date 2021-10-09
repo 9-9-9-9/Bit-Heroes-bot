@@ -1,13 +1,11 @@
 {
-  "versions": [
+  "bv": [
     "2.0.3"
   ],
-  "functions": {
-    "rerun": {
-      "2.0.4": [
-        "rerun",
-        "afk"
-      ]
-    }
+  "bf": {
+    "2.0.4": [
+      "rerun",
+      "afk"
+    ]
   }
 }
