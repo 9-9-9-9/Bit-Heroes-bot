@@ -16,8 +16,8 @@ import static bh.bot.common.Log.*;
 public class VersionUtil {
 	private static SematicVersion appVer = null;
 
-	public static void setCurrentAppVersion(String ver) {
-		appVer = new SematicVersion(ver);
+	public static SematicVersion setCurrentAppVersion(String ver) {
+		return appVer = new SematicVersion(ver);
 	}
 
 	public static boolean checkForLatestVersion() {
@@ -194,7 +194,7 @@ public class VersionUtil {
 		return appCode == null ? null : appCode.trim().toLowerCase();
 	}
 
-	private static class SematicVersion {
+	public static class SematicVersion {
 		public final byte major;
 		public final byte minor;
 		public final byte patch;

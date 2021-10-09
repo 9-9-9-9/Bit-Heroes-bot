@@ -3,6 +3,7 @@ package bh.bot;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.StringUtil.isBlank;
+import static bh.bot.common.utils.RegistryUtil.*;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
@@ -14,8 +15,11 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import bh.bot.app.dev.*;
+import bh.bot.common.exceptions.RegistryException;
 import bh.bot.common.types.flags.*;
 import bh.bot.common.utils.*;
+import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.WinReg;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.fusesource.jansi.AnsiConsole;
@@ -46,6 +50,7 @@ import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ColorizeUtil.Cu;
+import bh.bot.common.utils.VersionUtil.SematicVersion;
 
 @SuppressWarnings("deprecation")
 public class Main {
@@ -217,7 +222,8 @@ public class Main {
 			Model model = reader.read(new FileReader("pom.xml"));
 			String version = model.getVersion();
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s v%s, have a nice day", botName, version);
-			VersionUtil.setCurrentAppVersion(version);
+			SematicVersion appVersion = VersionUtil.setCurrentAppVersion(version);
+			runFirstLaunchCheck(appVersion);
 		} catch (Exception ignored) {
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
 		}
@@ -481,18 +487,75 @@ public class Main {
 	}
 
 	private static final File firstLaunchedFile = new File(".fl");
-	private static void runFirstLaunchCheck(String currentAppVersion) {
+	private static void runFirstLaunchCheck(SematicVersion currentAppVersion) {
+		/*
+		if (!OS.isWin) {
+			debug("Main::runFirstLaunchCheck supports Windows only");
+			return;
+		}
+
 		if (firstLaunchedFile.exists()) {
 			debug("This is not the first time you launched version %s so won't do Main::runFirstLaunchCheck", currentAppVersion);
 			return;
 		}
 
 		try {
+			BotInfo botInfo;
+			SematicVersion previousVersion;
+
+			try {
+				botInfo = getCurrentUsingBotInfo();
+
+				if (StringUtil.isBlank(botInfo.currentUsingVer))
+					throw new RegistryException("Can't detect previous version you were used");
+				if (StringUtil.isBlank(botInfo.currentUsingDir))
+					throw new RegistryException("Can't detect folder of the previous version you were used");
+
+				try {
+					previousVersion = new SematicVersion(botInfo.currentUsingVer);
+				} catch (Exception ex2) {
+					throw new RegistryException("Can't detect previous version you were used: " + botInfo.currentUsingVer);
+				}
+			} catch (Exception ex) {
+				if (ex instanceof RegistryException)
+					info(ColorizeUtil.formatWarning, ex.getMessage());
+				else
+					err(ex);
+				warn("Unable to access registry to read bot info of the previous version you used");
+				warningUserMustErrOccursWhileFirstLaunchCheck();
+				return;
+			}
+
+
 
 		} catch (Throwable t) {
-			err("%s was trying to copy configuration files from previous bot's version but failed", botName);
-			info(Cu.i().red("You may need to copy those files manually: ").yellow("user-config.properties").red(" file, ").yellow("readonly.*.user-config.properties").red(" files").reset());
+			err(t);
+			warningUserMustErrOccursWhileFirstLaunchCheck();
 		}
+
+		 */
+	}
+
+	private static void warningUserMustErrOccursWhileFirstLaunchCheck() {
+		warn("%s was trying to copy configuration files from previous bot's version but failed", botName);
+		info(Cu.i().yellow("You may need to copy those files manually: ").cyan("user-config.properties").yellow(" file and ").cyan("readonly.*.user-config.properties").yellow(" files").reset());
+	}
+
+	private static final String regPathBot = "SOFTWARE\\bh99bot";
+	private static final String regKeyVer = "CurVer";
+	private static final String regKeyDir = "CurDir";
+	private static BotInfo getCurrentUsingBotInfo() {
+		BotInfo result = new BotInfo();
+
+		result.currentUsingVer = readRegistryString(regPathBot, regKeyVer);
+		result.currentUsingDir = readRegistryString(regPathBot, regKeyDir);
+
+		return result;
+	}
+
+	private static class BotInfo {
+		public String currentUsingVer;
+		public String currentUsingDir;
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;
