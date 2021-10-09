@@ -136,21 +136,28 @@ public class Main {
 
 		FlagPlayOnSteam flagPlayOnSteam = new FlagPlayOnSteam();
 		FlagPlayOnWeb flagPlayOnWeb = new FlagPlayOnWeb();
-		if (flagPlayOnSteam.isSupportedOnCurrentOsPlatform()) {
-			lArgs.add(readInput("Steam or Web?\n\t1. Steam\n\t2. Web", null, s -> {
-				try {
-					int opt = Integer.parseInt(s.trim());
-					if (opt == 1)
-						return new Tuple3<>(true, null, flagPlayOnSteam.getCode());
-					if (opt == 2)
-						return new Tuple3<>(true, null, flagPlayOnWeb.getCode());
-				} catch (NumberFormatException ex) {
-					// ignored
-				}
-				return new Tuple3<>(false, "Wrong answer, must be <1> for Steam or <2> or Web", null);
-			}));
+		boolean isWeb = lArgs.stream().anyMatch(x -> x.equalsIgnoreCase(flagPlayOnWeb.getCode()));
+		boolean isSteam = lArgs.stream().anyMatch(x -> x.equalsIgnoreCase(flagPlayOnSteam.getCode()));
+		
+		if (isWeb || isSteam) {
+			// ignore
 		} else {
-			lArgs.add(flagPlayOnWeb.getCode());
+			if (flagPlayOnSteam.isSupportedOnCurrentOsPlatform()) {
+				lArgs.add(readInput("Steam or Web?\n\t1. Steam\n\t2. Web", null, s -> {
+					try {
+						int opt = Integer.parseInt(s.trim());
+						if (opt == 1)
+							return new Tuple3<>(true, null, flagPlayOnSteam.getCode());
+						if (opt == 2)
+							return new Tuple3<>(true, null, flagPlayOnWeb.getCode());
+					} catch (NumberFormatException ex) {
+						// ignored
+					}
+					return new Tuple3<>(false, "Wrong answer, must be <1> for Steam or <2> or Web", null);
+				}));
+			} else {
+				lArgs.add(flagPlayOnWeb.getCode());
+			}
 		}
 
 		boolean addMoreFlags = readYesNoInput("Do you want to add some add some flags? (Y/N, empty is No)",
