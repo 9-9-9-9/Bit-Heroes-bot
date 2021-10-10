@@ -19,9 +19,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import bh.bot.app.dev.*;
-import bh.bot.common.types.flags.*;
-import bh.bot.common.utils.*;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.fusesource.jansi.AnsiConsole;
@@ -32,6 +29,11 @@ import bh.bot.app.FishingApp;
 import bh.bot.app.GenMiniClient;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.SettingApp;
+import bh.bot.app.dev.ExtractMatrixApp;
+import bh.bot.app.dev.GenerateMetaApp;
+import bh.bot.app.dev.ImportTpImageApp;
+import bh.bot.app.dev.ScreenCaptureApp;
+import bh.bot.app.dev.TestApp;
 import bh.bot.app.farming.ExpeditionApp;
 import bh.bot.app.farming.GauntletApp;
 import bh.bot.app.farming.GvgApp;
@@ -49,9 +51,38 @@ import bh.bot.common.types.Familiar;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.flags.FlagAlterLoopInterval;
+import bh.bot.common.types.flags.FlagBribe;
+import bh.bot.common.types.flags.FlagCloseGameWindowAfterExit;
+import bh.bot.common.types.flags.FlagDisableMutex;
+import bh.bot.common.types.flags.FlagDoExpedition;
+import bh.bot.common.types.flags.FlagDoGauntlet;
+import bh.bot.common.types.flags.FlagDoGvG;
+import bh.bot.common.types.flags.FlagDoInvasion;
+import bh.bot.common.types.flags.FlagDoPvp;
+import bh.bot.common.types.flags.FlagDoRaid;
+import bh.bot.common.types.flags.FlagDoTrials;
+import bh.bot.common.types.flags.FlagDoWorldBoss;
+import bh.bot.common.types.flags.FlagExitAfkAfterIfWaitResourceGeneration;
+import bh.bot.common.types.flags.FlagExitAfterAmountOfSeconds;
+import bh.bot.common.types.flags.FlagMuteNoti;
+import bh.bot.common.types.flags.FlagPattern;
+import bh.bot.common.types.flags.FlagPlayOnSteam;
+import bh.bot.common.types.flags.FlagPlayOnWeb;
+import bh.bot.common.types.flags.FlagPrintHelpMessage;
+import bh.bot.common.types.flags.FlagProfileName;
+import bh.bot.common.types.flags.FlagSaveDebugImages;
+import bh.bot.common.types.flags.FlagShowDebugMessages;
+import bh.bot.common.types.flags.FlagShutdownAfterExit;
+import bh.bot.common.types.flags.Flags;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
+import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.ColorizeUtil.Cu;
+import bh.bot.common.utils.InteractionUtil;
+import bh.bot.common.utils.TimeUtil;
+import bh.bot.common.utils.VersionUtil;
+import bh.bot.common.utils.VersionUtil.SematicVersion;
 
 @SuppressWarnings("deprecation")
 public class Main {
@@ -66,6 +97,9 @@ public class Main {
 			forceDisableAnsi = true;
 		}
 		try {
+			info(Cu.i().cyan("You spend your time for your family and ").a(botName).a(" helps you persuade the Familiars ;)").reset());
+			info(Cu.i().magenta("Eat ").red("duck").magenta(" eat all the bones with ").a(botName).a(". Not a minute of your ").red("bitgor").magenta(" wasted").reset());
+
 			Configuration.registerApplicationClasses( //
 					SettingApp.class, //
 //
@@ -134,21 +168,28 @@ public class Main {
 
 		FlagPlayOnSteam flagPlayOnSteam = new FlagPlayOnSteam();
 		FlagPlayOnWeb flagPlayOnWeb = new FlagPlayOnWeb();
-		if (flagPlayOnSteam.isSupportedOnCurrentOsPlatform()) {
-			lArgs.add(readInput("Steam or Web?\n\t1. Steam\n\t2. Web", null, s -> {
-				try {
-					int opt = Integer.parseInt(s.trim());
-					if (opt == 1)
-						return new Tuple3<>(true, null, flagPlayOnSteam.getCode());
-					if (opt == 2)
-						return new Tuple3<>(true, null, flagPlayOnWeb.getCode());
-				} catch (NumberFormatException ex) {
-					// ignored
-				}
-				return new Tuple3<>(false, "Wrong answer, must be <1> for Steam or <2> or Web", null);
-			}));
+		boolean isWeb = lArgs.stream().anyMatch(x -> x.equalsIgnoreCase(flagPlayOnWeb.getCode()));
+		boolean isSteam = lArgs.stream().anyMatch(x -> x.equalsIgnoreCase(flagPlayOnSteam.getCode()));
+		
+		if (isWeb || isSteam) {
+			// ignore
 		} else {
-			lArgs.add(flagPlayOnWeb.getCode());
+			if (flagPlayOnSteam.isSupportedOnCurrentOsPlatform()) {
+				lArgs.add(readInput("Steam or Web?\n\t1. Steam\n\t2. Web", null, s -> {
+					try {
+						int opt = Integer.parseInt(s.trim());
+						if (opt == 1)
+							return new Tuple3<>(true, null, flagPlayOnSteam.getCode());
+						if (opt == 2)
+							return new Tuple3<>(true, null, flagPlayOnWeb.getCode());
+					} catch (NumberFormatException ex) {
+						// ignored
+					}
+					return new Tuple3<>(false, "Wrong answer, must be <1> for Steam or <2> or Web", null);
+				}));
+			} else {
+				lArgs.add(flagPlayOnWeb.getCode());
+			}
 		}
 
 		boolean addMoreFlags = readYesNoInput("Do you want to add some add some flags? (Y/N, empty is No)",
@@ -220,7 +261,8 @@ public class Main {
 			Model model = reader.read(new FileReader("pom.xml"));
 			String version = model.getVersion();
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s v%s, have a nice day", botName, version);
-			VersionUtil.setCurrentAppVersion(version);
+			SematicVersion appVersion = VersionUtil.setCurrentAppVersion(version);
+			VersionUtil.saveBotInfo(appVersion);
 		} catch (Exception ignored) {
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
 		}
@@ -349,6 +391,7 @@ public class Main {
 		li.web = isWeb;
 		li.exitAfterXSecs = exitAfter;
 		li.mainLoopInterval = mainLoopInterval;
+		li.disableMutex = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDisableMutex);
 		li.exitAfkIfWaitForResourceGeneration = usingFlagPatterns.stream()
 				.anyMatch(x -> x instanceof FlagExitAfkAfterIfWaitResourceGeneration);
 		li.shutdownAfterExit = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagShutdownAfterExit);
@@ -464,9 +507,22 @@ public class Main {
 	}
 
 	public static void exit(int exitCode) {
-		if (exitCode != 0 && exitCode != EXIT_CODE_VERSION_IS_REJECTED)
-			info(Cu.i().magenta("Tips: ").yellow("Got ").red("BUG").yellow("? Got ").cyan("ISSUE").yellow("? Want to ").magenta("ASK me").yellow(" a question? Please raise an issue on my GitHub repository (short url: ").cyan("issues.bh99bot.com").yellow(")").reset());
+		switch (exitCode) {
+			case 0:
+			case EXIT_CODE_VERSION_IS_REJECTED:
+			case EXIT_CODE_MULTIPLE_INSTANCE_DETECTED:
+				// no msg
+				break;
+			default:
+				info(Cu.i().magenta("Tips: ").yellow("Got ").red("BUG").yellow("? Got ").cyan("ISSUE").yellow("? Want to ").magenta("ASK me").yellow(" a question? Please raise an issue on my GitHub repository (short url: ").cyan("issues.bh99bot.com").yellow(")").reset());
+				break;
+		}
+
 		System.exit(exitCode);
+	}
+
+	public static void warningEnergyRefill() {
+		warn("Upon level-up, your current energy will be reset to your max energy value, no matter how much energy you currently have (10/500 => 500/500, 2.000/500 => 500/500). It's a good buff but there's a trap inside. So rich-kids, don't over drink your energy at one, excess energy will fly away for nothing and support team won't give you a hand on this bug. GL");
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;
@@ -479,5 +535,6 @@ public class Main {
 	public static final int EXIT_CODE_REQUIRE_SUDO = 12;
 	public static final int EXIT_CODE_VERSION_IS_REJECTED = 13;
 	public static final int EXIT_CODE_WINDOW_DETECTION_ISSUE = 14;
+	public static final int EXIT_CODE_MULTIPLE_INSTANCE_DETECTED = 15;
 	public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }

@@ -225,7 +225,9 @@ public class BwMatrixMeta {
         public static class Persuade {
             public static class Labels {
             	public static BwMatrixMeta kaleido;
-            	public static BwMatrixMeta violace;
+                public static BwMatrixMeta violace;
+                public static BwMatrixMeta ragnar;
+                public static BwMatrixMeta oevor;
             }
         }
 
@@ -439,6 +441,16 @@ public class BwMatrixMeta {
         Metas.Persuade.Labels.violace = BwMatrixMeta.from(//
                 "labels/persuade.violace?",
                 Configuration.screenResolutionProfile.getOffsetLabelPersuadeViolace(), //
+                0xFF807D
+        );
+        Metas.Persuade.Labels.ragnar = BwMatrixMeta.from(//
+                "labels/persuade.ragnar?",
+                Configuration.screenResolutionProfile.getOffsetLabelPersuadeRagNar(), //
+                0xFF807D
+        );
+        Metas.Persuade.Labels.oevor = BwMatrixMeta.from(//
+                "labels/persuade.oevor?",
+                Configuration.screenResolutionProfile.getOffsetLabelPersuadeOevor(), //
                 0xFF807D
         );
         

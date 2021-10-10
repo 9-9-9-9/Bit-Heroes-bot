@@ -6,6 +6,7 @@ import bh.bot.common.Telegram;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.Size;
 import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.ImageUtil;
@@ -27,6 +28,7 @@ import static bh.bot.common.utils.ThreadUtil.sleep;
 import static bh.bot.common.utils.ThreadUtil.waitDone;
 
 @AppMeta(code = "fishing", name = "Fishing", displayOrder = 3, argType = "number", argAsk = "How many times do you want to hook?", argDefault = "100", argRequired = true)
+@RequireSingleInstance
 public class FishingApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {

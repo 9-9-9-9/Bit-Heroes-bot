@@ -198,8 +198,12 @@ public abstract class ScreenResolutionProfile {
 	public abstract Offset getOffsetButtonBribePersuade();
 	
 	public abstract Offset getOffsetLabelPersuadeKaleido();
-	
+
 	public abstract Offset getOffsetLabelPersuadeViolace();
+
+	public abstract Offset getOffsetLabelPersuadeRagNar();
+
+	public abstract Offset getOffsetLabelPersuadeOevor();
 
 	public static class Profile800x520 extends ScreenResolutionProfile {
 		public static final String profileName = "800x520";
@@ -673,6 +677,16 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetLabelPersuadeViolace() {
 			return new Offset(189, 78);
+		}
+
+		@Override
+		public Offset getOffsetLabelPersuadeRagNar() {
+			return new Offset(192, 78);
+		}
+
+		@Override
+		public Offset getOffsetLabelPersuadeOevor() {
+			return new Offset(200, 78);
 		}
 	}
 }

@@ -23,6 +23,7 @@ public class Flags {
             new FlagExitAfkAfterIfWaitResourceGeneration(),
             new FlagCloseGameWindowAfterExit(),
             new FlagBribe(),
-			new FlagAlterLoopInterval()
+			new FlagAlterLoopInterval(),
+            new FlagDisableMutex(),
     };
 }

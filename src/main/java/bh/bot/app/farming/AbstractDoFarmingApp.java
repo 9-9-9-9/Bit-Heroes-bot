@@ -5,6 +5,7 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.AttendablePlace;
+import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ColorizeUtil;
@@ -23,6 +24,7 @@ import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
+@RequireSingleInstance
 public abstract class AbstractDoFarmingApp extends AbstractApplication {
     protected abstract AttendablePlace getAttendablePlace();
 
@@ -88,6 +90,9 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
             int continuousNotFound = 0;
             final Point coordinateHideMouse = new Point(0, 0);
             final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
+
+            Main.warningEnergyRefill();
+
             ML:
             while (!masterSwitch.get() && loopCount > 0) {
                 sleep(mainLoopInterval);

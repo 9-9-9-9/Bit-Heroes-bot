@@ -1,23 +1,34 @@
 package bh.bot.common.utils;
 
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.dev;
+import static bh.bot.common.Log.err;
+import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.isOnDebugMode;
+import static bh.bot.common.utils.RegistryUtil.*;
+
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import bh.bot.Main;
+import bh.bot.common.OS;
 import bh.bot.common.exceptions.InvalidDataException;
-
-import static bh.bot.common.Log.*;
 
 public class VersionUtil {
 	private static SematicVersion appVer = null;
 
-	public static void setCurrentAppVersion(String ver) {
-		appVer = new SematicVersion(ver);
+	public static SematicVersion setCurrentAppVersion(String ver) {
+		return appVer = new SematicVersion(ver);
 	}
 
 	public static boolean checkForLatestVersion() {
@@ -36,7 +47,7 @@ public class VersionUtil {
 					return false;
 				}
 
-				StringBuffer response = new StringBuffer();
+				final StringBuffer response = new StringBuffer();
 				try (InputStreamReader isr = new InputStreamReader(httpURLConnection.getInputStream());
 						BufferedReader in = new BufferedReader(isr)) {
 					String inputLine;
@@ -87,14 +98,14 @@ public class VersionUtil {
 		}
 	}
 
-	public static void quitIfCurrentVersionIsRejected() {
+	public static void quitIfCurrentVersionIsRejected(String appCode) {
 		if (appVer == null) {
 			dev("VersionUtil::quitIfCurrentVersionIsRejected appVer has not been set");
 			return;
 		}
 
 		try {
-			URL url = new URL("https://bh99bot.com/json/reject-versions.json");
+			URL url = new URL("https://bh99bot.com/json/reject-versions-2.json");
 			HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
 			httpURLConnection.setRequestMethod("GET");
 			try {
@@ -116,43 +127,193 @@ public class VersionUtil {
 
 				String data = response.toString();
 
-				JSONArray array = new JSONArray(data);
+				JSONObject json = new JSONObject(data);
 
-				if (array == null || array.length() < 1)
-					return;
+				JSONArray rejectedVersions = json.getJSONArray("bv"); // by versions
 
-				for (int i = 0; i < array.length(); i++) {
-					try {
-						String v = array.getString(i);
-						debug("array[%d]=%s", i, v);
-						SematicVersion sematicVersion = new SematicVersion(v);
+				if (rejectedVersions.length() > 0) {
+					for (int i = 0; i < rejectedVersions.length(); i++) {
+						try {
+							String v = rejectedVersions.getString(i);
+							debug("rejectedVersions[%d]=%s", i, v);
+							SematicVersion sematicVersion = new SematicVersion(v);
 
-						if (sematicVersion.compareTo(appVer) == 0) {
-							try {
-								String msg = String.format("You're using %s v%s which may contains serious bugs and not allowed to run anymore", Main.botName, appVer.toString());
-								for (int j = 0; j < 100; j++) {
-									err(msg);
-									warn("Please download latest version at 'bh99bot.com'");
+							if (sematicVersion.compareTo(appVer) == 0) {
+								try {
+									String msg = String.format("You're using %s v%s which is an old & suspended version due to one of the following reasons:", Main.botName, appVer.toString());
+									for (int j = 0; j < 20; j++) {
+										err(msg);
+										info(ColorizeUtil.formatError, "  - Game-itself might have changed some textures and this old version bot didn't get updated");
+										info(ColorizeUtil.formatError, "  - This old version might contain critical issues");
+										info(ColorizeUtil.formatError, "  - Other reasons");
+										info(ColorizeUtil.formatWarning, "Please download latest version on our website 'bh99bot.com'");
+									}
+								} finally {
+									Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
 								}
-							} finally {
-								Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
+								break;
+							}
+
+						} catch (Exception ex2) {
+							dev("Can not parse version at index %d", i);
+						}
+					}
+				}
+
+				JSONObject rejectedFunctionsByVersion = json.getJSONObject("bf");
+				if (rejectedFunctionsByVersion != null && rejectedFunctionsByVersion.has(appVer.toString())) {
+					JSONArray rejectedFunctionsOfThisVersion = rejectedFunctionsByVersion.getJSONArray(appVer.toString());
+					if (rejectedFunctionsOfThisVersion.length() > 0) {
+						appCode = normalizeAppCode(appCode);
+
+						for (int i = 0; i < rejectedFunctionsOfThisVersion.length(); i++) {
+							try {
+								String f = normalizeAppCode(rejectedFunctionsOfThisVersion.getString(i));
+								debug("rejectedFunctionsOfThisVersion[%d]=%s", i, f);
+
+								if (appCode.equals(f)) {
+									try {
+										String msg = String.format("Function `%s` was suspended in this version %s due to one of the following reasons:", appCode, appVer.toString());
+										for (int j = 0; j < 20; j++) {
+											err(msg);
+											info(ColorizeUtil.formatError, "  - Game-itself might have changed some textures and this old version bot didn't get updated");
+											info(ColorizeUtil.formatError, "  - `%s` in old version might contain critical issues", appCode);
+											info(ColorizeUtil.formatError, "  - Other reasons");
+											info(ColorizeUtil.formatWarning, "Please download latest version on our website 'bh99bot.com'");
+										}
+									} finally {
+										Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
+									}
+									break;
+								}
+
+							} catch (Exception ex2) {
+								dev("Can not parse version at index %d", i);
 							}
 						}
-
-					} catch (Exception ex2) {
-						dev("Can not parse version at index %d", i);
 					}
 				}
 			} finally {
 				httpURLConnection.disconnect();
 			}
 		} catch (Throwable t) {
-			if (isOnDebugMode())
-				t.printStackTrace();
+			dev(t);
 		}
 	}
 
-	private static class SematicVersion {
+	private static String normalizeAppCode(String appCode) {
+		return appCode == null ? null : appCode.trim().toLowerCase();
+	}
+
+	public static void saveBotInfo(SematicVersion currentAppVersion) {
+		try {
+			if (OS.isWin)
+				saveBotInfoOnWindows(currentAppVersion);
+			if (OS.isLinux)
+				saveBotInfoOnLinux(currentAppVersion);
+			if (OS.isMac)
+				saveBotInfoOnMacOS(currentAppVersion);
+		} catch (Throwable t) {
+			dev(t);
+		}
+	}
+
+	private static void saveBotInfoOnLinux(SematicVersion currentAppVersion) throws Exception {
+		String homeDir = System.getProperty("user.home");
+		if (StringUtil.isBlank(homeDir))
+			homeDir = new File("~").getAbsolutePath();
+		File fHomeDir = new File(homeDir);
+		if (!fHomeDir.exists() || !fHomeDir.isDirectory()) {
+			debug("Not a home dir");
+			return;
+		}
+
+		String wrkDir = System.getProperty("user.dir");
+
+		File f99bot = Paths.get(fHomeDir.getAbsolutePath(), ".99bot").toFile();
+
+		boolean writeDefault = false;
+
+		final String keyVer = "curVer";
+		final String keyDir = "curDir";
+		try {
+			if (f99bot.exists()) {
+				JSONObject json = new JSONObject(new String(Files.readAllBytes(f99bot.toPath())));
+				String curVer, curDir;
+				boolean updateVer;
+				try {
+					updateVer = !json.has(keyVer) || StringUtil.isBlank(curVer = json.getString(keyVer)) || new SematicVersion(curVer).compareTo(currentAppVersion) < 0;
+				} catch (Exception e) {
+					dev(e);
+					updateVer = true;
+				}
+
+				boolean updateDir;
+				try {
+					updateDir = !json.has(keyDir) || StringUtil.isBlank(curDir = json.getString(keyDir)) || !curDir.equals(wrkDir) || !new File(curDir).exists() || !new File(curDir).isDirectory();
+				} catch (Exception e) {
+					dev(e);
+					updateDir = true;
+				}
+
+				writeDefault = updateVer || updateDir;
+				debug("writeDefault %b", writeDefault);
+			} else {
+				writeDefault = true;
+			}
+		} catch (Exception ex) {
+			writeDefault = true;
+			throw ex;
+		} finally {
+			if (writeDefault) {
+				JSONObject json = new JSONObject();
+				json.put(keyVer, currentAppVersion.toString());
+				json.put(keyDir, wrkDir);
+				Files.write(f99bot.toPath(), json.toString().getBytes());
+			}
+		}
+	}
+
+	private static void saveBotInfoOnMacOS(SematicVersion currentAppVersion) throws Exception {
+		saveBotInfoOnLinux(currentAppVersion);
+	}
+	
+	private static void saveBotInfoOnWindows(SematicVersion currentAppVersion) {
+		String curVer = readRegistryString(regKeyBot, regValueVer);
+		String curDir = readRegistryString(regKeyBot, regValueDir);
+		String wrkDir = System.getProperty("user.dir");
+		debug("VersionUtil::saveBotInfoOnWindows.curVer %s", curVer);
+		debug("VersionUtil::saveBotInfoOnWindows.curDir %s", curDir);
+		debug("VersionUtil::saveBotInfoOnWindows.wrkDir %s", wrkDir);
+		
+		boolean updateVer;
+		try {
+			updateVer = StringUtil.isBlank(curVer) || new SematicVersion(curVer).compareTo(currentAppVersion) < 0;
+		} catch (Exception e) {
+			dev(e);
+			updateVer = true;
+		}
+		
+		boolean updateDir;
+		try {
+			updateDir = StringUtil.isBlank(curDir) || !curDir.equals(wrkDir) || !new File(curDir).exists() || !new File(curDir).isDirectory();
+			debug("VersionUtil::saveBotInfoOnWindows.updateDir %b (%b-%b-%b-%b)", updateDir, StringUtil.isBlank(curDir), curDir != wrkDir, !new File(curDir).exists(), !new File(curDir).isDirectory());
+		} catch (Exception e) {
+			dev(e);
+			updateDir = true;
+		}
+		
+		if (updateVer || updateDir) {
+			debug("VersionUtil::saveBotInfoOnWindows -> Rewrite");
+			prepareRegKey();
+			createValue(regKeyBot, regValueVer, currentAppVersion.toString());
+			createValue(regKeyBot, regValueDir, wrkDir);
+		} else {
+			debug("VersionUtil::saveBotInfoOnWindows -> No need to update version and dir of bot");
+		}
+	}
+
+	public static class SematicVersion {
 		public final byte major;
 		public final byte minor;
 		public final byte patch;

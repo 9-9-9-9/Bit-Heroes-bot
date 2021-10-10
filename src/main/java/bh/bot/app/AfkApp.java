@@ -10,6 +10,7 @@ import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.flags.FlagExitAfkAfterIfWaitResourceGeneration;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
@@ -38,6 +39,7 @@ import static bh.bot.common.utils.ThreadUtil.sleep;
 import static bh.bot.common.utils.ThreadUtil.waitDone;
 
 @AppMeta(code = "afk", name = "AFK", displayOrder = 1, argType = "afk", argAsk = "Task combination (optional)", argDefault = "pbr")
+@RequireSingleInstance
 public class AfkApp extends AbstractApplication {
     private InteractionUtil.Screen.Game gameScreenInteractor;
     private final AtomicLong blockPvpUntil = new AtomicLong(0);
@@ -201,6 +203,8 @@ public class AfkApp extends AbstractApplication {
             final Supplier<Boolean> isWorldBossBlocked = () -> !isNotBlocked(blockWorldBossUntil);
             final Supplier<Boolean> isRaidBlocked = () -> !isNotBlocked(blockRaidUntil);
 
+            Main.warningEnergyRefill();
+
             if (doRaid)
                 info(ColorizeUtil.formatInfo, "Raid: %s of %s", userConfig.getRaidModeDesc(), userConfig.getRaidLevelDesc());
             if (doWorldBoss)
@@ -224,7 +228,7 @@ public class AfkApp extends AbstractApplication {
 
                 if (Configuration.isSteamProfile) {
                     if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouSureWantToExit)) {
-                        info("areYouSureWantToExit");
+                        debug("areYouSureWantToExit");
                         sendEscape();
                         continue ML;
                     }
@@ -232,7 +236,7 @@ public class AfkApp extends AbstractApplication {
 
                 if (--checkAreYouStillThereAfter <= 0) {
                     if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.areYouStillThere)) {
-                        info("Knock knock, are you still there?");
+                        debug("Knock knock, are you still there?");
                         sendEnter();
                         sleep(1_000);
                         sendEscape();

@@ -36,7 +36,10 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
 import bh.bot.common.Log;
+import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.flags.*;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.WinBase;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
 import bh.bot.Main;
@@ -73,6 +76,7 @@ import bh.bot.common.utils.StringUtil;
 import bh.bot.common.utils.TimeUtil;
 import bh.bot.common.utils.ValidationUtil;
 import bh.bot.common.utils.VersionUtil;
+import com.sun.jna.platform.win32.WinNT;
 
 public abstract class AbstractApplication {
 	protected ParseArgumentsResult argumentInfo;
@@ -108,10 +112,7 @@ public abstract class AbstractApplication {
 			} else
 				throw new NotSupportedException(String.format("Shutdown command is not supported on %s OS", OS.name));
 
-			launchThreadCheckVersion();
-			showWarningWindowMustClearlyVisible();
-			internalRun(launchInfo.arguments);
-			tryToCloseGameWindow(launchInfo.closeGameWindowAfterExit);
+			wrappedInternalRun1(launchInfo);
 
 			final int shutdownAfterMinutes = FlagShutdownAfterExit.shutdownAfterXMinutes;
 			final int notiEverySec = 30;
@@ -131,10 +132,64 @@ public abstract class AbstractApplication {
 				err("Error occurs while trying to shutdown system");
 			}
 		} else {
-			launchThreadCheckVersion();
-			showWarningWindowMustClearlyVisible();
-			internalRun(launchInfo.arguments);
-			tryToCloseGameWindow(launchInfo.closeGameWindowAfterExit);
+			wrappedInternalRun1(launchInfo);
+		}
+	}
+
+	private void wrappedInternalRun1(ParseArgumentsResult launchInfo) {
+		if (this.getClass().getAnnotation(RequireSingleInstance.class) != null) {
+			if (launchInfo.disableMutex) {
+				warn("Disabled checking multiple bot instances");
+				wrappedInternalRun2(launchInfo);
+			} else {
+				debug("This application does not allow running multiple instances");
+				if (OS.isWin) {
+					wrappedInternalRun3ForWindows(launchInfo);
+				} else {
+					debug("Single instance application currently supports Windows only");
+					wrappedInternalRun2(launchInfo);
+				}
+			}
+		} else {
+			wrappedInternalRun2(launchInfo);
+		}
+		tryToCloseGameWindow(launchInfo.closeGameWindowAfterExit);
+	}
+
+	private void wrappedInternalRun2(ParseArgumentsResult launchInfo) {
+		launchThreadCheckVersion(launchInfo.applicationClass.getAnnotation(AppMeta.class).code());
+		showWarningWindowMustClearlyVisible();
+		internalRun(launchInfo.arguments);
+	}
+
+	private void wrappedInternalRun3ForWindows(ParseArgumentsResult launchInfo) {
+		WinNT.HANDLE mutexHandle = null;
+		try {
+			mutexHandle = Kernel32.INSTANCE.CreateMutex(null, true, String.format("%s-MUTEX", Main.botName));
+			if (mutexHandle != null && Kernel32.INSTANCE.GetLastError() != 183) {
+				// mutex acquired
+				debug("Acquired Mutex handle");
+			} else {
+				err("'%s' of %s is not allowed to run multiple instances at the same time because it may causes unexpected issues, please close previous process first!!!", this.getClass().getAnnotation(AppMeta.class).name(), Main.botName);
+				err("If this message is wrong and you are only running a single instance of %s, please relaunch with flag `%s`", Main.botName, new FlagDisableMutex().getCode());
+				Main.exit(Main.EXIT_CODE_MULTIPLE_INSTANCE_DETECTED);
+			}
+		} catch (Throwable t) {
+			dev(t);
+			dev("Unable to create mutex");
+		}
+
+		try {
+			wrappedInternalRun2(launchInfo);
+		} finally {
+			if (mutexHandle != null)
+				try {
+					debug("Releasing mutex handle");
+					Kernel32.INSTANCE.ReleaseMutex(mutexHandle);
+				} catch (Throwable t) {
+					dev(t);
+					dev("Problem why trying to release mutex handle");
+				}
 		}
 	}
 
@@ -142,9 +197,9 @@ public abstract class AbstractApplication {
 		return false;
 	}
 
-	private void launchThreadCheckVersion() {
+	private void launchThreadCheckVersion(final String appCode) {
 		CompletableFuture.runAsync(() -> {
-			VersionUtil.quitIfCurrentVersionIsRejected();
+			VersionUtil.quitIfCurrentVersionIsRejected(appCode);
 		});
 
 		if (skipCheckVersion())
@@ -652,7 +707,8 @@ public abstract class AbstractApplication {
 	private static final int reactiveAutoSleepSecs = 10;
 	private static final int closeEnterGameDialogNewsSleepSecs = 60;
 	private static final int persuadeSleepSecs = 60;
-	private static final int persuadeSleepSecs2 = 20;
+	private static final int persuadeSleepSecsIntervalInCaseManual = 30;
+	private static final int persuadeSleepSecsAwaitAction = 20;
 
 	protected void internalDoSmallTasks(AtomicBoolean masterSwitch, SmallTasks st) {
 		try {
@@ -665,11 +721,10 @@ public abstract class AbstractApplication {
 			long nextPersuade = addSec(persuadeSleepSecs);
 
 			if (st.persuade) {
-				/*
-				// TODO temporary do not persuade Kaleido due to texture not available for 800x520 profile
+
 				if (Configuration.enableDevFeatures)
-					argumentInfo.addFamiliarToBribeWithGems(Familiar.Violace);
-				 */
+					argumentInfo.addFamiliarToBribeWithGems(Familiar.Oevor);
+
 				for (Familiar f : argumentInfo.familiarToBribeWithGems)
 					warn("Will persuade %s with gems", f.name());
 			}
@@ -770,10 +825,12 @@ public abstract class AbstractApplication {
 	}
 
 	private List<Tuple2<BwMatrixMeta, Familiar>> persuadeTargets = null;
+	private boolean anyManuallyPersuade = false;
 	private long doPersuade(AtomicInteger continousPersuadeScreen) {
 		Point pBribeButton = findImage(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe);
 		Point pPersuadeButton = pBribeButton != null ? null : findImage(BwMatrixMeta.Metas.Globally.Buttons.persuade);
 		if (pPersuadeButton != null || pBribeButton != null) {
+			info("Found Persuade interface");
 			int continous = continousPersuadeScreen.addAndGet(1);
 			if (continous > 0) {
 				if (continous % 10 == 1) {
@@ -783,7 +840,9 @@ public abstract class AbstractApplication {
 
 				if (persuadeTargets == null)
 					persuadeTargets = Arrays.asList(
-							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.violace, Familiar.Violace)
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.violace, Familiar.Violace),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.ragnar, Familiar.Ragnar),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.oevor, Familiar.Oevor)
 					);
 
 				boolean doPersuadeGold = true;
@@ -810,14 +869,14 @@ public abstract class AbstractApplication {
 					persuade(true, pPersuadeButton, pBribeButton);
 				}
 
-				return addSec(persuadeSleepSecs2);
+				return addSec(persuadeSleepSecsAwaitAction);
 			} else {
 				info("Found persuade screen");
 			}
 		} else {
 			continousPersuadeScreen.set(0);
 		}
-		return addSec(persuadeSleepSecs);
+		return addSec(anyManuallyPersuade ? persuadeSleepSecsIntervalInCaseManual : persuadeSleepSecs);
 	}
 
 	private void saveCurrentScreenShot(boolean ignoreError) {
@@ -907,6 +966,7 @@ public abstract class AbstractApplication {
 		mouseMoveAndClickAndHide(p);
 		sleep(5_000);
 		Keyboard.sendEnter();
+		anyManuallyPersuade = true;
 	}
 
 	private long doClickTalk() {

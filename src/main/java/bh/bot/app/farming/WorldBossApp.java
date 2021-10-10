@@ -6,6 +6,7 @@ import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.utils.ColorizeUtil;
 
@@ -18,6 +19,7 @@ import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 
 @AppMeta(code = "world-boss", name = "World Boss (Solo)", displayOrder = 6)
+@RequireSingleInstance
 public class WorldBossApp extends AbstractDoFarmingApp {
     private final Supplier<Boolean> isWorldBossBlocked = () -> false;
     private UserConfig userConfig;
