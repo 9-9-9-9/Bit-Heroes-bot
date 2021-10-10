@@ -9,9 +9,13 @@ import static bh.bot.common.utils.RegistryUtil.*;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -203,16 +207,78 @@ public class VersionUtil {
 
 	public static void saveBotInfo(SematicVersion currentAppVersion) {
 		try {
-			saveBotInfoOnWindows(currentAppVersion);
+			if (OS.isWin)
+				saveBotInfoOnWindows(currentAppVersion);
+			if (OS.isLinux)
+				saveBotInfoOnLinux(currentAppVersion);
+			if (OS.isMac)
+				saveBotInfoOnMacOS(currentAppVersion);
 		} catch (Throwable t) {
 			dev(t);
 		}
 	}
+
+	private static void saveBotInfoOnLinux(SematicVersion currentAppVersion) throws Exception {
+		String homeDir = System.getProperty("user.home");
+		if (StringUtil.isBlank(homeDir))
+			homeDir = new File("~").getAbsolutePath();
+		File fHomeDir = new File(homeDir);
+		if (!fHomeDir.exists() || !fHomeDir.isDirectory()) {
+			debug("Not a home dir");
+			return;
+		}
+
+		String wrkDir = System.getProperty("user.dir");
+
+		File f99bot = Paths.get(fHomeDir.getAbsolutePath(), ".99bot").toFile();
+
+		boolean writeDefault = false;
+
+		final String keyVer = "curVer";
+		final String keyDir = "curDir";
+		try {
+			if (f99bot.exists()) {
+				JSONObject json = new JSONObject(new String(Files.readAllBytes(f99bot.toPath())));
+				String curVer, curDir;
+				boolean updateVer;
+				try {
+					updateVer = !json.has(keyVer) || StringUtil.isBlank(curVer = json.getString(keyVer)) || new SematicVersion(curVer).compareTo(currentAppVersion) < 0;
+				} catch (Exception e) {
+					dev(e);
+					updateVer = true;
+				}
+
+				boolean updateDir;
+				try {
+					updateDir = !json.has(keyDir) || StringUtil.isBlank(curDir = json.getString(keyDir)) || !curDir.equals(wrkDir) || !new File(curDir).exists() || !new File(curDir).isDirectory();
+				} catch (Exception e) {
+					dev(e);
+					updateDir = true;
+				}
+
+				writeDefault = updateVer || updateDir;
+				debug("writeDefault %b", writeDefault);
+			} else {
+				writeDefault = true;
+			}
+		} catch (Exception ex) {
+			writeDefault = true;
+			throw ex;
+		} finally {
+			if (writeDefault) {
+				JSONObject json = new JSONObject();
+				json.put(keyVer, currentAppVersion.toString());
+				json.put(keyDir, wrkDir);
+				Files.write(f99bot.toPath(), json.toString().getBytes());
+			}
+		}
+	}
+
+	private static void saveBotInfoOnMacOS(SematicVersion currentAppVersion) throws Exception {
+		saveBotInfoOnLinux(currentAppVersion);
+	}
 	
 	private static void saveBotInfoOnWindows(SematicVersion currentAppVersion) {
-		if (!OS.isWin)
-			return;
-
 		String curVer = readRegistryString(regKeyBot, regValueVer);
 		String curDir = readRegistryString(regKeyBot, regValueDir);
 		String wrkDir = System.getProperty("user.dir");
