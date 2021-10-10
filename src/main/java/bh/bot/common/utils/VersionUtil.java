@@ -1,6 +1,14 @@
 package bh.bot.common.utils;
 
+import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.dev;
+import static bh.bot.common.Log.err;
+import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.isOnDebugMode;
+import static bh.bot.common.utils.RegistryUtil.*;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -9,9 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import bh.bot.Main;
+import bh.bot.common.OS;
 import bh.bot.common.exceptions.InvalidDataException;
-
-import static bh.bot.common.Log.*;
 
 public class VersionUtil {
 	private static SematicVersion appVer = null;
@@ -192,6 +199,52 @@ public class VersionUtil {
 
 	private static String normalizeAppCode(String appCode) {
 		return appCode == null ? null : appCode.trim().toLowerCase();
+	}
+
+	public static void saveBotInfo(SematicVersion currentAppVersion) {
+		try {
+			saveBotInfoOnWindows(currentAppVersion);
+		} catch (Throwable t) {
+			dev(t);
+		}
+	}
+	
+	private static void saveBotInfoOnWindows(SematicVersion currentAppVersion) {
+		if (!OS.isWin)
+			return;
+
+		String curVer = readRegistryString(regKeyBot, regValueVer);
+		String curDir = readRegistryString(regKeyBot, regValueDir);
+		String wrkDir = System.getProperty("user.dir");
+		debug("VersionUtil::saveBotInfoOnWindows.curVer %s", curVer);
+		debug("VersionUtil::saveBotInfoOnWindows.curDir %s", curDir);
+		debug("VersionUtil::saveBotInfoOnWindows.wrkDir %s", wrkDir);
+		
+		boolean updateVer;
+		try {
+			updateVer = StringUtil.isBlank(curVer) || new SematicVersion(curVer).compareTo(currentAppVersion) < 0;
+		} catch (Exception e) {
+			dev(e);
+			updateVer = true;
+		}
+		
+		boolean updateDir;
+		try {
+			updateDir = StringUtil.isBlank(curDir) || !curDir.equals(wrkDir) || !new File(curDir).exists() || !new File(curDir).isDirectory();
+			debug("VersionUtil::saveBotInfoOnWindows.updateDir %b (%b-%b-%b-%b)", updateDir, StringUtil.isBlank(curDir), curDir != wrkDir, !new File(curDir).exists(), !new File(curDir).isDirectory());
+		} catch (Exception e) {
+			dev(e);
+			updateDir = true;
+		}
+		
+		if (updateVer || updateDir) {
+			debug("VersionUtil::saveBotInfoOnWindows -> Rewrite");
+			prepareRegKey();
+			createValue(regKeyBot, regValueVer, currentAppVersion.toString());
+			createValue(regKeyBot, regValueDir, wrkDir);
+		} else {
+			debug("VersionUtil::saveBotInfoOnWindows -> No need to update version and dir of bot");
+		}
 	}
 
 	public static class SematicVersion {

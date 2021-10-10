@@ -1,11 +1,16 @@
 package bh.bot;
 
-import static bh.bot.common.Log.*;
+import static bh.bot.common.Log.enableDebug;
+import static bh.bot.common.Log.err;
+import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.warn;
 import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.StringUtil.isBlank;
-import static bh.bot.common.utils.RegistryUtil.*;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,12 +19,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import bh.bot.app.dev.*;
-import bh.bot.common.exceptions.RegistryException;
-import bh.bot.common.types.flags.*;
-import bh.bot.common.utils.*;
-import com.sun.jna.platform.win32.Advapi32Util;
-import com.sun.jna.platform.win32.WinReg;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.fusesource.jansi.AnsiConsole;
@@ -30,6 +29,11 @@ import bh.bot.app.FishingApp;
 import bh.bot.app.GenMiniClient;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.SettingApp;
+import bh.bot.app.dev.ExtractMatrixApp;
+import bh.bot.app.dev.GenerateMetaApp;
+import bh.bot.app.dev.ImportTpImageApp;
+import bh.bot.app.dev.ScreenCaptureApp;
+import bh.bot.app.dev.TestApp;
 import bh.bot.app.farming.ExpeditionApp;
 import bh.bot.app.farming.GauntletApp;
 import bh.bot.app.farming.GvgApp;
@@ -47,9 +51,37 @@ import bh.bot.common.types.Familiar;
 import bh.bot.common.types.ParseArgumentsResult;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.flags.FlagAlterLoopInterval;
+import bh.bot.common.types.flags.FlagBribe;
+import bh.bot.common.types.flags.FlagCloseGameWindowAfterExit;
+import bh.bot.common.types.flags.FlagDisableMutex;
+import bh.bot.common.types.flags.FlagDoExpedition;
+import bh.bot.common.types.flags.FlagDoGauntlet;
+import bh.bot.common.types.flags.FlagDoGvG;
+import bh.bot.common.types.flags.FlagDoInvasion;
+import bh.bot.common.types.flags.FlagDoPvp;
+import bh.bot.common.types.flags.FlagDoRaid;
+import bh.bot.common.types.flags.FlagDoTrials;
+import bh.bot.common.types.flags.FlagDoWorldBoss;
+import bh.bot.common.types.flags.FlagExitAfkAfterIfWaitResourceGeneration;
+import bh.bot.common.types.flags.FlagExitAfterAmountOfSeconds;
+import bh.bot.common.types.flags.FlagMuteNoti;
+import bh.bot.common.types.flags.FlagPattern;
+import bh.bot.common.types.flags.FlagPlayOnSteam;
+import bh.bot.common.types.flags.FlagPlayOnWeb;
+import bh.bot.common.types.flags.FlagPrintHelpMessage;
+import bh.bot.common.types.flags.FlagProfileName;
+import bh.bot.common.types.flags.FlagSaveDebugImages;
+import bh.bot.common.types.flags.FlagShowDebugMessages;
+import bh.bot.common.types.flags.FlagShutdownAfterExit;
+import bh.bot.common.types.flags.Flags;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
+import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.ColorizeUtil.Cu;
+import bh.bot.common.utils.InteractionUtil;
+import bh.bot.common.utils.TimeUtil;
+import bh.bot.common.utils.VersionUtil;
 import bh.bot.common.utils.VersionUtil.SematicVersion;
 
 @SuppressWarnings("deprecation")
@@ -230,7 +262,7 @@ public class Main {
 			String version = model.getVersion();
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s v%s, have a nice day", botName, version);
 			SematicVersion appVersion = VersionUtil.setCurrentAppVersion(version);
-			runFirstLaunchCheck(appVersion);
+			VersionUtil.saveBotInfo(appVersion);
 		} catch (Exception ignored) {
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
 		}
@@ -491,77 +523,6 @@ public class Main {
 
 	public static void warningEnergyRefill() {
 		warn("Upon level-up, your current energy will be reset to your max energy value, no matter how much energy you currently have (10/500 => 500/500, 2.000/500 => 500/500). It's a good buff but there's a trap inside. So rich-kids, don't over drink your energy at one, excess energy will fly away for nothing and support team won't give you a hand on this bug. GL");
-	}
-
-	private static final File firstLaunchedFile = new File(".fl");
-	private static void runFirstLaunchCheck(SematicVersion currentAppVersion) {
-		/*
-		if (!OS.isWin) {
-			debug("Main::runFirstLaunchCheck supports Windows only");
-			return;
-		}
-
-		if (firstLaunchedFile.exists()) {
-			debug("This is not the first time you launched version %s so won't do Main::runFirstLaunchCheck", currentAppVersion);
-			return;
-		}
-
-		try {
-			BotInfo botInfo;
-			SematicVersion previousVersion;
-
-			try {
-				botInfo = getCurrentUsingBotInfo();
-
-				if (StringUtil.isBlank(botInfo.currentUsingVer))
-					throw new RegistryException("Can't detect previous version you were used");
-				if (StringUtil.isBlank(botInfo.currentUsingDir))
-					throw new RegistryException("Can't detect folder of the previous version you were used");
-
-				try {
-					previousVersion = new SematicVersion(botInfo.currentUsingVer);
-				} catch (Exception ex2) {
-					throw new RegistryException("Can't detect previous version you were used: " + botInfo.currentUsingVer);
-				}
-			} catch (Exception ex) {
-				if (ex instanceof RegistryException)
-					info(ColorizeUtil.formatWarning, ex.getMessage());
-				else
-					err(ex);
-				warn("Unable to access registry to read bot info of the previous version you used");
-				warningUserMustErrOccursWhileFirstLaunchCheck();
-				return;
-			}
-
-
-
-		} catch (Throwable t) {
-			err(t);
-			warningUserMustErrOccursWhileFirstLaunchCheck();
-		}
-		*/
-	}
-
-	private static void warningUserMustErrOccursWhileFirstLaunchCheck() {
-		warn("%s was trying to copy configuration files from previous bot's version but failed", botName);
-		info(Cu.i().yellow("You may need to copy those files manually: ").cyan("user-config.properties").yellow(" file and ").cyan("readonly.*.user-config.properties").yellow(" files").reset());
-	}
-
-	private static final String regPathBot = "SOFTWARE\\bh99bot";
-	private static final String regKeyVer = "CurVer";
-	private static final String regKeyDir = "CurDir";
-	private static BotInfo getCurrentUsingBotInfo() {
-		BotInfo result = new BotInfo();
-
-		result.currentUsingVer = readRegistryString(regPathBot, regKeyVer);
-		result.currentUsingDir = readRegistryString(regPathBot, regKeyDir);
-
-		return result;
-	}
-
-	private static class BotInfo {
-		public String currentUsingVer;
-		public String currentUsingDir;
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;
