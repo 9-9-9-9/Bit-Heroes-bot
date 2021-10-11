@@ -1,5 +1,6 @@
 package bh.bot.common.utils;
 
+import static bh.bot.app.GenMiniClient.readFromInputStream;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.RegistryUtil.*;
 import static bh.bot.common.utils.ColorizeUtil.Cu;
@@ -165,11 +166,11 @@ public class VersionUtil {
 
 			// generate update script
 			if (OS.isWin) {
-				generateAutoUpdateScriptOnWindows(extractedFiles);
+				generateAutoUpdateScriptOnWindows(newerVersion.toString(), extractedFiles);
 			} else if (OS.isLinux) {
-				generateAutoUpdateScriptOnLinux(extractedFiles);
+				generateAutoUpdateScriptOnLinux(newerVersion.toString(), extractedFiles);
 			} else if (OS.isMac) {
-				generateAutoUpdateScriptOnMacOS(extractedFiles);
+				generateAutoUpdateScriptOnMacOS(newerVersion.toString(), extractedFiles);
 			} else {
 				throw new NotSupportedException(String.format("Currently not supported auto update for %s", OS.name));
 			}
@@ -179,16 +180,31 @@ public class VersionUtil {
 		}
 	}
 
-	private static void generateAutoUpdateScriptOnWindows(List<String> extractedFiles) {
+	private static void generateAutoUpdateScriptOnWindows(String version, List<String> extractedFiles) {
 
 	}
 
-	private static void generateAutoUpdateScriptOnLinux(List<String> extractedFiles) {
+	private static void generateAutoUpdateScriptOnLinux(String version, List<String> extractedFiles) {
+		try (
+				InputStream p1 = Configuration.class.getResourceAsStream("/templates/auto-update.1.sh");
+				InputStream p2 = Configuration.class.getResourceAsStream("/templates/auto-update.2.sh")
+		) {
+			final StringBuilder sb = new StringBuilder();
+			String templateMaterial = readFromInputStream(p2);
+			extractedFiles.forEach(f -> sb.append('\n').append(templateMaterial.replaceAll("%SRC%", f.replaceAll(" ", "\\ ")).replaceAll("%DST%", new File(f).getName().replaceAll(" ", "\\ "))));
+			String script = readFromInputStream(p1).replaceAll("%VERSION%", version).replace("%COPY_SCRIPT%", sb.toString());
 
+			Files.write(Paths.get(autoUpdateScriptFileName), script.getBytes());
+
+			warn("Please run file %s to update %s to the latest version %s", autoUpdateScriptFileName, Main.botName, version);
+		} catch (IOException e) {
+			dev(e);
+			err("Unable to generate auto update script, please update manually by yourself by going to https://download.bh99bot.com");
+		}
 	}
 
-	private static void generateAutoUpdateScriptOnMacOS(List<String> extractedFiles) {
-		generateAutoUpdateScriptOnLinux(extractedFiles);
+	private static void generateAutoUpdateScriptOnMacOS(String version, List<String> extractedFiles) {
+		generateAutoUpdateScriptOnLinux(version, extractedFiles);
 	}
 
 	private static List<String> extractZip(File zipFile, String dstFolder) throws Exception {
@@ -282,17 +298,17 @@ public class VersionUtil {
 
 	private static final String tmpDownloadFilePrefix = ".download-new-ver.";
 	private static final String tmpDownloadFileSuffix = ".zip";
+	private static final String autoUpdateScriptFileName = Extensions.scriptFileName("update-99bot");
 
 	private static void deleteUpdateScript() {
-		String fileName = Extensions.scriptFileName("update-99bot");
 		try {
-			File file = new File(fileName);
+			File file = new File(autoUpdateScriptFileName);
 			if (!file.exists())
 				return;
 			file.delete();
 		} catch (Exception ex) {
 			dev(ex);
-			dev("Failed while attempting to remove %s", fileName);
+			dev("Failed while attempting to remove %s", autoUpdateScriptFileName);
 		}
 	}
 
