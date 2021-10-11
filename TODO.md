@@ -1,5 +1,5 @@
 ### TODO
-7. Display main loop interval in help
+8. Hide some flags
 
 ### DOING
 
@@ -10,3 +10,4 @@
 4. World-Boss should have lower loop interval (2s instead of 5s atm)
 5. Rename flag ~~alter-timer~~ to `alter-interval`
 6. `--alter-interval` for ReRun
+7. Display main loop interval in help

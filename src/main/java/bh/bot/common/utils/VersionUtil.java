@@ -1,22 +1,25 @@
 package bh.bot.common.utils;
 
-import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.dev;
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.info;
-import static bh.bot.common.Log.isOnDebugMode;
+import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.RegistryUtil.*;
+import static bh.bot.common.utils.ColorizeUtil.Cu;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
+import bh.bot.common.Configuration;
+import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.flags.FlagDisableMutex;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.WinNT;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -82,6 +85,14 @@ public class VersionUtil {
 						info(ColorizeUtil.formatError, msg);
 						info(ColorizeUtil.formatWarning, msg);
 						info(ColorizeUtil.formatInfo, msg);
+
+						if (!Configuration.Features.disableAutoUpdate)
+							try {
+								autoUpdate(sematicVersion);
+							} catch (Exception ex) {
+								dev(ex);
+								err("Error while trying to update to newest version of %s", Main.botName);
+							}
 						return true;
 					}
 				}
@@ -96,6 +107,193 @@ public class VersionUtil {
 				ex.printStackTrace();
 			return false;
 		}
+	}
+
+	private static void autoUpdate(SematicVersion newerVersion) {
+		WinNT.HANDLE mutexHandle = null;
+		try {
+			deleteUpdateScript();
+			cleanUpAbortedDownloadFiles();
+
+			final String newBinaryFileName = String.format("download-this-file-%s.zip", newerVersion);
+			final File fileZip = new File(newBinaryFileName);
+
+			if (!fileZip.exists()) {
+				dev("%s is not exists, attempting to download from github repo", newBinaryFileName);
+
+				final String tmpFileName = tmpDownloadFilePrefix + System.currentTimeMillis() + tmpDownloadFileSuffix;
+				final File tmpFile = new File(tmpFileName);
+
+				if (tmpFile.exists()) {
+					dev("Cancel autoUpdate due to tmp file exists: %s", tmpFileName);
+					return;
+				}
+
+				final String urlDownloadBinary = "https://github.com/9-9-9-9/Bit-Heroes-bot/releases/latest/download/download-this-file.zip";
+				try (BufferedInputStream in = new BufferedInputStream(new URL(urlDownloadBinary).openStream());
+					 FileOutputStream fileOutputStream = new FileOutputStream(tmpFileName)) {
+					info("Downloading binary of the new version %s of %s", newerVersion, Main.botName);
+					byte dataBuffer[] = new byte[1024];
+					int bytesRead;
+					while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+						fileOutputStream.write(dataBuffer, 0, bytesRead);
+					}
+
+					if (!tmpFile.renameTo(fileZip)) {
+						err("Failed to renamed new downloaded version from %s to %s", tmpFileName, newBinaryFileName);
+						return;
+					}
+
+					updateNotice("Downloaded binary for the new version %s", newerVersion);
+				} catch (Exception e) {
+					dev(e);
+					err("Failed to download binary for new version %s", newerVersion);
+					return;
+				}
+			}
+
+			updateNotice("%s is the compressed zip file of the new version %s of %s", newBinaryFileName, newerVersion, Main.botName);
+
+			final String dstFolder = "auto-update-" + newerVersion;
+			// extract
+			if (!extractZip(fileZip, dstFolder))
+				return;
+
+			// generate update script
+		} finally {
+			if (mutexHandle != null)
+				Kernel32.INSTANCE.ReleaseMutex(mutexHandle);
+		}
+	}
+
+	private static boolean extractZip(File zipFile, String dstFolder) {
+		if (!zipFile.exists()) {
+			err("Zip file could not be found: %s", zipFile.getName());
+			return false;
+		}
+
+		ZipInputStream zis = null;
+		try {
+			if (!mkdir(zipFile, "out"))
+				return false;
+			if (!mkdir(zipFile, "out", dstFolder))
+				return false;
+
+			byte[] buffer = new byte[1024];
+			int cnt = 0;
+			zis = new ZipInputStream(new FileInputStream(zipFile.getName()));
+			ZipEntry zipEntry;
+			while ((zipEntry = zis.getNextEntry()) != null) {
+				final String fileName = zipFile.getName();
+				if (!zipEntry.isDirectory()) {
+					if (fileName.endsWith(".jar") || fileName.endsWith(".sh") || fileName.endsWith(".bat")) {
+						final File targetFile = Paths.get("out", dstFolder, fileName).toFile();
+						if (targetFile.exists())
+							targetFile.delete();
+						try (FileOutputStream fos = new FileOutputStream(targetFile)) {
+							int len;
+							while ((len = zis.read(buffer)) > 0) {
+								fos.write(buffer, 0, len);
+							}
+							dev("Success: %s => %s", fileName, targetFile.getAbsolutePath());
+							cnt++;
+						} catch (Exception ex2) {
+							err("Failure while attempting to extract file %s from zip file of the new update", targetFile.getName());
+							throw ex2;
+						}
+					} else {
+						dev("Ignore zip entry %s (file extension)", fileName);
+					}
+				} else {
+					dev("Ignore zip entry %s (directory)", fileName);
+				}
+			}
+
+			if (cnt < 1)
+				throw new InvalidDataException("No entry was extracted from %s", zipFile.getName());
+
+			info("Successfully extracted content of %s into folder %s/%s", zipFile.getName(), "out", dstFolder);
+			return true;
+		} catch (Exception ex) {
+			dev(ex);
+			err("Unable to extract new update from %s", zipFile);
+			return false;
+		} finally {
+			try {
+				if (zis != null) {
+					zis.closeEntry();
+					zis.close();
+				}
+			} catch (Exception ignored) {
+				dev(ignored);
+				dev("Failed to close zip stream");
+			}
+		}
+	}
+
+	private static boolean mkdir(File zipFile, String path, String...paths) {
+		final File dir = Paths.get(path, paths).toFile();
+		if (!dir.exists() || !dir.isDirectory()) {
+			if (!dir.mkdir()) {
+				err("Unable to create directory to extract %s (%s)", zipFile.getName(), dir.getAbsolutePath());
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private static final String tmpDownloadFilePrefix = ".download-new-ver.";
+	private static final String tmpDownloadFileSuffix = ".zip";
+
+	private static void deleteUpdateScript() {
+		String fileName = Extensions.scriptFileName("update-99bot");
+		try {
+			File file = new File(fileName);
+			if (!file.exists())
+				return;
+			file.delete();
+		} catch (Exception ex) {
+			dev(ex);
+			dev("Failed while attempting to remove %s", fileName);
+		}
+	}
+
+	private static void cleanUpAbortedDownloadFiles() {
+		try {
+			File curDir = new File(".");
+			if (!curDir.exists() || !curDir.isDirectory()) {
+				dev("Un-expected! Attempting to get current dir but failure");
+				return;
+			}
+
+			final long validAfter = System.currentTimeMillis() - 300_000; // valid after 5m ago
+			Arrays.asList(curDir.listFiles()).stream()
+					.filter(x -> x.isFile() && x.getName().endsWith(tmpDownloadFileSuffix) && x.getName().startsWith(tmpDownloadFilePrefix))
+					.filter(x -> {
+						String[] spl = x.getName().split("\\.");
+						if (spl.length != 4)
+							return false;
+						try {
+							return Long.parseLong(spl[2]) >= validAfter;
+						} catch (NumberFormatException ignored) {
+							return false;
+						}
+					}).collect(Collectors.toList()).forEach(f -> {
+						try {
+							f.delete();
+						} catch (Exception ignored) {
+							dev(ignored);
+							dev("Error occurs while attempting to remove file %s", f.getName());
+						}
+			});
+		} catch (Exception ex) {
+			dev("Failed to cleanUpAbortedDownloadFiles");
+			dev(ex);
+		}
+	}
+
+	private static void updateNotice(String format, Object...args) {
+		info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** ").ra(String.format(format, args)));
 	}
 
 	public static void quitIfCurrentVersionIsRejected(String appCode) {

@@ -208,7 +208,7 @@ public abstract class AbstractApplication {
 		if (skipCheckVersion())
 			return;
 
-		Rad.exec(33, () -> {
+		Rad.exec(Configuration.enableDevFeatures ? 100 : 33, () -> {
 			CompletableFuture.runAsync(() -> {
 				if (!VersionUtil.checkForLatestVersion())
 					warn("Failure on checking for latest version of %s", Main.botName);

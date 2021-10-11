@@ -60,6 +60,7 @@ public class Configuration {
         public static boolean disableJna = false;
         public static boolean disableDoCheckGameScreenOffset = false;
         public static boolean disableColorizeTerminal = false;
+        public static boolean disableAutoUpdate = false;
     }
 
     public static class Tolerant {
@@ -121,6 +122,7 @@ public class Configuration {
         Features.disableDoCheckGameScreenOffset =
                 Features.disableJna || StringUtil.isTrue(read("disable.jna.disableDoCheckGameScreenOffset"));
         Features.disableColorizeTerminal = StringUtil.isTrue(read("disable.jansi")) || Main.forceDisableAnsi;
+        Features.disableAutoUpdate = StringUtil.isTrue(read("disable.auto-update"));
 
         String keyLongTimeNoSee = "timeout.minutes.long-time-no-see";
         short minLongTimeNoSee = 10;

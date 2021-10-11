@@ -57,6 +57,10 @@ cat <<EOF > ./release/user-config.properties
 
 # Google Chrome user dir, specify an external directory help you dont need to move the 'chrome-user-dir' folder next time when you update this Bit Heroes bot
 #external.mini-client.user.dir=D:\\\\Data\\\\chrome-user-dir
+
+# Disable sub-features
+#disable.jansi=true
+#disable.auto-update=true
 EOF
 
 # Copy files for mini client
