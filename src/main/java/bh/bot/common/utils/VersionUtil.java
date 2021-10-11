@@ -242,10 +242,10 @@ public class VersionUtil {
 			final StringBuilder sb = new StringBuilder();
 			String templateMaterial = readFromInputStream(p2);
 			extractedFiles.forEach(f ->
-				sb.append('\n')
+				sb.append("\r\n")
 				.append(
 					templateMaterial
-						.replaceAll("%SRC%", f)
+						.replaceAll("%SRC%", f.replaceAll("\\\\", "\\\\\\\\"))
 						.replaceAll("%DST%", new File(f).getName())
 				)
 			);
