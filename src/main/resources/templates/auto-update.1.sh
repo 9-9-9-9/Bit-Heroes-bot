@@ -22,8 +22,11 @@ patch_file() {
   if [ $err -ne 0 ]; then
     print_warning_and_exit %SRC% %DST%
   fi
+
+  echo 'Copied new file'$DST
 }
 
 %COPY_SCRIPT%
 
 rm -f %ZIP_FILE%
+echo 'Update finished'

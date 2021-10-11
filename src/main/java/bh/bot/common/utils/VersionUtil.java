@@ -81,17 +81,25 @@ public class VersionUtil {
 					int compare = appVer.compareTo(sematicVersion);
 
 					if (compare < 0) {
-						String msg = String.format( //
-								"** NEW UPDATE AVAILABLE ** %s v%s is now available at website: download.bh99bot.com", //
-								Main.botName, //
-								sematicVersion.toString() //
-						);
+						boolean autoUpdate = !Configuration.enableDevFeatures && !Configuration.Features.disableAutoUpdate;
+						String msg =
+								autoUpdate
+										? String.format( //
+										"** NEW UPDATE AVAILABLE ** %s v%s is now available", //
+										Main.botName, //
+										sematicVersion.toString() //
+								)
+										: String.format( //
+										"** NEW UPDATE AVAILABLE ** %s v%s is now available at website: download.bh99bot.com", //
+										Main.botName, //
+										sematicVersion.toString() //
+								);
 						info(ColorizeUtil.formatAsk, msg);
 						info(ColorizeUtil.formatError, msg);
 						info(ColorizeUtil.formatWarning, msg);
 						info(ColorizeUtil.formatInfo, msg);
 
-						if (!Configuration.enableDevFeatures && !Configuration.Features.disableAutoUpdate)
+						if (autoUpdate)
 							try {
 								autoUpdate(sematicVersion);
 							} catch (Exception ex) {
@@ -187,7 +195,27 @@ public class VersionUtil {
 	}
 
 	private static boolean generateAutoUpdateScriptOnWindows(File fileZip, String version, List<String> extractedFiles) {
-		return false;
+		try (
+				InputStream p1 = Configuration.class.getResourceAsStream("/templates/auto-update.1.bat");
+				InputStream p2 = Configuration.class.getResourceAsStream("/templates/auto-update.2.bat")
+		) {
+			final StringBuilder sb = new StringBuilder();
+			String templateMaterial = readFromInputStream(p2);
+			extractedFiles.forEach(f -> sb.append('\n').append(templateMaterial.replaceAll("%SRC%", f).replaceAll("%DST%", new File(f).getName())));
+			String script = readFromInputStream(p1)
+					.replaceAll("%VERSION%", version)
+					.replace("%COPY_SCRIPT%", sb.toString())
+					.replace("%ZIP_FILE%", fileZip.getName());
+
+			Files.write(Paths.get(autoUpdateScriptFileName), script.getBytes());
+
+			warn("Please run file %s to update %s to the latest version %s", autoUpdateScriptFileName, Main.botName, version);
+			return true;
+		} catch (IOException e) {
+			dev(e);
+			err("Unable to generate auto update script, please update manually by yourself by going to https://download.bh99bot.com");
+			return false;
+		}
 	}
 
 	private static boolean generateAutoUpdateScriptOnLinux(File fileZip, String version, List<String> extractedFiles) {
