@@ -1,4 +1,5 @@
 @echo off
+rem %VERSION%
 SETLOCAL
 
 %COPY_SCRIPT%

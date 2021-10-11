@@ -81,7 +81,9 @@ public class VersionUtil {
 					int compare = appVer.compareTo(sematicVersion);
 
 					if (compare < 0) {
-						boolean autoUpdate = !Configuration.enableDevFeatures && !Configuration.Features.disableAutoUpdate;
+						boolean autoUpdate = !Configuration.enableDevFeatures
+								&& !Configuration.Features.disableAutoUpdate
+								&& !new File("src").exists();
 						String msg =
 								autoUpdate
 										? String.format( //
@@ -125,13 +127,14 @@ public class VersionUtil {
 	private static void autoUpdate(SematicVersion newerVersion) throws Exception {
 		WinNT.HANDLE mutexHandle = null;
 		try {
-			deleteUpdateScript();
 			cleanUpAbortedDownloadFiles();
 
 			final String newBinaryFileName = String.format("download-this-file-%s.zip", newerVersion);
 			final File fileZip = new File(newBinaryFileName);
 
+			boolean checkGeneratedUpdateScript = true;
 			if (!fileZip.exists()) {
+				checkGeneratedUpdateScript = false;
 				dev("%s is not exists, attempting to download from github repo", newBinaryFileName);
 
 				final String tmpFileName = tmpDownloadFilePrefix + System.currentTimeMillis() + tmpDownloadFileSuffix;
@@ -173,21 +176,38 @@ public class VersionUtil {
 			if (extractedFiles == null || extractedFiles.size() < 1)
 				return;
 
-			// generate update script
-			if (OS.isWin) {
-				if (!generateAutoUpdateScriptOnWindows(fileZip, newerVersion.toString(), extractedFiles))
-					return;
-			} else if (OS.isLinux) {
-				if (!generateAutoUpdateScriptOnLinux(fileZip, newerVersion.toString(), extractedFiles))
-					return;
-			} else if (OS.isMac) {
-				if (!generateAutoUpdateScriptOnMacOS(fileZip, newerVersion.toString(), extractedFiles))
-					return;
-			} else {
-				throw new NotSupportedException(String.format("Currently not supported auto update for %s", OS.name));
+			boolean needGenerateUpdateScript = true;
+			if (checkGeneratedUpdateScript) {
+				try {
+					final File fUpdateScript = new File(autoUpdateScriptFileName);
+					if (fUpdateScript.exists()) {
+						String marker = Files.readAllLines(fUpdateScript.toPath()).get(1).trim();
+						if (marker.equals("rem " + newerVersion) || marker.equals("echo '" + newerVersion + "'"))
+							needGenerateUpdateScript = false;
+					}
+				} catch (Exception ignored) {
+					dev(ignored);
+					dev("Error occurs while checking %s => will continue generate %s", autoUpdateScriptFileName, autoUpdateScriptFileName);
+				}
 			}
 
-			fileZip.delete();
+			if (needGenerateUpdateScript) {
+				// generate update script
+				if (OS.isWin) {
+					if (!generateAutoUpdateScriptOnWindows(fileZip, newerVersion.toString(), extractedFiles))
+						return;
+				} else if (OS.isLinux) {
+					if (!generateAutoUpdateScriptOnLinux(fileZip, newerVersion.toString(), extractedFiles))
+						return;
+				} else if (OS.isMac) {
+					if (!generateAutoUpdateScriptOnMacOS(fileZip, newerVersion.toString(), extractedFiles))
+						return;
+				} else {
+					throw new NotSupportedException(String.format("Currently not supported auto update for %s", OS.name));
+				}
+			} else {
+				info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** Please run file ").red(autoUpdateScriptFileName).yellow(" to update ").a(Main.botName).a(" to the latest released version ").red(newerVersion.toString()).reset());
+			}
 		} finally {
 			if (mutexHandle != null)
 				Kernel32.INSTANCE.ReleaseMutex(mutexHandle);
@@ -205,11 +225,11 @@ public class VersionUtil {
 			String script = readFromInputStream(p1)
 					.replaceAll("%VERSION%", version)
 					.replace("%COPY_SCRIPT%", sb.toString())
-					.replace("%ZIP_FILE%", fileZip.getName());
+					.replaceAll("%ZIP_FILE%", fileZip.getName());
 
 			Files.write(Paths.get(autoUpdateScriptFileName), script.getBytes());
 
-			warn("Please run file %s to update %s to the latest version %s", autoUpdateScriptFileName, Main.botName, version);
+			info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** Please run file ").cyan(autoUpdateScriptFileName).yellow(" to update ").a(Main.botName).a(" to the latest released version ").cyan(version).reset());
 			return true;
 		} catch (IOException e) {
 			dev(e);
@@ -229,11 +249,11 @@ public class VersionUtil {
 			String script = readFromInputStream(p1)
 					.replaceAll("%VERSION%", version)
 					.replace("%COPY_SCRIPT%", sb.toString())
-					.replace("%ZIP_FILE%", fileZip.getName());
+					.replaceAll("%ZIP_FILE%", fileZip.getName());
 
 			Files.write(Paths.get(autoUpdateScriptFileName), script.getBytes());
 
-			warn("Please run file %s to update %s to the latest version %s", autoUpdateScriptFileName, Main.botName, version);
+			info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** Please run file ").cyan(autoUpdateScriptFileName).yellow(" to update ").a(Main.botName).a(" to the latest released version ").cyan(version).reset());
 			return true;
 		} catch (IOException e) {
 			dev(e);
