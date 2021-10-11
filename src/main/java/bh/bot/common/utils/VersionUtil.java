@@ -134,7 +134,7 @@ public class VersionUtil {
 			cleanUpAbortedDownloadFiles();
 
 			final String newBinaryFileName = String.format("download-this-file-%s.zip", newerVersion);
-			final File fileZip = new File(newBinaryFileName);
+			File fileZip = new File(newBinaryFileName);
 
 			boolean checkGeneratedUpdateScript = true;
 			if (!fileZip.exists()) {
@@ -165,7 +165,12 @@ public class VersionUtil {
 							Files.move(tmpFile.toPath(), fileZip.toPath(), StandardCopyOption.REPLACE_EXISTING);
 						} catch (Exception ignored) {
 							dev(ignored);
-							success = false;
+							try {
+								Files.copy(tmpFile.toPath(), fileZip.toPath(), StandardCopyOption.REPLACE_EXISTING);
+							} catch (Exception ignored2) {
+								dev(ignored2)
+								success = false;
+							}
 						}
 					}
 
