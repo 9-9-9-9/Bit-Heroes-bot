@@ -5,6 +5,7 @@ SETLOCAL
 %COPY_SCRIPT%
 
 del %ZIP_FILE% >nul 2>&1
+del .*.zip >nul 2>&1
 echo Update finished
 pause
 exit /b 0
