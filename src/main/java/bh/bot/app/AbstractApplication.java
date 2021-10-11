@@ -38,6 +38,7 @@ import javax.imageio.ImageIO;
 
 import bh.bot.common.Log;
 import bh.bot.common.exceptions.InvalidFlagException;
+import bh.bot.common.extensions.Rad;
 import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.flags.*;
 import com.sun.jna.platform.win32.Kernel32;
@@ -207,11 +208,12 @@ public abstract class AbstractApplication {
 		if (skipCheckVersion())
 			return;
 
-		if (RandomUtil.nextInt(10) % 3 == 0)
+		Rad.exec(33, () -> {
 			CompletableFuture.runAsync(() -> {
 				if (!VersionUtil.checkForLatestVersion())
 					warn("Failure on checking for latest version of %s", Main.botName);
 			});
+		});
 	}
 
 	private void showWarningWindowMustClearlyVisible() {
