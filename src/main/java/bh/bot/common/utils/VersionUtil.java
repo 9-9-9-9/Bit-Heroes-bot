@@ -18,6 +18,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import bh.bot.common.Configuration;
+import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.flags.FlagDisableMutex;
 import com.sun.jna.platform.win32.Kernel32;
@@ -163,8 +164,14 @@ public class VersionUtil {
 				return;
 
 			// generate update script
-			if (generateAutoUpdateScriptOnWindows()) {
-
+			if (OS.isWin) {
+				generateAutoUpdateScriptOnWindows(extractedFiles);
+			} else if (OS.isLinux) {
+				generateAutoUpdateScriptOnLinux(extractedFiles);
+			} else if (OS.isMac) {
+				generateAutoUpdateScriptOnMacOS(extractedFiles);
+			} else {
+				throw new NotSupportedException(String.format("Currently not supported auto update for %s", OS.name));
 			}
 		} finally {
 			if (mutexHandle != null)
@@ -202,10 +209,11 @@ public class VersionUtil {
 				List<String> extractedFiles = Arrays.asList(Paths.get("out", dstFolder).toFile().listFiles())
 						.stream()
 						.filter(x -> !x.getName().endsWith(fileMarkedAsSuccess.getName()))
-						.map(x -> x.getName())
+						.map(x -> x.getAbsolutePath())
 						.collect(Collectors.toList());
 				if (extractedFiles.size() > 0) {
 					dev("Successfully extracted before, no need to re-extract");
+					extractedFiles.forEach(fn -> dev("File: %s", fn));
 					return extractedFiles;
 				}
 			}
