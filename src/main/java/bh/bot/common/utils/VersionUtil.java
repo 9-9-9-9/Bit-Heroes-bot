@@ -91,7 +91,7 @@ public class VersionUtil {
 						info(ColorizeUtil.formatWarning, msg);
 						info(ColorizeUtil.formatInfo, msg);
 
-						if (!Configuration.Features.disableAutoUpdate)
+						if (!Configuration.enableDevFeatures && !Configuration.Features.disableAutoUpdate)
 							try {
 								autoUpdate(sematicVersion);
 							} catch (Exception ex) {
