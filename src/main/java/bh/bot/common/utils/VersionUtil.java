@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -158,8 +159,18 @@ public class VersionUtil {
 						fileOutputStream.write(dataBuffer, 0, bytesRead);
 					}
 
+					boolean success = true;
 					if (!tmpFile.renameTo(fileZip)) {
-						err("Failed to renamed new downloaded version from %s to %s", tmpFileName, newBinaryFileName);
+						try {
+							Files.move(tmpFile.toPath(), fileZip.toPath(), StandardCopyOption.REPLACE_EXISTING);
+						} catch (Exception ignored) {
+							dev(ignored);
+							success = false;
+						}
+					}
+
+					if (!success) {
+						err("Failed to rename new downloaded version from %s to %s", tmpFileName, newBinaryFileName);
 						return;
 					}
 
