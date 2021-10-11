@@ -10,10 +10,13 @@ patch_file() {
   cp $SRC $DST
 }
 
-print_warning() {
+print_warning_and_exit() {
   echo '** ERROR ** Failed while attempting to patch the file '$2' from downloaded file '$1
   echo '** ERROR ** Patch new update %VERSION% has failure, please update manually yourself by going to https://download.bh99bot.com'
   echo 'Sorry for this inconvenient'
+  exit 1
 }
 
 %COPY_SCRIPT%
+
+rm -f %ZIP_FILE%

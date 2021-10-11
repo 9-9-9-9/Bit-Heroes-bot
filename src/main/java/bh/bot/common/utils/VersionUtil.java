@@ -9,7 +9,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,8 +19,6 @@ import java.util.zip.ZipInputStream;
 
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.NotSupportedException;
-import bh.bot.common.types.annotations.AppMeta;
-import bh.bot.common.types.flags.FlagDisableMutex;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.WinNT;
 import org.json.JSONArray;
@@ -166,28 +163,30 @@ public class VersionUtil {
 
 			// generate update script
 			if (OS.isWin) {
-				if (!generateAutoUpdateScriptOnWindows(newerVersion.toString(), extractedFiles))
+				if (!generateAutoUpdateScriptOnWindows(fileZip, newerVersion.toString(), extractedFiles))
 					return;
 			} else if (OS.isLinux) {
-				if (!generateAutoUpdateScriptOnLinux(newerVersion.toString(), extractedFiles))
+				if (!generateAutoUpdateScriptOnLinux(fileZip, newerVersion.toString(), extractedFiles))
 					return;
 			} else if (OS.isMac) {
-				if (!generateAutoUpdateScriptOnMacOS(newerVersion.toString(), extractedFiles))
+				if (!generateAutoUpdateScriptOnMacOS(fileZip, newerVersion.toString(), extractedFiles))
 					return;
 			} else {
 				throw new NotSupportedException(String.format("Currently not supported auto update for %s", OS.name));
 			}
+
+			fileZip.delete();
 		} finally {
 			if (mutexHandle != null)
 				Kernel32.INSTANCE.ReleaseMutex(mutexHandle);
 		}
 	}
 
-	private static boolean generateAutoUpdateScriptOnWindows(String version, List<String> extractedFiles) {
+	private static boolean generateAutoUpdateScriptOnWindows(File fileZip, String version, List<String> extractedFiles) {
 		return false;
 	}
 
-	private static boolean generateAutoUpdateScriptOnLinux(String version, List<String> extractedFiles) {
+	private static boolean generateAutoUpdateScriptOnLinux(File fileZip, String version, List<String> extractedFiles) {
 		try (
 				InputStream p1 = Configuration.class.getResourceAsStream("/templates/auto-update.1.sh");
 				InputStream p2 = Configuration.class.getResourceAsStream("/templates/auto-update.2.sh")
@@ -195,7 +194,10 @@ public class VersionUtil {
 			final StringBuilder sb = new StringBuilder();
 			String templateMaterial = readFromInputStream(p2);
 			extractedFiles.forEach(f -> sb.append('\n').append(templateMaterial.replaceAll("%SRC%", f.replaceAll(" ", "\\ ")).replaceAll("%DST%", new File(f).getName().replaceAll(" ", "\\ "))));
-			String script = readFromInputStream(p1).replaceAll("%VERSION%", version).replace("%COPY_SCRIPT%", sb.toString());
+			String script = readFromInputStream(p1)
+					.replaceAll("%VERSION%", version)
+					.replace("%COPY_SCRIPT%", sb.toString())
+					.replace("%ZIP_FILE%", fileZip.getName());
 
 			Files.write(Paths.get(autoUpdateScriptFileName), script.getBytes());
 
@@ -208,8 +210,8 @@ public class VersionUtil {
 		}
 	}
 
-	private static boolean generateAutoUpdateScriptOnMacOS(String version, List<String> extractedFiles) {
-		return generateAutoUpdateScriptOnLinux(version, extractedFiles);
+	private static boolean generateAutoUpdateScriptOnMacOS(File fileZip, String version, List<String> extractedFiles) {
+		return generateAutoUpdateScriptOnLinux(fileZip, version, extractedFiles);
 	}
 
 	private static List<String> extractZip(File zipFile, String dstFolder) throws Exception {
