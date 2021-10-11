@@ -272,7 +272,7 @@ public class Main {
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
 		}
 
-		info(Cu.i().magenta("Please give me a Star").ra(" at my github repository ").cyan("git.bh99bot.com").ra(" (github.com/9-9-9-9/Bit-Heroes-bot). ").magenta("Thank you").reset());
+		info(Cu.i().magenta("Please give me a Star").ra(" at my github repository ").cyan("git.bh99bot.com").ra(" (short link of https://github.com/9-9-9-9/Bit-Heroes-bot). ").magenta("Thank you").reset());
 		Rad.print(20, ColorizeUtil.formatAsk, "Visit our repository often to update latest bot version with new features added frequently");
 		instance.run(parseArgumentsResult);
 	}
