@@ -184,9 +184,9 @@ public class VersionUtil {
 			zis = new ZipInputStream(new FileInputStream(zipFile.getName()));
 			ZipEntry zipEntry;
 			while ((zipEntry = zis.getNextEntry()) != null) {
-				final String fileName = zipFile.getName();
+				final String fileName = new File(zipEntry.getName()).getName();
 				if (!zipEntry.isDirectory()) {
-					if (fileName.endsWith(".jar") || fileName.endsWith(".sh") || fileName.endsWith(".bat")) {
+					if (fileName.endsWith(".jar") || fileName.endsWith(".sh") || fileName.endsWith(".bat") || fileName.equals("prepare-mini-chrome-client.txt")) {
 						final File targetFile = Paths.get("out", dstFolder, fileName).toFile();
 						if (targetFile.exists())
 							targetFile.delete();
