@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
 import bh.bot.common.Log;
+import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.flags.*;
 import com.sun.jna.platform.win32.Kernel32;
@@ -722,8 +724,25 @@ public abstract class AbstractApplication {
 
 			if (st.persuade) {
 
-				if (Configuration.enableDevFeatures)
-					argumentInfo.addFamiliarToBribeWithGems(Familiar.Oevor);
+				if (Configuration.enableDevFeatures) {
+					final String fileBribeName = "bribe.txt";
+					File fBribe = new File(fileBribeName);
+					if (fBribe.exists() && fBribe.isFile()) {
+						List<String> familiarsToBribe = Files.readAllLines(fBribe.toPath()).stream().filter(StringUtil::isNotBlank).map(String::trim).collect(Collectors.toList());
+						if (familiarsToBribe.size() > 0) {
+							FlagBribe flagBribe = new FlagBribe();
+							try {
+								flagBribe.parseParam(String.format("%s=%s", flagBribe.getCode(), String.join(",", familiarsToBribe)));
+							} catch (NotSupportedException ex) {
+								throw new InvalidDataException("Content of '%s' contains invalid familiar name, valid names must be supported by flag '%s'. Inner error: %s", fileBribeName, flagBribe.getCode(), ex.getMessage());
+							} catch (Exception ex2) {
+								dev(ex2);
+								err("Error occurs while trying to parse %s file. Content within that file will be ignored. Please raise an issue on my GitHub repo", fileBribeName);
+							}
+						}
+						argumentInfo.addFamiliarToBribeWithGems(Familiar.Oevor);
+					}
+				}
 
 				for (Familiar f : argumentInfo.familiarToBribeWithGems)
 					warn("Will persuade %s with gems", f.name());
@@ -840,9 +859,13 @@ public abstract class AbstractApplication {
 
 				if (persuadeTargets == null)
 					persuadeTargets = Arrays.asList(
-							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.violace, Familiar.Violace),
 							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.ragnar, Familiar.Ragnar),
-							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.oevor, Familiar.Oevor)
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.kaleido, Familiar.Kaleido),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.violace, Familiar.Violace),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.oevor, Familiar.Oevor),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.grimz, Familiar.Grimz),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.quirrel, Familiar.Quirrel),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.gobby, Familiar.Gobby)
 					);
 
 				boolean doPersuadeGold = true;

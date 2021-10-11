@@ -1,5 +1,9 @@
 package bh.bot.common.types;
 
 public enum Familiar {
-	Kaleido, Violace, Ragnar, Oevor
+	Ragnar, // R1
+	Kaleido, Violace, Oevor, // R2
+	Grimz, // Z1D1
+	Quirrel, //
+	Gobby
 }

@@ -228,6 +228,9 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta violace;
                 public static BwMatrixMeta ragnar;
                 public static BwMatrixMeta oevor;
+                public static BwMatrixMeta grimz;
+                public static BwMatrixMeta quirrel;
+                public static BwMatrixMeta gobby;
             }
         }
 
@@ -452,6 +455,21 @@ public class BwMatrixMeta {
                 "labels/persuade.oevor?",
                 Configuration.screenResolutionProfile.getOffsetLabelPersuadeOevor(), //
                 0xFF807D
+        );
+        Metas.Persuade.Labels.grimz = BwMatrixMeta.from(//
+                "labels/persuade.grimz?",
+                Configuration.screenResolutionProfile.getOffsetLabelPersuadeGrimz(), //
+                0xFF807D
+        );
+        Metas.Persuade.Labels.quirrel = BwMatrixMeta.from(//
+                "labels/persuade.quirrel?",
+                Configuration.screenResolutionProfile.getOffsetLabelPersuadeQuirrel(), //
+                0xFF807D
+        );
+        Metas.Persuade.Labels.gobby = BwMatrixMeta.from(//
+                "labels/persuade.gobby?",
+                Configuration.screenResolutionProfile.getOffsetLabelPersuadeGobby(), //
+                0xFFFF00
         );
         
         // Fishing
