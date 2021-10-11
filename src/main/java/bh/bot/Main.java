@@ -1,9 +1,6 @@
 package bh.bot;
 
-import static bh.bot.common.Log.enableDebug;
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.info;
-import static bh.bot.common.Log.warn;
+import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.StringUtil.isBlank;
 
@@ -261,14 +258,24 @@ public class Main {
 						flagPattern.getName(), instance.getAppCode()));
 			}
 
+		String currentVersion = null;
 		try {
 			MavenXpp3Reader reader = new MavenXpp3Reader();
 			Model model = reader.read(new FileReader("pom.xml"));
-			String version = model.getVersion();
-			Rad.print(33, ColorizeUtil.formatAsk, "Hi, my name is %s v%s, have a nice day", botName, version);
-			SematicVersion appVersion = VersionUtil.setCurrentAppVersion(version);
-			VersionUtil.saveBotInfo(appVersion);
+			currentVersion = model.getVersion();
 		} catch (Exception ignored) {
+			dev(ignored);
+		}
+
+		if (currentVersion != null) {
+			try {
+				Rad.print(33, ColorizeUtil.formatAsk, "Hi, my name is %s v%s, have a nice day", botName, currentVersion);
+				SematicVersion appVersion = VersionUtil.setCurrentAppVersion(currentVersion);
+				VersionUtil.saveBotInfo(appVersion);
+			} catch (Exception ignored) {
+				dev(ignored);
+			}
+		} else {
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
 		}
 
