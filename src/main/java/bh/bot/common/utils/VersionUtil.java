@@ -166,11 +166,14 @@ public class VersionUtil {
 
 			// generate update script
 			if (OS.isWin) {
-				generateAutoUpdateScriptOnWindows(newerVersion.toString(), extractedFiles);
+				if (!generateAutoUpdateScriptOnWindows(newerVersion.toString(), extractedFiles))
+					return;
 			} else if (OS.isLinux) {
-				generateAutoUpdateScriptOnLinux(newerVersion.toString(), extractedFiles);
+				if (!generateAutoUpdateScriptOnLinux(newerVersion.toString(), extractedFiles))
+					return;
 			} else if (OS.isMac) {
-				generateAutoUpdateScriptOnMacOS(newerVersion.toString(), extractedFiles);
+				if (!generateAutoUpdateScriptOnMacOS(newerVersion.toString(), extractedFiles))
+					return;
 			} else {
 				throw new NotSupportedException(String.format("Currently not supported auto update for %s", OS.name));
 			}
@@ -180,11 +183,11 @@ public class VersionUtil {
 		}
 	}
 
-	private static void generateAutoUpdateScriptOnWindows(String version, List<String> extractedFiles) {
-
+	private static boolean generateAutoUpdateScriptOnWindows(String version, List<String> extractedFiles) {
+		return false;
 	}
 
-	private static void generateAutoUpdateScriptOnLinux(String version, List<String> extractedFiles) {
+	private static boolean generateAutoUpdateScriptOnLinux(String version, List<String> extractedFiles) {
 		try (
 				InputStream p1 = Configuration.class.getResourceAsStream("/templates/auto-update.1.sh");
 				InputStream p2 = Configuration.class.getResourceAsStream("/templates/auto-update.2.sh")
@@ -197,14 +200,16 @@ public class VersionUtil {
 			Files.write(Paths.get(autoUpdateScriptFileName), script.getBytes());
 
 			warn("Please run file %s to update %s to the latest version %s", autoUpdateScriptFileName, Main.botName, version);
+			return true;
 		} catch (IOException e) {
 			dev(e);
 			err("Unable to generate auto update script, please update manually by yourself by going to https://download.bh99bot.com");
+			return false;
 		}
 	}
 
-	private static void generateAutoUpdateScriptOnMacOS(String version, List<String> extractedFiles) {
-		generateAutoUpdateScriptOnLinux(version, extractedFiles);
+	private static boolean generateAutoUpdateScriptOnMacOS(String version, List<String> extractedFiles) {
+		return generateAutoUpdateScriptOnLinux(version, extractedFiles);
 	}
 
 	private static List<String> extractZip(File zipFile, String dstFolder) throws Exception {
