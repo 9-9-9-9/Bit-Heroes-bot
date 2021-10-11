@@ -331,7 +331,8 @@ public abstract class AbstractApplication {
 
 		List<FlagPattern> flagPatterns = Arrays.asList(Flags.allFlags);
 		// Local flags
-		List<FlagPattern> localFlags = flagPatterns.stream().filter(x -> !x.isGlobalFlag() && x.isSupportedByApp(this))
+		List<FlagPattern> localFlags = flagPatterns.stream()
+				.filter(x -> !x.isGlobalFlag() && x.isSupportedByApp(this) && !x.hide())
 				.collect(Collectors.toList());
 		if (localFlags.size() > 0) {
 			sb.append("\nFlags:");
@@ -340,7 +341,7 @@ public abstract class AbstractApplication {
 		}
 		// Global flags:
 		List<FlagPattern> globalFlags = flagPatterns.stream().filter(FlagPattern::isGlobalFlag)
-				.filter(x -> x.isSupportedByApp(this)).collect(Collectors.toList());
+				.filter(x -> x.isSupportedByApp(this) && !x.hide()).collect(Collectors.toList());
 		sb.append("\nGlobal flags:");
 		for (FlagPattern globalFlag : globalFlags.stream().filter(x -> !(x instanceof FlagResolution))
 				.collect(Collectors.toList()))

@@ -68,4 +68,8 @@ public class FlagBribe extends FlagPattern<Familiar> {
 				|| instance instanceof AbstractDoFarmingApp;
 	}
 
+	@Override
+	public boolean hide() {
+		return true;
+	}
 }
