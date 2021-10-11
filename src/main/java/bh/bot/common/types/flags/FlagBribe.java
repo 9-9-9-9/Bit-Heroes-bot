@@ -23,6 +23,12 @@ public class FlagBribe extends FlagPattern<Familiar> {
 				return Familiar.Ragnar;
 			case "oevor":
 				return Familiar.Oevor;
+			case "grimz":
+				return Familiar.Grimz;
+			case "quirrel":
+				return Familiar.Quirrel;
+			case "gobby":
+				return Familiar.Gobby;
 			default:
 				throw new NotSupportedException(String.format("Unknown value '%s' of flag %s", s, getCode()));
 			}
@@ -62,4 +68,8 @@ public class FlagBribe extends FlagPattern<Familiar> {
 				|| instance instanceof AbstractDoFarmingApp;
 	}
 
+	@Override
+	public boolean hide() {
+		return true;
+	}
 }

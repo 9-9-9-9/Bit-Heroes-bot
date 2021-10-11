@@ -1,16 +1,11 @@
 package bh.bot;
 
-import static bh.bot.common.Log.enableDebug;
-import static bh.bot.common.Log.err;
-import static bh.bot.common.Log.info;
-import static bh.bot.common.Log.warn;
+import static bh.bot.app.GenMiniClient.readFromInputStream;
+import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.StringUtil.isBlank;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +14,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import bh.bot.app.dev.*;
+import bh.bot.common.extensions.Rad;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.fusesource.jansi.AnsiConsole;
@@ -29,11 +26,6 @@ import bh.bot.app.FishingApp;
 import bh.bot.app.GenMiniClient;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.SettingApp;
-import bh.bot.app.dev.ExtractMatrixApp;
-import bh.bot.app.dev.GenerateMetaApp;
-import bh.bot.app.dev.ImportTpImageApp;
-import bh.bot.app.dev.ScreenCaptureApp;
-import bh.bot.app.dev.TestApp;
 import bh.bot.app.farming.ExpeditionApp;
 import bh.bot.app.farming.GauntletApp;
 import bh.bot.app.farming.GvgApp;
@@ -97,8 +89,10 @@ public class Main {
 			forceDisableAnsi = true;
 		}
 		try {
-			info(Cu.i().cyan("You spend your time for your family and ").a(botName).a(" helps you persuade the Familiars ;)").reset());
-			info(Cu.i().magenta("Eat ").red("duck").magenta(" eat all the bones with ").a(botName).a(". Not a minute of your ").red("bitgor").magenta(" wasted").reset());
+			Rad.exec(33, () -> {
+				info(Cu.i().cyan("You spend your time for your family and ").a(botName).a(" helps you persuade the Familiars ;)").reset());
+				info(Cu.i().magenta("Eat ").red("duck").magenta(" eat all the bones with ").a(botName).a(". Not a minute of your ").red("bitgor").magenta(" wasted").reset());
+			});
 
 			Configuration.registerApplicationClasses( //
 					SettingApp.class, //
@@ -121,7 +115,7 @@ public class Main {
 //
 					ScreenCaptureApp.class, //
 					TestApp.class, //
-					GenerateMetaApp.class
+					GenerateMetaApp.class //
 			);
 
 			if (args.length == 0 || Arrays.stream(args).allMatch(x -> x.trim().startsWith("--")))
@@ -220,8 +214,10 @@ public class Main {
 				lArgs.add(newFlag);
 			}
 		} else {
-			info(Cu.i().cyan("FYI: command-line builder is available at: ").green("cb.bh99bot.com").reset());
-			info(Cu.i().cyan("You can also save the command-line into script ").green(scriptFileName("<name>.c")).cyan(" and re-use later").reset());
+			Rad.exec(50, () -> {
+				info(Cu.i().cyan("FYI: command-line builder is available at: ").green("cb.bh99bot.com").reset());
+				info(Cu.i().cyan("You can also save the command-line into script ").green(scriptFileName("<name>.c")).cyan(" and re-use later").reset());
+			});
 		}
 
 		return lArgs.stream().distinct().collect(Collectors.toList()).toArray(new String[0]);
@@ -256,19 +252,36 @@ public class Main {
 						flagPattern.getName(), instance.getAppCode()));
 			}
 
+		String currentVersion = null;
 		try {
 			MavenXpp3Reader reader = new MavenXpp3Reader();
 			Model model = reader.read(new FileReader("pom.xml"));
-			String version = model.getVersion();
-			info(ColorizeUtil.formatAsk, "Hi, my name is %s v%s, have a nice day", botName, version);
-			SematicVersion appVersion = VersionUtil.setCurrentAppVersion(version);
-			VersionUtil.saveBotInfo(appVersion);
+			currentVersion = model.getVersion();
 		} catch (Exception ignored) {
+			if (!(ignored instanceof FileNotFoundException))
+				dev(ignored);
+
+			try (InputStream fCurVer = Configuration.class.getResourceAsStream("/current-version.txt")) {
+				currentVersion = readFromInputStream(fCurVer).trim();
+			} catch (Exception ignored2) {
+				dev(ignored2);
+			}
+		}
+
+		if (currentVersion != null) {
+			try {
+				Rad.print(33, ColorizeUtil.formatAsk, "Hi, my name is %s v%s, have a nice day", botName, currentVersion);
+				SematicVersion appVersion = VersionUtil.setCurrentAppVersion(currentVersion);
+				VersionUtil.saveBotInfo(appVersion);
+			} catch (Exception ignored) {
+				dev(ignored);
+			}
+		} else {
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
 		}
 
-		info(Cu.i().magenta("Please give me a Star").reset().a(" at my github repository ").cyan("github.com/9-9-9-9/Bit-Heroes-bot").reset().a(" (short url: ").cyan("git.bh99bot.com").reset().a(")").magenta(". Thank you").reset().toString());
-		info(ColorizeUtil.formatAsk, "Visit our repository often to update latest bot version with new features added frequently");
+		info(Cu.i().magenta("Please give me a Star").ra(" at my github repository ").cyan("git.bh99bot.com").ra(" (short link of https://github.com/9-9-9-9/Bit-Heroes-bot). ").magenta("Thank you").reset());
+		Rad.print(20, ColorizeUtil.formatAsk, "Visit our repository often to update latest bot version with new features added frequently");
 		instance.run(parseArgumentsResult);
 	}
 
@@ -511,6 +524,7 @@ public class Main {
 			case 0:
 			case EXIT_CODE_VERSION_IS_REJECTED:
 			case EXIT_CODE_MULTIPLE_INSTANCE_DETECTED:
+			case EXIT_CODE_EXTRACT_BOT_VERSION_FAILURE:
 				// no msg
 				break;
 			default:
@@ -522,7 +536,7 @@ public class Main {
 	}
 
 	public static void warningEnergyRefill() {
-		warn("Upon level-up, your current energy will be reset to your max energy value, no matter how much energy you currently have (10/500 => 500/500, 2.000/500 => 500/500). It's a good buff but there's a trap inside. So rich-kids, don't over drink your energy at one, excess energy will fly away for nothing and support team won't give you a hand on this bug. GL");
+		Rad.pWarn(20,"Upon level-up, your current energy will be reset to your max energy value, no matter how much energy you currently have (10/500 => 500/500, 2.000/500 => 500/500). It's a good buff but there's a trap inside. So rich-kids, don't over drink your energy at one, excess energy will fly away for nothing and support team won't give you a hand on this bug. GL");
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;
@@ -536,5 +550,6 @@ public class Main {
 	public static final int EXIT_CODE_VERSION_IS_REJECTED = 13;
 	public static final int EXIT_CODE_WINDOW_DETECTION_ISSUE = 14;
 	public static final int EXIT_CODE_MULTIPLE_INSTANCE_DETECTED = 15;
+	public static final int EXIT_CODE_EXTRACT_BOT_VERSION_FAILURE = 16;
 	public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }

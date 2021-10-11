@@ -34,6 +34,7 @@ c.*.sh
 *.c.bat
 *.c.sh
 deploy.sh
+update-99bot.*
 
 reconnect.bmp
 reconnect-hl.bmp
@@ -41,6 +42,8 @@ reconnect-hl.bmp
 *.zip
 
 .fl
+bribe.txt
 
 latest.README.md
 im.dev
+current-version.txt

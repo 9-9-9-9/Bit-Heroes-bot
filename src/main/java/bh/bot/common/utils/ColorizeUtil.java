@@ -101,6 +101,10 @@ public class ColorizeUtil {
 			return this;
 		}
 
+		public Cu ra(String text) {
+			return this.reset().a(text);
+		}
+
 		public Ansi ansi() {
 			return ansi;
 		}

@@ -8,6 +8,18 @@ then
   exit 1
 fi
 
+# Include version info
+echo $VERSION > ./src/main/resources/current-version.txt
+
+# Build
+./build.sh
+exit=$?
+if [ $exit -ne 0 ]; then
+  echo 'Build failure'
+  exit 1
+fi
+
+# Check binary after build
 BINARY=./target/99bot-$VERSION-jar-with-dependencies.jar
 if [ ! -f $BINARY ];
 then
@@ -57,6 +69,10 @@ cat <<EOF > ./release/user-config.properties
 
 # Google Chrome user dir, specify an external directory help you dont need to move the 'chrome-user-dir' folder next time when you update this Bit Heroes bot
 #external.mini-client.user.dir=D:\\\\Data\\\\chrome-user-dir
+
+# Disable sub-features
+#disable.jansi=true
+#disable.auto-update=true
 EOF
 
 # Copy files for mini client

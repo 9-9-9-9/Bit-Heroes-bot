@@ -111,6 +111,10 @@ public abstract class FlagPattern<T> {
         return false;
     }
 
+    public boolean hide() {
+        return false;
+    }
+
     public abstract String getName();
     public abstract String getDescription();
     public final boolean isSupportedOnCurrentOsPlatform() {

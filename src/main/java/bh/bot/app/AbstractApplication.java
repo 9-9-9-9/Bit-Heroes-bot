@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,8 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
 import bh.bot.common.Log;
+import bh.bot.common.exceptions.InvalidFlagException;
+import bh.bot.common.extensions.Rad;
 import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.flags.*;
 import com.sun.jna.platform.win32.Kernel32;
@@ -205,19 +208,20 @@ public abstract class AbstractApplication {
 		if (skipCheckVersion())
 			return;
 
-		if (RandomUtil.nextInt(10) % 3 == 0)
+		Rad.exec(33, () -> {
 			CompletableFuture.runAsync(() -> {
 				if (!VersionUtil.checkForLatestVersion())
 					warn("Failure on checking for latest version of %s", Main.botName);
 			});
+		});
 	}
 
 	private void showWarningWindowMustClearlyVisible() {
-		if (RandomUtil.nextInt(10) % 3 != 0) { // 66%
+		Rad.exec(66, () -> {
 			if (Configuration.isWebProfile)
-				warn("Do NOT zoom in/out the web page while you playing Bit Heroes on web and keep the original resolution is 800x520. If you do zoom the web page, bot won't work because it can not find the desired images due to expected size was changed");
+				warn("Do NOT zoom in/out the web page while you playing Bit Heroes on web and keep the original resolution is 800x520. If you do zoom the web page, bot won't work");
 			Main.showWarningWindowMustClearlyVisible();
-		}
+		});
 	}
 
 	private void tryToCloseGameWindow(boolean closeGameWindowAfterExit) {
@@ -327,7 +331,8 @@ public abstract class AbstractApplication {
 
 		List<FlagPattern> flagPatterns = Arrays.asList(Flags.allFlags);
 		// Local flags
-		List<FlagPattern> localFlags = flagPatterns.stream().filter(x -> !x.isGlobalFlag() && x.isSupportedByApp(this))
+		List<FlagPattern> localFlags = flagPatterns.stream()
+				.filter(x -> !x.isGlobalFlag() && x.isSupportedByApp(this) && !x.hide())
 				.collect(Collectors.toList());
 		if (localFlags.size() > 0) {
 			sb.append("\nFlags:");
@@ -336,7 +341,7 @@ public abstract class AbstractApplication {
 		}
 		// Global flags:
 		List<FlagPattern> globalFlags = flagPatterns.stream().filter(FlagPattern::isGlobalFlag)
-				.filter(x -> x.isSupportedByApp(this)).collect(Collectors.toList());
+				.filter(x -> x.isSupportedByApp(this) && !x.hide()).collect(Collectors.toList());
 		sb.append("\nGlobal flags:");
 		for (FlagPattern globalFlag : globalFlags.stream().filter(x -> !(x instanceof FlagResolution))
 				.collect(Collectors.toList()))
@@ -721,9 +726,32 @@ public abstract class AbstractApplication {
 			long nextPersuade = addSec(persuadeSleepSecs);
 
 			if (st.persuade) {
-
-				if (Configuration.enableDevFeatures)
-					argumentInfo.addFamiliarToBribeWithGems(Familiar.Oevor);
+				if (Configuration.enableDevFeatures) {
+					final String fileBribeName = "bribe.txt";
+					File fBribe = new File(fileBribeName);
+					if (fBribe.exists() && fBribe.isFile()) {
+						List<String> familiarsToBribe = Files.readAllLines(fBribe.toPath()).stream().filter(StringUtil::isNotBlank).map(String::trim).collect(Collectors.toList());
+						if (familiarsToBribe.size() > 0) {
+							FlagBribe flagBribe = new FlagBribe();
+							ArrayList<Familiar> familiars = new ArrayList<>();
+							boolean ignoreFile = false;
+							for (String famName : familiarsToBribe)
+								try {
+									familiars.add(flagBribe.parseParam(String.format("%s=%s", flagBribe.getCode(), famName)));
+								} catch (NotSupportedException ignored) {
+									throw new InvalidDataException("Familiar's name '%s' within file %s is not supported!", famName, fileBribeName);
+								} catch (Exception ex2) {
+									dev(ex2);
+									err("Error occurs while trying to parse %s file. Content within that file will be ignored. Please raise an issue on my GitHub repo", fileBribeName);
+									ignoreFile = true;
+									break;
+								}
+							if (!ignoreFile)
+								for (Familiar fam : familiars)
+									argumentInfo.addFamiliarToBribeWithGems(fam);
+						}
+					}
+				}
 
 				for (Familiar f : argumentInfo.familiarToBribeWithGems)
 					warn("Will persuade %s with gems", f.name());
@@ -840,9 +868,13 @@ public abstract class AbstractApplication {
 
 				if (persuadeTargets == null)
 					persuadeTargets = Arrays.asList(
-							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.violace, Familiar.Violace),
 							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.ragnar, Familiar.Ragnar),
-							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.oevor, Familiar.Oevor)
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.kaleido, Familiar.Kaleido),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.violace, Familiar.Violace),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.oevor, Familiar.Oevor),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.grimz, Familiar.Grimz),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.quirrel, Familiar.Quirrel),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.gobby, Familiar.Gobby)
 					);
 
 				boolean doPersuadeGold = true;
