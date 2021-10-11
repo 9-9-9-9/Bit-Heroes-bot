@@ -8,6 +8,18 @@ then
   exit 1
 fi
 
+# Include version info
+echo $VERSION > ./src/main/resources/current-version.txt
+
+# Build
+./build.sh
+exit=$?
+if [ $exit -ne 0 ]; then
+  echo 'Build failure'
+  exit 1
+fi
+
+# Check binary after build
 BINARY=./target/99bot-$VERSION-jar-with-dependencies.jar
 if [ ! -f $BINARY ];
 then

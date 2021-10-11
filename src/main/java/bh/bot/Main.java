@@ -1,13 +1,11 @@
 package bh.bot;
 
+import static bh.bot.app.GenMiniClient.readFromInputStream;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.Extensions.scriptFileName;
 import static bh.bot.common.utils.StringUtil.isBlank;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +14,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import bh.bot.app.dev.*;
 import bh.bot.common.extensions.Rad;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -27,11 +26,6 @@ import bh.bot.app.FishingApp;
 import bh.bot.app.GenMiniClient;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.SettingApp;
-import bh.bot.app.dev.ExtractMatrixApp;
-import bh.bot.app.dev.GenerateMetaApp;
-import bh.bot.app.dev.ImportTpImageApp;
-import bh.bot.app.dev.ScreenCaptureApp;
-import bh.bot.app.dev.TestApp;
 import bh.bot.app.farming.ExpeditionApp;
 import bh.bot.app.farming.GauntletApp;
 import bh.bot.app.farming.GvgApp;
@@ -121,7 +115,7 @@ public class Main {
 //
 					ScreenCaptureApp.class, //
 					TestApp.class, //
-					GenerateMetaApp.class
+					GenerateMetaApp.class //
 			);
 
 			if (args.length == 0 || Arrays.stream(args).allMatch(x -> x.trim().startsWith("--")))
@@ -264,7 +258,14 @@ public class Main {
 			Model model = reader.read(new FileReader("pom.xml"));
 			currentVersion = model.getVersion();
 		} catch (Exception ignored) {
-			dev(ignored);
+			if (!(ignored instanceof FileNotFoundException))
+				dev(ignored);
+
+			try (InputStream fCurVer = Configuration.class.getResourceAsStream("/current-version.txt")) {
+				currentVersion = readFromInputStream(fCurVer).trim();
+			} catch (Exception ignored2) {
+				dev(ignored2);
+			}
 		}
 
 		if (currentVersion != null) {
@@ -523,6 +524,7 @@ public class Main {
 			case 0:
 			case EXIT_CODE_VERSION_IS_REJECTED:
 			case EXIT_CODE_MULTIPLE_INSTANCE_DETECTED:
+			case EXIT_CODE_EXTRACT_BOT_VERSION_FAILURE:
 				// no msg
 				break;
 			default:
@@ -548,5 +550,6 @@ public class Main {
 	public static final int EXIT_CODE_VERSION_IS_REJECTED = 13;
 	public static final int EXIT_CODE_WINDOW_DETECTION_ISSUE = 14;
 	public static final int EXIT_CODE_MULTIPLE_INSTANCE_DETECTED = 15;
+	public static final int EXIT_CODE_EXTRACT_BOT_VERSION_FAILURE = 16;
 	public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }

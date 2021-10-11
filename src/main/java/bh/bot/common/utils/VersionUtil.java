@@ -35,6 +35,10 @@ public class VersionUtil {
 		return appVer = new SematicVersion(ver);
 	}
 
+	public static String getCurrentAppVersion() {
+		return appVer == null ? null : appVer.toString();
+	}
+
 	public static boolean checkForLatestVersion() {
 		if (appVer == null)
 			return false;
