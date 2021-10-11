@@ -107,7 +107,8 @@ public class VersionUtil {
 
 						if (autoUpdate)
 							try {
-								autoUpdate(sematicVersion);
+								if (!autoUpdate(sematicVersion))
+									info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** Attempted to perform Auto-update but ").red("failure").yellow(" please update new version manually from our website  ").cyan("download.bh99bot.com").reset());
 							} catch (Exception ex) {
 								dev(ex);
 								err("Error while trying to update to newest version of %s", Main.botName);
@@ -128,7 +129,7 @@ public class VersionUtil {
 		}
 	}
 
-	private static void autoUpdate(SematicVersion newerVersion) throws Exception {
+	private static boolean autoUpdate(SematicVersion newerVersion) throws Exception {
 		WinNT.HANDLE mutexHandle = null;
 		try {
 			cleanUpAbortedDownloadFiles();
@@ -146,7 +147,7 @@ public class VersionUtil {
 
 				if (tmpFile.exists()) {
 					dev("Cancel autoUpdate due to tmp file exists: %s", tmpFileName);
-					return;
+					return false;
 				}
 
 				final String urlDownloadBinary = "https://github.com/9-9-9-9/Bit-Heroes-bot/releases/latest/download/download-this-file.zip";
@@ -168,7 +169,7 @@ public class VersionUtil {
 							try {
 								Files.copy(tmpFile.toPath(), fileZip.toPath(), StandardCopyOption.REPLACE_EXISTING);
 							} catch (Exception ignored2) {
-								dev(ignored2)
+								dev(ignored2);
 								success = false;
 							}
 						}
@@ -176,14 +177,14 @@ public class VersionUtil {
 
 					if (!success) {
 						err("Failed to rename new downloaded version from %s to %s", tmpFileName, newBinaryFileName);
-						return;
+						return false;
 					}
 
 					updateNotice("Downloaded binary for the new version %s", newerVersion);
 				} catch (Exception e) {
 					dev(e);
 					err("Failed to download binary for new version %s", newerVersion);
-					return;
+					return false;
 				}
 			}
 
@@ -193,7 +194,7 @@ public class VersionUtil {
 			// extract
 			List<String> extractedFiles = extractZip(fileZip, dstFolder);
 			if (extractedFiles == null || extractedFiles.size() < 1)
-				return;
+				return false;
 
 			boolean needGenerateUpdateScript = true;
 			if (checkGeneratedUpdateScript) {
@@ -214,19 +215,21 @@ public class VersionUtil {
 				// generate update script
 				if (OS.isWin) {
 					if (!generateAutoUpdateScriptOnWindows(fileZip, newerVersion.toString(), extractedFiles))
-						return;
+						return false;
 				} else if (OS.isLinux) {
 					if (!generateAutoUpdateScriptOnLinux(fileZip, newerVersion.toString(), extractedFiles))
-						return;
+						return false;
 				} else if (OS.isMac) {
 					if (!generateAutoUpdateScriptOnMacOS(fileZip, newerVersion.toString(), extractedFiles))
-						return;
+						return false;
 				} else {
 					throw new NotSupportedException(String.format("Currently not supported auto update for %s", OS.name));
 				}
 			} else {
 				info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** Please run file ").red(autoUpdateScriptFileName).yellow(" to update ").a(Main.botName).a(" to the latest released version ").red(newerVersion.toString()).reset());
 			}
+
+			return true;
 		} finally {
 			if (mutexHandle != null)
 				Kernel32.INSTANCE.ReleaseMutex(mutexHandle);
