@@ -1,5 +1,4 @@
 ### TODO
-9. Generate auto-update script on Windows
 
 ### DOING
 
@@ -12,5 +11,6 @@
 6. `--alter-interval` for ReRun
 7. Display main loop interval in help
 8. Hide some flags from displaying in `--help` (private use only)
+9. Generate auto-update script on Windows
 10. Fix getting bot version on release binaries
 11. Fix release.sh script
