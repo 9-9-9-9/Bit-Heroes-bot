@@ -81,9 +81,12 @@ public class VersionUtil {
 					int compare = appVer.compareTo(sematicVersion);
 
 					if (compare < 0) {
+						/* TODO restore
 						boolean autoUpdate = !Configuration.enableDevFeatures
 								&& !Configuration.Features.disableAutoUpdate
 								&& !new File("src").exists();
+						 */
+						boolean autoUpdate = true;
 						String msg =
 								autoUpdate
 										? String.format( //
