@@ -10,7 +10,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -109,7 +111,7 @@ public class VersionUtil {
 		}
 	}
 
-	private static void autoUpdate(SematicVersion newerVersion) {
+	private static void autoUpdate(SematicVersion newerVersion) throws Exception {
 		WinNT.HANDLE mutexHandle = null;
 		try {
 			deleteUpdateScript();
@@ -156,31 +158,60 @@ public class VersionUtil {
 
 			final String dstFolder = "auto-update-" + newerVersion;
 			// extract
-			if (!extractZip(fileZip, dstFolder))
+			List<String> extractedFiles = extractZip(fileZip, dstFolder);
+			if (extractedFiles == null || extractedFiles.size() < 1)
 				return;
 
 			// generate update script
+			if (generateAutoUpdateScriptOnWindows()) {
+
+			}
 		} finally {
 			if (mutexHandle != null)
 				Kernel32.INSTANCE.ReleaseMutex(mutexHandle);
 		}
 	}
 
-	private static boolean extractZip(File zipFile, String dstFolder) {
+	private static void generateAutoUpdateScriptOnWindows(List<String> extractedFiles) {
+
+	}
+
+	private static void generateAutoUpdateScriptOnLinux(List<String> extractedFiles) {
+
+	}
+
+	private static void generateAutoUpdateScriptOnMacOS(List<String> extractedFiles) {
+		generateAutoUpdateScriptOnLinux(extractedFiles);
+	}
+
+	private static List<String> extractZip(File zipFile, String dstFolder) throws Exception {
 		if (!zipFile.exists()) {
 			err("Zip file could not be found: %s", zipFile.getName());
-			return false;
+			return null;
 		}
 
 		ZipInputStream zis = null;
 		try {
 			if (!mkdir(zipFile, "out"))
-				return false;
+				return null;
 			if (!mkdir(zipFile, "out", dstFolder))
-				return false;
+				return null;
+
+			final File fileMarkedAsSuccess = Paths.get("out", dstFolder, ".success").toFile();
+			if (fileMarkedAsSuccess.exists()) {
+				List<String> extractedFiles = Arrays.asList(Paths.get("out", dstFolder).toFile().listFiles())
+						.stream()
+						.filter(x -> !x.getName().endsWith(fileMarkedAsSuccess.getName()))
+						.map(x -> x.getName())
+						.collect(Collectors.toList());
+				if (extractedFiles.size() > 0) {
+					dev("Successfully extracted before, no need to re-extract");
+					return extractedFiles;
+				}
+			}
 
 			byte[] buffer = new byte[1024];
-			int cnt = 0;
+			List<String> extractedFiles = new ArrayList<>();
 			zis = new ZipInputStream(new FileInputStream(zipFile.getName()));
 			ZipEntry zipEntry;
 			while ((zipEntry = zis.getNextEntry()) != null) {
@@ -195,8 +226,9 @@ public class VersionUtil {
 							while ((len = zis.read(buffer)) > 0) {
 								fos.write(buffer, 0, len);
 							}
-							dev("Success: %s => %s", fileName, targetFile.getAbsolutePath());
-							cnt++;
+							String absolutePath = targetFile.getAbsolutePath();
+							dev("Success: %s => %s", fileName, absolutePath);
+							extractedFiles.add(absolutePath);
 						} catch (Exception ex2) {
 							err("Failure while attempting to extract file %s from zip file of the new update", targetFile.getName());
 							throw ex2;
@@ -209,15 +241,13 @@ public class VersionUtil {
 				}
 			}
 
-			if (cnt < 1)
+			if (extractedFiles.size() < 1)
 				throw new InvalidDataException("No entry was extracted from %s", zipFile.getName());
 
 			info("Successfully extracted content of %s into folder %s/%s", zipFile.getName(), "out", dstFolder);
-			return true;
-		} catch (Exception ex) {
-			dev(ex);
-			err("Unable to extract new update from %s", zipFile);
-			return false;
+			if (!fileMarkedAsSuccess.createNewFile())
+				dev("Unable to mark successfully extracted by creating file %s", fileMarkedAsSuccess.getName());
+			return extractedFiles;
 		} finally {
 			try {
 				if (zis != null) {
