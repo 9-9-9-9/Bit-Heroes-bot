@@ -83,9 +83,7 @@ public class VersionUtil {
 
 					if (compare < 0) {
 						/* TODO restore
-						boolean autoUpdate = !Configuration.enableDevFeatures
-								&& !Configuration.Features.disableAutoUpdate
-								&& !new File("src").exists();
+						boolean autoUpdate = !Configuration.Features.disableAutoUpdate && !new File("src").exists();
 						 */
 						boolean autoUpdate = true;
 						String msg =
@@ -243,7 +241,14 @@ public class VersionUtil {
 		) {
 			final StringBuilder sb = new StringBuilder();
 			String templateMaterial = readFromInputStream(p2);
-			extractedFiles.forEach(f -> sb.append('\n').append(templateMaterial.replaceAll("%SRC%", f).replaceAll("%DST%", new File(f).getName())));
+			extractedFiles.forEach(f ->
+				sb.append('\n')
+				.append(
+					templateMaterial
+						.replaceAll("%SRC%", f)
+						.replaceAll("%DST%", new File(f).getName())
+				)
+			);
 			String script = readFromInputStream(p1)
 					.replaceAll("%VERSION%", version)
 					.replace("%COPY_SCRIPT%", sb.toString())
