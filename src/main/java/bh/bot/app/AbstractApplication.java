@@ -731,16 +731,23 @@ public abstract class AbstractApplication {
 						List<String> familiarsToBribe = Files.readAllLines(fBribe.toPath()).stream().filter(StringUtil::isNotBlank).map(String::trim).collect(Collectors.toList());
 						if (familiarsToBribe.size() > 0) {
 							FlagBribe flagBribe = new FlagBribe();
-							try {
-								flagBribe.parseParam(String.format("%s=%s", flagBribe.getCode(), String.join(",", familiarsToBribe)));
-							} catch (NotSupportedException ex) {
-								throw new InvalidDataException("Content of '%s' contains invalid familiar name, valid names must be supported by flag '%s'. Inner error: %s", fileBribeName, flagBribe.getCode(), ex.getMessage());
-							} catch (Exception ex2) {
-								dev(ex2);
-								err("Error occurs while trying to parse %s file. Content within that file will be ignored. Please raise an issue on my GitHub repo", fileBribeName);
-							}
+							ArrayList<Familiar> familiars = new ArrayList<>();
+							boolean ignoreFile = false;
+							for (String famName : familiarsToBribe)
+								try {
+									familiars.add(flagBribe.parseParam(String.format("%s=%s", flagBribe.getCode(), famName)));
+								} catch (NotSupportedException ignored) {
+									throw new InvalidDataException("Familiar's name '%s' within file %s is not supported!", famName, fileBribeName);
+								} catch (Exception ex2) {
+									dev(ex2);
+									err("Error occurs while trying to parse %s file. Content within that file will be ignored. Please raise an issue on my GitHub repo", fileBribeName);
+									ignoreFile = true;
+									break;
+								}
+							if (!ignoreFile)
+								for (Familiar fam : familiars)
+									argumentInfo.addFamiliarToBribeWithGems(fam);
 						}
-						argumentInfo.addFamiliarToBribeWithGems(Familiar.Oevor);
 					}
 				}
 
