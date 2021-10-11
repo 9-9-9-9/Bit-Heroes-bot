@@ -19,6 +19,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import bh.bot.common.extensions.Rad;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.fusesource.jansi.AnsiConsole;
@@ -97,8 +98,10 @@ public class Main {
 			forceDisableAnsi = true;
 		}
 		try {
-			info(Cu.i().cyan("You spend your time for your family and ").a(botName).a(" helps you persuade the Familiars ;)").reset());
-			info(Cu.i().magenta("Eat ").red("duck").magenta(" eat all the bones with ").a(botName).a(". Not a minute of your ").red("bitgor").magenta(" wasted").reset());
+			Rad.exec(33, () -> {
+				info(Cu.i().cyan("You spend your time for your family and ").a(botName).a(" helps you persuade the Familiars ;)").reset());
+				info(Cu.i().magenta("Eat ").red("duck").magenta(" eat all the bones with ").a(botName).a(". Not a minute of your ").red("bitgor").magenta(" wasted").reset());
+			});
 
 			Configuration.registerApplicationClasses( //
 					SettingApp.class, //
@@ -220,8 +223,10 @@ public class Main {
 				lArgs.add(newFlag);
 			}
 		} else {
-			info(Cu.i().cyan("FYI: command-line builder is available at: ").green("cb.bh99bot.com").reset());
-			info(Cu.i().cyan("You can also save the command-line into script ").green(scriptFileName("<name>.c")).cyan(" and re-use later").reset());
+			Rad.exec(50, () -> {
+				info(Cu.i().cyan("FYI: command-line builder is available at: ").green("cb.bh99bot.com").reset());
+				info(Cu.i().cyan("You can also save the command-line into script ").green(scriptFileName("<name>.c")).cyan(" and re-use later").reset());
+			});
 		}
 
 		return lArgs.stream().distinct().collect(Collectors.toList()).toArray(new String[0]);
@@ -260,15 +265,15 @@ public class Main {
 			MavenXpp3Reader reader = new MavenXpp3Reader();
 			Model model = reader.read(new FileReader("pom.xml"));
 			String version = model.getVersion();
-			info(ColorizeUtil.formatAsk, "Hi, my name is %s v%s, have a nice day", botName, version);
+			Rad.print(33, ColorizeUtil.formatAsk, "Hi, my name is %s v%s, have a nice day", botName, version);
 			SematicVersion appVersion = VersionUtil.setCurrentAppVersion(version);
 			VersionUtil.saveBotInfo(appVersion);
 		} catch (Exception ignored) {
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
 		}
 
-		info(Cu.i().magenta("Please give me a Star").reset().a(" at my github repository ").cyan("github.com/9-9-9-9/Bit-Heroes-bot").reset().a(" (short url: ").cyan("git.bh99bot.com").reset().a(")").magenta(". Thank you").reset().toString());
-		info(ColorizeUtil.formatAsk, "Visit our repository often to update latest bot version with new features added frequently");
+		info(Cu.i().magenta("Please give me a Star").ra(" at my github repository ").cyan("git.bh99bot.com").ra(" (github.com/9-9-9-9/Bit-Heroes-bot). ").magenta("Thank you").reset());
+		Rad.print(20, ColorizeUtil.formatAsk, "Visit our repository often to update latest bot version with new features added frequently");
 		instance.run(parseArgumentsResult);
 	}
 
@@ -522,7 +527,7 @@ public class Main {
 	}
 
 	public static void warningEnergyRefill() {
-		warn("Upon level-up, your current energy will be reset to your max energy value, no matter how much energy you currently have (10/500 => 500/500, 2.000/500 => 500/500). It's a good buff but there's a trap inside. So rich-kids, don't over drink your energy at one, excess energy will fly away for nothing and support team won't give you a hand on this bug. GL");
+		Rad.pWarn(20,"Upon level-up, your current energy will be reset to your max energy value, no matter how much energy you currently have (10/500 => 500/500, 2.000/500 => 500/500). It's a good buff but there's a trap inside. So rich-kids, don't over drink your energy at one, excess energy will fly away for nothing and support team won't give you a hand on this bug. GL");
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;

@@ -723,7 +723,6 @@ public abstract class AbstractApplication {
 			long nextPersuade = addSec(persuadeSleepSecs);
 
 			if (st.persuade) {
-
 				if (Configuration.enableDevFeatures) {
 					final String fileBribeName = "bribe.txt";
 					File fBribe = new File(fileBribeName);
