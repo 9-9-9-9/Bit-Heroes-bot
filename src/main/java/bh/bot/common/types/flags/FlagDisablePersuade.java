@@ -4,6 +4,7 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.farming.AbstractDoFarmingApp;
+import bh.bot.app.farming.RaidApp;
 import bh.bot.common.types.annotations.FlagMeta;
 
 @FlagMeta(displayOrder = 9)
@@ -27,6 +28,6 @@ public class FlagDisablePersuade extends FlagPattern.NonParamFlag {
     protected boolean internalCheckIsSupportedByApp(AbstractApplication instance) {
         return instance instanceof AfkApp
                 || instance instanceof ReRunApp
-                || instance instanceof AbstractDoFarmingApp;
+                || instance instanceof RaidApp;
     }
 }

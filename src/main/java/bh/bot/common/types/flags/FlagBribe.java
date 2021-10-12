@@ -4,6 +4,7 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.farming.AbstractDoFarmingApp;
+import bh.bot.app.farming.RaidApp;
 import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.Familiar;
@@ -65,7 +66,7 @@ public class FlagBribe extends FlagPattern<Familiar> {
 	protected boolean internalCheckIsSupportedByApp(AbstractApplication instance) {
 		return instance instanceof AfkApp
 				|| instance instanceof ReRunApp
-				|| instance instanceof AbstractDoFarmingApp;
+				|| instance instanceof RaidApp;
 	}
 
 	@Override
