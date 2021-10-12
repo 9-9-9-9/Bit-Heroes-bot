@@ -29,12 +29,13 @@ public class SettingApp extends AbstractApplication {
             if (file.exists() && file.isDirectory())
                 throw new InvalidDataException("%s is a directory", fileName);
             Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(cfgProfileName);
-            int raidLevel, raidMode, worldBossLevel, expeditionPlace;
+            int raidLevel, raidMode, worldBossLevel, expeditionPlace, pvpTarget;
             if (resultLoadUserConfig._1) {
                 raidLevel = resultLoadUserConfig._2.raidLevel;
                 raidMode = resultLoadUserConfig._2.raidMode;
                 worldBossLevel = resultLoadUserConfig._2.worldBossLevel;
                 expeditionPlace = resultLoadUserConfig._2.expeditionPlace;
+                pvpTarget = resultLoadUserConfig._2.pvpTarget;
 
                 if (resultLoadUserConfig._2.isValidRaidLevel())
                     info(ColorizeUtil.formatInfo, "Selected Raid level %s", resultLoadUserConfig._2.getRaidLevelDesc());
@@ -56,6 +57,11 @@ public class SettingApp extends AbstractApplication {
                 else
                     info(ColorizeUtil.formatInfo, "You haven't specified Expedition door");
 
+                if (resultLoadUserConfig._2.isValidPvpTarget())
+                    info(ColorizeUtil.formatInfo, "Selected PVP target: %s", resultLoadUserConfig._2.getPvpTargetDesc());
+                else
+                    info(ColorizeUtil.formatInfo, "You haven't specified PVP target");
+
                 info("Press any key to continue...");
                 Main.getBufferedReader().readLine();
             } else {
@@ -63,6 +69,7 @@ public class SettingApp extends AbstractApplication {
                 raidMode = 0;
                 worldBossLevel = 0;
                 expeditionPlace = 0;
+                pvpTarget = 0;
             }
 
             //
@@ -100,7 +107,15 @@ public class SettingApp extends AbstractApplication {
             tmp = readIntInput(sb.toString(), 0, expeditionPlaceRange._2);
             expeditionPlace = tmp == null ? expeditionPlace : tmp;
             //
-            UserConfig newCfg = new UserConfig(cfgProfileName, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel, (byte) expeditionPlace);
+            final Tuple2<Byte, Byte> pvpTargetRange = UserConfig.getPvpTargetRange();
+            sb = new StringBuilder("All PVP target options:\n");
+            for (int rl = pvpTargetRange._1; rl <= pvpTargetRange._2; rl++)
+                sb.append(String.format("  %2d. %s\n", rl, UserConfig.getPvpTargetDesc(rl)));
+            sb.append("Specific PVP target?");
+            tmp = readIntInput(sb.toString(), pvpTargetRange._1, pvpTargetRange._2);
+            pvpTarget = tmp == null ? pvpTarget : tmp;
+            //
+            UserConfig newCfg = new UserConfig(cfgProfileName, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel, (byte) expeditionPlace, (byte) pvpTarget);
 
             sb = new StringBuilder("Your setting:\n");
             if (newCfg.isValidRaidLevel() && UserConfig.isValidDifficultyMode(newCfg.raidMode))
@@ -118,6 +133,11 @@ public class SettingApp extends AbstractApplication {
             else
                 sb.append("  expedition door has not been set");
             sb.append('\n');
+            if (newCfg.isValidPvpTarget())
+                sb.append(String.format("  Attack %s", UserConfig.getPvpTargetDesc((byte) pvpTarget)));
+            else
+                sb.append("  PVP target has not been set");
+            sb.append('\n');
             sb.append(String.format("Do you want to save the above setting into profile name '%s' ?", cfgProfileName));
             boolean save = readInput(sb.toString(), "Press Y/N then enter", s -> {
                 s = s.trim().toLowerCase();
@@ -134,6 +154,7 @@ public class SettingApp extends AbstractApplication {
                 sb.append(String.format("%s=%d\n", UserConfig.raidModeKey, raidMode));
                 sb.append(String.format("%s=%d\n", UserConfig.worldBossLevelKey, worldBossLevel));
                 sb.append(String.format("%s=%d\n", UserConfig.expeditionPlaceKey, expeditionPlace));
+                sb.append(String.format("%s=%d\n", UserConfig.pvpTargetKey, pvpTarget));
                 Files.write(Paths.get(fileName), sb.toString().getBytes());
                 info("Saved successfully");
             } else {

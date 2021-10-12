@@ -211,6 +211,8 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetLabelPersuadeGobby();
 
+	public abstract byte getOffsetDiffBetweenFightButtons();
+
 	public static class Profile800x520 extends ScreenResolutionProfile {
 		public static final String profileName = "800x520";
 
@@ -707,6 +709,11 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetLabelPersuadeGobby() {
 			return new Offset(200, 78);
+		}
+
+		@Override
+		public byte getOffsetDiffBetweenFightButtons() {
+			return 54;
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ### TODO
 
 ### DOING
+13. Allow select PVP target (1-5)
 
 ### DONE
 1. Custom Telegram with ID

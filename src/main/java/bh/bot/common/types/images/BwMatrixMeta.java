@@ -160,8 +160,10 @@ public class BwMatrixMeta {
     }
 
     public void setLastMatchPoint(int x, int y) {
-        lastMatch[0] = x;
-        lastMatch[1] = y;
+        if (lastMatch[0] != x)
+            lastMatch[0] = x;
+        if (lastMatch[1] != y)
+            lastMatch[1] = y;
     }
 
     public int[] getLastMatchPoint() {

@@ -3,6 +3,7 @@ package bh.bot.common.types.flags;
 import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
 import bh.bot.app.farming.ExpeditionApp;
+import bh.bot.app.farming.PvpApp;
 import bh.bot.app.farming.RaidApp;
 import bh.bot.app.farming.WorldBossApp;
 import bh.bot.common.exceptions.InvalidFlagException;
@@ -41,7 +42,8 @@ public class FlagProfileName extends FlagPattern<String> {
         return instance instanceof AfkApp
                 || instance instanceof WorldBossApp
                 || instance instanceof RaidApp
-                || instance instanceof ExpeditionApp;
+                || instance instanceof ExpeditionApp
+                || instance instanceof PvpApp;
     }
 
     @Override
