@@ -17,7 +17,7 @@ This project has inspiration from https://github.com/tiemonl/Bit-Heroes-Fishing-
 ___
 [Wiki version](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
 
-This readme file is for developers
+**This readme file is for developers**
 
 Normal users please [read at this page](https://github.com/9-9-9-9/Bit-Heroes-bot/blob/master/README.release.md)
 
