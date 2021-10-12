@@ -1504,7 +1504,7 @@ public abstract class AbstractApplication {
 	}
 
 	protected void warningPvpTargetSelectionCase() {
-		info(Cu.i().yellow("** WARNING ** ").cyan("about select PVP target").yellow(" feature, to prevent wrong targeting, ").cyan("in AFK function").yellow(", this feature works and ").cyan("only works when bot itself attends to PVP").yellow(" by selecting the PVP icon (top left of game screen). That means if you select the PVP icon yourself or enter PVP before bot click, it only select the first line as target as default").reset());
+		info(Cu.i().yellow("** WARNING ** ").red("about selecting PVP target").yellow(" feature, to prevent wrong targeting and un-expected loss, ").cyan("in AFK function").yellow(", this feature works and ").cyan("only works when bot itself attends to PVP").yellow(" by selecting the PVP icon (top left of game screen). That means if you select the PVP icon yourself or enter PVP before bot click etc.., it only select the first line as target as default").reset());
 	}
 
 	protected int getDefaultMainLoopInterval() {
