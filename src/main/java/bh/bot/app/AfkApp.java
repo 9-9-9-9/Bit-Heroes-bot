@@ -343,8 +343,6 @@ public class AfkApp extends AbstractApplication {
                             Point p = findImage(naBtnFightPvp.image);
                             if (p != null) {
                                 mouseMoveAndClickAndHide(new Point(p.x, p.y + offsetTargetPvp));
-                                sleep(1_000);
-                                mouseMoveAndClickAndHide(p); // fallback
                                 moveCursor(coordinateHideMouse);
                                 continue ML;
                             }

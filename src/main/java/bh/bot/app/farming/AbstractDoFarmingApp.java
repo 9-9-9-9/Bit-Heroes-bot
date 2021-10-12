@@ -150,8 +150,6 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                     Point p = findImage(naBtnFight.image);
                     if (p != null) {
                         mouseMoveAndClickAndHide(new Point(p.x, p.y + offsetTargetPvp));
-                        sleep(1_000);
-                        mouseMoveAndClickAndHide(p); // fallback
                         if (naBtnFight.reduceLoopCountOnFound) {
                             loopCount--;
                             info("%d loop left", loopCount);
