@@ -89,10 +89,8 @@ public class AfkApp extends AbstractApplication {
                         }
                     }
 
-                    if (doPVP) {
+                    if (doPVP)
                         info(ColorizeUtil.formatInfo, "You have selected to target %s in PVP", userConfig.getPvpTargetDesc());
-                        warningPvpTargetSelectionCase();
-                    }
                 } catch (InvalidDataException ex2) {
                     err(ex2.getMessage());
                     printRequiresSetting();
