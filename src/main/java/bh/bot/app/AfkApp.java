@@ -234,6 +234,8 @@ public class AfkApp extends AbstractApplication {
                 info(ColorizeUtil.formatInfo, "Expedition: (%d) %s", this.expeditionPlace, UserConfig.getExpeditionPlaceDesc(this.expeditionPlace));
                 printWarningExpeditionImplementation();
             }
+            if (doPvp)
+                info(ColorizeUtil.formatInfo, "PVP target: %s", userConfig.getPvpTargetDesc());
 
             ML:
             while (!masterSwitch.get()) {
