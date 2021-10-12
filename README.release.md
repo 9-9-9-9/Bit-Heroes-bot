@@ -24,7 +24,7 @@ Developers please read [at my github](https://github.com/9-9-9-9/Bit-Heroes-bot)
 
 [_There're some notes for MacOS users, please read here_](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Notes-for-MacOS-users)
 ___
-Officially support [BitHeroes on Steam](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Does-this-bot-supports-Steam-version-of-Bit-Heroes%3F) and ([BitHeroes on web](https://www.kongregate.com/games/Juppiomenz/bit-heroes) + mini-client)
+Officially support [BitHeroes on Steam](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Does-this-bot-supports-Steam-version-of-Bit-Heroes%3F) and [BitHeroes on web](https://www.kongregate.com/games/Juppiomenz/bit-heroes) + [mini-client](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
 
 **Only support English user interface**
 
