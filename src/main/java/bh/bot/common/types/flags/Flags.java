@@ -25,5 +25,6 @@ public class Flags {
             new FlagBribe(),
 			new FlagAlterLoopInterval(),
             new FlagDisableMutex(),
+            new FlagDisablePersuade()
     };
 }

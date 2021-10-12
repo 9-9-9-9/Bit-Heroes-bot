@@ -14,3 +14,4 @@
 9. Generate auto-update script on Windows
 10. Fix getting bot version on release binaries
 11. Fix release.sh script
+12. Flag disable persuade

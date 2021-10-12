@@ -724,8 +724,9 @@ public abstract class AbstractApplication {
 			long nextCloseEnterGameDialogNews = addSec(closeEnterGameDialogNewsSleepSecs);
 			final AtomicInteger continousPersuadeScreen = new AtomicInteger(0);
 			long nextPersuade = addSec(persuadeSleepSecs);
+			boolean persuade = st.persuade && !argumentInfo.disablePersuade;
 
-			if (st.persuade) {
+			if (persuade) {
 				if (Configuration.enableDevFeatures) {
 					final String fileBribeName = "bribe.txt";
 					File fBribe = new File(fileBribeName);
@@ -757,6 +758,18 @@ public abstract class AbstractApplication {
 					warn("Will persuade %s with gems", f.name());
 			}
 
+			if (st.persuade && argumentInfo.disablePersuade)
+				info(Cu.i()
+						.yellow("** WARNING ** ")
+						.red("Auto persuade/bribe has been disabled")
+						.yellow(" so please ")
+						.red("turn on in-game's auto persuade")
+						.yellow(" for all kind of familiars or ")
+						.red("always stay in front of your computer")
+						.yellow(" to persuade/bribe manually, otherwise bot can't continue your tasks and becomes waste of resources")
+						.reset()
+				);
+
 			while (!masterSwitch.get()) {
 				sleep(1_000);
 
@@ -775,7 +788,7 @@ public abstract class AbstractApplication {
 				if (st.closeEnterGameNewsDialog && nextCloseEnterGameDialogNews <= System.currentTimeMillis())
 					nextCloseEnterGameDialogNews = closeEnterGameDialogNews();
 
-				if (st.persuade && nextPersuade <= System.currentTimeMillis())
+				if (persuade && nextPersuade <= System.currentTimeMillis())
 					nextPersuade = doPersuade(continousPersuadeScreen);
 			}
 		} catch (Exception ex) {
