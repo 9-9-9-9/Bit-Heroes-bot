@@ -157,6 +157,9 @@ public class SettingApp extends AbstractApplication {
                 sb.append(String.format("%s=%d\n", UserConfig.pvpTargetKey, pvpTarget));
                 Files.write(Paths.get(fileName), sb.toString().getBytes());
                 info("Saved successfully");
+
+                if (pvpTarget > 1)
+                    warningPvpTargetSelectionCase();
             } else {
                 info("Nothing was changed");
             }

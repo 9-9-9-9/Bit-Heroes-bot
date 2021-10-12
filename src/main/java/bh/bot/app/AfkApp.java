@@ -49,6 +49,7 @@ public class AfkApp extends AbstractApplication {
     private final AtomicLong blockRaidUntil = new AtomicLong(0);
     private final AtomicLong blockGvgAndInvasionAndExpeditionUntil = new AtomicLong(0);
     private final AtomicLong blockTrialsAndGauntletUntil = new AtomicLong(0);
+    private final AtomicBoolean isOnPvp = new AtomicBoolean(false);
     private byte expeditionPlace = UserConfig.getExpeditionPlaceRange()._1;
 
     @Override
@@ -90,6 +91,7 @@ public class AfkApp extends AbstractApplication {
 
                     if (doPVP) {
                         info(ColorizeUtil.formatInfo, "You have selected to target %s in PVP", userConfig.getPvpTargetDesc());
+                        warningPvpTargetSelectionCase();
                     }
                 } catch (InvalidDataException ex2) {
                     err(ex2.getMessage());
@@ -234,8 +236,10 @@ public class AfkApp extends AbstractApplication {
                 info(ColorizeUtil.formatInfo, "Expedition: (%d) %s", this.expeditionPlace, UserConfig.getExpeditionPlaceDesc(this.expeditionPlace));
                 printWarningExpeditionImplementation();
             }
-            if (doPvp)
+            if (doPvp) {
                 info(ColorizeUtil.formatInfo, "PVP target: %s", userConfig.getPvpTargetDesc());
+                warningPvpTargetSelectionCase();
+            }
 
             ML:
             while (!masterSwitch.get()) {
@@ -342,10 +346,14 @@ public class AfkApp extends AbstractApplication {
                     AbstractDoFarmingApp.NextAction nextAction = tryToClickOnBatch(tuple._3);
                     if (nextAction == null) {
                         if (selectFightPvp > 0 && tuple._1 == AttendablePlaces.pvp) {
-                            Point p = findImage(naBtnFightPvp.image);
-                            if (p != null) {
-                                mouseMoveAndClickAndHide(new Point(p.x, p.y + offsetTargetPvp));
-                                moveCursor(coordinateHideMouse);
+                            if (isOnPvp.get()) {
+                                Point p = findImage(naBtnFightPvp.image);
+                                if (p != null) {
+                                    mouseMoveAndClickAndHide(new Point(p.x, p.y + offsetTargetPvp));
+                                    moveCursor(coordinateHideMouse);
+                                    continue ML;
+                                }
+                            } else if (clickImage(naBtnFightPvp.image)) {
                                 continue ML;
                             }
                         }
@@ -379,6 +387,8 @@ public class AfkApp extends AbstractApplication {
                         debug("Finding %s icon", tuple._1.name);
                         Point point = this.gameScreenInteractor.findAttendablePlace(tuple._1);
                         if (point != null) {
+                            isOnPvp.set(tuple._1 == AttendablePlaces.pvp);
+
                             if (isUnknownGvgOrInvasionOrExpedition) {
                                 if (tuple._1 == AttendablePlaces.gvg) {
                                     isUnknownGvgOrInvasionOrExpedition = false;
