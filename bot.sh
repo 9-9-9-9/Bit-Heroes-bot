@@ -7,3 +7,8 @@ if [ ! -f ./BitHeroes.jar ]; then
 fi
 
 java -jar BitHeroes.jar $@
+exit=$?
+
+if [ $exit -ne 0 ]; then
+  echo 'Exit code '$exit
+fi
