@@ -226,7 +226,9 @@ public class VersionUtil {
 					throw new NotSupportedException(String.format("Currently not supported auto update for %s", OS.name));
 				}
 			} else {
-				info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** Please run file ").red(autoUpdateScriptFileName).yellow(" to update ").a(Main.botName).a(" to the latest released version ").red(newerVersion.toString()).reset());
+				for (int i = 0; i < RandomUtil.nextInt(2, 10); i++) {
+					info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** Please run file ").red(autoUpdateScriptFileName).yellow(" to update ").a(Main.botName).a(" to the latest released version ").red(newerVersion.toString()).reset());
+				}
 			}
 
 			return true;
