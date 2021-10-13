@@ -520,17 +520,14 @@ public class VersionUtil {
 			return;
 		}
 
-		try {
-			if (Configuration.Features.isFunctionDisabled(appCode)) {
-				for (int j = 0; j < 20; j++) {
-					err(String.format("Function `%s` was suspended in this version %s due to one of the following reasons:", appCode, appVer.toString()));
-					info(ColorizeUtil.formatError, "  - Game-itself might have changed some textures and this old version bot didn't get updated");
-					info(ColorizeUtil.formatError, "  - `%s` in old version might contain critical issues", appCode);
-					info(ColorizeUtil.formatError, "  - Other reasons");
-					info(ColorizeUtil.formatWarning, "Please download latest version on our website 'bh99bot.com'");
-				}
+		if (Configuration.Features.isFunctionDisabled(appCode)) {
+			for (int j = 0; j < 20; j++) {
+				err(String.format("Function `%s` was suspended in this version %s due to one of the following reasons:", appCode, appVer.toString()));
+				info(ColorizeUtil.formatError, "  - Game-itself might have changed some textures and this old version bot didn't get updated");
+				info(ColorizeUtil.formatError, "  - `%s` in old version might contain critical issues", appCode);
+				info(ColorizeUtil.formatError, "  - Other reasons");
+				info(ColorizeUtil.formatWarning, "Please download latest version on our website 'bh99bot.com'");
 			}
-		} finally {
 			Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
 		}
 	}
