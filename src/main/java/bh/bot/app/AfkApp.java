@@ -90,7 +90,7 @@ public class AfkApp extends AbstractApplication {
                     }
 
                     if (doPVP)
-                        info(ColorizeUtil.formatInfo, "You have selected to target %s in PVP", userConfig.getPvpTargetDesc());
+                        info(ColorizeUtil.formatInfo, "You have chosen to select target on the %s of PVP", userConfig.getPvpTargetDesc());
                 } catch (InvalidDataException ex2) {
                     err(ex2.getMessage());
                     printRequiresSetting();

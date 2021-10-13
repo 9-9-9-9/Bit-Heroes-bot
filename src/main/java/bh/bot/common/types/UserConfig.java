@@ -194,13 +194,13 @@ public class UserConfig {
     public static String getPvpTargetDesc(int number) {
         switch (number) {
             case 1:
-                return "first line";
+                return "First line";
             case 2:
-                return "second line";
+                return "Second line";
             case 3:
-                return "third line";
+                return "Third line";
             case 4:
-                return "fourth line";
+                return "Fourth line";
             default:
                 return "Unknown ?";
         }

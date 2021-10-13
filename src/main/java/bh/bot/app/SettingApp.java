@@ -134,7 +134,7 @@ public class SettingApp extends AbstractApplication {
                 sb.append("  expedition door has not been set");
             sb.append('\n');
             if (newCfg.isValidPvpTarget())
-                sb.append(String.format("  Attack %s", UserConfig.getPvpTargetDesc((byte) pvpTarget)));
+                sb.append(String.format("  Select PVP target on %s", UserConfig.getPvpTargetDesc((byte) pvpTarget)));
             else
                 sb.append("  PVP target has not been set");
             sb.append('\n');

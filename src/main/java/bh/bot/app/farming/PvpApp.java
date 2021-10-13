@@ -25,7 +25,7 @@ public class PvpApp extends AbstractDoFarmingApp {
         userConfig = getPredefinedUserConfigFromProfileName("You want to do PVP so you have to specific profile name first!\nSelect an existing profile:");
 
         try {
-            info(ColorizeUtil.formatInfo, "You have selected to target %s", userConfig.getPvpTargetDesc());
+            info(ColorizeUtil.formatInfo, "You have chosen to select target on %s of PVP", userConfig.getPvpTargetDesc());
             return true;
         } catch (InvalidDataException ex2) {
             err(ex2.getMessage());
