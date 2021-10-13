@@ -194,13 +194,13 @@ public class UserConfig {
     public static String getPvpTargetDesc(int number) {
         switch (number) {
             case 1:
-                return "Lowest TS (1st line)";
+                return "first line";
             case 2:
-                return "Lower TS (2nd line)";
+                return "second line";
             case 3:
-                return "Medium TS (3rd line)";
+                return "third line";
             case 4:
-                return "Higher TS (4th line)";
+                return "fourth line";
             default:
                 return "Unknown ?";
         }
