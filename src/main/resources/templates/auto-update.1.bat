@@ -8,6 +8,7 @@ del %ZIP_FILE% >nul 2>&1
 del .*.zip >nul 2>&1
 echo Update finished
 start "" https://bh99bot.com/updated-success.html
+del update-99bot.bat >nul 2>&1
 pause
 exit /b 0
 
