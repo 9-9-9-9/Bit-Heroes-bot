@@ -22,8 +22,8 @@ java -jar BitHeroes.jar %*
 
 :L_EXIT0
 	@pause
-	exit /b 0
+	@exit /b 0
 
 :L_EXIT1
 	@pause
-	exit /b 1
+	@exit /b 1
