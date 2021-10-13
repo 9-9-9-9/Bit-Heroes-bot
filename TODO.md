@@ -1,7 +1,6 @@
 ### TODO
 
 ### DOING
-13. Allow select PVP target (1-5)
 
 ### DONE
 1. Custom Telegram with ID
@@ -16,3 +15,4 @@
 10. Fix getting bot version on release binaries
 11. Fix release.sh script
 12. Flag disable persuade
+13. Allow select PVP target (1-4)

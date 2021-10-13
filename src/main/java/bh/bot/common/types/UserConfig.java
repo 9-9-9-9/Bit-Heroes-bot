@@ -196,9 +196,9 @@ public class UserConfig {
             case 1:
                 return "Lowest TS (1st line)";
             case 2:
-                return "Medium TS (2nd line)";
+                return "Lower TS (2nd line)";
             case 3:
-                return "High TS (3rd line)";
+                return "Medium TS (3rd line)";
             case 4:
                 return "Higher TS (4th line)";
             default:
