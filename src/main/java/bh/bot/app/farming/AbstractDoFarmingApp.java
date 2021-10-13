@@ -149,7 +149,8 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 if (selectFightPvp > 0) {
                     Point p = findImage(naBtnFight.image);
                     if (p != null) {
-                        mouseMoveAndClickAndHide(new Point(p.x, p.y + offsetTargetPvp));
+                        int offset = Configuration.Features.isFunctionDisabled("target-pvp") ? 0 : offsetTargetPvp;
+                        mouseMoveAndClickAndHide(new Point(p.x, p.y + offset));
                         if (naBtnFight.reduceLoopCountOnFound) {
                             loopCount--;
                             info("%d loop left", loopCount);

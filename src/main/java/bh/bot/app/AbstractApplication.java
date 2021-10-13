@@ -202,6 +202,7 @@ public abstract class AbstractApplication {
 
 	private void launchThreadCheckVersion(final String appCode) {
 		CompletableFuture.runAsync(() -> {
+			VersionUtil.fetchDisabledFunctions();
 			VersionUtil.quitIfCurrentVersionIsRejected(appCode);
 		});
 

@@ -347,7 +347,8 @@ public class AfkApp extends AbstractApplication {
                             if (isOnPvp.get()) {
                                 Point p = findImage(naBtnFightPvp.image);
                                 if (p != null) {
-                                    mouseMoveAndClickAndHide(new Point(p.x, p.y + offsetTargetPvp));
+                                    int offset = Configuration.Features.isFunctionDisabled("target-pvp") ? 0 : offsetTargetPvp;
+                                    mouseMoveAndClickAndHide(new Point(p.x, p.y + offset));
                                     moveCursor(coordinateHideMouse);
                                     continue ML;
                                 }
