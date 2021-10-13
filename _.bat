@@ -13,6 +13,10 @@
 )
 
 java -jar BitHeroes.jar %*
+SET EXIT_LVL=%errorlevel%
+@if %EXIT_LVL% NEQ 0 (
+    @echo exit code: %EXIT_LVL%
+)
 
 @goto L_EXIT0
 
