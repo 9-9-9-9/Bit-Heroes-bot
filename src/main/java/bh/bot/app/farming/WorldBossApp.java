@@ -22,7 +22,6 @@ import static bh.bot.common.Log.info;
 @RequireSingleInstance
 public class WorldBossApp extends AbstractDoFarmingApp {
     private final Supplier<Boolean> isWorldBossBlocked = () -> false;
-    private UserConfig userConfig;
 
     @Override
     protected boolean readMoreInput() throws IOException {

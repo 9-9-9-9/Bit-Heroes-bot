@@ -8,6 +8,7 @@ public class UserConfig {
     public static final String raidModeKey = "ig.user.raid.mode";
     public static final String worldBossLevelKey = "ig.user.world-boss.level";
     public static final String expeditionPlaceKey = "ig.user.expedition.place";
+    public static final String pvpTargetKey = "ig.user.pvp.target";
 
     public static final byte modeNormal = 1;
     public static final byte modeHard = 2;
@@ -19,19 +20,23 @@ public class UserConfig {
     private static final byte worldBossLevelMax = 8;
     private static final byte expeditionPlaceMin = 1;
     private static final byte expeditionPlaceMax = 4;
+    private static final byte pvpTargetMin = 1;
+    private static final byte pvpTargetMax = 4;
 
     public final String cfgProfileName;
     public final byte raidLevel;
     public final byte raidMode;
     public final byte worldBossLevel;
     public final byte expeditionPlace;
+    public final byte pvpTarget;
 
-    public UserConfig(String cfgProfileName, byte raidLevel, byte raidMode, byte worldBossLevel, byte expeditionPlace) {
+    public UserConfig(String cfgProfileName, byte raidLevel, byte raidMode, byte worldBossLevel, byte expeditionPlace, byte pvpTarget) {
         this.cfgProfileName = cfgProfileName;
         this.raidLevel = raidLevel;
         this.raidMode = raidMode;
         this.worldBossLevel = worldBossLevel;
         this.expeditionPlace = expeditionPlace;
+        this.pvpTarget = (byte)Math.max(pvpTargetMin, pvpTarget);
     }
 
     public String getRaidLevelDesc() {
@@ -56,6 +61,13 @@ public class UserConfig {
         return getExpeditionPlaceDesc(expeditionPlace);
     }
 
+    public String getPvpTargetDesc() {
+        if (!isValidPvpTarget())
+            throw new InvalidDataException("Invalid PVP target number %d. Must in range %d to %d", pvpTarget,
+                    pvpTargetMin, pvpTargetMax);
+        return getPvpTargetDesc(pvpTarget);
+    }
+
     public String getRaidModeDesc() {
         return getDifficultyModeDesc(raidMode, "Raid");
     }
@@ -72,6 +84,10 @@ public class UserConfig {
         return expeditionPlace >= expeditionPlaceMin && expeditionPlace <= expeditionPlaceMax;
     }
 
+    public boolean isValidPvpTarget() {
+        return pvpTarget >= pvpTargetMin && pvpTarget <= pvpTargetMax;
+    }
+
     public static Tuple2<Byte, Byte> getRaidLevelRange() {
         return new Tuple2<>(raidLevelMin, raidLevelMax);
     }
@@ -86,6 +102,10 @@ public class UserConfig {
 
     public static Tuple2<Byte, Byte> getModeRange() {
         return new Tuple2<>(modeNormal, modeHeroic);
+    }
+
+    public static Tuple2<Byte, Byte> getPvpTargetRange() {
+        return new Tuple2<>(pvpTargetMin, pvpTargetMax);
     }
 
     public static String getDifficultyModeDesc(byte mode, String name) {
@@ -166,6 +186,21 @@ public class UserConfig {
                 return "Gummy (InfernoD) / Twimbo (HallowedD) / Vionot (JammieD) / Wizbot (IdolD) / Melvapaloozo (BattleB) ";
             case 4:
                 return "Zarlock (InfernoD) / X5-T34M (HallowedD) / Grampa (JammieD) / Astamus (IdolD) / Bitstock (BattleB) ";
+            default:
+                return "Unknown ?";
+        }
+    }
+
+    public static String getPvpTargetDesc(int number) {
+        switch (number) {
+            case 1:
+                return "First line";
+            case 2:
+                return "Second line";
+            case 3:
+                return "Third line";
+            case 4:
+                return "Fourth line";
             default:
                 return "Unknown ?";
         }

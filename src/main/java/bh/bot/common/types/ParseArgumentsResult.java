@@ -33,6 +33,7 @@ public class ParseArgumentsResult {
     public ScreenResolutionProfile screenResolutionProfile;
     public String cfgProfileName;
     public ArrayList<Familiar> familiarToBribeWithGems;
+    public boolean disablePersuade;
 
     @SuppressWarnings("rawtypes")
     public ParseArgumentsResult(Class<? extends AbstractApplication> applicationClass, String[] arguments, ArrayList<FlagPattern> usingFlags) {

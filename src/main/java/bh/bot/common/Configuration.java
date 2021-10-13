@@ -11,8 +11,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -61,6 +63,20 @@ public class Configuration {
         public static boolean disableDoCheckGameScreenOffset = false;
         public static boolean disableColorizeTerminal = false;
         public static boolean disableAutoUpdate = false;
+        private static final HashSet<String> disabledFunctions = new HashSet<>();
+
+        public static void disableFunction(String name) {
+            if (StringUtil.isBlank(name))
+                return;
+            disabledFunctions.add(name.trim().toLowerCase());
+        }
+
+        public static boolean isFunctionDisabled(String name) {
+            if (StringUtil.isBlank(name))
+                throw new IllegalArgumentException("param 'name' must not be blank");
+
+            return disabledFunctions.contains(name.trim().toLowerCase());
+        }
     }
 
     public static class Tolerant {
@@ -161,7 +177,7 @@ public class Configuration {
             return new Tuple2<>(false, null);
         }
 
-        byte raidLevel, raidMode, worldBossLevel, expeditionPlace;
+        byte raidLevel, raidMode, worldBossLevel, expeditionPlace, pvpTarget;
 
         info("Going to load configuration from %s", fileCfg.getName());
 
@@ -194,7 +210,13 @@ public class Configuration {
             throw new InvalidDataException("Value of key '%s' is not a number", UserConfig.expeditionPlaceKey);
         }
 
-        return new Tuple2<>(true, new UserConfig(cfgProfileName, raidLevel, raidMode, worldBossLevel, expeditionPlace));
+        try {
+            pvpTarget = Byte.parseByte(readKey(properties, UserConfig.pvpTargetKey, "1", "Not specified"));
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Value of key '%s' is not a number", UserConfig.pvpTargetKey);
+        }
+
+        return new Tuple2<>(true, new UserConfig(cfgProfileName, raidLevel, raidMode, worldBossLevel, expeditionPlace, pvpTarget));
     }
 
     @SuppressWarnings("SameParameterValue")

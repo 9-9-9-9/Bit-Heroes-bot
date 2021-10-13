@@ -2,6 +2,7 @@ package bh.bot.app;
 
 import bh.bot.Main;
 import bh.bot.app.farming.*;
+import bh.bot.app.farming.AbstractDoFarmingApp.NextAction;
 import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
 import bh.bot.common.exceptions.InvalidDataException;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
@@ -33,8 +35,8 @@ import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.types.AttendablePlace.MenuItem;
 import static bh.bot.common.utils.InteractionUtil.Keyboard.*;
-import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
-import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
+import static bh.bot.common.utils.InteractionUtil.Mouse.*;
+import static bh.bot.common.utils.InteractionUtil.Mouse.mouseMoveAndClickAndHide;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 import static bh.bot.common.utils.ThreadUtil.waitDone;
 
@@ -47,6 +49,7 @@ public class AfkApp extends AbstractApplication {
     private final AtomicLong blockRaidUntil = new AtomicLong(0);
     private final AtomicLong blockGvgAndInvasionAndExpeditionUntil = new AtomicLong(0);
     private final AtomicLong blockTrialsAndGauntletUntil = new AtomicLong(0);
+    private final AtomicBoolean isOnPvp = new AtomicBoolean(false);
     private byte expeditionPlace = UserConfig.getExpeditionPlaceRange()._1;
 
     @Override
@@ -61,19 +64,17 @@ public class AfkApp extends AbstractApplication {
             boolean doRaid = eventList.contains(AttendablePlaces.raid);
             boolean doWorldBoss = eventList.contains(AttendablePlaces.worldBoss);
             boolean doExpedition = eventList.contains(AttendablePlaces.expedition);
-            if (doRaid || doWorldBoss || doExpedition) {
-                userConfig = getPredefinedUserConfigFromProfileName("You want to do Raid/World Boss/Expedition so you have to specific profile name first!\nSelect an existing profile:");
+            boolean doPVP = eventList.contains(AttendablePlaces.pvp);
+            if (doRaid || doWorldBoss || doExpedition || doPVP) {
+                userConfig = getPredefinedUserConfigFromProfileName("You want to do Raid/World Boss/Expedition/PVP so you have to specific profile name first!\nSelect an existing profile:");
 
                 try {
-                    if (doRaid && doWorldBoss) {
+                    if (doRaid) {
                         info(ColorizeUtil.formatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
                                 userConfig.getRaidLevelDesc());
-                        info(ColorizeUtil.formatInfo, "and World Boss %s", userConfig.getWorldBossLevelDesc());
-                        warn("World Boss is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on");
-                    } else if (doRaid) {
-                        info(ColorizeUtil.formatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
-                                userConfig.getRaidLevelDesc());
-                    } else if (doWorldBoss) {
+                    }
+
+                    if (doWorldBoss) {
                         info(ColorizeUtil.formatInfo, "You have selected world boss %s", userConfig.getWorldBossLevelDesc());
                         warn("World Boss is solo only and does not support select mode of World Boss (Normal/Hard/Heroic), only select by default So which boss do you want to hit? Choose it before turn this on");
                     }
@@ -87,6 +88,9 @@ public class AfkApp extends AbstractApplication {
                             expeditionPlace = selectExpeditionPlace();
                         }
                     }
+
+                    if (doPVP)
+                        info(ColorizeUtil.formatInfo, "You have chosen to select target on the %s of PVP", userConfig.getPvpTargetDesc());
                 } catch (InvalidDataException ex2) {
                     err(ex2.getMessage());
                     printRequiresSetting();
@@ -150,8 +154,25 @@ public class AfkApp extends AbstractApplication {
             int continuousNotFound = 0;
             final Point coordinateHideMouse = new Point(0, 0);
             final ArrayList<Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>>> taskList = new ArrayList<>();
-            if (doPvp)
-                taskList.add(new Tuple3<>(AttendablePlaces.pvp, blockPvpUntil, PvpApp.getPredefinedImageActions()));
+            NextAction naBtnFightPvp = null;
+            if (doPvp) {
+                List<AbstractDoFarmingApp.NextAction> pvpPia = PvpApp.getPredefinedImageActions();
+                if (userConfig.isValidPvpTarget()) {
+                    final BwMatrixMeta fight1 = BwMatrixMeta.Metas.PvpArena.Buttons.fight1;
+                    Optional<NextAction> first = pvpPia.stream().filter(x -> x.image == fight1).findFirst();
+                    if (first.isPresent()) {
+                        naBtnFightPvp = first.get();
+                        final NextAction tmp = naBtnFightPvp;
+                        if (naBtnFightPvp != null) {
+                            pvpPia = pvpPia.stream().filter(x -> x != tmp).collect(Collectors.toList());
+                        }
+                    }
+                }
+                taskList.add(new Tuple3<>(AttendablePlaces.pvp, blockPvpUntil, pvpPia));
+            }
+            final int selectFightPvp = naBtnFightPvp != null ? userConfig.pvpTarget : 0;
+            final int offsetTargetPvp = selectFightPvp < 1 ? 0 : (selectFightPvp - 1) * Configuration.screenResolutionProfile.getOffsetDiffBetweenFightButtons();
+
             if (doWorldBoss)
                 taskList.add(new Tuple3<>(AttendablePlaces.worldBoss, blockWorldBossUntil,
                         WorldBossApp.getPredefinedImageActions()));
@@ -212,6 +233,10 @@ public class AfkApp extends AbstractApplication {
             if (doExpedition) {
                 info(ColorizeUtil.formatInfo, "Expedition: (%d) %s", this.expeditionPlace, UserConfig.getExpeditionPlaceDesc(this.expeditionPlace));
                 printWarningExpeditionImplementation();
+            }
+            if (doPvp) {
+                info(ColorizeUtil.formatInfo, "PVP target: %s", userConfig.getPvpTargetDesc());
+                warningPvpTargetSelectionCase();
             }
 
             ML:
@@ -317,8 +342,22 @@ public class AfkApp extends AbstractApplication {
                     if (!isNotBlocked(tuple._2))
                         continue;
                     AbstractDoFarmingApp.NextAction nextAction = tryToClickOnBatch(tuple._3);
-                    if (nextAction == null)
+                    if (nextAction == null) {
+                        if (selectFightPvp > 0 && tuple._1 == AttendablePlaces.pvp) {
+                            if (isOnPvp.get()) {
+                                Point p = findImage(naBtnFightPvp.image);
+                                if (p != null) {
+                                    int offset = Configuration.Features.isFunctionDisabled("target-pvp") ? 0 : offsetTargetPvp;
+                                    mouseMoveAndClickAndHide(new Point(p.x, p.y + offset));
+                                    moveCursor(coordinateHideMouse);
+                                    continue ML;
+                                }
+                            } else if (clickImage(naBtnFightPvp.image)) {
+                                continue ML;
+                            }
+                        }
                         continue;
+                    }
                     debug(nextAction.image.getImageNameCode());
                     if (nextAction.isOutOfTurns) {
                         spamEscape(2);
@@ -347,6 +386,8 @@ public class AfkApp extends AbstractApplication {
                         debug("Finding %s icon", tuple._1.name);
                         Point point = this.gameScreenInteractor.findAttendablePlace(tuple._1);
                         if (point != null) {
+                            isOnPvp.set(tuple._1 == AttendablePlaces.pvp);
+
                             if (isUnknownGvgOrInvasionOrExpedition) {
                                 if (tuple._1 == AttendablePlaces.gvg) {
                                     isUnknownGvgOrInvasionOrExpedition = false;

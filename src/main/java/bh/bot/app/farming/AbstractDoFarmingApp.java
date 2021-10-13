@@ -5,6 +5,7 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.AttendablePlace;
+import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple3;
@@ -15,13 +16,14 @@ import bh.bot.common.utils.ThreadUtil;
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
-import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
-import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
+import static bh.bot.common.utils.InteractionUtil.Mouse.*;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 @RequireSingleInstance
@@ -30,6 +32,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
 
     protected final AttendablePlace ap = getAttendablePlace();
     protected InteractionUtil.Screen.Game gameScreenInteractor;
+    protected UserConfig userConfig;
 
     @Override
     protected void internalRun(String[] args) {
@@ -87,9 +90,23 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
 
             info(ColorizeUtil.formatInfo, "\n\nStarting %s", getAppName());
             List<NextAction> internalPredefinedImageActions = getInternalPredefinedImageActions();
+            NextAction naBtnFight = null;
+            if (this instanceof PvpApp && userConfig != null && userConfig.isValidPvpTarget()) {
+                final BwMatrixMeta fight1 = BwMatrixMeta.Metas.PvpArena.Buttons.fight1;
+                Optional<NextAction> first = internalPredefinedImageActions.stream().filter(x -> x.image == fight1).findFirst();
+                if (first.isPresent()) {
+                    naBtnFight = first.get();
+                    final NextAction tmp = naBtnFight;
+                    if (naBtnFight != null) {
+                        internalPredefinedImageActions = internalPredefinedImageActions.stream().filter(x -> x != tmp).collect(Collectors.toList());
+                    }
+                }
+            }
             int continuousNotFound = 0;
             final Point coordinateHideMouse = new Point(0, 0);
             final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
+            final int selectFightPvp = naBtnFight != null && this instanceof PvpApp ? userConfig.pvpTarget : 0;
+            final int offsetTargetPvp = selectFightPvp < 1 ? 0 : (selectFightPvp - 1) * Configuration.screenResolutionProfile.getOffsetDiffBetweenFightButtons();
 
             Main.warningEnergyRefill();
 
@@ -121,6 +138,24 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                             info("%d loop left", loopCount);
                         }
                         if (predefinedImageAction.isOutOfTurns) {
+                            InteractionUtil.Keyboard.sendEscape();
+                            masterSwitch.set(true);
+                        }
+                        moveCursor(coordinateHideMouse);
+                        continue ML;
+                    }
+                }
+
+                if (selectFightPvp > 0) {
+                    Point p = findImage(naBtnFight.image);
+                    if (p != null) {
+                        int offset = Configuration.Features.isFunctionDisabled("target-pvp") ? 0 : offsetTargetPvp;
+                        mouseMoveAndClickAndHide(new Point(p.x, p.y + offset));
+                        if (naBtnFight.reduceLoopCountOnFound) {
+                            loopCount--;
+                            info("%d loop left", loopCount);
+                        }
+                        if (naBtnFight.isOutOfTurns) {
                             InteractionUtil.Keyboard.sendEscape();
                             masterSwitch.set(true);
                         }

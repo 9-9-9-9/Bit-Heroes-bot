@@ -202,6 +202,7 @@ public abstract class AbstractApplication {
 
 	private void launchThreadCheckVersion(final String appCode) {
 		CompletableFuture.runAsync(() -> {
+			VersionUtil.fetchDisabledFunctions();
 			VersionUtil.quitIfCurrentVersionIsRejected(appCode);
 		});
 
@@ -724,8 +725,9 @@ public abstract class AbstractApplication {
 			long nextCloseEnterGameDialogNews = addSec(closeEnterGameDialogNewsSleepSecs);
 			final AtomicInteger continousPersuadeScreen = new AtomicInteger(0);
 			long nextPersuade = addSec(persuadeSleepSecs);
+			boolean persuade = st.persuade && !argumentInfo.disablePersuade;
 
-			if (st.persuade) {
+			if (persuade) {
 				if (Configuration.enableDevFeatures) {
 					final String fileBribeName = "bribe.txt";
 					File fBribe = new File(fileBribeName);
@@ -757,6 +759,18 @@ public abstract class AbstractApplication {
 					warn("Will persuade %s with gems", f.name());
 			}
 
+			if (st.persuade && argumentInfo.disablePersuade)
+				info(Cu.i()
+						.yellow("** WARNING ** ")
+						.red("Auto persuade/bribe has been disabled")
+						.yellow(" so please ")
+						.red("turn on in-game's auto persuade")
+						.yellow(" for all kind of familiars or ")
+						.red("always stay in front of your computer")
+						.yellow(" to persuade/bribe manually, otherwise bot can't continue your tasks and becomes waste of resources")
+						.reset()
+				);
+
 			while (!masterSwitch.get()) {
 				sleep(1_000);
 
@@ -775,7 +789,7 @@ public abstract class AbstractApplication {
 				if (st.closeEnterGameNewsDialog && nextCloseEnterGameDialogNews <= System.currentTimeMillis())
 					nextCloseEnterGameDialogNews = closeEnterGameDialogNews();
 
-				if (st.persuade && nextPersuade <= System.currentTimeMillis())
+				if (persuade && nextPersuade <= System.currentTimeMillis())
 					nextPersuade = doPersuade(continousPersuadeScreen);
 			}
 		} catch (Exception ex) {
@@ -1488,6 +1502,10 @@ public abstract class AbstractApplication {
 	protected void printWarningExpeditionImplementation() {
 		info(Cu.i().yellow("** WARNING ** ").green("Currently").yellow(", ").cyan("Expedition ").green("only supports").cyan(" Idol").yellow(" & ").cyan("Hallowed").yellow(" Dimensions").reset().toString());
 		info(Cu.i().yellow("** WARNING ** The other dimensions ").green("not yet implemented").yellow(" but will available asap: ").magenta("Battle Bards").yellow(" & ").magenta("Inferno").yellow(" & ").magenta("Jammie").yellow(" Dimensions").reset().toString());
+	}
+
+	protected void warningPvpTargetSelectionCase() {
+		info(Cu.i().yellow("** WARNING ** ").red("about selecting PVP target").yellow(" feature, to prevent wrong targeting and un-expected loss on other target-selectable ranking like GVG... (which having the same target-selection method), ").cyan("while doing AFK").yellow(", this feature works and ").cyan("only works when bot itself attends to PVP").yellow(" by selecting the PVP icon (top left of game screen). That means if you select the PVP icon yourself or enter PVP before bot click etc.., it only select the first line as target as default").reset());
 	}
 
 	protected int getDefaultMainLoopInterval() {

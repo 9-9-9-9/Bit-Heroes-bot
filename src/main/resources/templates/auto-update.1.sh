@@ -4,6 +4,7 @@ print_warning_and_exit() {
   echo '** ERROR ** Failed while attempting to patch the file '$2' from downloaded file '$1
   echo '** ERROR ** Patch new update %VERSION% has failure, please update manually yourself by going to https://download.bh99bot.com'
   echo 'Sorry for this inconvenient'
+  xdg-open https://bh99bot.com/updated-failure.html
   exit 1
 }
 
@@ -30,3 +31,4 @@ patch_file() {
 
 rm -f %ZIP_FILE%
 echo 'Update finished'
+xdg-open https://bh99bot.com/updated-success.html

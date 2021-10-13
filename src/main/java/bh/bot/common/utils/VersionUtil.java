@@ -36,10 +36,6 @@ public class VersionUtil {
 		return appVer = new SematicVersion(ver);
 	}
 
-	public static String getCurrentAppVersion() {
-		return appVer == null ? null : appVer.toString();
-	}
-
 	public static boolean checkForLatestVersion() {
 		if (appVer == null)
 			return false;
@@ -125,9 +121,18 @@ public class VersionUtil {
 	}
 
 	private static boolean autoUpdate(SematicVersion newerVersion) throws Exception {
+		if (appVer == null)
+			return false;
+
 		WinNT.HANDLE mutexHandle = null;
 		try {
 			cleanUpAbortedDownloadFiles();
+
+			ThreadUtil.sleep(10_000);
+			if (Configuration.Features.isFunctionDisabled("auto-update")) {
+				err("Auto-update for this version had been disabled remotely");
+				return false;
+			}
 
 			final String newBinaryFileName = String.format("download-this-file-%s.zip", newerVersion);
 			File fileZip = new File(newBinaryFileName);
@@ -221,7 +226,9 @@ public class VersionUtil {
 					throw new NotSupportedException(String.format("Currently not supported auto update for %s", OS.name));
 				}
 			} else {
-				info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** Please run file ").red(autoUpdateScriptFileName).yellow(" to update ").a(Main.botName).a(" to the latest released version ").red(newerVersion.toString()).reset());
+				for (int i = 0; i < RandomUtil.nextInt(2, 10); i++) {
+					info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** Please run file ").red(autoUpdateScriptFileName).yellow(" to update ").a(Main.botName).a(" to the latest released version ").red(newerVersion.toString()).reset());
+				}
 			}
 
 			return true;
@@ -433,9 +440,9 @@ public class VersionUtil {
 		info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** ").ra(String.format(format, args)));
 	}
 
-	public static void quitIfCurrentVersionIsRejected(String appCode) {
+	public static void fetchDisabledFunctions() {
 		if (appVer == null) {
-			dev("VersionUtil::quitIfCurrentVersionIsRejected appVer has not been set");
+			dev("VersionUtil::fetchDisabledFunctions appVer has not been set");
 			return;
 		}
 
@@ -447,7 +454,7 @@ public class VersionUtil {
 				int responseCode = httpURLConnection.getResponseCode();
 
 				if (responseCode != 200 && responseCode != 304) {
-					dev("VersionUtil::quitIfCurrentVersionIsRejected response code %d", responseCode);
+					dev("VersionUtil::fetchDisabledFunctions response code %d", responseCode);
 					return;
 				}
 
@@ -498,41 +505,32 @@ public class VersionUtil {
 				JSONObject rejectedFunctionsByVersion = json.getJSONObject("bf");
 				if (rejectedFunctionsByVersion != null && rejectedFunctionsByVersion.has(appVer.toString())) {
 					JSONArray rejectedFunctionsOfThisVersion = rejectedFunctionsByVersion.getJSONArray(appVer.toString());
-					if (rejectedFunctionsOfThisVersion.length() > 0) {
-						appCode = normalizeAppCode(appCode);
-
-						for (int i = 0; i < rejectedFunctionsOfThisVersion.length(); i++) {
-							try {
-								String f = normalizeAppCode(rejectedFunctionsOfThisVersion.getString(i));
-								debug("rejectedFunctionsOfThisVersion[%d]=%s", i, f);
-
-								if (appCode.equals(f)) {
-									try {
-										String msg = String.format("Function `%s` was suspended in this version %s due to one of the following reasons:", appCode, appVer.toString());
-										for (int j = 0; j < 20; j++) {
-											err(msg);
-											info(ColorizeUtil.formatError, "  - Game-itself might have changed some textures and this old version bot didn't get updated");
-											info(ColorizeUtil.formatError, "  - `%s` in old version might contain critical issues", appCode);
-											info(ColorizeUtil.formatError, "  - Other reasons");
-											info(ColorizeUtil.formatWarning, "Please download latest version on our website 'bh99bot.com'");
-										}
-									} finally {
-										Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
-									}
-									break;
-								}
-
-							} catch (Exception ex2) {
-								dev("Can not parse version at index %d", i);
-							}
-						}
-					}
+					for (int i = 0; i < rejectedFunctionsOfThisVersion.length(); i++)
+						Configuration.Features.disableFunction(rejectedFunctionsOfThisVersion.getString(i));
 				}
 			} finally {
 				httpURLConnection.disconnect();
 			}
 		} catch (Throwable t) {
 			dev(t);
+		}
+	}
+
+	public static void quitIfCurrentVersionIsRejected(String appCode) {
+		if (appVer == null) {
+			dev("VersionUtil::quitIfCurrentVersionIsRejected appVer has not been set");
+			return;
+		}
+
+		if (Configuration.Features.isFunctionDisabled(appCode)) {
+			for (int j = 0; j < 20; j++) {
+				err(String.format("Function `%s` was suspended in this version %s due to one of the following reasons:", appCode, appVer.toString()));
+				info(ColorizeUtil.formatError, "  - Game-itself might have changed some textures and this old version bot didn't get updated");
+				info(ColorizeUtil.formatError, "  - `%s` in old version might contain critical issues", appCode);
+				info(ColorizeUtil.formatError, "  - Other reasons");
+				info(ColorizeUtil.formatWarning, "Please download latest version on our website 'bh99bot.com'");
+			}
+			Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
 		}
 	}
 

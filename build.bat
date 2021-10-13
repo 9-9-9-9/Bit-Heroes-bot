@@ -1,11 +1,14 @@
-@if not exist pom.xml goto to_exit
+@if not exist pom.xml (
+	rem Wrong working directory
+    goto L_EXIT2
+)
 
 @CALL mvn clean package
 
 @if not %errorlevel%==0 (
     echo ** ERROR ** maven build failure
 	pause
-    goto EXIT_1
+    goto L_EXIT1
 )
 
 @if not exist out mkdir out
@@ -17,10 +20,9 @@
     rem Generating mini client
     @call client.bat
 )
-
-:to_exit
-	rem Wrong working directory
-	@exit /b 2
 	
-:EXIT_1
+:L_EXIT1
 	@exit /b 1
+
+:L_EXIT2
+	@exit /b 2
