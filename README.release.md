@@ -3,8 +3,10 @@ Upgrade notes:
   - `user-config.properties` and `readonly.*.user-config.properties` files, it contains your configurations
   - `chrome-user-dir` directory, that folder was created by chrome to do temp cache and also save your game's setting. By specify an external directory into the key `external.mini-client.user.dir` of the `user-config.properties` file, next time when you upgrade this bot, you don't need to move this folder
 ___
-## [bh99bot.com](https://bh99bot.com) is the bot for Bit Heroes
+Bit Heroes bot
 ##### on Linux / Windows / ~~MacOS~~
+
+https://bh99bot.com
 
 Hi, I'm 99bot, please give this repository a Star, thanks
 
@@ -24,7 +26,7 @@ Developers please read [at my github](https://github.com/9-9-9-9/Bit-Heroes-bot)
 
 [_There're some notes for MacOS users, please read here_](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Notes-for-MacOS-users)
 ___
-Officially support [BitHeroes on Steam](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Does-this-bot-supports-Steam-version-of-Bit-Heroes%3F) and [BitHeroes on web](https://www.kongregate.com/games/Juppiomenz/bit-heroes) + [mini-client](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
+Officially support [Bit Heroes on Steam](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Does-this-bot-supports-Steam-version-of-Bit-Heroes%3F) and [Bit Heroes on web](https://www.kongregate.com/games/Juppiomenz/bit-heroes) + [mini-client](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
 
 **Only support English user interface**
 

@@ -154,7 +154,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 	}
 
 	private void showErrAskIfBhRunningOrReqAdm() {
-		err("Is the BitHeroes running? If yes, probably this err caused by lacking privilege, you may need to run this bot as administrator");
+		err("Is the Bit Heroes running? If yes, probably this err caused by lacking privilege, you may need to run this bot as administrator");
 	}
 
 	private void showErrReqAdm() {
