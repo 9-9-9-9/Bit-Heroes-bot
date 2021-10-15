@@ -344,8 +344,8 @@ public class Main {
 		boolean isWeb = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagPlayOnWeb);
 		if (isSteam && isWeb) {
 			err("Ambiguous flags! Can not use both flags at the same time:");
-			err("  '--web' for controlling web-version BitHeroes");
-			err("  '--steam' for controlling Steam-version BitHeroes");
+			err("  '--web' for controlling web-version Bit Heroes");
+			err("  '--steam' for controlling Steam-version Bit Heroes");
 			Main.exit(EXIT_CODE_SCREEN_RESOLUTION_ISSUE);
 		}
 

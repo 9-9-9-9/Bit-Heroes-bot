@@ -3,7 +3,7 @@ package bh.bot.common.types.flags;
 import bh.bot.common.types.Platform;
 import bh.bot.common.types.annotations.FlagMeta;
 
-@FlagMeta(cbDesc = "Specific that you want to use this bot to control BitHeroes on Steam", checked = true, displayOrder = 1)
+@FlagMeta(cbDesc = "Specific that you want to use this bot to control Bit Heroes on Steam", checked = true, displayOrder = 1)
 public class FlagPlayOnSteam extends FlagResolution {
     @Override
     public String getName() {
@@ -12,7 +12,7 @@ public class FlagPlayOnSteam extends FlagResolution {
 
     @Override
     public String getDescription() {
-        return "Specific that you want to use this bot to control BitHeroes on Steam";
+        return "Specific that you want to use this bot to control Bit Heroes on Steam";
     }
 
     public Platform[] getSupportedOsPlatforms() {
