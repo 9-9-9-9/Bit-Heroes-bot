@@ -9,7 +9,7 @@ del .*.zip >nul 2>&1
 echo Update finished
 start "" https://bh99bot.com/updated-success.html
 pause
-del update-99bot.bat >nul 2>&1
+(goto) 2>nul & del "%~f0"
 exit /b 0
 
 :PATCH_FILE
