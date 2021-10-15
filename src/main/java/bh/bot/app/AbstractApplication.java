@@ -1155,16 +1155,19 @@ public abstract class AbstractApplication {
 				o = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionWizBot();
 			else if (place == 4)
 				o = Configuration.screenResolutionProfile.getOffsetEnterIdolDimensionAstamus();
+		} else if (clickImage(BwMatrixMeta.Metas.Expedition.Labels.infernoDimension)) {
+			if (place == 1)
+				o = Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionRaleib();
+			else if (place == 2)
+				o = Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionBlemo();
+			else if (place == 3)
+				o = Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionGummy();
+			else if (place == 4)
+				o = Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionZarlock();
 		}
 
 		/*
-		 * result.put(BwMatrixMeta.Metas.Expedition.Labels.infernoDimension, new
-		 * Offset[]{
-		 * Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionRaleib(),
-		 * Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionBlemo(),
-		 * Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionGummy(),
-		 * Configuration.screenResolutionProfile.getOffsetEnterInfernoDimensionZarlock()
-		 * , }); result.put(BwMatrixMeta.Metas.Expedition.Labels.jammieDimension, new
+		 * result.put(BwMatrixMeta.Metas.Expedition.Labels.jammieDimension, new
 		 * Offset[]{
 		 * Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionZorgo(),
 		 * Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionYackerz(),
@@ -1500,8 +1503,8 @@ public abstract class AbstractApplication {
 	}
 
 	protected void printWarningExpeditionImplementation() {
-		info(Cu.i().yellow("** WARNING ** ").green("Currently").yellow(", ").cyan("Expedition ").green("only supports").cyan(" Idol").yellow(" & ").cyan("Hallowed").yellow(" Dimensions").reset().toString());
-		info(Cu.i().yellow("** WARNING ** The other dimensions ").green("not yet implemented").yellow(" but will available asap: ").magenta("Battle Bards").yellow(" & ").magenta("Inferno").yellow(" & ").magenta("Jammie").yellow(" Dimensions").reset().toString());
+		info(Cu.i().yellow("** WARNING ** ").green("Currently").yellow(", ").cyan("Expedition ").green("only supports").cyan(" Idol").yellow(" & ").cyan("Hallowed").yellow(" & ").cyan("Inferno").yellow(" Dimensions").reset().toString());
+		info(Cu.i().yellow("** WARNING ** The other dimensions ").green("not yet implemented").yellow(" but will available asap: ").magenta("Battle Bards").yellow(" & ").magenta("Jammie").yellow(" Dimensions").reset().toString());
 	}
 
 	protected void warningPvpTargetSelectionCase() {

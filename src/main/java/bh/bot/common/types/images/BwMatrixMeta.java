@@ -623,6 +623,11 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetLabelHallowedDimension(), //
                 0xFFFFFF
         );
+        Metas.Expedition.Labels.infernoDimension = BwMatrixMeta.from(//
+                "labels/expedition.inferno-dimension?",
+                Configuration.screenResolutionProfile.getOffsetLabelInfernoDimension(), //
+                0xFFFFFF
+        );
 
         // Trials
         Metas.Trials.Buttons.play = BwMatrixMeta.from(//

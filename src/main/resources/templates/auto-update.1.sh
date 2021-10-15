@@ -31,4 +31,5 @@ patch_file() {
 
 rm -f %ZIP_FILE%
 echo 'Update finished'
+rm -f ./update-99bot.sh
 xdg-open https://bh99bot.com/updated-success.html

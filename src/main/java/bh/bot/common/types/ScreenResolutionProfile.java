@@ -558,27 +558,27 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetLabelInfernoDimension() {
-			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+			return new Offset(207, 57);
 		}
 
 		@Override
 		public Offset getOffsetEnterInfernoDimensionRaleib() {
-			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+			return new Offset(216, 191);
 		}
 
 		@Override
 		public Offset getOffsetEnterInfernoDimensionBlemo() {
-			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+			return new Offset(600, 191);
 		}
 
 		@Override
 		public Offset getOffsetEnterInfernoDimensionGummy() {
-			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+			return new Offset(416, 403);
 		}
 
 		@Override
 		public Offset getOffsetEnterInfernoDimensionZarlock() {
-			throw new NotImplementedException("Inferno Dimension of Expedition has not yet been implemented");
+			return new Offset(416, 266);
 		}
 
 		@Override
