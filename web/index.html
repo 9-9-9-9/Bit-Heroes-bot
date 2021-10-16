@@ -17,7 +17,7 @@
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Cinzel&display=swap" rel="stylesheet">
         <style>
 			body {
 				padding: 20px;
@@ -44,13 +44,26 @@
 				font-size: 1rem;
 				color: #9eb3c5;
 			}
-        </style>
+
+			a#download {
+				color: #f7c223 !important;
+				font-family: 'IM Fell English SC', serif;
+			}
+
+			a.download72 {
+				font-size: 72px;
+			}
+
+			a.download40 {
+				font-size: 40px;
+			}
+		</style>
     </head>
     <body class="bged">
 		<img src="./img/bh99bot.png" id="logo" />
-		<h1>Bit Heroes bot</h1>
-		<p>supports both <strong>Windows</strong> and <strong>Linux</strong></p>
-		<h2><a href="./download.html" style="color: #f7c223 !important;font-family: 'IM Fell English SC', serif;font-size:40px">Download Now</a></h2>
+		<h1 style="font-family: 'Cinzel', cursive;">Bit Heroes bot</h1>
+		<p style="font-size: 0.9rem;">supports both <strong>Windows</strong> and <strong>Linux</strong></p>
+		<h2><a href="./download.html" id="download" class="download72">Download Now</a></h2>
 		<p><a href="./download.html" target="_blank"><img src="https://img.shields.io/github/v/release/9-9-9-9/Bit-Heroes-bot?label=open%20source&style=for-the-badge" alt="latest tag" /></a></p>
 
 		<h4>Main features:</h4>
@@ -72,7 +85,7 @@
 			<li class="sm">Any bug, issue? <a href="https://github.com/9-9-9-9/Bit-Heroes-bot/issues" target="_blank">Raise an issue</a> here and I will check as soon as possible</li>
 		</ul>
 
-		<p><i>External links:</i> <a href="https://www.epicnpc.com/threads/bit-heroes-bot-by-9-9-9-9-named-99bot.2065219/" target="_blank">EpicNPC thread</a>, <a href="./fandom.html" target="_blank">Fandom</a></p>
+		<p><i>External links:</i> <a href="https://www.epicnpc.com/threads/bit-heroes-bot-free-open-source.2065219/" target="_blank">EpicNPC thread</a>, <a href="./fandom.html" target="_blank">Fandom</a></p>
 
 		<hr/>
 		<div id="slogan">
@@ -83,5 +96,13 @@
 		<p><img alt="Download" src="https://img.shields.io/github/downloads/9-9-9-9/Bit-Heroes-bot/total?color=green&label=Total%20downloaded"/></p>
 
 		<iframe width="560" height="315" src="https://www.youtube.com/embed/uGbISSCGpIk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+		<script>
+			if (window.innerWidth < 640) {
+				const a = document.getElementById('download');
+				a.setAttribute('class', 'download40');
+			}
+		</script>
     </body>
 </html>
