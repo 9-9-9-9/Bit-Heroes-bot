@@ -628,6 +628,11 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetLabelInfernoDimension(), //
                 0xFFFFFF
         );
+        Metas.Expedition.Labels.battleBards = BwMatrixMeta.from(//
+                "labels/expedition.battle-bards?",
+                Configuration.screenResolutionProfile.getOffsetLabelBattleBards(), //
+                0xFFFFFF
+        );
 
         // Trials
         Metas.Trials.Buttons.play = BwMatrixMeta.from(//

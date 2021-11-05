@@ -633,27 +633,27 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetLabelBattleBards() {
-			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
+			return new Offset(251, 57);
 		}
 
 		@Override
 		public Offset getOffsetEnterBattleBardsHero() {
-			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
+			return new Offset(401, 186);
 		}
 
 		@Override
 		public Offset getOffsetEnterBattleBardsBurning() {
-			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
+			return new Offset(242, 388);
 		}
 
 		@Override
 		public Offset getOffsetEnterBattleBardsMelvapaloozo() {
-			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
+			return new Offset(559, 388);
 		}
 
 		@Override
 		public Offset getOffsetEnterBattleBardsBitstock() {
-			throw new NotImplementedException("Battle Bards of Expedition has not yet been implemented");
+			return new Offset(401, 304);
 		}
 
 		@Override
