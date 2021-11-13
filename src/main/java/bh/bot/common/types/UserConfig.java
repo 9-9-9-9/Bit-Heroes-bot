@@ -15,7 +15,7 @@ public class UserConfig {
     public static final byte modeHeroic = 3;
 
     private static final byte raidLevelMin = 1;
-    private static final byte raidLevelMax = 13;
+    private static final byte raidLevelMax = 14;
     private static final byte worldBossLevelMin = 1;
     private static final byte worldBossLevelMax = 8;
     private static final byte expeditionPlaceMin = 1;
@@ -169,7 +169,7 @@ public class UserConfig {
             case 7:
                 return "The Ignited Abyss";
             case 8:
-                return "The Wolf's Deception (T13-T16)";
+                return "The Wolf's Deception (T13-T17)";
             default:
                 return "Unknown (T?-T?)";
         }
