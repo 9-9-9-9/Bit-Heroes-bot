@@ -3,9 +3,7 @@
 [![Github Open Issues](https://img.shields.io/github/issues/9-9-9-9/Bit-Heroes-bot.svg)](https://github.com/9-9-9-9/Bit-Heroes-bot/issues)
 [![Github All Releases](https://img.shields.io/github/downloads/9-9-9-9/Bit-Heroes-bot/total.svg)](https://github.com/9-9-9-9/Bit-Heroes-bot/releases)
 
-https://bh99bot.com
-
-Hi, I'm 99bot, please give this repository a Star, thanks
+Hi, I'm bot, please give this repository a Star, thanks
 
 This project has inspiration from https://github.com/tiemonl/Bit-Heroes-Fishing-Bot
 
@@ -15,7 +13,6 @@ This project has inspiration from https://github.com/tiemonl/Bit-Heroes-Fishing-
 
 > Eat duck, eat all the bones. With 99bot, you wont waste any minute of your Bitgor also your sleeping time
 
-[Checkout some videos on my YouTube channel](http://youtube.bh99bot.com)
 ___
 [Wiki version](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
 
