@@ -6,8 +6,6 @@ ___
 Bit Heroes bot
 ##### on Linux / Windows / ~~MacOS~~
 
-https://bh99bot.com
-
 Hi, I'm 99bot, please give this repository a Star, thanks
 
 > We play the game, don't let the game play us
@@ -16,7 +14,6 @@ Hi, I'm 99bot, please give this repository a Star, thanks
 
 > Eat duck, eat all the bones. With 99bot, you wont waste any minute of your Bitgor also your sleeping time
 
-[Checkout some videos on my YouTube channel](http://youtube.bh99bot.com)
 ___
 [Wiki version](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
 
