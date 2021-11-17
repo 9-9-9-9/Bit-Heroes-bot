@@ -87,7 +87,7 @@ public class VersionUtil {
 										sematicVersion.toString() //
 								)
 										: String.format( //
-										"** NEW UPDATE AVAILABLE ** %s v%s is now available at website: download.bh99bot.com", //
+										"** NEW UPDATE AVAILABLE ** %s v%s is now available at website: https://github.com/9-9-9-9/Bit-Heroes-bot/releases/latest", //
 										Main.botName, //
 										sematicVersion.toString() //
 								);
@@ -99,7 +99,7 @@ public class VersionUtil {
 						if (autoUpdate)
 							try {
 								if (!autoUpdate(sematicVersion))
-									info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** Attempted to perform Auto-update but ").red("failure").yellow(" please update new version manually from our website  ").cyan("download.bh99bot.com").reset());
+									info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** Attempted to perform Auto-update but ").red("failure").yellow(" please update new version manually from our website  ").cyan("https://github.com/9-9-9-9/Bit-Heroes-bot/releases/latest").reset());
 							} catch (Exception ex) {
 								dev(ex);
 								err("Error while trying to update to newest version of %s", Main.botName);
@@ -264,7 +264,7 @@ public class VersionUtil {
 			return true;
 		} catch (IOException e) {
 			dev(e);
-			err("Unable to generate auto update script, please update manually by yourself by going to https://download.bh99bot.com");
+			err("Unable to generate auto update script, please update manually by yourself by going to https://github.com/9-9-9-9/Bit-Heroes-bot/releases/latest");
 			return false;
 		}
 	}
@@ -288,7 +288,7 @@ public class VersionUtil {
 			return true;
 		} catch (IOException e) {
 			dev(e);
-			err("Unable to generate auto update script, please update manually by yourself by going to https://download.bh99bot.com");
+			err("Unable to generate auto update script, please update manually by yourself by going to https://github.com/9-9-9-9/Bit-Heroes-bot/releases/latest");
 			return false;
 		}
 	}
@@ -388,7 +388,7 @@ public class VersionUtil {
 
 	private static final String tmpDownloadFilePrefix = ".download-new-ver.";
 	private static final String tmpDownloadFileSuffix = ".zip";
-	private static final String autoUpdateScriptFileName = Extensions.scriptFileName("update-99bot");
+	private static final String autoUpdateScriptFileName = Extensions.scriptFileName("update-bot");
 
 	private static void deleteUpdateScript() {
 		try {
@@ -488,7 +488,7 @@ public class VersionUtil {
 										info(ColorizeUtil.formatError, "  - Game-itself might have changed some textures and this old version bot didn't get updated");
 										info(ColorizeUtil.formatError, "  - This old version might contain critical issues");
 										info(ColorizeUtil.formatError, "  - Other reasons");
-										info(ColorizeUtil.formatWarning, "Please download latest version on our website 'bh99bot.com'");
+										info(ColorizeUtil.formatWarning, "Please download latest version on our website 'https://github.com/9-9-9-9/Bit-Heroes-bot/releases/latest'");
 									}
 								} finally {
 									Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
@@ -528,7 +528,7 @@ public class VersionUtil {
 				info(ColorizeUtil.formatError, "  - Game-itself might have changed some textures and this old version bot didn't get updated");
 				info(ColorizeUtil.formatError, "  - `%s` in old version might contain critical issues", appCode);
 				info(ColorizeUtil.formatError, "  - Other reasons");
-				info(ColorizeUtil.formatWarning, "Please download latest version on our website 'bh99bot.com'");
+				info(ColorizeUtil.formatWarning, "Please download latest version on our website 'https://github.com/9-9-9-9/Bit-Heroes-bot/releases/latest'");
 			}
 			Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
 		}

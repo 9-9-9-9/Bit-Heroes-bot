@@ -20,7 +20,7 @@ exit /b 0
         echo %2
         echo from downloaded file
         echo %1
-        echo ** ERROR ** Patch new update %VERSION% has failure, please update manually yourself by going to https://download.bh99bot.com
+        echo ** ERROR ** Patch new update %VERSION% has failure, please update manually yourself by going to https://github.com/9-9-9-9/Bit-Heroes-bot/releases/latest
         echo Sorry for this inconvenient
         start "" https://bh99bot.com/updated-failure.html
         pause

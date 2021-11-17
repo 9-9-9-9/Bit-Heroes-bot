@@ -34,7 +34,7 @@ c.*.sh
 *.c.bat
 *.c.sh
 deploy.sh
-update-99bot.*
+update-bot.*
 
 reconnect.bmp
 reconnect-hl.bmp
