@@ -1175,17 +1175,16 @@ public abstract class AbstractApplication {
 				o = Configuration.screenResolutionProfile.getOffsetEnterBattleBardsMelvapaloozo();
 			else if (place == 4)
 				o = Configuration.screenResolutionProfile.getOffsetEnterBattleBardsBitstock();
+		} else if (clickImage(BwMatrixMeta.Metas.Expedition.Labels.jammieDimension)) {
+			if (place == 1)
+				o = Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionZorgo();
+			else if (place == 2)
+				o = Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionYackerz();
+			else if (place == 3)
+				o = Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionVionot();
+			else if (place == 4)
+				o = Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionGrampa();
 		}
-
-		/*
-		 * result.put(BwMatrixMeta.Metas.Expedition.Labels.jammieDimension, new
-		 * Offset[]{
-		 * Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionZorgo(),
-		 * Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionYackerz(),
-		 * Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionVionot(),
-		 * Configuration.screenResolutionProfile.getOffsetEnterJammieDimensionGrampa(),
-		 * });
-		 */
 
 		if (o != null) {
 			Point p = o.toScreenCoordinate();
@@ -1505,11 +1504,6 @@ public abstract class AbstractApplication {
 			Main.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
 		}
 		return resultLoadUserConfig._2;
-	}
-
-	protected void printWarningExpeditionImplementation() {
-		info(Cu.i().yellow("** WARNING ** ").green("Currently").yellow(", ").cyan("Expedition ").green("only supports").cyan(" Battle Bards").yellow(" & ").cyan(" Idol").yellow(" & ").cyan("Hallowed").yellow(" & ").cyan("Inferno").yellow(" Dimensions").reset().toString());
-		info(Cu.i().yellow("** WARNING ** The last one ").magenta("Jammie Dimensions").green(" is not yet implemented").yellow(" but will available asap").reset().toString());
 	}
 
 	protected void warningPvpTargetSelectionCase() {

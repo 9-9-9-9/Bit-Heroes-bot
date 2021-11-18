@@ -31,7 +31,6 @@ public class ExpeditionApp extends AbstractDoFarmingApp {
             place = selectExpeditionPlace();
         }
 
-        printWarningExpeditionImplementation();
         return true;
     }
 

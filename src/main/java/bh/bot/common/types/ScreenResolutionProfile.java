@@ -612,27 +612,27 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetLabelJammieDimension() {
-			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+			return new Offset(218, 57);
 		}
 
 		@Override
 		public Offset getOffsetEnterJammieDimensionZorgo() {
-			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+			return new Offset(168, 201);
 		}
 
 		@Override
 		public Offset getOffsetEnterJammieDimensionYackerz() {
-			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+			return new Offset(319, 283);
 		}
 
 		@Override
 		public Offset getOffsetEnterJammieDimensionVionot() {
-			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+			return new Offset(479, 338);
 		}
 
 		@Override
 		public Offset getOffsetEnterJammieDimensionGrampa() {
-			throw new NotImplementedException("Jammie Dimension of Expedition has not yet been implemented");
+			return new Offset(636, 374);
 		}
 
 		@Override

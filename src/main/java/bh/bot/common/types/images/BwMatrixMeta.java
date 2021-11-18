@@ -645,6 +645,11 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetLabelBattleBards(), //
                 0xFFFFFF
         );
+        Metas.Expedition.Labels.jammieDimension = BwMatrixMeta.from(//
+                "labels/expedition.jammie-dimension?",
+                Configuration.screenResolutionProfile.getOffsetLabelJammieDimension(), //
+                0xFFFFFF
+        );
 
         // Trials
         Metas.Trials.Buttons.play = BwMatrixMeta.from(//
