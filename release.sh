@@ -90,7 +90,7 @@ cp ./web.bot.bat ./release/
 cp ./steam.bot.bat ./release/
 cp ./client.bat ./release/
 cp ./help.bat ./release/
-cp ./setting.bat ./release/cd ~
+cp ./setting.bat ./release/
 
 
 # Include README.md

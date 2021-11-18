@@ -888,7 +888,9 @@ public abstract class AbstractApplication {
 							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.oevor, Familiar.Oevor),
 							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.grimz, Familiar.Grimz),
 							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.quirrel, Familiar.Quirrel),
-							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.gobby, Familiar.Gobby)
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.gobby, Familiar.Gobby),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.rugumz, Familiar.Rugumz),
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.moghur, Familiar.Moghur)
 					);
 
 				boolean doPersuadeGold = true;
