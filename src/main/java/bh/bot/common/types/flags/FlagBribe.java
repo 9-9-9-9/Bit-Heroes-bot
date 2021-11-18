@@ -30,6 +30,10 @@ public class FlagBribe extends FlagPattern<Familiar> {
 				return Familiar.Quirrel;
 			case "gobby":
 				return Familiar.Gobby;
+			case "rugumz":
+				return Familiar.Rugumz;
+			case "moghur":
+				return Familiar.Moghur;
 			default:
 				throw new NotSupportedException(String.format("Unknown value '%s' of flag %s", s, getCode()));
 			}
