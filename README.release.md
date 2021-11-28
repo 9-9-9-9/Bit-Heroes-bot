@@ -6,13 +6,13 @@ ___
 Bit Heroes bot
 ##### on Linux / Windows / ~~MacOS~~
 
-Hi, I'm 99bot, please give this repository a Star, thanks
+Hi, I'm the bot, please give this repository a Star, thanks
 
 > We play the game, don't let the game play us
 
-> You spend your time for your family and 99bot helps you persuade the Familiars
+> You spend your time for your family and me helps you persuade the Familiars
 
-> Eat duck, eat all the bones. With 99bot, you wont waste any minute of your Bitgor also your sleeping time
+> Eat duck, eat all the bones. With me, you wont waste any minute of your Bitgor also your sleeping time
 
 ___
 [Wiki version](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
@@ -47,7 +47,7 @@ Officially support [Bit Heroes on Steam](https://github.com/9-9-9-9/Bit-Heroes-b
   - Mini-client/Web on Windows: `web.bot.bat`
   - Linux/MacOS: `./bot.sh`
   
-Tips 1: you can launch app with flags directly via command-line after got familiar with 99bot:
+Tips 1: you can launch app with flags directly via command-line after got familiar with this bot:
 > java -jar BitHeroes.jar "function_name" "param1" ["param2"] [--flags]
 
 Tips 2: see help

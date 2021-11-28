@@ -3,15 +3,15 @@
 [![Github Open Issues](https://img.shields.io/github/issues/9-9-9-9/Bit-Heroes-bot.svg)](https://github.com/9-9-9-9/Bit-Heroes-bot/issues)
 [![Github All Releases](https://img.shields.io/github/downloads/9-9-9-9/Bit-Heroes-bot/total.svg)](https://github.com/9-9-9-9/Bit-Heroes-bot/releases)
 
-Hi, I'm bot, please give this repository a Star, thanks
+Hi, I'm the bot, please give this repository a Star, thanks
 
 This project has inspiration from https://github.com/tiemonl/Bit-Heroes-Fishing-Bot
 
 > We play the game, don't let the game play us
 
-> You spend your time for your family and 99bot helps you persuade the Familiars
+> You spend your time for your family and me helps you persuade the Familiars
 
-> Eat duck, eat all the bones. With 99bot, you wont waste any minute of your Bitgor also your sleeping time
+> Eat duck, eat all the bones. With me, you wont waste any minute of your Bitgor also your sleeping time
 
 ___
 [Wiki version](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
@@ -55,7 +55,7 @@ And some extra functions support developers on developing this bot
   - Mini-client/Web on Windows: `web.bot.bat`
   - Linux/MacOS: `./bot.sh`
   
-Tips 1: you can launch app with flags directly via command-line after got familiar with 99bot:
+Tips 1: you can launch app with flags directly via command-line after got familiar with this bot:
 > java -jar BitHeroes.jar "function_name" "param1" ["param2"] [--flags]
 
 Tips 2: see help

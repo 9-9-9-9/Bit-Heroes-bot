@@ -92,6 +92,7 @@ public class Main {
 //
 					ScreenCaptureApp.class, //
 					TestApp.class, //
+					DualWorldBoss.class, //
 					GenerateMetaApp.class //
 			);
 
