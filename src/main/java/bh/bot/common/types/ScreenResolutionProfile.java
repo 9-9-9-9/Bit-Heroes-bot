@@ -63,6 +63,10 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetButtonRegroupAfterDefeatByWorldBoss();
 
+	public abstract Offset getOffsetButtonReadyWorldBossTeam();
+
+	public abstract Offset getOffsetButtonUnReadyWorldBossTeam();
+
 	public abstract Offset getOffsetDialogNotEnoughXeals();
 
 	public abstract Offset getOffsetButtonPlayPvpArena();
@@ -343,6 +347,16 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetButtonRegroupAfterDefeatByWorldBoss() {
 			return new Offset(293, 467);
+		}
+
+		@Override
+		public Offset getOffsetButtonReadyWorldBossTeam() {
+			return new Offset(342, 460);
+		}
+
+		@Override
+		public Offset getOffsetButtonUnReadyWorldBossTeam() {
+			return new Offset(332, 462);
 		}
 
 		@Override

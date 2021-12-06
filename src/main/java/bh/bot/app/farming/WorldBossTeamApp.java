@@ -58,33 +58,51 @@ public class WorldBossTeamApp extends AbstractApplication {
 
     private void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
         info(ColorizeUtil.formatInfo, "\n\nStarting World Boss (Team)");
+        info(ColorizeUtil.formatError, "*** NOTICE: REMEMBER YOU HAVE TO WATCH/CHECK THE GAME SOMETIME TO PREVENT UN-EXPECTED HANG/LOSS DUE TO UN-MANAGED BEHAVIORS LIKE MISSING MEMBERS,...ETC ***");
         try {
             final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
 
             moveCursor(new Point(950, 100));
-            long lastFound = System.currentTimeMillis();
-            boolean clickedOnPreviousRound = false;
+            long lastRound = System.currentTimeMillis();
             while (loopCount > 0 && !masterSwitch.get()) {
                 sleep(mainLoopInterval);
-                if (clickImage(BwMatrixMeta.Metas.Dungeons.Buttons.rerun)) {
+                if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.regroup)) {
                     loopCount--;
-                    lastFound = System.currentTimeMillis();
+                    lastRound = System.currentTimeMillis();
                     info("%d loop left", loopCount);
-                    clickedOnPreviousRound = true;
-                } else {
-                    if (System.currentTimeMillis() - lastFound > longTimeNoSee) {
-                        info("Long time no see => Stop");
-                        Telegram.sendMessage("long time no see button", true);
-                        break;
-                    } else {
-                        debug("Not found, repeat");
-                    }
-
-                    if (clickedOnPreviousRound) {
-                        clickedOnPreviousRound = false;
-                        sleep(60_000);
-                    }
+                    continue;
                 }
+
+                if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.regroupOnDefeated)) {
+                    loopCount--;
+                    lastRound = System.currentTimeMillis();
+                    info("%d loop left (you was defeated this round)", loopCount);
+                    continue;
+                }
+
+                if (System.currentTimeMillis() - lastRound > longTimeNoSee) {
+                    info("Long time no see => Stop");
+                    Telegram.sendMessage("long time no see button", true);
+                    break;
+                }
+
+                if (findImage(BwMatrixMeta.Metas.WorldBoss.Buttons.unready) != null) {
+                    debug("Team member (already ready) => waiting");
+                    sleep(4_000);
+                    continue;
+                }
+
+                if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.ready)) {
+                    debug("Team member => waiting");
+                    continue;
+                }
+
+                if (findImage(BwMatrixMeta.Metas.WorldBoss.Buttons.startBoss) == null) {
+                    debug("Team leader but not all members are ready => waiting");
+                    continue;
+                }
+
+
             }
 
             masterSwitch.set(true);
@@ -112,6 +130,6 @@ public class WorldBossTeamApp extends AbstractApplication {
 
     @Override
     protected int getDefaultMainLoopInterval() {
-        return 2_000;
+        return 1_800;
     }
 }

@@ -264,6 +264,8 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta startBoss;
                 public static BwMatrixMeta regroup;
                 public static BwMatrixMeta regroupOnDefeated;
+                public static BwMatrixMeta ready;
+                public static BwMatrixMeta unready;
             }
 
             public static class Labels {
@@ -537,6 +539,16 @@ public class BwMatrixMeta {
         Metas.WorldBoss.Buttons.regroupOnDefeated = BwMatrixMeta.from(//
                 "buttons/world-boss.regroup-lose?",
                 Configuration.screenResolutionProfile.getOffsetButtonRegroupAfterDefeatByWorldBoss(), //
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Buttons.ready = BwMatrixMeta.from(//
+                "buttons/world-boss.ready?",
+                Configuration.screenResolutionProfile.getOffsetButtonReadyWorldBossTeam(), //
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Buttons.unready = BwMatrixMeta.from(//
+                "buttons/world-boss.unready?",
+                Configuration.screenResolutionProfile.getOffsetButtonUnReadyWorldBossTeam(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Dialogs.notEnoughXeals = BwMatrixMeta.from(//
