@@ -8,12 +8,14 @@ import bh.bot.common.Telegram;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.images.BwMatrixMeta;
+import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.ThreadUtil;
 
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static bh.bot.Main.readInput;
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
@@ -25,6 +27,8 @@ public class WorldBossTeamApp extends AbstractApplication {
     // TODO check usage
     private int longTimeNoSee = Configuration.Timeout.defaultLongTimeNoSeeInMinutes * 60_000;
 
+    private int minimumNumberOfTeamMembers;
+
     @Override
     protected void internalRun(String[] args) {
         longTimeNoSee = Configuration.Timeout.longTimeNoSeeInMinutes * 60_000;
@@ -35,6 +39,8 @@ public class WorldBossTeamApp extends AbstractApplication {
             info(getHelp());
             arg = readInputLoopCount("How many times do you want to attack the world bosses?");
         }
+
+        minimumNumberOfTeamMembers = readInputMinimumTeamMembersCount("How many team members are required to start World Boss? (fill it exactly)");
 
         final int loop = arg;
         Log.info("Loop: %d", loop);
@@ -77,6 +83,7 @@ public class WorldBossTeamApp extends AbstractApplication {
                     loopCount--;
                     lastRound = System.currentTimeMillis();
                     info("%d loop left (you was defeated this round)", loopCount);
+                    Telegram.sendMessage("Defeated in World Boss (Team)", true);
                     continue;
                 }
 
@@ -131,5 +138,19 @@ public class WorldBossTeamApp extends AbstractApplication {
     @Override
     protected int getDefaultMainLoopInterval() {
         return 1_800;
+    }
+
+    protected int readInputMinimumTeamMembersCount(String ask) {
+        return readInput(ask, "Numeric only", s -> {
+            try {
+                int num = Integer.parseInt(s);
+                if (num < 2) {
+                    return new Tuple3<>(false, "Must greater than 1", 0);
+                }
+                return new Tuple3<>(true, null, num);
+            } catch (NumberFormatException ex1) {
+                return new Tuple3<>(false, "The value you inputted is not a number", 0);
+            }
+        });
     }
 }

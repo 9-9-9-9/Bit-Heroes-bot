@@ -48,9 +48,9 @@ public class SettingApp extends AbstractApplication {
                     info(ColorizeUtil.formatInfo, "You haven't specified Raid mode (Normal/Hard/Heroic)");
 
                 if (resultLoadUserConfig._2.isValidWorldBossLevel())
-                    info(ColorizeUtil.formatInfo, "Selected World Boss %s", resultLoadUserConfig._2.getWorldBossLevelDesc());
+                    info(ColorizeUtil.formatInfo, "Selected World Boss (Solo) %s", resultLoadUserConfig._2.getWorldBossLevelDesc());
                 else
-                    info(ColorizeUtil.formatInfo, "You haven't specified World Boss level");
+                    info(ColorizeUtil.formatInfo, "You haven't specified World Boss level to Solo");
 
                 if (resultLoadUserConfig._2.isValidExpeditionPlace())
                     info(ColorizeUtil.formatInfo, "Selected Expedition door %s", resultLoadUserConfig._2.getExpeditionPlaceDesc());
@@ -94,7 +94,7 @@ public class SettingApp extends AbstractApplication {
             sb = new StringBuilder("All World Boss levels:\n");
             for (int rl = woldBossLevelRange._1; rl <= woldBossLevelRange._2; rl++)
                 sb.append(String.format("  %2d. %s\n", rl, UserConfig.getWorldBossLevelDesc(rl)));
-            sb.append("Specific World Boss level?");
+            sb.append("Specific World Boss level to Solo?");
             tmp = readIntInput(sb.toString(), woldBossLevelRange._1, woldBossLevelRange._2);
             worldBossLevel = tmp == null ? worldBossLevel : tmp;
             //
@@ -124,7 +124,7 @@ public class SettingApp extends AbstractApplication {
                 sb.append("  raid has not been set");
             sb.append('\n');
             if (newCfg.isValidWorldBossLevel())
-                sb.append(String.format("  world boss %s", UserConfig.getWorldBossLevelDesc((byte) worldBossLevel)));
+                sb.append(String.format("  world boss (solo) %s", UserConfig.getWorldBossLevelDesc((byte) worldBossLevel)));
             else
                 sb.append("  world boss has not been set");
             sb.append('\n');
@@ -189,7 +189,7 @@ public class SettingApp extends AbstractApplication {
 
     @Override
     protected String getDescription() {
-        return "Do setting raid level, raid mode, world boss level, expedition door to enter,...";
+        return "Do setting raid level, raid mode, world boss (solo) level, expedition door to enter,...";
     }
 
     @Override

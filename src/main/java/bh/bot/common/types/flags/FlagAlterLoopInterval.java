@@ -4,6 +4,7 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.farming.AbstractDoFarmingApp;
+import bh.bot.app.farming.WorldBossTeamApp;
 import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.types.annotations.FlagMeta;
 import bh.bot.common.types.tuples.Tuple3;
@@ -69,6 +70,7 @@ public class FlagAlterLoopInterval extends FlagPattern<Integer> {
     protected boolean internalCheckIsSupportedByApp(AbstractApplication instance) {
         return instance instanceof AbstractDoFarmingApp
                 || instance instanceof ReRunApp
-                || instance instanceof AfkApp;
+                || instance instanceof AfkApp
+                || instance instanceof WorldBossTeamApp;
     }
 }
