@@ -266,6 +266,11 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta regroupOnDefeated;
                 public static BwMatrixMeta ready;
                 public static BwMatrixMeta unready;
+                public static BwMatrixMeta invite1;
+                public static BwMatrixMeta invite2;
+                public static BwMatrixMeta invite3;
+                public static BwMatrixMeta invite4;
+                public static BwMatrixMeta invite5;
             }
 
             public static class Labels {
@@ -549,6 +554,31 @@ public class BwMatrixMeta {
         Metas.WorldBoss.Buttons.unready = BwMatrixMeta.from(//
                 "buttons/world-boss.unready?",
                 Configuration.screenResolutionProfile.getOffsetButtonUnReadyWorldBossTeam(), //
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Buttons.invite1 = BwMatrixMeta.from(//
+                "buttons/world-boss.invite?",
+                Configuration.screenResolutionProfile.getOffsetButtonInvite1WorldBossTeam(), //
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Buttons.invite2 = BwMatrixMeta.from(//
+                "buttons/world-boss.invite?",
+                Configuration.screenResolutionProfile.getOffsetButtonInvite2WorldBossTeam(), //
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Buttons.invite3 = BwMatrixMeta.from(//
+                "buttons/world-boss.invite?",
+                Configuration.screenResolutionProfile.getOffsetButtonInvite3WorldBossTeam(), //
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Buttons.invite4 = BwMatrixMeta.from(//
+                "buttons/world-boss.invite?",
+                Configuration.screenResolutionProfile.getOffsetButtonInvite4WorldBossTeam(), //
+                0xFFFFFF
+        );
+        Metas.WorldBoss.Buttons.invite5 = BwMatrixMeta.from(//
+                "buttons/world-boss.invite?",
+                Configuration.screenResolutionProfile.getOffsetButtonInvite5WorldBossTeam(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Dialogs.notEnoughXeals = BwMatrixMeta.from(//

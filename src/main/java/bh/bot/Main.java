@@ -523,5 +523,6 @@ public class Main {
 	public static final int EXIT_CODE_WINDOW_DETECTION_ISSUE = 14;
 	public static final int EXIT_CODE_MULTIPLE_INSTANCE_DETECTED = 15;
 	public static final int EXIT_CODE_EXTRACT_BOT_VERSION_FAILURE = 16;
+	public static final int EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION = 17;
 	public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }

@@ -5,9 +5,11 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
+import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.images.BwMatrixMeta;
+import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.ThreadUtil;
@@ -16,8 +18,8 @@ import java.awt.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static bh.bot.Main.readInput;
-import static bh.bot.common.Log.debug;
-import static bh.bot.common.Log.info;
+import static bh.bot.common.Log.*;
+import static bh.bot.common.utils.InteractionUtil.Mouse.mouseMoveAndClickAndHide;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
@@ -28,6 +30,7 @@ public class WorldBossTeamApp extends AbstractApplication {
     private int longTimeNoSee = Configuration.Timeout.defaultLongTimeNoSeeInMinutes * 60_000;
 
     private int minimumNumberOfTeamMembers;
+    private int maximumNumberOfTeamMembers;
 
     @Override
     protected void internalRun(String[] args) {
@@ -40,7 +43,31 @@ public class WorldBossTeamApp extends AbstractApplication {
             arg = readInputLoopCount("How many times do you want to attack the world bosses?");
         }
 
-        minimumNumberOfTeamMembers = readInputMinimumTeamMembersCount("How many team members are required to start World Boss? (fill it exactly)");
+        minimumNumberOfTeamMembers = readInputMinimumTeamMembersCount();
+
+        final Tuple2<Byte, Byte> woldBossLevelRange = UserConfig.getWorldBossLevelRange();
+        info("All World Boss levels:");
+        for (int rl = woldBossLevelRange._1; rl <= woldBossLevelRange._2; rl++)
+            info(String.format("  %2d. %s\n", rl, UserConfig.getWorldBossLevelDesc(rl)));
+
+        int worldBossLevel = readInputWorldBossLevel(woldBossLevelRange._1, woldBossLevelRange._2);
+        maximumNumberOfTeamMembers = extractMaximumTeamMemberCountFromWorldBossLevel(worldBossLevel);
+        if (maximumNumberOfTeamMembers < 3 || maximumNumberOfTeamMembers > 5) {
+            err("I'm sorry, this world boss level has not been supported yet, please raise an Issue ticket at my github");
+            Main.exit(Main.EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION);
+            return;
+        }
+
+        info("%s supports up to %d team members (if I'm wrong, please raise an Issue ticket at my github)", UserConfig.getWorldBossLevelDesc(worldBossLevel), maximumNumberOfTeamMembers);
+        if (minimumNumberOfTeamMembers == maximumNumberOfTeamMembers) {
+            info("and you configured your team must be full in order to Start", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
+        } else if (minimumNumberOfTeamMembers < maximumNumberOfTeamMembers) {
+            info("and you configured your team must have at least %d/%d members in order to Start", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
+        } else {
+            err("The minimum number of team members you've inputted is %d which is greater than number of slots %s supports is %d", minimumNumberOfTeamMembers, UserConfig.getWorldBossLevelDesc(worldBossLevel), maximumNumberOfTeamMembers);
+            Main.exit(Main.EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION);
+            return;
+        }
 
         final int loop = arg;
         Log.info("Loop: %d", loop);
@@ -68,6 +95,17 @@ public class WorldBossTeamApp extends AbstractApplication {
         try {
             final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
 
+            BwMatrixMeta[] inviteButtons = new BwMatrixMeta[maximumNumberOfTeamMembers];
+            inviteButtons[0] = BwMatrixMeta.Metas.WorldBoss.Buttons.invite1;
+            if (maximumNumberOfTeamMembers >= 2)
+                inviteButtons[1] = BwMatrixMeta.Metas.WorldBoss.Buttons.invite2;
+            if (maximumNumberOfTeamMembers >= 3)
+                inviteButtons[2] = BwMatrixMeta.Metas.WorldBoss.Buttons.invite3;
+            if (maximumNumberOfTeamMembers >= 4)
+                inviteButtons[3] = BwMatrixMeta.Metas.WorldBoss.Buttons.invite4;
+            if (maximumNumberOfTeamMembers >= 5)
+                inviteButtons[4] = BwMatrixMeta.Metas.WorldBoss.Buttons.invite5;
+
             moveCursor(new Point(950, 100));
             long lastRound = System.currentTimeMillis();
             while (loopCount > 0 && !masterSwitch.get()) {
@@ -93,8 +131,10 @@ public class WorldBossTeamApp extends AbstractApplication {
                     break;
                 }
 
+                mouseMoveAndClickAndHide(Configuration.screenResolutionProfile.getOffsetLabelWorldBossInSummonDialog().toScreenCoordinate());
+
                 if (findImage(BwMatrixMeta.Metas.WorldBoss.Buttons.unready) != null) {
-                    debug("Team member (already ready) => waiting");
+                    debug("Team member (already clicked the Ready button) => waiting");
                     sleep(4_000);
                     continue;
                 }
@@ -105,11 +145,46 @@ public class WorldBossTeamApp extends AbstractApplication {
                 }
 
                 if (findImage(BwMatrixMeta.Metas.WorldBoss.Buttons.startBoss) == null) {
+                    // at this point, not sure about if we're in the ready-to-start screen but that's not matter, no thing to do at this point for sure
                     debug("Team leader but not all members are ready => waiting");
                     continue;
                 }
 
+                if (minimumNumberOfTeamMembers < maximumNumberOfTeamMembers) {
+                    // partially
+                    int cntInviteButtons = 0;
+                    for (BwMatrixMeta inviteButton : inviteButtons) {
+                        if (findImage(inviteButton) != null) {
+                            cntInviteButtons += 1;
+                        }
+                    }
 
+                    if (cntInviteButtons > maximumNumberOfTeamMembers - minimumNumberOfTeamMembers) {
+                        info("%d/%d members, waiting for other team members to join", maximumNumberOfTeamMembers - cntInviteButtons, maximumNumberOfTeamMembers);
+                    } else {
+                        if (!clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.startBoss)) {
+                            warn("Unknown state, can't detect the Start button");
+                        }
+                    }
+
+                } else {
+                    // full team
+                    boolean foundAnyInviteButton = false;
+                    for (BwMatrixMeta inviteButton : inviteButtons) {
+                        if (findImage(inviteButton) != null) {
+                            foundAnyInviteButton = true;
+                            break;
+                        }
+                    }
+
+                    if (foundAnyInviteButton) {
+                        info("Team is not full, waiting for team members");
+                    } else {
+                        if (!clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.startBoss)) {
+                            warn("Unknown state, can't detect the Start button");
+                        }
+                    }
+                }
             }
 
             masterSwitch.set(true);
@@ -140,12 +215,54 @@ public class WorldBossTeamApp extends AbstractApplication {
         return 1_800;
     }
 
-    protected int readInputMinimumTeamMembersCount(String ask) {
-        return readInput(ask, "Numeric only", s -> {
+    private int extractMaximumTeamMemberCountFromWorldBossLevel(int worldBossLevel) {
+        switch (worldBossLevel)
+        {
+            //noinspection SpellCheckingInspection
+            case 1: // Orlag Clan
+                return 5;
+            case 2: // Netherworld
+                return 3;
+            case 3: // Melvin Factory
+                return 4;
+            case 4: // 3XT3RM1N4T10N
+                return 3;
+            case 5: // Brimstone Syndicate
+                return 3;
+            case 6: // Titans Attack
+                return 3;
+            case 7: // The Ignited Abyss
+                return 3;
+            case 8: // Nordic Dream
+                return 4;
+            default:
+                return -1;
+        }
+    }
+
+    protected int readInputMinimumTeamMembersCount() {
+        return readInput("How many team members are required to start World Boss? (fill it exactly)", "Numeric only", s -> {
             try {
                 int num = Integer.parseInt(s);
                 if (num < 2) {
                     return new Tuple3<>(false, "Must greater than 1", 0);
+                }
+                return new Tuple3<>(true, null, num);
+            } catch (NumberFormatException ex1) {
+                return new Tuple3<>(false, "The value you inputted is not a number", 0);
+            }
+        });
+    }
+
+    protected int readInputWorldBossLevel(int min, int max) {
+        return readInput("Specific World Boss level to farm with team? (to be used to extract maximum number of team members)", "Numeric only", s -> {
+            try {
+                int num = Integer.parseInt(s);
+                if (num < min) {
+                    return new Tuple3<>(false, "Minimum is " + min, 0);
+                }
+                if (num > max) {
+                    return new Tuple3<>(false, "Maximum is " + max, 0);
                 }
                 return new Tuple3<>(true, null, num);
             } catch (NumberFormatException ex1) {

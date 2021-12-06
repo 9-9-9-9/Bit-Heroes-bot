@@ -67,6 +67,16 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetButtonUnReadyWorldBossTeam();
 
+	public abstract Offset getOffsetButtonInvite1WorldBossTeam();
+
+	public abstract Offset getOffsetButtonInvite2WorldBossTeam();
+
+	public abstract Offset getOffsetButtonInvite3WorldBossTeam();
+
+	public abstract Offset getOffsetButtonInvite4WorldBossTeam();
+
+	public abstract Offset getOffsetButtonInvite5WorldBossTeam();
+
 	public abstract Offset getOffsetDialogNotEnoughXeals();
 
 	public abstract Offset getOffsetButtonPlayPvpArena();
@@ -357,6 +367,31 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetButtonUnReadyWorldBossTeam() {
 			return new Offset(332, 462);
+		}
+
+		@Override
+		public Offset getOffsetButtonInvite1WorldBossTeam() {
+			return new Offset(353, 179 + 54 * 0);
+		}
+
+		@Override
+		public Offset getOffsetButtonInvite2WorldBossTeam() {
+			return new Offset(353, 179 + 54 * 1);
+		}
+
+		@Override
+		public Offset getOffsetButtonInvite3WorldBossTeam() {
+			return new Offset(353, 179 + 54 * 2);
+		}
+
+		@Override
+		public Offset getOffsetButtonInvite4WorldBossTeam() {
+			return new Offset(353, 179 + 54 * 3);
+		}
+
+		@Override
+		public Offset getOffsetButtonInvite5WorldBossTeam() {
+			return new Offset(353, 179 + 54 * 4);
 		}
 
 		@Override
