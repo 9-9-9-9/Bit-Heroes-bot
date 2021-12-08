@@ -5,20 +5,21 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.Telegram;
-import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.images.BwMatrixMeta;
-import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.ThreadUtil;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
-import static bh.bot.Main.readInput;
+import static bh.bot.Main.*;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.InteractionUtil.Mouse.mouseMoveAndClickAndHide;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
@@ -35,6 +36,12 @@ public class WorldBossTeamApp extends AbstractApplication {
 
     @Override
     protected void internalRun(String[] args) {
+        if (args.length != 0 && args.length != 1 && args.length != 3) {
+            err("Wrong number of argument");
+            exit(Main.EXIT_CODE_INVALID_NUMBER_OF_ARGUMENTS);
+            return;
+        }
+
         longTimeNoSee = Configuration.Timeout.longTimeNoSeeInMinutes * 60_000;
         int arg;
         try {
@@ -44,29 +51,59 @@ public class WorldBossTeamApp extends AbstractApplication {
             arg = readInputLoopCount("How many times do you want to attack the world bosses?");
         }
 
-        minimumNumberOfTeamMembers = readInputMinimumTeamMembersCount();
+        if (args.length == 3) {
+            try {
+                minimumNumberOfTeamMembers = Integer.parseInt(args[1]);
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
+                minimumNumberOfTeamMembers = readInputMinimumTeamMembersCount();
+            }
+            try {
+                maximumNumberOfTeamMembers = Integer.parseInt(args[2]);
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
+                maximumNumberOfTeamMembers = readInputMaximumTeamMembersCount();
+            }
+        } else {
+            minimumNumberOfTeamMembers = readInputMinimumTeamMembersCount();
+            maximumNumberOfTeamMembers = readInputMaximumTeamMembersCount();
+        }
 
-        final Tuple2<Byte, Byte> woldBossLevelRange = UserConfig.getWorldBossLevelRange();
-        info("All World Boss levels:");
-        for (int rl = woldBossLevelRange._1; rl <= woldBossLevelRange._2; rl++)
-            info(String.format("  %2d. %s\n", rl, UserConfig.getWorldBossLevelDesc(rl)));
-
-        int worldBossLevel = readInputWorldBossLevel(woldBossLevelRange._1, woldBossLevelRange._2);
-        maximumNumberOfTeamMembers = extractMaximumTeamMemberCountFromWorldBossLevel(worldBossLevel);
-        if (maximumNumberOfTeamMembers < 3 || maximumNumberOfTeamMembers > 5) {
-            err("I'm sorry, this world boss level has not been supported yet, please raise an Issue ticket at my github");
+        if (minimumNumberOfTeamMembers < 2 || minimumNumberOfTeamMembers > 5) {
+            err("Minimum number of team members required to start is %d, which is a wrong number, valid range is from 2 to 5", maximumNumberOfTeamMembers);
             Main.exit(Main.EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION);
             return;
         }
 
-        info("%s supports up to %d team members (if I'm wrong, please raise an Issue ticket at my github)", UserConfig.getWorldBossLevelDesc(worldBossLevel), maximumNumberOfTeamMembers);
-        if (minimumNumberOfTeamMembers == maximumNumberOfTeamMembers) {
-            info("and you configured your team must be full in order to Start", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
-        } else if (minimumNumberOfTeamMembers < maximumNumberOfTeamMembers) {
-            info("and you configured your team must have at least %d/%d members in order to Start", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
-        } else {
-            err("The minimum number of team members you've inputted is %d which is greater than number of slots %s supports is %d", minimumNumberOfTeamMembers, UserConfig.getWorldBossLevelDesc(worldBossLevel), maximumNumberOfTeamMembers);
+        if (maximumNumberOfTeamMembers < 3 || maximumNumberOfTeamMembers > 5) {
+            err("Number of team members supported by World Boss is %d, which is a wrong number, valid range is from 3 to 5", maximumNumberOfTeamMembers);
+            info("Netherworld, 3XT3RM1N4T10N, Brimstone Syndicate, Titans Attack, The Ignited Abyss support 3 team members");
+            info("Melvin Factory, Nordic Dream support 4 team members");
+            info("Orlag Clan supports 5 team members");
             Main.exit(Main.EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION);
+            return;
+        }
+
+        if (minimumNumberOfTeamMembers > maximumNumberOfTeamMembers) {
+            err("The minimum number of team members you've set is %d which is greater than maximum number of slots the world boss supports is %d", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
+            Main.exit(Main.EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION);
+            return;
+        }
+
+        if (!readYesNoInput(String.format("The World Boss you are going to hunt, supports %d members. Is that correct?", maximumNumberOfTeamMembers), "If something wrong, please press N and restart bot and provide correct configuration, otherwise bot won't work correctly", false, true))
+        {
+            Main.exit(EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION);
+            return;
+        }
+
+        String ask;
+        if (minimumNumberOfTeamMembers < maximumNumberOfTeamMembers) {
+            ask = String.format("You configured your team must have at least %d/%d members in order to Start", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
+        } else {
+            ask = String.format("You configured your team must be full %d/%d members in order to Start", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
+        }
+
+        if (!readYesNoInput(ask + ". Is that correct?", "If something wrong, please press N and restart bot and provide correct configuration, otherwise bot won't work correctly", false, true))
+        {
+            Main.exit(EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION);
             return;
         }
 
@@ -213,7 +250,12 @@ public class WorldBossTeamApp extends AbstractApplication {
 
     @Override
     protected String getUsage() {
-        return "<count>";
+        return "<loop_count> <minimum_number_of_team_members> <number_of_team_members_the_world_boss_supports>";
+    }
+
+    @Override
+    public String getArgHint() {
+        return "You can either provide no argument or 1 (loop count) or 3 arguments (<loop_count> <minimum_number_of_team_members> <number_of_team_members_the_world_boss_supports>). Notice about the 3rd argument <number_of_team_members_the_world_boss_supports>, it is how many team members the world boss supports (eg 3 for Titans Attack, 5 for Orlag Clan). If you want to start World Boss Team for 50 turns, only start when having at least 2 members and the World Boss only supports 4 members then fill it: \"50 2 4\"";
     }
 
     @Override
@@ -231,58 +273,39 @@ public class WorldBossTeamApp extends AbstractApplication {
         return 1_800;
     }
 
-    private int extractMaximumTeamMemberCountFromWorldBossLevel(int worldBossLevel) {
-        switch (worldBossLevel)
-        {
-            //noinspection SpellCheckingInspection
-            case 1: // Orlag Clan
-                return 5;
-            case 2: // Netherworld
-                return 3;
-            case 3: // Melvin Factory
-                return 4;
-            case 4: // 3XT3RM1N4T10N
-                return 3;
-            case 5: // Brimstone Syndicate
-                return 3;
-            case 6: // Titans Attack
-                return 3;
-            case 7: // The Ignited Abyss
-                return 3;
-            case 8: // Nordic Dream
-                return 4;
-            default:
-                return -1;
-        }
-    }
-
     protected int readInputMinimumTeamMembersCount() {
-        return readInput("How many team members are required to start World Boss? (fill it exactly)", "Numeric only", s -> {
+        return readInput("Minimum number of team members required to Start? (otherwise bot will wait)", "If you want to wait until your team has at least 3 members before start hunting world boss, fill it 3 here, etc...", s -> {
             try {
                 int num = Integer.parseInt(s);
-                if (num < 2) {
+                if (num < 1)
                     return new Tuple3<>(false, "Must greater than 1", 0);
-                }
+                else if (num == 1)
+                    return new Tuple3<>(false, "Come on, this is world boss team, why 1? Use World Boss Solo instead!", 0);
+                else if (num > 5)
+                    return new Tuple3<>(false, "Must lower than 6", 0);
                 return new Tuple3<>(true, null, num);
             } catch (NumberFormatException ex1) {
-                return new Tuple3<>(false, "The value you inputted is not a number", 0);
+                return new Tuple3<>(false, "It's not a number", 0);
             }
         });
     }
 
-    protected int readInputWorldBossLevel(int min, int max) {
-        return readInput("Specific World Boss level to farm with team? (to be used to extract maximum number of team members)", "Numeric only", s -> {
+    protected int readInputMaximumTeamMembersCount() {
+        return readInput("How many team members does the World Boss supports?\n" +
+                        "  3 (Netherworld, 3XT3RM1N4T10N, Brimstone Syndicate, Titans Attack, The Ignited Abyss)\n" +
+                        "  4 (Melvin Factory, Nordic Dream)\n" +
+                        "  5 (Orlag Clan)", null, s -> {
             try {
                 int num = Integer.parseInt(s);
-                if (num < min) {
-                    return new Tuple3<>(false, "Minimum is " + min, 0);
+                if (num < 3) {
+                    return new Tuple3<>(false, "Must greater than 2", 0);
                 }
-                if (num > max) {
-                    return new Tuple3<>(false, "Maximum is " + max, 0);
+                else if (num > 5) {
+                    return new Tuple3<>(false, "Must lower than 6", 0);
                 }
                 return new Tuple3<>(true, null, num);
             } catch (NumberFormatException ex1) {
-                return new Tuple3<>(false, "The value you inputted is not a number", 0);
+                return new Tuple3<>(false, "It's not a number", 0);
             }
         });
     }

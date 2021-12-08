@@ -162,7 +162,7 @@ public class Main {
 				String.format(
 						"You can pass flags like '--exit=3600'/'--ear'/'--help'... here. For list of supported flags available for each function, please run file '%s'",
 						scriptFileName("help")),
-				true);
+				true, false);
 		if (addMoreFlags) {
 			final Supplier<List<String>> selectedFlagsInfoProvider = () -> lArgs.stream()
 					.filter(x -> x.startsWith("--")).collect(Collectors.toList());
@@ -420,20 +420,25 @@ public class Main {
 	}
 
 	public static boolean readYesNoInput(String ask, String desc) {
-		return readYesNoInput(ask, desc, false);
+		return readYesNoInput(ask, desc, false, false);
 	}
 
-	public static boolean readYesNoInput(String ask, String desc, boolean emptyAsNo) {
-		Boolean result = readInput(ask, desc == null ? "Answer by typing Y/N" : desc, s -> {
+	public static boolean readYesNoInput(String ask, String desc, boolean emptyAsNo, boolean emptyAsYes) {
+		if (emptyAsYes && emptyAsNo) {
+			emptyAsNo = false;
+			emptyAsYes = false;
+		}
+		Boolean result = readInput(ask, desc == null ? "Answer by typing Y/N" : desc + "\nAnswer by typing Y/N", s -> {
 			String answer = s.trim().toLowerCase();
-			if ("y".equals(answer) || "yes".equals(answer))
+			if ("y".equals(answer) || "yes".equals(answer) || "yup".equals(answer) || "true".equals(answer) || "correct".equals(answer) || "right".equals(answer))
 				return new Tuple3<>(true, null, true);
-			if ("n".equals(answer) || "no".equals(answer))
+			if ("n".equals(answer) || "no".equals(answer) || "not".equals(answer) || "false".equals(answer))
 				return new Tuple3<>(true, null, false);
 			return new Tuple3<>(false, "Not a valid answer", null);
-		}, emptyAsNo);
-		if (result == null)
-			return false;
+		}, emptyAsNo || emptyAsYes);
+		if (result == null) {
+			return emptyAsYes;
+		}
 		return result;
 	}
 
