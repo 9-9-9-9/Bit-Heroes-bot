@@ -12,6 +12,7 @@ import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.types.tuples.Tuple2;
 import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ColorizeUtil;
+import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.ThreadUtil;
 
 import java.awt.*;
@@ -90,6 +91,8 @@ public class WorldBossTeamApp extends AbstractApplication {
     }
 
     private void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
+        final Point coordinateHideMouse = new Point(0, 0);
+
         info(ColorizeUtil.formatInfo, "\n\nStarting World Boss (Team)");
         info(ColorizeUtil.formatError, "*** NOTICE: REMEMBER YOU HAVE TO WATCH/CHECK THE GAME SOMETIME TO PREVENT UN-EXPECTED HANG/LOSS DUE TO UN-MANAGED BEHAVIORS LIKE MISSING MEMBERS,...ETC ***");
         try {
@@ -142,6 +145,19 @@ public class WorldBossTeamApp extends AbstractApplication {
                 if (clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.ready)) {
                     debug("Team member => waiting");
                     continue;
+                }
+
+                if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmStartNotFullTeam)) {
+                    debug("confirmStartNotFullTeam");
+                    InteractionUtil.Keyboard.sendSpaceKey();
+                    moveCursor(coordinateHideMouse);
+                    continue;
+                }
+
+                if (findImage(BwMatrixMeta.Metas.WorldBoss.Dialogs.notEnoughXeals) != null) {
+                    debug("notEnoughXeals");
+                    InteractionUtil.Keyboard.sendEscape();
+                    break;
                 }
 
                 if (findImage(BwMatrixMeta.Metas.WorldBoss.Buttons.startBoss) == null) {
