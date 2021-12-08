@@ -94,7 +94,7 @@ public class WorldBossTeamApp extends AbstractApplication {
         final Point coordinateHideMouse = new Point(0, 0);
 
         info(ColorizeUtil.formatInfo, "\n\nStarting World Boss (Team)");
-        info(ColorizeUtil.formatError, "*** NOTICE: REMEMBER YOU HAVE TO WATCH/CHECK THE GAME SOMETIME TO PREVENT UN-EXPECTED HANG/LOSS DUE TO UN-MANAGED BEHAVIORS LIKE MISSING MEMBERS,...ETC ***");
+        info(ColorizeUtil.formatWarning, "*** NOTICE: REMEMBER YOU HAVE TO WATCH/CHECK THE GAME SOMETIME TO PREVENT UN-EXPECTED HANG/LOSS DUE TO UN-MANAGED BEHAVIORS LIKE MISSING MEMBERS,...ETC ***");
         try {
             final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
 
