@@ -66,7 +66,7 @@ public class AfkApp extends AbstractApplication {
             boolean doExpedition = eventList.contains(AttendablePlaces.expedition);
             boolean doPVP = eventList.contains(AttendablePlaces.pvp);
             if (doRaid || doWorldBoss || doExpedition || doPVP) {
-                userConfig = getPredefinedUserConfigFromProfileName("You want to do Raid/World Boss/Expedition/PVP so you have to specific profile name first!\nSelect an existing profile:");
+                userConfig = getPredefinedUserConfigFromProfileName("You want to do Raid/World Boss (Solo)/Expedition/PVP so you have to specific profile name first!\nSelect an existing profile:");
 
                 try {
                     if (doRaid) {

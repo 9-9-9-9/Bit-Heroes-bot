@@ -112,9 +112,8 @@ public class ReRunApp extends AbstractApplication {
                     continue;
                 }
                 if (clickImage(BwMatrixMeta.Metas.Raid.Buttons.town)) {
-                    masterSwitch.set(true);
-                    warn("Detected 'Defeated' state so ReRun gonna stop now");
-                    Telegram.sendMessage("Defeated", true);
+                    warn("Detected 'Defeated' state");
+                    Telegram.sendMessage("Defeated in Raid", true);
                 }
             }
         } catch (Exception ex) {

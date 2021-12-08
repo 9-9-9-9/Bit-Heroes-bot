@@ -15,6 +15,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import bh.bot.app.dev.*;
+import bh.bot.app.farming.*;
 import bh.bot.common.extensions.Rad;
 import bh.bot.common.types.flags.*;
 import org.apache.maven.model.Model;
@@ -27,14 +28,6 @@ import bh.bot.app.FishingApp;
 import bh.bot.app.GenMiniClient;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.SettingApp;
-import bh.bot.app.farming.ExpeditionApp;
-import bh.bot.app.farming.GauntletApp;
-import bh.bot.app.farming.GvgApp;
-import bh.bot.app.farming.InvasionApp;
-import bh.bot.app.farming.PvpApp;
-import bh.bot.app.farming.RaidApp;
-import bh.bot.app.farming.TrialsApp;
-import bh.bot.app.farming.WorldBossApp;
 import bh.bot.common.Configuration;
 import bh.bot.common.OS;
 import bh.bot.common.Telegram;
@@ -78,6 +71,7 @@ public class Main {
 					FishingApp.class, //
 					AfkApp.class, //
 					WorldBossApp.class, //
+					WorldBossTeamApp.class, //
 					RaidApp.class, //
 					PvpApp.class, //
 					InvasionApp.class, //
@@ -92,6 +86,7 @@ public class Main {
 //
 					ScreenCaptureApp.class, //
 					TestApp.class, //
+					DualWorldBoss.class, //
 					GenerateMetaApp.class //
 			);
 
@@ -528,5 +523,6 @@ public class Main {
 	public static final int EXIT_CODE_WINDOW_DETECTION_ISSUE = 14;
 	public static final int EXIT_CODE_MULTIPLE_INSTANCE_DETECTED = 15;
 	public static final int EXIT_CODE_EXTRACT_BOT_VERSION_FAILURE = 16;
+	public static final int EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION = 17;
 	public static final int EXIT_CODE_UNHANDLED_EXCEPTION = -1;
 }
