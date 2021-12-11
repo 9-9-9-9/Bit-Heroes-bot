@@ -44,7 +44,10 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 info(getHelp());
                 loopCount = readInput("Loop count:", "how many time do you want to do " + getAppName(), s -> {
                     try {
-                        int result = Integer.parseInt(s, 16) & 0xFFFFFF;
+                        int result = Integer.parseInt(s);
+                        if (result < 2) {
+                            return new Tuple3<>(false, "Must be greater than 1", 0);
+                        }
                         return new Tuple3<>(true, null, result);
                     } catch (Exception ex2) {
                         return new Tuple3<>(false, "Unable to parse, error: " + ex.getMessage(), 0);
