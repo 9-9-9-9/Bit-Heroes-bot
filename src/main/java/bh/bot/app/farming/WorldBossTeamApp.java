@@ -12,11 +12,13 @@ import bh.bot.common.types.tuples.Tuple3;
 import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.ThreadUtil;
+import org.fusesource.jansi.Ansi;
 
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static bh.bot.Main.*;
@@ -51,20 +53,29 @@ public class WorldBossTeamApp extends AbstractApplication {
             arg = readInputLoopCount("How many times do you want to attack the world bosses?");
         }
 
+        boolean skipConfirm = true;
+
         if (args.length == 3) {
             try {
                 minimumNumberOfTeamMembers = Integer.parseInt(args[1]);
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
-                minimumNumberOfTeamMembers = readInputMinimumTeamMembersCount();
+                err(ex);
+                err("Bad value of 2nd argument (minimum number of team members)");
+                Main.exit(EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION);
+                return;
             }
             try {
                 maximumNumberOfTeamMembers = Integer.parseInt(args[2]);
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
-                maximumNumberOfTeamMembers = readInputMaximumTeamMembersCount();
+                err(ex);
+                err("Bad value of 3rd argument (Number of team members that the target World Boss supports)");
+                Main.exit(EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION);
+                return;
             }
         } else {
             minimumNumberOfTeamMembers = readInputMinimumTeamMembersCount();
             maximumNumberOfTeamMembers = readInputMaximumTeamMembersCount();
+            skipConfirm = false;
         }
 
         if (minimumNumberOfTeamMembers < 2 || minimumNumberOfTeamMembers > 5) {
@@ -83,28 +94,34 @@ public class WorldBossTeamApp extends AbstractApplication {
         }
 
         if (minimumNumberOfTeamMembers > maximumNumberOfTeamMembers) {
-            err("The minimum number of team members you've set is %d which is greater than maximum number of slots the world boss supports is %d", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
+            err("The minimum number of team members you've set is %d which is greater than maximum number of slots the target world boss supports is %d", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
             Main.exit(Main.EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION);
             return;
         }
 
-        if (!readYesNoInput(String.format("The World Boss you are going to hunt, supports %d members. Is that correct?", maximumNumberOfTeamMembers), "If something wrong, please press N and restart bot and provide correct configuration, otherwise bot won't work correctly", false, true))
-        {
-            Main.exit(EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION);
-            return;
-        }
-
-        String ask;
-        if (minimumNumberOfTeamMembers < maximumNumberOfTeamMembers) {
-            ask = String.format("You configured your team must have at least %d/%d members in order to Start", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
+        if (skipConfirm) {
+            if (minimumNumberOfTeamMembers < maximumNumberOfTeamMembers) {
+                info("You configured your team must have at least %d/%d members in order to Start", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
+            } else {
+                info("You configured your team must be full %d/%d members in order to Start", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
+            }
         } else {
-            ask = String.format("You configured your team must be full %d/%d members in order to Start", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
-        }
+            if (!readYesNoInput(String.format("The World Boss you are going to hunt, supports %d members. Is that correct?", maximumNumberOfTeamMembers), "If something wrong, please press N and restart bot and provide correct configuration, otherwise bot won't work correctly", false, true)) {
+                Main.exit(EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION);
+                return;
+            }
 
-        if (!readYesNoInput(ask + ". Is that correct?", "If something wrong, please press N and restart bot and provide correct configuration, otherwise bot won't work correctly", false, true))
-        {
-            Main.exit(EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION);
-            return;
+            String ask;
+            if (minimumNumberOfTeamMembers < maximumNumberOfTeamMembers) {
+                ask = String.format("You configured your team must have at least %d/%d members in order to Start", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
+            } else {
+                ask = String.format("You configured your team must be full %d/%d members in order to Start", minimumNumberOfTeamMembers, maximumNumberOfTeamMembers);
+            }
+
+            if (!readYesNoInput(ask + ". Is that correct?", "If something wrong, please press N and restart bot and provide correct configuration, otherwise bot won't work correctly", false, true)) {
+                Main.exit(EXIT_CODE_INCORRECT_RUNTIME_CONFIGURATION);
+                return;
+            }
         }
 
         final int loop = arg;
@@ -131,7 +148,9 @@ public class WorldBossTeamApp extends AbstractApplication {
         final Point coordinateHideMouse = new Point(0, 0);
 
         info(ColorizeUtil.formatInfo, "\n\nStarting World Boss (Team)");
-        info(ColorizeUtil.formatWarning, "*** NOTICE: REMEMBER YOU HAVE TO WATCH/CHECK THE GAME SOMETIME TO PREVENT UN-EXPECTED HANG/LOSS DUE TO UN-MANAGED BEHAVIORS LIKE MISSING MEMBERS,...ETC ***");
+        warningWatch(ColorizeUtil.formatError);
+        warningWatch(ColorizeUtil.formatWarning);
+        warningWatch(ColorizeUtil.formatInfo);
         try {
             final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
 
@@ -248,6 +267,10 @@ public class WorldBossTeamApp extends AbstractApplication {
         }
     }
 
+    private void warningWatch(Function<Ansi, Ansi> ansiFormat) {
+        info(ansiFormat, "*** NOTICE: REMEMBER YOU HAVE TO WATCH/CHECK THE GAME SOMETIME TO PREVENT UN-EXPECTED HANG/LOSS DUE TO UN-MANAGED BEHAVIORS LIKE MISSING MEMBERS, RE-GROUP FAILED, INCORRECT GROUP MATCHING...ETC ***");
+    }
+
     @Override
     protected String getUsage() {
         return "<loop_count> <minimum_number_of_team_members> <number_of_team_members_the_world_boss_supports>";
@@ -255,7 +278,7 @@ public class WorldBossTeamApp extends AbstractApplication {
 
     @Override
     public String getArgHint() {
-        return "You can either provide no argument or 1 (loop count) or 3 arguments (<loop_count> <minimum_number_of_team_members> <number_of_team_members_the_world_boss_supports>). Notice about the 3rd argument <number_of_team_members_the_world_boss_supports>, it is how many team members the world boss supports (eg 3 for Titans Attack, 5 for Orlag Clan). If you want to start World Boss Team for 50 turns, only start when having at least 2 members and the World Boss only supports 4 members then fill it: \"50 2 4\"";
+        return "You can either provide no argument or 1 (loop count) or 3 arguments (<loop_count> <minimum_number_of_team_members> <number_of_team_members_the_world_boss_supports>). Notice about the 3rd argument <number_of_team_members_the_world_boss_supports>, it is how many team members the target world boss supports (eg 3 for Titans Attack, 5 for Orlag Clan). If you want to start World Boss Team for 50 turns, only start when having at least 2 members and the target World Boss only supports 4 members then fill it: \"50 2 4\"";
     }
 
     @Override
@@ -291,7 +314,7 @@ public class WorldBossTeamApp extends AbstractApplication {
     }
 
     protected int readInputMaximumTeamMembersCount() {
-        return readInput("How many team members does the World Boss supports?\n" +
+        return readInput("How many team members does the target World Boss supports?\n" +
                         "  3 (Netherworld, 3XT3RM1N4T10N, Brimstone Syndicate, Titans Attack, The Ignited Abyss)\n" +
                         "  4 (Melvin Factory, Nordic Dream)\n" +
                         "  5 (Orlag Clan)", null, s -> {
