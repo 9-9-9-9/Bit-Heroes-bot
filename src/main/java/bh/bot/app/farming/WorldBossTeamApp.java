@@ -15,11 +15,8 @@ import bh.bot.common.utils.ThreadUtil;
 import org.fusesource.jansi.Ansi;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static bh.bot.Main.*;
 import static bh.bot.common.Log.*;
@@ -45,15 +42,16 @@ public class WorldBossTeamApp extends AbstractApplication {
         }
 
         longTimeNoSee = Configuration.Timeout.longTimeNoSeeInMinutes * 60_000;
+        boolean skipConfirm = true;
+
         int arg;
         try {
             arg = Integer.parseInt(args[0]);
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
             info(getHelp());
             arg = readInputLoopCount("How many times do you want to attack the world bosses?");
+            skipConfirm = false;
         }
-
-        boolean skipConfirm = true;
 
         if (args.length == 3) {
             try {
@@ -137,6 +135,7 @@ public class WorldBossTeamApp extends AbstractApplication {
                                 .clickDisconnect() //
                                 .reactiveAuto() //
                                 .autoExit() //
+                                .warningWorldBossTeam() //
                                 .build() //
                 ), //
                 () -> doCheckGameScreenOffset(masterSwitch)
@@ -148,9 +147,9 @@ public class WorldBossTeamApp extends AbstractApplication {
         final Point coordinateHideMouse = new Point(0, 0);
 
         info(ColorizeUtil.formatInfo, "\n\nStarting World Boss (Team)");
-        warningWatch(ColorizeUtil.formatError);
-        warningWatch(ColorizeUtil.formatWarning);
-        warningWatch(ColorizeUtil.formatInfo);
+        warningWatchWorldBossTeam(ColorizeUtil.formatError);
+        warningWatchWorldBossTeam(ColorizeUtil.formatWarning);
+        warningWatchWorldBossTeam(ColorizeUtil.formatInfo);
         try {
             final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
 
@@ -265,10 +264,6 @@ public class WorldBossTeamApp extends AbstractApplication {
             Telegram.sendMessage("Error occurs during execution: " + ex.getMessage(), true);
             masterSwitch.set(true);
         }
-    }
-
-    private void warningWatch(Function<Ansi, Ansi> ansiFormat) {
-        info(ansiFormat, "*** NOTICE: REMEMBER YOU HAVE TO WATCH/CHECK THE GAME SOMETIME TO PREVENT UN-EXPECTED HANG/LOSS DUE TO UN-MANAGED BEHAVIORS LIKE MISSING MEMBERS, RE-GROUP FAILED, INCORRECT GROUP MATCHING...ETC ***");
     }
 
     @Override

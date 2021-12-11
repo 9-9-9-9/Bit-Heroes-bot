@@ -31,6 +31,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -80,6 +81,7 @@ import bh.bot.common.utils.TimeUtil;
 import bh.bot.common.utils.ValidationUtil;
 import bh.bot.common.utils.VersionUtil;
 import com.sun.jna.platform.win32.WinNT;
+import org.fusesource.jansi.Ansi;
 
 public abstract class AbstractApplication {
 	protected ParseArgumentsResult argumentInfo;
@@ -715,6 +717,7 @@ public abstract class AbstractApplication {
 	private static final int persuadeSleepSecs = 60;
 	private static final int persuadeSleepSecsIntervalInCaseManual = 30;
 	private static final int persuadeSleepSecsAwaitAction = 20;
+	private static final int showWarningWorldBossTeamSleepSecs = 60;
 
 	protected void internalDoSmallTasks(AtomicBoolean masterSwitch, SmallTasks st) {
 		try {
@@ -726,6 +729,8 @@ public abstract class AbstractApplication {
 			final AtomicInteger continousPersuadeScreen = new AtomicInteger(0);
 			long nextPersuade = addSec(persuadeSleepSecs);
 			boolean persuade = st.persuade && !argumentInfo.disablePersuade;
+			long nextShowWarningWorldBossTeam = addSec(showWarningWorldBossTeamSleepSecs);
+			boolean showWarningWorldBossTeam = st.showWarningWorldBossTeam;
 
 			if (persuade) {
 				if (Configuration.enableDevFeatures) {
@@ -791,6 +796,12 @@ public abstract class AbstractApplication {
 
 				if (persuade && nextPersuade <= System.currentTimeMillis())
 					nextPersuade = doPersuade(continousPersuadeScreen);
+
+				if (showWarningWorldBossTeam && nextShowWarningWorldBossTeam <= System.currentTimeMillis())
+				{
+					warningWatchWorldBossTeam(ColorizeUtil.formatWarning);
+					nextShowWarningWorldBossTeam = addSec(showWarningWorldBossTeamSleepSecs);
+				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -810,6 +821,7 @@ public abstract class AbstractApplication {
 		public final boolean autoExit;
 		public final boolean closeEnterGameNewsDialog;
 		public final boolean persuade;
+		public final boolean showWarningWorldBossTeam;
 
 		private SmallTasks(Builder b) {
 			this.clickTalk = b.f(0);
@@ -818,6 +830,7 @@ public abstract class AbstractApplication {
 			this.autoExit = b.f(3);
 			this.closeEnterGameNewsDialog = b.f(4);
 			this.persuade = b.f(5);
+			this.showWarningWorldBossTeam = b.f(6);
 		}
 
 		public static Builder builder() {
@@ -862,6 +875,10 @@ public abstract class AbstractApplication {
 
 			public Builder persuade() {
 				return this.set(5);
+			}
+
+			public Builder warningWorldBossTeam() {
+				return this.set(6);
 			}
 		}
 	}
@@ -1508,6 +1525,10 @@ public abstract class AbstractApplication {
 
 	protected void warningPvpTargetSelectionCase() {
 		info(Cu.i().yellow("** WARNING ** ").red("about selecting PVP target").yellow(" feature, to prevent wrong targeting and un-expected loss on other target-selectable ranking like GVG... (which having the same target-selection method), ").cyan("while doing AFK").yellow(", this feature works and ").cyan("only works when bot itself attends to PVP").yellow(" by selecting the PVP icon (top left of game screen). That means if you select the PVP icon yourself or enter PVP before bot click etc.., it only select the first line as target as default").reset());
+	}
+
+	protected void warningWatchWorldBossTeam(Function<Ansi, Ansi> ansiFormat) {
+		info(ansiFormat, "*** NOTICE: REMEMBER YOU HAVE TO WATCH/CHECK THE GAME SOMETIME TO PREVENT UN-EXPECTED HANG/LOSS DUE TO UN-MANAGED BEHAVIORS LIKE MISSING MEMBERS, RE-GROUP FAILED, INCORRECT GROUP MATCHING...ETC ***");
 	}
 
 	protected int getDefaultMainLoopInterval() {
