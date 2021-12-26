@@ -1,11 +1,13 @@
 **Upgrade notes:** copy configuration files `user-config.properties` and `readonly.*.user-config.properties` from previous bot version's directory
 ___
-##Bit Heroes bot
+## Bit Heroes bot
 ##### on Linux / Windows
 
 > We play the game, don't let the game play us
 
 [Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
+
+> To the guys who using this bot but not giving this repo a Star: Fvck U
 ___
 Supports **English user interface** of [Bit Heroes on Steam](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Does-this-bot-supports-Steam-version-of-Bit-Heroes%3F) and [Bit Heroes on web](https://www.kongregate.com/games/Juppiomenz/bit-heroes) + [mini-client](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
 
