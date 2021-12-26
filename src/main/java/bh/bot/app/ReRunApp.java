@@ -69,8 +69,9 @@ public class ReRunApp extends AbstractApplication {
                 sleep(mainLoopInterval);
                 if (clickImage(BwMatrixMeta.Metas.Dungeons.Buttons.rerun)) {
                     loopCount--;
-                    lastFound = System.currentTimeMillis();
-                    info("%d loop left", loopCount);
+                    long now = System.currentTimeMillis();
+                    info("%d loop left (last round: %ds)", loopCount, (now - lastFound) / 1000);
+                    lastFound = now;
                     clickedOnPreviousRound = true;
                 } else {
                     if (System.currentTimeMillis() - lastFound > longTimeNoSee) {

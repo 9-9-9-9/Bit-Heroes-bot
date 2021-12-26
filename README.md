@@ -1,52 +1,31 @@
-## Bit Heroes bot
-##### on Linux / Windows / ~~MacOS~~
-[![Github Open Issues](https://img.shields.io/github/issues/9-9-9-9/Bit-Heroes-bot.svg)](https://github.com/9-9-9-9/Bit-Heroes-bot/issues)
-[![Github All Releases](https://img.shields.io/github/downloads/9-9-9-9/Bit-Heroes-bot/total.svg)](https://github.com/9-9-9-9/Bit-Heroes-bot/releases)
-
-Hi, I'm the bot, please give this repository a Star, thanks
-
-This project has inspiration from https://github.com/tiemonl/Bit-Heroes-Fishing-Bot
+**Upgrade notes:** copy configuration files `user-config.properties` and `readonly.*.user-config.properties` from previous bot version's directory
+___
+Bit Heroes bot
+##### on Linux / Windows
 
 > We play the game, don't let the game play us
-
-> You spend your time for your family and me helps you persuade the Familiars
-
-> Eat duck, eat all the bones. With me, you wont waste any minute of your Bitgor also your sleeping time
-
-___
-[Wiki version](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
-
-**This readme file is for developers**
-
-Normal users please [read at this page](https://github.com/9-9-9-9/Bit-Heroes-bot/blob/master/README.release.md)
-
-[_There're some notes for MacOS users, please read here_](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Notes-for-MacOS-users)
 ___
 Officially support [Bit Heroes on Steam](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Does-this-bot-supports-Steam-version-of-Bit-Heroes%3F) and [Bit Heroes on web](https://www.kongregate.com/games/Juppiomenz/bit-heroes) + [mini-client](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
 
 **Only support English user interface**
+
+[Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
+
+[Note for MacOS users](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Notes-for-MacOS-users)
 
 ### Contains the following functions:
 1. [Auto fishing](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22fishing%22)
 2. [**ReRun** Dungeons and Raid](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22rerun%22)
 3. [Do stuffs while AFK](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22afk%22)
 4. Farm  [World Boss](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22world-boss%22) / [Raid](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22raid%22) / [PVP](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22pvp%22) / [Invasion](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22invasion%22) / [GVG](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22GVG%22) / [Expedition](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22expedition%22) / [Trials](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22trials%22) / [Gauntlet](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22gauntlet%22)
-5. [Launch game in mini client using Google Chrome](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
-
-And some extra functions support developers on developing this bot
+5. Farm [World Boss in Team mode](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22world-boss%22-(team))
+6. [Launch game in mini client using Google Chrome](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
 
 [Also supports pushing messages to Telegram for notification purpose](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
 
 ### Minimum requirement:
-- [JDK 8 (not tested on version 9 and above but probably it works)](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html)
-- [Apache Maven](https://maven.apache.org/install.html)
-- [Google Chrome (if you wish to use the mini client)](https://www.google.com/chrome)
-
-### Installation:
-1. `git clone https://github.com/9-9-9-9/Bit-Heroes-bot` or download ZIP file then extract
-2. Depends on OS:
-    - Windows: click and run the file `build.bat`
-    - Linux/MacOS: run command `./build.sh` in terminal
+- [Java 8 (not tested on version 9+ but probably it works)](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html)
+- [Google Chrome installed (if you wish to use the mini client)](https://www.google.com/chrome)
 
 #### Easy to use:
 1. Configure follow [instruction on Wiki (click me)](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Basic-setup)
@@ -67,14 +46,3 @@ Tips 2: see help
   - Windows: run file `setting.bat`
   - Linux/MacOS: run script `./setting.sh`
 - [push notification via Telegram](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
-
-#### Tested environments:
-Please find out on each function on [wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
-
-### MacOS users
-1. From MacOS 10.13+, java.awt.Robot class of Java can not do mouse and keyboard interaction, thus none of bot functions will work
-2. With a bit of luck, you can try to add Java to [System Preferences > Security & Privacy > Accessibility] and see if it works (because MacOS prevent apps from controlling your mac by default).
-If it doesn't work, install a higher version of Java, add Accessibility and try again. If it still doesn't work, just give up
-3. Thus this whole project only has the mini-client function will work on MacOS
-
-So this project does not officially supported MacOS, any developer can resolve the above issue, please make a pull request 

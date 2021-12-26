@@ -113,6 +113,8 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
 
             Main.warningEnergyRefill();
 
+            long lastLoop = System.currentTimeMillis();
+
             ML:
             while (!masterSwitch.get() && loopCount > 0) {
                 sleep(mainLoopInterval);
@@ -138,7 +140,9 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                         continuousNotFound = 0;
                         if (predefinedImageAction.reduceLoopCountOnFound) {
                             loopCount--;
-                            info("%d loop left", loopCount);
+                            long now = System.currentTimeMillis();
+                            info("%d loop left (last round: %ds)", loopCount, (now - lastLoop) / 1000);
+                            lastLoop = now;
                         }
                         if (predefinedImageAction.isOutOfTurns) {
                             InteractionUtil.Keyboard.sendEscape();
