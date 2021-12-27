@@ -3,6 +3,9 @@ ___
 ## Bit Heroes bot
 ##### on Linux / Windows
 
+[![Github Open Issues](https://img.shields.io/github/issues/9-9-9-9/Bit-Heroes-bot.svg)](https://github.com/9-9-9-9/Bit-Heroes-bot/issues)
+[![Github All Releases](https://img.shields.io/github/downloads/9-9-9-9/Bit-Heroes-bot/total.svg)](https://github.com/9-9-9-9/Bit-Heroes-bot/releases)
+
 > We play the game, don't let the game play us
 
 [Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
