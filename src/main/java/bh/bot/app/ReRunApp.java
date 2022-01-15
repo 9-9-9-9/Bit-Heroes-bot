@@ -58,7 +58,7 @@ public class ReRunApp extends AbstractApplication {
 
     private void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
         info(ColorizeUtil.formatInfo, "\n\nStarting ReRun");
-        Main.warningEnergyRefill();
+        Main.warningSupport();
         try {
             final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
 

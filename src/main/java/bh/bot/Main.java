@@ -511,8 +511,9 @@ public class Main {
 		System.exit(exitCode);
 	}
 
-	public static void warningEnergyRefill() {
-		Rad.pWarn(20,"Upon level-up, your current energy will be reset to your max energy value, no matter how much energy you currently have (10/500 => 500/500, 2.000/500 => 500/500). It's a good buff but there's a trap inside. So rich-kids, don't over drink your energy at one, excess energy will fly away for nothing and support team won't give you a hand on this bug. GL");
+	public static void warningSupport() {
+		Rad.pWarn(20,"Only support English interface");
+		Rad.pWarn(50,"Only support screen scale 100% (original) otherwise bot will working wrongly");
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;

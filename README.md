@@ -14,6 +14,8 @@ ___
 ___
 Supports **English user interface** of [Bit Heroes on Steam](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Does-this-bot-supports-Steam-version-of-Bit-Heroes%3F) and [Bit Heroes on web](https://www.kongregate.com/games/Juppiomenz/bit-heroes) + [mini-client](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
 
+**Beware** make sure your screen scale ratio is 100% [(Learn more)](https://www.windowscentral.com/how-set-custom-display-scaling-setting-windows-10)
+
 ### Contains the following functions:
 1. [Auto fishing](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22fishing%22)
 2. [**ReRun** Dungeons and Raid](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22rerun%22)

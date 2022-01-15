@@ -111,7 +111,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
             final int selectFightPvp = naBtnFight != null && this instanceof PvpApp ? userConfig.pvpTarget : 0;
             final int offsetTargetPvp = selectFightPvp < 1 ? 0 : (selectFightPvp - 1) * Configuration.screenResolutionProfile.getOffsetDiffBetweenFightButtons();
 
-            Main.warningEnergyRefill();
+            Main.warningSupport();
 
             long lastLoop = System.currentTimeMillis();
 
