@@ -514,7 +514,7 @@ public class Main {
 	public static void warningSupport() {
 		try {
 			Rad.pWarn(20,"Only support English interface");
-			Rad.pWarn(50,"Only support screen scale 100%% (original) otherwise bot will working wrongly");
+			Rad.pWarn(50,"Only support screen scale 100%% (original, no scale) otherwise bot will working wrongly");
 		} catch (Throwable t) {
 			// ignore
 		}
