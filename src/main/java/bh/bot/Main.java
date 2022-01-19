@@ -512,8 +512,12 @@ public class Main {
 	}
 
 	public static void warningSupport() {
-		Rad.pWarn(20,"Only support English interface");
-		Rad.pWarn(50,"Only support screen scale 100% (original) otherwise bot will working wrongly");
+		try {
+			Rad.pWarn(20,"Only support English interface");
+			Rad.pWarn(50,"Only support screen scale 100%% (original) otherwise bot will working wrongly");
+		} catch (Throwable t) {
+			// ignore
+		}
 	}
 
 	public static final int EXIT_CODE_SCREEN_RESOLUTION_ISSUE = 3;
