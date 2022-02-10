@@ -91,6 +91,8 @@ cp ./steam.bot.bat ./release/
 cp ./client.bat ./release/
 cp ./help.bat ./release/
 cp ./setting.bat ./release/
+cp ./AFK.steam.bat ./release/
+cp ./AFK.web.bat ./release/
 
 # Remove secret
 rm -f ./release/bh-client/*.html

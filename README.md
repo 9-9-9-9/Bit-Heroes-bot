@@ -64,4 +64,4 @@ _(Example for Windows only, you can save into a bat file to be able to click-to-
 - ReRun
     > call steam.bot.bat rerun
 
-[Learn more about script here](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Script-example)
+[Learn more about how to create script files here](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Script-example)
