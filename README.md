@@ -52,12 +52,12 @@ Tips 2: see help
 
 ##### Some convenient scrips:
 _(Example for Windows only, you can save into a bat file to be able to click-to-run)_
-- AFK (do chaining tasks PVP, WB, GVG/Invasion/Expedition, TG) and exit
+- AFK (do chaining tasks PVP, WB, GVG/Invasion/Expedition, TG, Raid) and exit
     > call steam.bot.bat afk a --ear
     
     You can also provide flag `--profile=X` so you won't need to select profile manually
     > call steam.bot.bat afk a --ear --profile=MyProfileName
-- AFK (do chaining tasks PVP, WB, GVG/Invasion/Expedition, TG) and keep online (does not recover from disconnected)
+- AFK and keep online (does not recover from disconnected)
     > call steam.bot.bat afk a
 - Fishing
     > call steam.bot.bat fishing
