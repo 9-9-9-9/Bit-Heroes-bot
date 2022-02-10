@@ -26,6 +26,7 @@ import static bh.bot.common.Log.info;
 import static bh.bot.common.utils.InteractionUtil.Mouse.*;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
+@SuppressWarnings("UnnecessaryLabelOnContinueStatement")
 @RequireSingleInstance
 public abstract class AbstractDoFarmingApp extends AbstractApplication {
     protected abstract AttendablePlace getAttendablePlace();
@@ -93,22 +94,20 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
 
             info(ColorizeUtil.formatInfo, "\n\nStarting %s", getAppName());
             List<NextAction> internalPredefinedImageActions = getInternalPredefinedImageActions();
-            NextAction naBtnFight = null;
+            NextAction naBtnFightOfPvp = null;
             if (this instanceof PvpApp && userConfig != null && userConfig.isValidPvpTarget()) {
                 final BwMatrixMeta fight1 = BwMatrixMeta.Metas.PvpArena.Buttons.fight1;
                 Optional<NextAction> first = internalPredefinedImageActions.stream().filter(x -> x.image == fight1).findFirst();
                 if (first.isPresent()) {
-                    naBtnFight = first.get();
-                    final NextAction tmp = naBtnFight;
-                    if (naBtnFight != null) {
-                        internalPredefinedImageActions = internalPredefinedImageActions.stream().filter(x -> x != tmp).collect(Collectors.toList());
-                    }
+                    naBtnFightOfPvp = first.get();
+                    final NextAction tmp = naBtnFightOfPvp;
+                    internalPredefinedImageActions = internalPredefinedImageActions.stream().filter(x -> x != tmp).collect(Collectors.toList());
                 }
             }
             int continuousNotFound = 0;
             final Point coordinateHideMouse = new Point(0, 0);
             final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
-            final int selectFightPvp = naBtnFight != null && this instanceof PvpApp ? userConfig.pvpTarget : 0;
+            final int selectFightPvp = naBtnFightOfPvp != null ? userConfig.pvpTarget : 0;
             final int offsetTargetPvp = selectFightPvp < 1 ? 0 : (selectFightPvp - 1) * Configuration.screenResolutionProfile.getOffsetDiffBetweenFightButtons();
 
             Main.warningSupport();
@@ -141,7 +140,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                         if (predefinedImageAction.reduceLoopCountOnFound) {
                             loopCount--;
                             long now = System.currentTimeMillis();
-                            info("%d loop left (last round: %ds)", loopCount, (now - lastLoop) / 1000);
+                            info("%3d remaining loop left (last round: %ds)", loopCount, (now - lastLoop) / 1000);
                             lastLoop = now;
                         }
                         if (predefinedImageAction.isOutOfTurns) {
@@ -154,15 +153,15 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 }
 
                 if (selectFightPvp > 0) {
-                    Point p = findImage(naBtnFight.image);
+                    Point p = findImage(naBtnFightOfPvp.image);
                     if (p != null) {
                         int offset = Configuration.Features.isFunctionDisabled("target-pvp") ? 0 : offsetTargetPvp;
                         mouseMoveAndClickAndHide(new Point(p.x, p.y + offset));
-                        if (naBtnFight.reduceLoopCountOnFound) {
+                        if (naBtnFightOfPvp.reduceLoopCountOnFound) {
                             loopCount--;
-                            info("%d loop left", loopCount);
+                            info("%3d remaining loop left", loopCount);
                         }
-                        if (naBtnFight.isOutOfTurns) {
+                        if (naBtnFightOfPvp.isOutOfTurns) {
                             InteractionUtil.Keyboard.sendEscape();
                             masterSwitch.set(true);
                         }

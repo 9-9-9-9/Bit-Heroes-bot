@@ -88,12 +88,10 @@ public class ImportTpImageApp extends AbstractApplication {
             filePath = readInput(sb.toString(), null, s -> {
                 s = s.trim();
                 int selected = Integer.parseInt(s);
-                final String pn = profileName;
                 Opt opt = opts.get(selected - 1);
                 String[] mergedPath = Stream
-                        .concat(Arrays.asList("main", "resources", "game-images", pn).stream(),
-                                Arrays.asList(opt.path).stream())
-                        .collect(Collectors.toList()).toArray(new String[0]);
+                        .concat(Stream.of("main", "resources", "game-images", profileName),
+                                Arrays.stream(opt.path)).toArray(String[]::new);
                 Path targetDir = Paths.get("src", mergedPath);
                 File dir = targetDir.toFile();
                 if (!dir.exists())

@@ -40,6 +40,7 @@ import static bh.bot.common.utils.InteractionUtil.Mouse.mouseMoveAndClickAndHide
 import static bh.bot.common.utils.ThreadUtil.sleep;
 import static bh.bot.common.utils.ThreadUtil.waitDone;
 
+@SuppressWarnings("UnnecessaryLabelOnContinueStatement")
 @AppMeta(code = "afk", name = "AFK", displayOrder = 1, argType = "afk", argAsk = "Task combination (optional)", argDefault = "pbr")
 @RequireSingleInstance
 public class AfkApp extends AbstractApplication {

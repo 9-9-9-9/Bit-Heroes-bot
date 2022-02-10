@@ -38,7 +38,9 @@ public class KeepPixApp extends AbstractApplication {
                 if (!new File(templateImg).exists() || !new File(inputImg).exists())
                     throw new FileNotFoundException();
             } catch (ArrayIndexOutOfBoundsException | FileNotFoundException ex) {
+                //noinspection DuplicatedCode
                 info(getHelp());
+                //noinspection DuplicatedCode
                 Function<String, Tuple3<Boolean, String, String>> transform = s -> {
                     try {
                         File file = new File(s);

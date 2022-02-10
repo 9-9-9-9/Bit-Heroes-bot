@@ -35,7 +35,7 @@ public class ReRunApp extends AbstractApplication {
         }
 
         final int loop = arg;
-        Log.info("Loop: %d", loop);
+        info("%3d remaining loop left", loop);
         AtomicBoolean masterSwitch = new AtomicBoolean(false);
         ThreadUtil.waitDone(
                 () -> doLoopClickImage(loop, masterSwitch),

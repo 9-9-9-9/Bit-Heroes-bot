@@ -211,6 +211,7 @@ public abstract class AbstractApplication {
 		if (skipCheckVersion())
 			return;
 
+		//noinspection CodeBlock2Expr
 		Rad.exec(33, () -> {
 			CompletableFuture.runAsync(() -> {
 				if (!VersionUtil.checkForLatestVersion())
@@ -923,9 +924,6 @@ public abstract class AbstractApplication {
 							doPersuadeGold = false;
 							break;
 						}
-						if (ps == PersuadeState.NotTargetFamiliar) {
-							continue;
-						}
 					}
 				}
 
@@ -944,6 +942,7 @@ public abstract class AbstractApplication {
 		return addSec(anyManuallyPersuade ? persuadeSleepSecsIntervalInCaseManual : persuadeSleepSecs);
 	}
 
+	@SuppressWarnings("SameParameterValue")
 	private void saveCurrentScreenShot(boolean ignoreError) {
 		try {
 			int x = Configuration.gameScreenOffset.X.get();
@@ -1055,6 +1054,7 @@ public abstract class AbstractApplication {
 		return addSec(detectDcSleepSecs);
 	}
 
+	@SuppressWarnings("FieldCanBeLocal")
 	private final byte maxContinousRed = 6;
 
 	private long autoReactiveAuto(AtomicInteger continousRed) {

@@ -80,6 +80,7 @@ public class ExtractMatrixApp extends AbstractApplication {
             } catch (ArrayIndexOutOfBoundsException ex) {
                 if (!isDisplayedHelp)
                     info(getHelp());
+                //noinspection DuplicatedCode
                 Function<String, Tuple3<Boolean, String, String>> transform = s -> {
                     try {
                         File file = new File(s);

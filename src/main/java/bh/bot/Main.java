@@ -66,7 +66,7 @@ public class Main {
 
 			Configuration.registerApplicationClasses( //
 					SettingApp.class, //
-//
+// User functions
 					ReRunApp.class, //
 					FishingApp.class, //
 					AfkApp.class, //
@@ -80,10 +80,9 @@ public class Main {
 					GvgApp.class, //
 					GauntletApp.class, //
 					GenMiniClient.class,
-//
+// Dev functions
 					ExtractMatrixApp.class, //
 					ImportTpImageApp.class, //
-//
 					ScreenCaptureApp.class, //
 					TestApp.class, //
 					GenerateMetaApp.class //

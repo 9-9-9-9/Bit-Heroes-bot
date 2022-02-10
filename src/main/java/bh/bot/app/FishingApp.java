@@ -42,7 +42,7 @@ public class FishingApp extends AbstractApplication {
         }
 
         final int loop = arg;
-        info("Loop: %d", loop);
+        info("%3d remaining loop left", loop);
 
         try {
             adjustScreenOffset();

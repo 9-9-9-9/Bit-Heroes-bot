@@ -17,9 +17,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("DeprecatedIsStillUsed")
 @AppMeta(code = "gen-meta", name = "Generate meta", requireClientType = false, dev = true, displayOrder = 100)
+@Deprecated
 public class GenerateMetaApp extends AbstractApplication {
     @Override
     protected void internalRun(String[] args) {
@@ -42,8 +45,9 @@ public class GenerateMetaApp extends AbstractApplication {
             flagInfo.order = anFlagMeta.displayOrder();
 
             return flagInfo;
-        }).filter(x -> x != null).collect(Collectors.toList());
+        }).filter(Objects::nonNull).collect(Collectors.toList());
 
+        //noinspection rawtypes
         List<FlagPattern> supportedFlags = Arrays.stream(Flags.allFlags).filter(f -> flagInfos.stream().anyMatch(fi -> fi.code.equals(f.getName()))).collect(Collectors.toList());
 
         List<AppInfo> appInfos = apps.stream().map(x -> {
@@ -53,7 +57,7 @@ public class GenerateMetaApp extends AbstractApplication {
             AppInfo appInfo = new AppInfo();
             appInfo.name = anAppMeta.name();
             appInfo.code = anAppMeta.code();
-            appInfo.flags = supportedFlags.stream().filter(f -> f.isSupportedByApp(x)).map(f -> f.getName()).collect(Collectors.toList());
+            appInfo.flags = supportedFlags.stream().filter(f -> f.isSupportedByApp(x)).map(FlagPattern::getName).collect(Collectors.toList());
             appInfo.argType = anAppMeta.argType();
             appInfo.argAsk = anAppMeta.argAsk();
             appInfo.argDefault = anAppMeta.argDefault();
@@ -101,6 +105,7 @@ public class GenerateMetaApp extends AbstractApplication {
         return "developers only";
     }
 
+    @SuppressWarnings("unused")
     public static class Meta {
         private List<AppInfo> apps;
         private List<FlagInfo> flags;
@@ -122,6 +127,7 @@ public class GenerateMetaApp extends AbstractApplication {
         }
     }
 
+    @SuppressWarnings("unused")
     public static class AppInfo {
         private String name;
         private String code;

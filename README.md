@@ -49,3 +49,17 @@ Tips 2: see help
   - Windows: run file `setting.bat`
   - Linux: run script `./setting.sh`
 - [push notification via Telegram](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Configure-Telegram-in-able-to-receive-notification)
+
+##### Some convenient scrips:
+_(Example for Windows only, you can save into a bat file to be able to click-to-run)_
+- AFK (do chaining tasks PVP, WB, GVG/Invasion/Expedition, TG) and exit
+    > call steam.bot.bat afk a --ear
+    
+    You can also provide flag `--profile=X` so you won't need to select profile manually
+    > call steam.bot.bat afk a --ear --profile=MyProfileName
+- AFK (do chaining tasks PVP, WB, GVG/Invasion/Expedition, TG) and keep online (does not recover from disconnected)
+    > call steam.bot.bat afk a
+- Fishing
+    > call steam.bot.bat fishing
+- ReRun
+    > call steam.bot.bat rerun
