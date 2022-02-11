@@ -5,7 +5,23 @@ if [ ! -f ./pom.xml ]; then
   exit 2
 fi
 
-/opt/app/apache-maven-3.6.3/bin/mvn clean package
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
+echo ${machine}
+
+if [ "$machine" = "Mac" ]
+then
+	mvn clean package
+else
+	/opt/app/apache-maven-3.6.3/bin/mvn clean package
+fi
+
 EXIT=$?
 
 if [ $EXIT -ne 0 ]; then
