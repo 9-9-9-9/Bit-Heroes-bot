@@ -2,6 +2,7 @@
 .project
 .settings/
 .idea/
+.DS_Store
 target/
 out/
 bh-client/
