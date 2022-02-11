@@ -13,7 +13,6 @@ case "${unameOut}" in
     MINGW*)     machine=MinGw;;
     *)          machine="UNKNOWN:${unameOut}"
 esac
-echo ${machine}
 
 if [ "$machine" = "Mac" ]
 then
