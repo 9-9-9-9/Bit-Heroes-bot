@@ -273,39 +273,35 @@ public class FishingApp extends AbstractApplication {
             while (!masterSwitch.get()) {
                 sleep(1000);
 
-                BufferedImage sc = captureScreen(anchorPoint.x, anchorPoint.y,
+                BufferedImage sc = captureScreen(
+                        anchorPoint.x, anchorPoint.y,
                         Configuration.screenResolutionProfile.getSupportedGameResolutionWidth(),
-                        Configuration.screenResolutionProfile.getSupportedGameResolutionHeight());
+                        Configuration.screenResolutionProfile.getSupportedGameResolutionHeight()
+                );
                 try {
                     saveDebugImage(sc, "detectScreen_fishing");
 
                     if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.catch_)) {
                         screen.set(screenCatch);
                         unsure.set(false);
-                        unsureFrom.set(Long.MAX_VALUE);
-                        seeBtnStartFrom.set(Long.MAX_VALUE);
                         continue;
                     }
 
                     if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.cast)) {
                         screen.set(screenCast);
                         unsure.set(false);
-                        unsureFrom.set(Long.MAX_VALUE);
-                        seeBtnStartFrom.set(Long.MAX_VALUE);
                         continue;
                     }
 
                     if (isContains(sc, BwMatrixMeta.Metas.Fishing.Buttons.start)) {
                         screen.set(screenStart);
                         unsure.set(false);
-                        unsureFrom.set(Long.MAX_VALUE);
                         seeBtnStartFrom.set(System.currentTimeMillis());
                         continue;
                     }
 
                     unsure.set(true);
                     unsureFrom.set(System.currentTimeMillis());
-                    seeBtnStartFrom.set(Long.MAX_VALUE);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     sleep(2000);
