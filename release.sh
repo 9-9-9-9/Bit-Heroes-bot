@@ -78,7 +78,11 @@ EOF
 # Copy files for mini client
 cp ./prepare-mini-chrome-client.txt ./release/
 
-# Copy launch scripts for Linux/Mac
+# Copy sample scripts
+mkdir ./release/sample-scripts/
+cp ./sample-scripts/*.bat ./release/sample-scripts/
+
+# Copy launch scripts for Linux
 cp ./bot.sh ./release/
 cp ./client.sh ./release/
 cp ./help.sh ./release/

@@ -4,3 +4,4 @@
 :: You can remove flag `--ear` to keep game online all day (but still gone if you got Disconnected)
 :: With steam version of BH, refer to AFK.steam.bat file
 call web.bot.bat afk a --ear
+:: Move this file to bot's folder in order to use (this file was distributed within `sample-script` folder so it unable to run)
