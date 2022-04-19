@@ -164,6 +164,7 @@ public class AfkApp extends AbstractApplication {
                     if (first.isPresent()) {
                         naBtnFightPvp = first.get();
                         final NextAction tmp = naBtnFightPvp;
+                        //noinspection ConstantConditions
                         if (naBtnFightPvp != null) {
                             pvpPia = pvpPia.stream().filter(x -> x != tmp).collect(Collectors.toList());
                         }
@@ -653,6 +654,7 @@ public class AfkApp extends AbstractApplication {
                 } else if (c == codeGauntlet) {
                     result.doGauntlet = true;
                 } else if (c == ',' || c == ';' || c == '+') {
+                    //noinspection UnnecessaryContinue
                     continue;
                 } else {
                     throw new InvalidDataException("Unrecognized code value '%s'. Accepted values are combination of %s. For example combination '%s%s%s' stands for PVP + World Boss + Trials", c, shortDescArg, codePvp, codeWorldBoss1, codeTrials);

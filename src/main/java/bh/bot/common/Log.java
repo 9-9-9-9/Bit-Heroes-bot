@@ -106,7 +106,7 @@ public class Log {
         }
         if (obj == null)
             return;
-        System.err.println(colorize(String.format("** ERR ** %s", obj.toString()), formatError));
+        System.err.println(colorize(String.format("** ERR ** %s", obj), formatError));
     }
 
     public static void err(String format, Object... objs) {
@@ -116,7 +116,7 @@ public class Log {
     private static void println(Object obj) {
         if (obj == null)
             return;
-        System.out.println(obj.toString());
+        System.out.println(obj);
     }
 
     private static String colorize(String text, Function<Ansi, Ansi> formatter) {
