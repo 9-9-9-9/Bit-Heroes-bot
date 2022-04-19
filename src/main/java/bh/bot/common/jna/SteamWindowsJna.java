@@ -73,6 +73,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 			);
 			showErrAskIfBhRunningOrReqAdm();
 			Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+			return null;
 		}
 
 		if (rect.width <= 0 || rect.height <= 0)
@@ -106,6 +107,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 				);
 				showErrAskIfBhRunningOrReqAdm();
 				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+				return null;
 			}
 
 			if (rect.width < ew || rect.height < eh) {

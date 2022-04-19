@@ -111,6 +111,7 @@ public abstract class FlagPattern<T> {
         return false;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean hide() {
         return false;
     }

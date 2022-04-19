@@ -2,7 +2,6 @@ package bh.bot.app;
 
 import bh.bot.Main;
 import bh.bot.common.Configuration;
-import bh.bot.common.Log;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.annotations.RequireSingleInstance;

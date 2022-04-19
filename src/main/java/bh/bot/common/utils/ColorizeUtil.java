@@ -1,37 +1,17 @@
 package bh.bot.common.utils;
 
-import static org.fusesource.jansi.Ansi.ansi;
-
-import java.util.function.Function;
-
 import bh.bot.common.Configuration;
 import org.fusesource.jansi.Ansi;
 
+import java.util.function.Function;
+
 public class ColorizeUtil {
-	public static String cInfo(String text) {
-		return ansi().fgBrightBlue().a(text).reset().toString();
-	}
-
-	public static String cAsk(String text) {
-		return ansi().fgBrightCyan().a(text).reset().toString();
-	}
-
-	public static String cWarning(String text) {
-		return ansi().fgBrightYellow().a(text).reset().toString();
-	}
-
-	public static String cError(String text) {
-		return ansi().fgBrightRed().a(text).reset().toString();
-	}
+	public static final Function<Ansi, Ansi> formatInfo = Ansi::fgBrightBlue;
+	public static final Function<Ansi, Ansi> formatAsk = Ansi::fgBrightCyan;
+	public static final Function<Ansi, Ansi> formatWarning = Ansi::fgBrightYellow;
+	public static final Function<Ansi, Ansi> formatError = Ansi::fgBrightRed;
 	
-	public static final Function<Ansi, Ansi> formatInfo = ansi -> ansi.fgBrightBlue();
-	
-	public static final Function<Ansi, Ansi> formatAsk = ansi -> ansi.fgBrightCyan();
-	
-	public static final Function<Ansi, Ansi> formatWarning = ansi -> ansi.fgBrightYellow();
-	
-	public static final Function<Ansi, Ansi> formatError = ansi -> ansi.fgBrightRed();
-	
+	@SuppressWarnings("unused")
 	public static class Cu {
 		private final Ansi ansi = Ansi.ansi();
 		private final StringBuilder sb = new StringBuilder();

@@ -3,7 +3,6 @@ package bh.bot.common.types.flags;
 import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
 import bh.bot.app.ReRunApp;
-import bh.bot.app.farming.AbstractDoFarmingApp;
 import bh.bot.app.farming.RaidApp;
 import bh.bot.common.exceptions.InvalidFlagException;
 import bh.bot.common.exceptions.NotSupportedException;
@@ -13,7 +12,7 @@ public class FlagBribe extends FlagPattern<Familiar> {
 
 	@Override
 	protected Familiar internalParseParam(String paramPart) throws InvalidFlagException {
-		String[] spl = paramPart.toLowerCase().split("[\\,\\;]");
+		String[] spl = paramPart.toLowerCase().split("[,;]");
 		for (String s : spl) {
 			switch (s) {
 			case "kaleido":

@@ -134,10 +134,8 @@ public class Main {
 		FlagPlayOnWeb flagPlayOnWeb = new FlagPlayOnWeb();
 		boolean isWeb = lArgs.stream().anyMatch(x -> x.equalsIgnoreCase(flagPlayOnWeb.getCode()));
 		boolean isSteam = lArgs.stream().anyMatch(x -> x.equalsIgnoreCase(flagPlayOnSteam.getCode()));
-		
-		if (isWeb || isSteam) {
-			// ignore
-		} else {
+
+		if (!isWeb && !isSteam) {
 			if (flagPlayOnSteam.isSupportedOnCurrentOsPlatform()) {
 				lArgs.add(readInput("Steam or Web?\n\t1. Steam\n\t2. Web", null, s -> {
 					try {
@@ -184,12 +182,15 @@ public class Main {
 				lArgs.add(newFlag);
 			}
 		} else {
-			Rad.exec(50, () -> {
-				info(Cu.i().cyan("You can save the command-line into script ").green(scriptFileName("<name>.c")).cyan(" and re-use later").reset());
-			});
+			Rad.exec(50, () -> info(Cu.i()
+					.cyan("You can save the command-line into script ")
+					.green(scriptFileName("<name>.c"))
+					.cyan(" and re-use later")
+					.reset()
+			));
 		}
 
-		return lArgs.stream().distinct().collect(Collectors.toList()).toArray(new String[0]);
+		return lArgs.stream().distinct().toArray(String[]::new);
 	}
 
 	private static void process(String[] args) throws Exception {
@@ -226,14 +227,14 @@ public class Main {
 			MavenXpp3Reader reader = new MavenXpp3Reader();
 			Model model = reader.read(new FileReader("pom.xml"));
 			currentVersion = model.getVersion();
-		} catch (Exception ignored) {
-			if (!(ignored instanceof FileNotFoundException))
-				dev(ignored);
+		} catch (Exception forDevPurposeOnly) {
+			if (!(forDevPurposeOnly instanceof FileNotFoundException))
+				dev(forDevPurposeOnly);
 
 			try (InputStream fCurVer = Configuration.class.getResourceAsStream("/current-version.txt")) {
 				currentVersion = readFromInputStream(fCurVer).trim();
-			} catch (Exception ignored2) {
-				dev(ignored2);
+			} catch (Exception forDevPurposeOnly2) {
+				dev(forDevPurposeOnly2);
 			}
 		}
 
@@ -242,8 +243,8 @@ public class Main {
 				Rad.print(33, ColorizeUtil.formatAsk, "Hi, my name is %s v%s, have a nice day", botName, currentVersion);
 				SematicVersion appVersion = VersionUtil.setCurrentAppVersion(currentVersion);
 				VersionUtil.saveBotInfo(appVersion);
-			} catch (Exception ignored) {
-				dev(ignored);
+			} catch (Exception forDevPurposeOnly) {
+				dev(forDevPurposeOnly);
 			}
 		} else {
 			info(ColorizeUtil.formatAsk, "Hi, my name is %s, have a nice day", botName);
@@ -345,6 +346,7 @@ public class Main {
 			AppMeta anAppMeta = applicationClassFromAppCode.getAnnotation(AppMeta.class);
 
 			if (!anAppMeta.requireClientType()) {
+				//noinspection ConstantConditions
 				isSteam = false;
 				isWeb = true;
 			} else if (OS.isWin) {
@@ -417,6 +419,7 @@ public class Main {
 		return readInput(ask, desc, null, transform, allowBlankAndIfBlankThenReturnNull);
 	}
 
+	@SuppressWarnings("unused")
 	public static boolean readYesNoInput(String ask, String desc) {
 		return readYesNoInput(ask, desc, false, false);
 	}

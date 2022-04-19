@@ -1,9 +1,8 @@
 package bh.bot.common.types;
 
-import java.awt.Rectangle;
-
-import bh.bot.common.exceptions.NotImplementedException;
 import bh.bot.common.types.tuples.Tuple4;
+
+import java.awt.*;
 
 @SuppressWarnings("SpellCheckingInspection")
 public abstract class ScreenResolutionProfile {
@@ -231,6 +230,7 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract byte getOffsetDiffBetweenFightButtons();
 
+	@SuppressWarnings("PointlessArithmeticExpression")
 	public static class Profile800x520 extends ScreenResolutionProfile {
 		public static final String profileName = "800x520";
 
