@@ -1,24 +1,32 @@
 package bh.bot.app;
 
-import static bh.bot.Main.readInput;
-import static bh.bot.common.Log.*;
-import static bh.bot.common.utils.Extensions.scriptFileName;
-import static bh.bot.common.utils.ImageUtil.freeMem;
-import static bh.bot.common.utils.InteractionUtil.Keyboard.sendEscape;
-import static bh.bot.common.utils.InteractionUtil.Keyboard.sendSpaceKey;
-import static bh.bot.common.utils.InteractionUtil.Mouse.clickRadioButton;
-import static bh.bot.common.utils.InteractionUtil.Mouse.hideCursor;
-import static bh.bot.common.utils.InteractionUtil.Mouse.mouseClick;
-import static bh.bot.common.utils.InteractionUtil.Mouse.mouseMoveAndClickAndHide;
-import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
-import static bh.bot.common.utils.InteractionUtil.Screen.captureElementInEstimatedArea;
-import static bh.bot.common.utils.InteractionUtil.Screen.captureScreen;
-import static bh.bot.common.utils.InteractionUtil.Screen.getPixelColor;
-import static bh.bot.common.utils.ThreadUtil.sleep;
+import bh.bot.Main;
+import bh.bot.common.Configuration;
+import bh.bot.common.Log;
+import bh.bot.common.OS;
+import bh.bot.common.Telegram;
+import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.exceptions.NotSupportedException;
+import bh.bot.common.extensions.Rad;
+import bh.bot.common.jna.*;
+import bh.bot.common.types.*;
+import bh.bot.common.types.annotations.AppMeta;
+import bh.bot.common.types.annotations.RequireSingleInstance;
+import bh.bot.common.types.flags.*;
+import bh.bot.common.types.images.BwMatrixMeta;
+import bh.bot.common.types.tuples.Tuple2;
+import bh.bot.common.types.tuples.Tuple3;
+import bh.bot.common.types.tuples.Tuple4;
+import bh.bot.common.utils.*;
+import bh.bot.common.utils.ColorizeUtil.Cu;
+import bh.bot.common.utils.InteractionUtil.Keyboard;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinNT;
+import org.fusesource.jansi.Ansi;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.Rectangle;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -35,53 +43,15 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import javax.imageio.ImageIO;
-
-import bh.bot.common.Log;
-import bh.bot.common.exceptions.InvalidFlagException;
-import bh.bot.common.extensions.Rad;
-import bh.bot.common.types.annotations.RequireSingleInstance;
-import bh.bot.common.types.flags.*;
-import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.WinBase;
-import com.sun.jna.platform.win32.WinDef.HWND;
-
-import bh.bot.Main;
-import bh.bot.common.Configuration;
-import bh.bot.common.OS;
-import bh.bot.common.Telegram;
-import bh.bot.common.exceptions.InvalidDataException;
-import bh.bot.common.exceptions.NotSupportedException;
-import bh.bot.common.jna.AbstractLinuxJna;
-import bh.bot.common.jna.IJna;
-import bh.bot.common.jna.MiniClientLinuxJna;
-import bh.bot.common.jna.MiniClientMacOsJna;
-import bh.bot.common.jna.MiniClientWindowsJna;
-import bh.bot.common.jna.SteamWindowsJna;
-import bh.bot.common.types.Familiar;
-import bh.bot.common.types.Offset;
-import bh.bot.common.types.ParseArgumentsResult;
-import bh.bot.common.types.ScreenResolutionProfile;
-import bh.bot.common.types.UserConfig;
-import bh.bot.common.types.annotations.AppMeta;
-import bh.bot.common.types.images.BwMatrixMeta;
-import bh.bot.common.types.tuples.Tuple2;
-import bh.bot.common.types.tuples.Tuple3;
-import bh.bot.common.types.tuples.Tuple4;
-import bh.bot.common.utils.ColorizeUtil;
-import bh.bot.common.utils.ColorizeUtil.Cu;
-import bh.bot.common.utils.Extensions;
-import bh.bot.common.utils.ImageUtil;
-import bh.bot.common.utils.InteractionUtil;
-import bh.bot.common.utils.InteractionUtil.Keyboard;
-import bh.bot.common.utils.InteractionUtil.Screen.ScreenCapturedResult;
-import bh.bot.common.utils.RandomUtil;
-import bh.bot.common.utils.StringUtil;
-import bh.bot.common.utils.TimeUtil;
-import bh.bot.common.utils.ValidationUtil;
-import bh.bot.common.utils.VersionUtil;
-import com.sun.jna.platform.win32.WinNT;
-import org.fusesource.jansi.Ansi;
+import static bh.bot.Main.readInput;
+import static bh.bot.common.Log.*;
+import static bh.bot.common.utils.Extensions.scriptFileName;
+import static bh.bot.common.utils.ImageUtil.freeMem;
+import static bh.bot.common.utils.InteractionUtil.Keyboard.sendEscape;
+import static bh.bot.common.utils.InteractionUtil.Keyboard.sendSpaceKey;
+import static bh.bot.common.utils.InteractionUtil.Mouse.*;
+import static bh.bot.common.utils.InteractionUtil.Screen.*;
+import static bh.bot.common.utils.ThreadUtil.sleep;
 
 public abstract class AbstractApplication {
 	protected ParseArgumentsResult argumentInfo;
@@ -734,6 +704,7 @@ public abstract class AbstractApplication {
 			boolean showWarningWorldBossTeam = st.showWarningWorldBossTeam;
 
 			if (persuade) {
+				warn("Auto persuade had been turned on, that means in case of any persuade screen appears, bot will automatically persuade the monster with Gold. If you want to disable this feature, you can use '%s' flag", FlagDisablePersuade.FlagName);
 				if (Configuration.enableDevFeatures) {
 					final String fileBribeName = "bribe.txt";
 					File fBribe = new File(fileBribeName);
@@ -812,7 +783,7 @@ public abstract class AbstractApplication {
 	}
 
 	private long addSec(int secs) {
-		return System.currentTimeMillis() + secs * 1_000;
+		return System.currentTimeMillis() + secs * 1_000L;
 	}
 
 	protected static class SmallTasks {
@@ -1123,7 +1094,7 @@ public abstract class AbstractApplication {
 		if (argumentInfo.exitAfterXSecs < 1)
 			return;
 
-		long applicationExpectedExitTime = applicationStartTime + argumentInfo.exitAfterXSecs * 1_000;
+		long applicationExpectedExitTime = applicationStartTime + argumentInfo.exitAfterXSecs * 1_000L;
 		long now = System.currentTimeMillis();
 		if (applicationExpectedExitTime <= now) {
 			masterSwitch.set(true);
