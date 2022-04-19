@@ -1,9 +1,12 @@
 package bh.bot.common.utils;
 
-import static bh.bot.app.GenMiniClient.readFromInputStream;
-import static bh.bot.common.Log.*;
-import static bh.bot.common.utils.RegistryUtil.*;
-import static bh.bot.common.utils.ColorizeUtil.Cu;
+import bh.bot.Main;
+import bh.bot.common.Configuration;
+import bh.bot.common.OS;
+import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.exceptions.NotSupportedException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -14,20 +17,16 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import bh.bot.common.Configuration;
-import bh.bot.common.exceptions.NotSupportedException;
-import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.WinNT;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import bh.bot.Main;
-import bh.bot.common.OS;
-import bh.bot.common.exceptions.InvalidDataException;
+import static bh.bot.app.GenMiniClient.readFromInputStream;
+import static bh.bot.common.Log.*;
+import static bh.bot.common.utils.ColorizeUtil.Cu;
+import static bh.bot.common.utils.RegistryUtil.*;
 
 public class VersionUtil {
 	private static SematicVersion appVer = null;
@@ -52,7 +51,7 @@ public class VersionUtil {
 					return false;
 				}
 
-				final StringBuffer response = new StringBuffer();
+				final StringBuilder response = new StringBuilder();
 				try (InputStreamReader isr = new InputStreamReader(httpURLConnection.getInputStream());
 						BufferedReader in = new BufferedReader(isr)) {
 					String inputLine;
@@ -65,7 +64,7 @@ public class VersionUtil {
 
 				JSONArray array = new JSONArray(data);
 
-				if (array == null || array.length() < 1)
+				if (array.length() < 1)
 					return false;
 
 				for (int i = 0; i < array.length(); i++) {
@@ -84,12 +83,12 @@ public class VersionUtil {
 										? String.format( //
 										"** NEW UPDATE AVAILABLE ** %s v%s is now available", //
 										Main.botName, //
-										sematicVersion.toString() //
+										sematicVersion //
 								)
 										: String.format( //
 										"** NEW UPDATE AVAILABLE ** %s v%s is now available at website: https://github.com/9-9-9-9/Bit-Heroes-bot/releases/latest", //
 										Main.botName, //
-										sematicVersion.toString() //
+										sematicVersion //
 								);
 						info(ColorizeUtil.formatAsk, msg);
 						info(ColorizeUtil.formatError, msg);
@@ -124,118 +123,109 @@ public class VersionUtil {
 		if (appVer == null)
 			return false;
 
-		WinNT.HANDLE mutexHandle = null;
-		try {
-			cleanUpAbortedDownloadFiles();
+		cleanUpAbortedDownloadFiles();
 
-			ThreadUtil.sleep(10_000);
-			if (Configuration.Features.isFunctionDisabled("auto-update")) {
-				err("Auto-update for this version had been disabled remotely");
+		ThreadUtil.sleep(10_000);
+		if (Configuration.Features.isFunctionDisabled("auto-update")) {
+			err("Auto-update for this version had been disabled remotely");
+			return false;
+		}
+
+		final String newBinaryFileName = String.format("download-this-file-%s.zip", newerVersion);
+		File fileZip = new File(newBinaryFileName);
+
+		boolean checkGeneratedUpdateScript = true;
+		if (!fileZip.exists()) {
+			checkGeneratedUpdateScript = false;
+			dev("%s is not exists, attempting to download from github repo", newBinaryFileName);
+
+			final String tmpFileName = tmpDownloadFilePrefix + System.currentTimeMillis() + tmpDownloadFileSuffix;
+			final File tmpFile = new File(tmpFileName);
+
+			if (tmpFile.exists()) {
+				dev("Cancel autoUpdate due to tmp file exists: %s", tmpFileName);
 				return false;
 			}
 
-			final String newBinaryFileName = String.format("download-this-file-%s.zip", newerVersion);
-			File fileZip = new File(newBinaryFileName);
-
-			boolean checkGeneratedUpdateScript = true;
-			if (!fileZip.exists()) {
-				checkGeneratedUpdateScript = false;
-				dev("%s is not exists, attempting to download from github repo", newBinaryFileName);
-
-				final String tmpFileName = tmpDownloadFilePrefix + System.currentTimeMillis() + tmpDownloadFileSuffix;
-				final File tmpFile = new File(tmpFileName);
-
-				if (tmpFile.exists()) {
-					dev("Cancel autoUpdate due to tmp file exists: %s", tmpFileName);
-					return false;
+			final String urlDownloadBinary = "https://github.com/9-9-9-9/Bit-Heroes-bot/releases/latest/download/download-this-file.zip";
+			try (BufferedInputStream in = new BufferedInputStream(new URL(urlDownloadBinary).openStream());
+				 FileOutputStream fileOutputStream = new FileOutputStream(tmpFileName)) {
+				info("Downloading binary of the new version %s of %s", newerVersion, Main.botName);
+				byte[] dataBuffer = new byte[1024];
+				int bytesRead;
+				while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+					fileOutputStream.write(dataBuffer, 0, bytesRead);
 				}
 
-				final String urlDownloadBinary = "https://github.com/9-9-9-9/Bit-Heroes-bot/releases/latest/download/download-this-file.zip";
-				try (BufferedInputStream in = new BufferedInputStream(new URL(urlDownloadBinary).openStream());
-					 FileOutputStream fileOutputStream = new FileOutputStream(tmpFileName)) {
-					info("Downloading binary of the new version %s of %s", newerVersion, Main.botName);
-					byte dataBuffer[] = new byte[1024];
-					int bytesRead;
-					while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-						fileOutputStream.write(dataBuffer, 0, bytesRead);
-					}
-
-					boolean success = true;
-					if (!tmpFile.renameTo(fileZip)) {
+				boolean success = true;
+				if (!tmpFile.renameTo(fileZip)) {
+					try {
+						Files.move(tmpFile.toPath(), fileZip.toPath(), StandardCopyOption.REPLACE_EXISTING);
+					} catch (Exception forDevPurposeOnly) {
+						dev(forDevPurposeOnly);
 						try {
-							Files.move(tmpFile.toPath(), fileZip.toPath(), StandardCopyOption.REPLACE_EXISTING);
-						} catch (Exception ignored) {
-							dev(ignored);
-							try {
-								Files.copy(tmpFile.toPath(), fileZip.toPath(), StandardCopyOption.REPLACE_EXISTING);
-							} catch (Exception ignored2) {
-								dev(ignored2);
-								success = false;
-							}
+							Files.copy(tmpFile.toPath(), fileZip.toPath(), StandardCopyOption.REPLACE_EXISTING);
+						} catch (Exception forDevPurposeOnly2) {
+							dev(forDevPurposeOnly2);
+							success = false;
 						}
 					}
+				}
 
-					if (!success) {
-						err("Failed to rename new downloaded version from %s to %s", tmpFileName, newBinaryFileName);
-						return false;
-					}
-
-					updateNotice("Downloaded binary for the new version %s", newerVersion);
-				} catch (Exception e) {
-					dev(e);
-					err("Failed to download binary for new version %s", newerVersion);
+				if (!success) {
+					err("Failed to rename new downloaded version from %s to %s", tmpFileName, newBinaryFileName);
 					return false;
 				}
-			}
 
-			updateNotice("%s is the compressed zip file of the new version %s of %s", newBinaryFileName, newerVersion, Main.botName);
-
-			final String dstFolder = "auto-update-" + newerVersion;
-			// extract
-			List<String> extractedFiles = extractZip(fileZip, dstFolder);
-			if (extractedFiles == null || extractedFiles.size() < 1)
+				updateNotice("Downloaded binary for the new version %s", newerVersion);
+			} catch (Exception e) {
+				dev(e);
+				err("Failed to download binary for new version %s", newerVersion);
 				return false;
-
-			boolean needGenerateUpdateScript = true;
-			if (checkGeneratedUpdateScript) {
-				try {
-					final File fUpdateScript = new File(autoUpdateScriptFileName);
-					if (fUpdateScript.exists()) {
-						String marker = Files.readAllLines(fUpdateScript.toPath()).get(1).trim();
-						if (marker.equals("rem " + newerVersion) || marker.equals("echo '" + newerVersion + "'"))
-							needGenerateUpdateScript = false;
-					}
-				} catch (Exception ignored) {
-					dev(ignored);
-					dev("Error occurs while checking %s => will continue generate %s", autoUpdateScriptFileName, autoUpdateScriptFileName);
-				}
 			}
-
-			if (needGenerateUpdateScript) {
-				// generate update script
-				if (OS.isWin) {
-					if (!generateAutoUpdateScriptOnWindows(fileZip, newerVersion.toString(), extractedFiles))
-						return false;
-				} else if (OS.isLinux) {
-					if (!generateAutoUpdateScriptOnLinux(fileZip, newerVersion.toString(), extractedFiles))
-						return false;
-				} else if (OS.isMac) {
-					if (!generateAutoUpdateScriptOnMacOS(fileZip, newerVersion.toString(), extractedFiles))
-						return false;
-				} else {
-					throw new NotSupportedException(String.format("Currently not supported auto update for %s", OS.name));
-				}
-			} else {
-				for (int i = 0; i < RandomUtil.nextInt(2, 10); i++) {
-					info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** Please run file ").red(autoUpdateScriptFileName).yellow(" to update ").a(Main.botName).a(" to the latest released version ").red(newerVersion.toString()).reset());
-				}
-			}
-
-			return true;
-		} finally {
-			if (mutexHandle != null)
-				Kernel32.INSTANCE.ReleaseMutex(mutexHandle);
 		}
+
+		updateNotice("%s is the compressed zip file of the new version %s of %s", newBinaryFileName, newerVersion, Main.botName);
+
+		final String dstFolder = "auto-update-" + newerVersion;
+		// extract
+		List<String> extractedFiles = extractZip(fileZip, dstFolder);
+		if (extractedFiles == null || extractedFiles.size() < 1)
+			return false;
+
+		boolean needGenerateUpdateScript = true;
+		if (checkGeneratedUpdateScript) {
+			try {
+				final File fUpdateScript = new File(autoUpdateScriptFileName);
+				if (fUpdateScript.exists()) {
+					String marker = Files.readAllLines(fUpdateScript.toPath()).get(1).trim();
+					if (marker.equals("rem " + newerVersion) || marker.equals("echo '" + newerVersion + "'"))
+						needGenerateUpdateScript = false;
+				}
+			} catch (Exception forDevPurposeOnly) {
+				dev(forDevPurposeOnly);
+				dev("Error occurs while checking %s => will continue generate %s", autoUpdateScriptFileName, autoUpdateScriptFileName);
+			}
+		}
+
+		if (needGenerateUpdateScript) {
+			// generate update script
+			if (OS.isWin) {
+				return generateAutoUpdateScriptOnWindows(fileZip, newerVersion.toString(), extractedFiles);
+			} else if (OS.isLinux) {
+				return generateAutoUpdateScriptOnLinux(fileZip, newerVersion.toString(), extractedFiles);
+			} else if (OS.isMac) {
+				return generateAutoUpdateScriptOnMacOS(fileZip, newerVersion.toString(), extractedFiles);
+			} else {
+				throw new NotSupportedException(String.format("Currently not supported auto update for %s", OS.name));
+			}
+		} else {
+			for (int i = 0; i < RandomUtil.nextInt(2, 10); i++) {
+				info(Cu.i().yellow("** ").red("UPDATE NOTICE").yellow(" ** Please run file ").red(autoUpdateScriptFileName).yellow(" to update ").a(Main.botName).a(" to the latest released version ").red(newerVersion.toString()).reset());
+			}
+		}
+
+		return true;
 	}
 
 	private static boolean generateAutoUpdateScriptOnWindows(File fileZip, String version, List<String> extractedFiles) {
@@ -312,10 +302,9 @@ public class VersionUtil {
 
 			final File fileMarkedAsSuccess = Paths.get("out", dstFolder, ".success").toFile();
 			if (fileMarkedAsSuccess.exists()) {
-				List<String> extractedFiles = Arrays.asList(Paths.get("out", dstFolder).toFile().listFiles())
-						.stream()
+				List<String> extractedFiles = streamOf(Paths.get("out", dstFolder).toFile().listFiles())
 						.filter(x -> !x.getName().endsWith(fileMarkedAsSuccess.getName()))
-						.map(x -> x.getAbsolutePath())
+						.map(File::getAbsolutePath)
 						.collect(Collectors.toList());
 				if (extractedFiles.size() > 0) {
 					dev("Successfully extracted before, no need to re-extract");
@@ -334,6 +323,7 @@ public class VersionUtil {
 					if (fileName.endsWith(".jar") || fileName.endsWith(".sh") || fileName.endsWith(".bat") || fileName.equals("prepare-mini-chrome-client.txt")) {
 						final File targetFile = Paths.get("out", dstFolder, fileName).toFile();
 						if (targetFile.exists())
+							//noinspection ResultOfMethodCallIgnored
 							targetFile.delete();
 						try (FileOutputStream fos = new FileOutputStream(targetFile)) {
 							int len;
@@ -368,14 +358,22 @@ public class VersionUtil {
 					zis.closeEntry();
 					zis.close();
 				}
-			} catch (Exception ignored) {
-				dev(ignored);
+			} catch (Exception forDevPurposeOnly) {
+				dev(forDevPurposeOnly);
 				dev("Failed to close zip stream");
 			}
 		}
 	}
 
-	private static boolean mkdir(File zipFile, String path, String...paths) {
+	private static <T> Stream<T> streamOf(T[] arr) {
+		if (arr == null) {
+			return Stream.empty();
+		}
+		return Arrays.stream(arr);
+	}
+
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
+	private static boolean mkdir(File zipFile, @SuppressWarnings("SameParameterValue") String path, String...paths) {
 		final File dir = Paths.get(path, paths).toFile();
 		if (!dir.exists() || !dir.isDirectory()) {
 			if (!dir.mkdir()) {
@@ -390,18 +388,6 @@ public class VersionUtil {
 	private static final String tmpDownloadFileSuffix = ".zip";
 	private static final String autoUpdateScriptFileName = Extensions.scriptFileName("update-bot");
 
-	private static void deleteUpdateScript() {
-		try {
-			File file = new File(autoUpdateScriptFileName);
-			if (!file.exists())
-				return;
-			file.delete();
-		} catch (Exception ex) {
-			dev(ex);
-			dev("Failed while attempting to remove %s", autoUpdateScriptFileName);
-		}
-	}
-
 	private static void cleanUpAbortedDownloadFiles() {
 		try {
 			File curDir = new File(".");
@@ -411,7 +397,7 @@ public class VersionUtil {
 			}
 
 			final long validAfter = System.currentTimeMillis() - 300_000; // valid after 5m ago
-			Arrays.asList(curDir.listFiles()).stream()
+				streamOf(curDir.listFiles())
 					.filter(x -> x.isFile() && x.getName().endsWith(tmpDownloadFileSuffix) && x.getName().startsWith(tmpDownloadFilePrefix))
 					.filter(x -> {
 						String[] spl = x.getName().split("\\.");
@@ -424,9 +410,10 @@ public class VersionUtil {
 						}
 					}).collect(Collectors.toList()).forEach(f -> {
 						try {
+							//noinspection ResultOfMethodCallIgnored
 							f.delete();
-						} catch (Exception ignored) {
-							dev(ignored);
+						} catch (Exception forDevPurposeOnly) {
+							dev(forDevPurposeOnly);
 							dev("Error occurs while attempting to remove file %s", f.getName());
 						}
 			});
@@ -458,7 +445,7 @@ public class VersionUtil {
 					return;
 				}
 
-				StringBuffer response = new StringBuffer();
+				StringBuilder response = new StringBuilder();
 				try (InputStreamReader isr = new InputStreamReader(httpURLConnection.getInputStream());
 					 BufferedReader in = new BufferedReader(isr)) {
 					String inputLine;
@@ -532,10 +519,6 @@ public class VersionUtil {
 			}
 			Main.exit(Main.EXIT_CODE_VERSION_IS_REJECTED);
 		}
-	}
-
-	private static String normalizeAppCode(String appCode) {
-		return appCode == null ? null : appCode.trim().toLowerCase();
 	}
 
 	public static void saveBotInfo(SematicVersion currentAppVersion) {
@@ -612,8 +595,8 @@ public class VersionUtil {
 	}
 	
 	private static void saveBotInfoOnWindows(SematicVersion currentAppVersion) {
-		String curVer = readRegistryString(regKeyBot, regValueVer);
-		String curDir = readRegistryString(regKeyBot, regValueDir);
+		String curVer = readRegistryString(regValueVer);
+		String curDir = readRegistryString(regValueDir);
 		String wrkDir = System.getProperty("user.dir");
 		debug("VersionUtil::saveBotInfoOnWindows.curVer %s", curVer);
 		debug("VersionUtil::saveBotInfoOnWindows.curDir %s", curDir);
@@ -630,7 +613,13 @@ public class VersionUtil {
 		boolean updateDir;
 		try {
 			updateDir = StringUtil.isBlank(curDir) || !curDir.equals(wrkDir) || !new File(curDir).exists() || !new File(curDir).isDirectory();
-			debug("VersionUtil::saveBotInfoOnWindows.updateDir %b (%b-%b-%b-%b)", updateDir, StringUtil.isBlank(curDir), curDir != wrkDir, !new File(curDir).exists(), !new File(curDir).isDirectory());
+			debug("VersionUtil::saveBotInfoOnWindows.updateDir %b (%b-%b-%b-%b)",
+					updateDir,
+					StringUtil.isBlank(curDir),
+					!Objects.equals(curDir, wrkDir),
+					curDir == null || !new File(curDir).exists(),
+					curDir == null || !new File(curDir).isDirectory()
+			);
 		} catch (Exception e) {
 			dev(e);
 			updateDir = true;
@@ -639,8 +628,8 @@ public class VersionUtil {
 		if (updateVer || updateDir) {
 			debug("VersionUtil::saveBotInfoOnWindows -> Rewrite");
 			prepareRegKey();
-			createValue(regKeyBot, regValueVer, currentAppVersion.toString());
-			createValue(regKeyBot, regValueDir, wrkDir);
+			createValue(regValueVer, currentAppVersion.toString());
+			createValue(regValueDir, wrkDir);
 		} else {
 			debug("VersionUtil::saveBotInfoOnWindows -> No need to update version and dir of bot");
 		}

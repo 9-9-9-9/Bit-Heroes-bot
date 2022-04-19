@@ -3,12 +3,13 @@ package bh.bot.common.types.flags;
 import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
 import bh.bot.app.ReRunApp;
-import bh.bot.app.farming.AbstractDoFarmingApp;
 import bh.bot.app.farming.RaidApp;
 import bh.bot.common.types.annotations.FlagMeta;
 
 @FlagMeta(displayOrder = 9)
 public class FlagDisablePersuade extends FlagPattern.NonParamFlag {
+    public static final String FlagName = "disable-persuade";
+
     @Override
     public boolean isGlobalFlag() {
         return false;
@@ -16,7 +17,7 @@ public class FlagDisablePersuade extends FlagPattern.NonParamFlag {
 
     @Override
     public String getName() {
-        return "disable-persuade";
+        return FlagName;
     }
 
     @Override

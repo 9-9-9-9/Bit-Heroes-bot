@@ -107,19 +107,19 @@ public class GenMiniClient extends AbstractApplication {
                     // chromeArgs.add(String.format("\"--user-data-dir=%s\"", chromeUserDir.getAbsolutePath()));
                     chromeArgs.add("--window-size=805,545");
                     chromeArgs.add("--window-position=0,0");
-                    chromeArgs.add(String.format("\"--app=file://%s\"", pathIndex.toAbsolutePath().toString()));
+                    chromeArgs.add(String.format("\"--app=file://%s\"", pathIndex.toAbsolutePath()));
                 } else if (OS.isWin) {
                     app = String.format("\"%s\"", chromePathOnWindows);
                     chromeArgs.add(String.format("\"--user-data-dir=%s\"", chromeUserDir));
                     chromeArgs.add("--window-size=820,565");
                     chromeArgs.add("--window-position=0,0");
-                    chromeArgs.add(String.format("\"--app=file://%s\"", pathIndex.toAbsolutePath().toString()));
+                    chromeArgs.add(String.format("\"--app=file://%s\"", pathIndex.toAbsolutePath()));
                 } else {
                     app = "google-chrome";
                     chromeArgs.add(String.format("'--user-data-dir=%s'", chromeUserDir));
                     chromeArgs.add("--window-size=800,520");
                     chromeArgs.add("--window-position=0,0");
-                    chromeArgs.add(String.format("'--app=file://%s'", pathIndex.toAbsolutePath().toString()));
+                    chromeArgs.add(String.format("'--app=file://%s'", pathIndex.toAbsolutePath()));
                 }
 
                 StringBuilder sb = new StringBuilder();
