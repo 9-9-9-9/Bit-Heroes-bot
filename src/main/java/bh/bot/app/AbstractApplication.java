@@ -704,7 +704,7 @@ public abstract class AbstractApplication {
 			boolean showWarningWorldBossTeam = st.showWarningWorldBossTeam;
 
 			if (persuade) {
-				warn("Auto persuade had been turned on, that means in case of any persuade screen appears, bot will automatically persuade the monster with Gold. If you want to disable this feature, you can use '%s' flag", FlagDisablePersuade.FlagName);
+				info("Auto persuade had been turned on, that means in case of any persuade screen appears, bot will automatically persuade the monster with Gold. If you want to disable this feature, you can use '%s' flag", FlagDisablePersuade.FlagName);
 				if (Configuration.enableDevFeatures) {
 					final String fileBribeName = "bribe.txt";
 					File fBribe = new File(fileBribeName);

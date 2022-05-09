@@ -169,7 +169,7 @@ public class UserConfig {
             case 7:
                 return "The Ignited Abyss";
             case 8:
-                return "The Wolf's Deception (T13-T18)";
+                return "Nordic Dream (T13-T18)";
             default:
                 return "Unknown (T?-T?)";
         }
