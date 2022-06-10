@@ -167,9 +167,9 @@ public class UserConfig {
             case 6:
                 return "Titans Attack! (T11-T16)";
             case 7:
-                return "The Ignited Abyss";
+                return "The Ignited Abyss (T13-T16)";
             case 8:
-                return "Nordic Dream (T13-T18)";
+                return "Nordic Dream (T16-T18)";
             default:
                 return "Unknown (T?-T?)";
         }
