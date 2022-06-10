@@ -311,14 +311,14 @@ public class WorldBossTeamApp extends AbstractApplication {
     protected int readInputMaximumTeamMembersCount() {
         return readInput("How many team members does the target World Boss supports?\n" +
                         "  3 (Netherworld, 3XT3RM1N4T10N, Brimstone Syndicate, Titans Attack, The Ignited Abyss)\n" +
-                        "  4 (Melvin Factory, Nordic Dream)\n" +
+                        "  4 (Melvin Factory, Nordic Dream, Notorious Beef)\n" +
                         "  5 (Orlag Clan)", null, s -> {
             try {
                 int num = Integer.parseInt(s);
                 if (num < 3) {
                     return new Tuple3<>(false, "Must greater than 2", 0);
                 }
-                else if (num > 5) {
+                if (num > 5) {
                     return new Tuple3<>(false, "Must lower than 6", 0);
                 }
                 return new Tuple3<>(true, null, num);

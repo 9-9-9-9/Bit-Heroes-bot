@@ -17,7 +17,7 @@ public class UserConfig {
     private static final byte raidLevelMin = 1;
     private static final byte raidLevelMax = 15;
     private static final byte worldBossLevelMin = 1;
-    private static final byte worldBossLevelMax = 8;
+    private static final byte worldBossLevelMax = 9;
     private static final byte expeditionPlaceMin = 1;
     private static final byte expeditionPlaceMax = 4;
     private static final byte pvpTargetMin = 1;
@@ -170,6 +170,8 @@ public class UserConfig {
                 return "The Ignited Abyss (T13-T16)";
             case 8:
                 return "Nordic Dream (T16-T18)";
+            case 9:
+                return "Notorious Beef (T18-T?)";
             default:
                 return "Unknown (T?-T?)";
         }
