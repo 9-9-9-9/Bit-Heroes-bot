@@ -392,7 +392,7 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Globally.Buttons.radioButton = BwMatrixMeta.from(//
-                "buttons/globally.radio-button?",
+                "buttons/globally.radio-button2?",
                 Offset.none(), //
                 0x000000
         );
@@ -763,12 +763,12 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Raid.Buttons.accept = BwMatrixMeta.from(//
-                "buttons/raid.accept-tp.bmp", //
+                "buttons/raid.accept2?", //
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptTeamOfRaid(), //
                 0xFFFFFF
         );
         Metas.Raid.Labels.labelInSummonDialog = BwMatrixMeta.from(//
-                "labels/raid-tp.bmp", //
+                "labels/raid.raid2?", //
                 Configuration.screenResolutionProfile.getOffsetLabelRaidInSummonDialog(), //
                 0xFFFFFF
         );
