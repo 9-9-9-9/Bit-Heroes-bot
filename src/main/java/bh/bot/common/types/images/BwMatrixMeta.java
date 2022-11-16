@@ -209,7 +209,7 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta autoG;
                 public static BwMatrixMeta autoR;
                 public static BwMatrixMeta radioButton;
-                public static BwMatrixMeta close;
+                // public static BwMatrixMeta close;
                 public static BwMatrixMeta mapButtonOnFamiliarUi;
                 public static BwMatrixMeta persuade;
                 public static BwMatrixMeta persuadeBribe;
@@ -372,47 +372,49 @@ public class BwMatrixMeta {
 
     public static void load() throws IOException {
         Metas.Globally.Buttons.talkRightArrow = BwMatrixMeta.from(//
-                "buttons/globally.talkRightArrow?",
+                "buttons/globally.talkRightArrow2?",
                 Configuration.screenResolutionProfile.getOffsetButtonTalkRightArrow(), //
                 0x000000
         );
         Metas.Globally.Buttons.reconnect = BwMatrixMeta.from(//
-                "buttons/globally.reconnect?",
+                "buttons/globally.reconnect2?",
                 Configuration.screenResolutionProfile.getOffsetButtonReconnect(), //
                 0xFFFFFF
         );
         Metas.Globally.Buttons.autoG = BwMatrixMeta.from(//
-                "buttons/globally.auto-green?",
+                "buttons/globally.auto-green2?",
                 Configuration.screenResolutionProfile.getOffsetButtonAuto(), //
                 0xFFFFFF
         );
         Metas.Globally.Buttons.autoR = BwMatrixMeta.from(//
-                "buttons/globally.auto-red?",
+                "buttons/globally.auto-red2?",
                 Configuration.screenResolutionProfile.getOffsetButtonAuto(), //
                 0xFFFFFF
         );
         Metas.Globally.Buttons.radioButton = BwMatrixMeta.from(//
-                "buttons/globally.radio-button?",
+                "buttons/globally.radio-button2?",
                 Offset.none(), //
                 0x000000
         );
-        Metas.Globally.Buttons.close = BwMatrixMeta.from(//
-                "buttons/globally.close?",
-                Offset.none(), //
-                0x000000
-        );
+        /*
+	        Metas.Globally.Buttons.close = BwMatrixMeta.from(//
+	                "buttons/globally.close?",
+	                Offset.none(), //
+	                0x000000
+	        );
+        */
         Metas.Globally.Buttons.mapButtonOnFamiliarUi = BwMatrixMeta.from(//
-                "buttons/globally.map-on-familiar-ui?",
+                "buttons/globally.map-on-familiar-ui2?",
                 Configuration.screenResolutionProfile.getOffsetButtonMapOnFamiliarUi(), //
                 0x000000
         );
         Metas.Globally.Buttons.persuade = BwMatrixMeta.from(//
-                "buttons/globally.persuade?",
+                "buttons/globally.persuade2?",
                 Configuration.screenResolutionProfile.getOffsetButtonPersuade(), //
                 0xFFFFFF
         );
         Metas.Globally.Buttons.persuadeBribe = BwMatrixMeta.from(//
-                "buttons/globally.persuade-bribe?",
+                "buttons/globally.persuade-bribe2?",
                 Configuration.screenResolutionProfile.getOffsetButtonBribePersuade(), //
                 0xFFFFFF
         );
@@ -442,7 +444,7 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Dungeons.Buttons.rerun = BwMatrixMeta.from(//
-                "buttons/dungeons.rerun?",
+                "buttons/dungeons.rerun2?",
                 Configuration.screenResolutionProfile.getOffsetButtonDungeonReRun(), //
                 0xFFFFFF);
         
@@ -495,22 +497,22 @@ public class BwMatrixMeta {
         
         // Fishing
         Metas.Fishing.Labels.fishing = BwMatrixMeta.from(//
-                "labels/fishing?",
+                "labels/fishing.fishing2?",
                 Configuration.screenResolutionProfile.getOffsetLabelFishing(), //
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.start = BwMatrixMeta.from(//
-                "buttons/fishing.start?",
+                "buttons/fishing.start2?",
                 Configuration.screenResolutionProfile.getOffsetButtonFishingStart(), //
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.cast = BwMatrixMeta.from(//
-                "buttons/fishing.cast?",
+                "buttons/fishing.cast2?",
                 Configuration.screenResolutionProfile.getOffsetButtonFishingCast(), //
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.catch_ = BwMatrixMeta.from(//
-                "buttons/fishing.catch?",
+                "buttons/fishing.catch2?",
                 Configuration.screenResolutionProfile.getOffsetButtonFishingCatch(), //
                 0xFFFFFF
         );
@@ -756,17 +758,17 @@ public class BwMatrixMeta {
 
         // Raid
         Metas.Raid.Buttons.town = BwMatrixMeta.from(//
-                "buttons/raid.town?", //
+                "buttons/raid.town2?", //
                 Configuration.screenResolutionProfile.getOffsetButtonTownWhenDefeatedInRaid(), //
                 0xFFFFFF
         );
         Metas.Raid.Buttons.accept = BwMatrixMeta.from(//
-                "buttons/raid.accept-tp.bmp", //
+                "buttons/raid.accept2?", //
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptTeamOfRaid(), //
                 0xFFFFFF
         );
         Metas.Raid.Labels.labelInSummonDialog = BwMatrixMeta.from(//
-                "labels/raid-tp.bmp", //
+                "labels/raid.raid2?", //
                 Configuration.screenResolutionProfile.getOffsetLabelRaidInSummonDialog(), //
                 0xFFFFFF
         );

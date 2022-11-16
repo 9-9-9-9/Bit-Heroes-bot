@@ -197,12 +197,12 @@ public class FishingApp extends AbstractApplication {
                 } else if (curScreen == screenCast) {
                     debug("On screen CAST");
 
-                    Offset offsetScanCastingFish = Configuration.screenResolutionProfile
-                            .getOffsetScanCastingFish();
-                    Size scanSizeCastingFish = Configuration.screenResolutionProfile
-                            .getScanSizeCastingFish();
-                    BufferedImage sc = captureScreen(anchorPoint.x + offsetScanCastingFish.X,
-                            anchorPoint.y + offsetScanCastingFish.Y, scanSizeCastingFish.W, scanSizeCastingFish.H);
+                    Offset offsetScanCastingFish = Configuration.screenResolutionProfile.getOffsetScanCastingFish();
+                    Size scanSizeCastingFish = Configuration.screenResolutionProfile.getScanSizeCastingFish();
+                    BufferedImage sc = captureScreen(
+                		anchorPoint.x + offsetScanCastingFish.X, anchorPoint.y + offsetScanCastingFish.Y, 
+                		scanSizeCastingFish.W, scanSizeCastingFish.H
+            		);
                     final int black = 0x000000;
                     try {
                         final int offset1 = 0;
@@ -336,9 +336,12 @@ public class FishingApp extends AbstractApplication {
                     blackPixelDRgb, //
                     sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF, //
                     colorTolerant, im.getOriginalPixelPart(px[0], px[1]))) {
-                optionalDebug(debug, "Fail (1) at %3d, %3d (offset=%3d, %3d, coord=%3d, %3d) with color: %d vs %d",
-                        offsetX + px[0], offsetY + px[1], offsetX, offsetY, px[0], px[1], blackPixelRgb,
-                        sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF);
+                optionalDebug(
+                		debug, 
+                		"Fail (1) at %3d, %3d (offset=%3d, %3d, coord=%3d, %3d) with color: %s vs %s",
+                        offsetX + px[0], offsetY + px[1], offsetX, offsetY, px[0], px[1], 
+                        String.format("%06X", blackPixelRgb), String.format("%06X", sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF)
+                );
                 return false;
             }
         }
@@ -348,9 +351,12 @@ public class FishingApp extends AbstractApplication {
                     blackPixelRgb, //
                     sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF, //
                     colorTolerant)) {
-                optionalDebug(debug, "Fail (2) at %3d, %3d (offset=%3d, %3d, coord=%3d, %3d) with color: %d vs %d",
-                        offsetX + px[0], offsetY + px[1], offsetX, offsetY, px[0], px[1], blackPixelRgb,
-                        sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF);
+                optionalDebug(
+                		debug, 
+                		"Fail (2) at %3d, %3d (offset=%3d, %3d, coord=%3d, %3d) with color: %s vs %s",
+                        offsetX + px[0], offsetY + px[1], offsetX, offsetY, px[0], px[1], 
+                        String.format("%06X", blackPixelRgb), String.format("%06X", sc.getRGB(offsetX + px[0], offsetY + px[1]) & 0xFFFFFF)
+                );
                 return false;
             }
         }

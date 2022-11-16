@@ -1237,7 +1237,8 @@ public abstract class AbstractApplication {
 		mouseMoveAndClickAndHide(coord);
 		BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog.setLastMatchPoint(coord.x, coord.y);
 		Tuple2<Point[], Byte> result = detectRadioButtons(
-				Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
+				Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid()
+		);
 		Point[] points = result._1;
 		int selectedLevel = result._2 + 1;
 		info("Found %d raid levels, selected %s", points.length, UserConfig.getRaidLevelDesc(selectedLevel));
@@ -1265,16 +1266,28 @@ public abstract class AbstractApplication {
 		sleep(5_000);
 		if (UserConfig.isNormalMode(userConfig.raidMode)) {
 			mouseMoveAndClickAndHide(
-					fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
-							coord, Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()));
+					fromRelativeToAbsoluteBasedOnPreviousResult(
+							BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
+							coord, 
+							Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()
+					)
+			);
 		} else if (UserConfig.isHardMode(userConfig.raidMode)) {
 			mouseMoveAndClickAndHide(
-					fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
-							coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHardRaid()));
+					fromRelativeToAbsoluteBasedOnPreviousResult(
+							BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
+							coord, 
+							Configuration.screenResolutionProfile.getOffsetButtonEnterHardRaid()
+					)
+			);
 		} else if (UserConfig.isHeroicMode(userConfig.raidMode)) {
 			mouseMoveAndClickAndHide(
-					fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
-							coord, Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicRaid()));
+					fromRelativeToAbsoluteBasedOnPreviousResult(
+							BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
+							coord, 
+							Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicRaid()
+					)
+			);
 		} else {
 			throw new InvalidDataException("Unknown raid mode value: %d", userConfig.raidMode);
 		}

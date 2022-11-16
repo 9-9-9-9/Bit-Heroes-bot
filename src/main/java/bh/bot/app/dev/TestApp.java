@@ -40,6 +40,9 @@ public class TestApp extends AbstractApplication {
 	protected void internalRun(String[] args) {
 		adjustScreenOffset();
 
+		System.out.println("Clicked = " + clickImage(BwMatrixMeta.Metas.Raid.Buttons.accept));
+		System.out.println("Clicked = " + clickImage(BwMatrixMeta.Metas.Raid.Dialogs.notEnoughShards));
+
 		//
 	}
 

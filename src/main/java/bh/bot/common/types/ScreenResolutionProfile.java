@@ -266,7 +266,7 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetLabelFishing() {
-			return new Offset(355, 13);
+			return new Offset(356, 13);
 		}
 
 		@Override
