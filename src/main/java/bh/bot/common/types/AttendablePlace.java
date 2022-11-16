@@ -21,8 +21,20 @@ public class AttendablePlace {
     public AttendablePlace(String name, int id, String imgCode, boolean left, int procedureTicketMinutes) throws IOException {
         this.name = name;
         this.id = id;
+        
+        String imgFile;
+        switch(imgCode) {
+	    	case "pvp":
+	    	case "world-boss":
+	    	case "raid":
+	        	imgFile = imgCode + "2";
+	        	break;
+	    	default:
+	    		imgFile = imgCode;
+	    		break;
+        }
         this.img = BwMatrixMeta.from(
-                String.format("labels/attendable-places/%s?", imgCode),
+                String.format("labels/attendable-places/%s?", imgFile),
                 new Offset(0, 0),
                 0xFFFFFF
         );
