@@ -372,7 +372,7 @@ public class BwMatrixMeta {
 
     public static void load() throws IOException {
         Metas.Globally.Buttons.talkRightArrow = BwMatrixMeta.from(//
-                "buttons/globally.talkRightArrow?",
+                "buttons/globally.talkRightArrow2?",
                 Configuration.screenResolutionProfile.getOffsetButtonTalkRightArrow(), //
                 0x000000
         );
