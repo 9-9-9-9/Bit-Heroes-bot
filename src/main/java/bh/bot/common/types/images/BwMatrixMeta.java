@@ -409,12 +409,12 @@ public class BwMatrixMeta {
                 0x000000
         );
         Metas.Globally.Buttons.persuade = BwMatrixMeta.from(//
-                "buttons/globally.persuade?",
+                "buttons/globally.persuade2?",
                 Configuration.screenResolutionProfile.getOffsetButtonPersuade(), //
                 0xFFFFFF
         );
         Metas.Globally.Buttons.persuadeBribe = BwMatrixMeta.from(//
-                "buttons/globally.persuade-bribe?",
+                "buttons/globally.persuade-bribe2?",
                 Configuration.screenResolutionProfile.getOffsetButtonBribePersuade(), //
                 0xFFFFFF
         );

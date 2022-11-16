@@ -39,8 +39,9 @@ public class TestApp extends AbstractApplication {
 	@Override
 	protected void internalRun(String[] args) {
 		adjustScreenOffset();
-		
-			System.out.println("Clicked = " + clickImage(BwMatrixMeta.Metas.Globally.Buttons.talkRightArrow));
+
+		System.out.println("Clicked = " + clickImage(BwMatrixMeta.Metas.Globally.Buttons.persuade));
+		System.out.println("Clicked = " + clickImage(BwMatrixMeta.Metas.Globally.Buttons.mapButtonOnFamiliarUi));
 
 		//
 	}
