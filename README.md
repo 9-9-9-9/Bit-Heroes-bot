@@ -1,3 +1,6 @@
+# IMPORTANT: Sadly, bot no longer works with new update Nov 16th, 2022
+## I don't know if I can fix this or not, haven't know why atm
+
 **Upgrade notes:** copy configuration files `user-config.properties` and `readonly.*.user-config.properties` from previous bot version's directory _(if you update the bot via auto-update method then no need to do this)_
 ___
 ## Bit Heroes bot
