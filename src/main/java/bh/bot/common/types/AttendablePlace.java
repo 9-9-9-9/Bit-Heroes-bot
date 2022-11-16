@@ -27,8 +27,13 @@ public class AttendablePlace {
 	    	case "pvp":
 	    	case "world-boss":
 	    	case "raid":
+	    	case "gvg":
+	    	case "trials":
 	        	imgFile = imgCode + "2";
 	        	break;
+	    	case "expedition":
+	    	case "gauntlet":
+	    	case "invasion":
 	    	default:
 	    		imgFile = imgCode;
 	    		break;

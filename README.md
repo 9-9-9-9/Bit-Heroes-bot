@@ -8,10 +8,10 @@
 - [ ] Raid
 - [ ] GVG
 - [ ] Invasion
-- [ ] Expedision 1
-- [ ] Expedision 2
-- [ ] Expedision 3
-- [ ] Expedision 4
+- [ ] Expedition 1
+- [ ] Expedition 2
+- [ ] Expedition 3
+- [ ] Expedition 4
 - [ ] Trials
 - [ ] Gauntlet
 
