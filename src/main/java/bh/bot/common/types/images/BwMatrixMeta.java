@@ -404,7 +404,7 @@ public class BwMatrixMeta {
 	        );
         */
         Metas.Globally.Buttons.mapButtonOnFamiliarUi = BwMatrixMeta.from(//
-                "buttons/globally.map-on-familiar-ui?",
+                "buttons/globally.map-on-familiar-ui2?",
                 Configuration.screenResolutionProfile.getOffsetButtonMapOnFamiliarUi(), //
                 0x000000
         );
