@@ -495,22 +495,22 @@ public class BwMatrixMeta {
         
         // Fishing
         Metas.Fishing.Labels.fishing = BwMatrixMeta.from(//
-                "labels/fishing.fishing?",
+                "labels/fishing.fishing2?",
                 Configuration.screenResolutionProfile.getOffsetLabelFishing(), //
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.start = BwMatrixMeta.from(//
-                "buttons/fishing.start?",
+                "buttons/fishing.start2?",
                 Configuration.screenResolutionProfile.getOffsetButtonFishingStart(), //
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.cast = BwMatrixMeta.from(//
-                "buttons/fishing.cast?",
+                "buttons/fishing.cast2?",
                 Configuration.screenResolutionProfile.getOffsetButtonFishingCast(), //
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.catch_ = BwMatrixMeta.from(//
-                "buttons/fishing.catch?",
+                "buttons/fishing.catch2?",
                 Configuration.screenResolutionProfile.getOffsetButtonFishingCatch(), //
                 0xFFFFFF
         );
