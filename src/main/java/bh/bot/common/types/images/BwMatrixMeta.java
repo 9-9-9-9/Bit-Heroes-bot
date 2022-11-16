@@ -377,7 +377,7 @@ public class BwMatrixMeta {
                 0x000000
         );
         Metas.Globally.Buttons.reconnect = BwMatrixMeta.from(//
-                "buttons/globally.reconnect?",
+                "buttons/globally.reconnect2?",
                 Configuration.screenResolutionProfile.getOffsetButtonReconnect(), //
                 0xFFFFFF
         );
