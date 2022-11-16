@@ -495,7 +495,7 @@ public class BwMatrixMeta {
         
         // Fishing
         Metas.Fishing.Labels.fishing = BwMatrixMeta.from(//
-                "labels/fishing?",
+                "labels/fishing.fishing?",
                 Configuration.screenResolutionProfile.getOffsetLabelFishing(), //
                 0xFFFFFF
         );
