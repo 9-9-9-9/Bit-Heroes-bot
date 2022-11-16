@@ -442,7 +442,7 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Dungeons.Buttons.rerun = BwMatrixMeta.from(//
-                "buttons/dungeons.rerun?",
+                "buttons/dungeons.rerun2?",
                 Configuration.screenResolutionProfile.getOffsetButtonDungeonReRun(), //
                 0xFFFFFF);
         
@@ -756,7 +756,7 @@ public class BwMatrixMeta {
 
         // Raid
         Metas.Raid.Buttons.town = BwMatrixMeta.from(//
-                "buttons/raid.town?", //
+                "buttons/raid.town2?", //
                 Configuration.screenResolutionProfile.getOffsetButtonTownWhenDefeatedInRaid(), //
                 0xFFFFFF
         );

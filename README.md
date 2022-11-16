@@ -1,7 +1,7 @@
 # IMPORTANT: Sadly, bot no longer works with new update Nov 16th, 2022
 ### Fixed functions:
 - [x] Fishing
-- [ ] ReRun
+- [x] ReRun
 - [ ] PVP
 - [ ] WB Solo
 - [ ] WB Team
