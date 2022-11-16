@@ -658,14 +658,17 @@ public abstract class AbstractApplication {
 						else {
 							if (selectedRadioButtonIndex != curRadioButtonIndex)
 								throw new InvalidDataException(
-										"Found more than one selected radio button which is absolutely wrong!");
+										"Found more than one selected radio button which is absolutely wrong!"
+								);
 						}
 						break;
 					}
 
 					optionalDebug(debug, "detectRadioButtons captured at %3d,%3d with size %3dx%3d, match at %3d,%3d",
-							screenCapturedResult.x, screenCapturedResult.y, screenCapturedResult.w,
-							screenCapturedResult.h, x, y);
+							screenCapturedResult.x, screenCapturedResult.y,
+							screenCapturedResult.w, screenCapturedResult.h,
+							x, y
+					);
 					startingCoords.add(new Point(x, y));
 				}
 			}
@@ -674,9 +677,12 @@ public abstract class AbstractApplication {
 				throw new InvalidDataException("Unable to detect index of selected radio button among %d results",
 						startingCoords.size());
 
-			return new Tuple2<>(startingCoords.stream()
+			return new Tuple2<>(
+					startingCoords.stream()
 					.map(c -> new Point(screenCapturedResult.x + c.x, screenCapturedResult.y + c.y))
-					.toArray(Point[]::new), (byte) selectedRadioButtonIndex);
+					.toArray(Point[]::new),
+					(byte) selectedRadioButtonIndex
+			);
 		}
 	}
 

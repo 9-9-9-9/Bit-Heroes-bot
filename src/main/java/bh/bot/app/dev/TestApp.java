@@ -79,7 +79,8 @@ public class TestApp extends AbstractApplication {
 	@SuppressWarnings("unused")
 	private void detectRaidRadioButtons() {
 		Tuple2<Point[], Byte> result = detectRadioButtons(
-				Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
+				Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid()
+		);
 		Point[] points = result._1;
 		byte selectedIndex = result._2;
 		info("Found %d, selected %d", points.length, selectedIndex + 1);
@@ -89,7 +90,8 @@ public class TestApp extends AbstractApplication {
 	@SuppressWarnings("unused")
 	private void detectWorldBossRadioButtons() {
 		Tuple2<Point[], Byte> result = detectRadioButtons(
-				Configuration.screenResolutionProfile.getRectangleRadioButtonsOfWorldBoss());
+				Configuration.screenResolutionProfile.getRectangleRadioButtonsOfWorldBoss()
+		);
 		Point[] points = result._1;
 		byte selectedIndex = result._2;
 		info("Found %d, selected %d", points.length, selectedIndex + 1);
