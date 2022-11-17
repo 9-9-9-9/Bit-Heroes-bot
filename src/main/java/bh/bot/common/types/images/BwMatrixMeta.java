@@ -773,7 +773,7 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Raid.Dialogs.notEnoughShards = BwMatrixMeta.from(//
-                "dialogs/raid.not-enough-shards-tp.bmp", //
+                "dialogs/raid.not-enough-shards2?", //
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughShards(), //
                 0xFFFFFF
         );
