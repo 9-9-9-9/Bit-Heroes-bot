@@ -62,18 +62,21 @@ public abstract class AbstractApplication {
 
 		if (this.argumentInfo.enableSavingDebugImages)
 			info("Enabled saving debug images");
+		
 		initOutputDirectories();
-		// ImgMeta.load(); // Deprecated class
+		
 		if (isRequiredToLoadImages())
 			BwMatrixMeta.load();
+		
 		Telegram.setAppName(getAppName());
+		
 		warn(getLimitationExplain());
 
 		if (launchInfo.shutdownAfterExit) {
 			String command;
-			if (OS.isWin)
+			if (OS.isWin) {
 				command = "shutdown -s -t 0";
-			else if (OS.isLinux) {
+			} else if (OS.isLinux) {
 				command = "sudo shutdown now";
 				try {
 					if (0 != Runtime.getRuntime().exec("sudo -nv").waitFor()) {
@@ -84,8 +87,9 @@ public abstract class AbstractApplication {
 					err(ex.getMessage());
 					err("Unable to check compatible between `--shutdown` flag and your system, not sure if it works");
 				}
-			} else
+			} else {
 				throw new NotSupportedException(String.format("Shutdown command is not supported on %s OS", OS.name));
+			}
 
 			wrappedInternalRun1(launchInfo);
 
@@ -157,7 +161,7 @@ public abstract class AbstractApplication {
 		try {
 			wrappedInternalRun2(launchInfo);
 		} finally {
-			if (mutexHandle != null)
+			if (mutexHandle != null) {
 				try {
 					debug("Releasing mutex handle");
 					Kernel32.INSTANCE.ReleaseMutex(mutexHandle);
@@ -165,6 +169,7 @@ public abstract class AbstractApplication {
 					dev(t);
 					dev("Problem why trying to release mutex handle");
 				}
+			}
 		}
 	}
 
@@ -257,7 +262,8 @@ public abstract class AbstractApplication {
 	}
 
 	protected void saveImage(BufferedImage img, String prefix) {
-		File file = Paths.get("out", "images", getAppCode(), prefix + "_" + System.currentTimeMillis() + ".bmp")
+		File file = Paths
+				.get("out", "images", getAppCode(), prefix + "_" + System.currentTimeMillis() + ".bmp")
 				.toFile();
 		try {
 			ImageIO.write(img, "bmp", file);
@@ -314,13 +320,17 @@ public abstract class AbstractApplication {
 				sb.append(localFlag);
 		}
 		// Global flags:
-		List<FlagPattern> globalFlags = flagPatterns.stream().filter(FlagPattern::isGlobalFlag)
-				.filter(x -> x.isSupportedByApp(this) && !x.hide()).collect(Collectors.toList());
+		List<FlagPattern> globalFlags = flagPatterns.stream() //
+				.filter(FlagPattern::isGlobalFlag) //
+				.filter(x -> x.isSupportedByApp(this) && !x.hide()) //
+				.collect(Collectors.toList());
 		sb.append("\nGlobal flags:");
-		for (FlagPattern globalFlag : globalFlags.stream().filter(x -> !(x instanceof FlagResolution))
+		for (FlagPattern globalFlag : globalFlags.stream() //
+				.filter(x -> !(x instanceof FlagResolution)) //
 				.collect(Collectors.toList()))
 			sb.append(globalFlag);
-		List<FlagPattern> flagsResolution = globalFlags.stream().filter(x -> x instanceof FlagResolution)
+		List<FlagPattern> flagsResolution = globalFlags.stream() //
+				.filter(x -> x instanceof FlagResolution) //
 				.collect(Collectors.toList());
 		if (flagsResolution.size() > 0) {
 			for (FlagPattern globalFlag : flagsResolution)
@@ -401,7 +411,9 @@ public abstract class AbstractApplication {
 				if (!ImageUtil.areColorsSimilar(//
 						blackPixelDRgb, //
 						sc.getRGB(px[0], px[1]) & 0xFFFFFF, //
-						Configuration.Tolerant.color, im.getOriginalPixelPart(px[0], px[1]))) {
+						Configuration.Tolerant.color, //
+						im.getOriginalPixelPart(px[0], px[1])
+				)) {
 					return null;
 				}
 			}

@@ -40,8 +40,10 @@ public class TestApp extends AbstractApplication {
 	protected void internalRun(String[] args) {
 		adjustScreenOffset();
 
-		System.out.println("Clicked = " + clickImage(BwMatrixMeta.Metas.Raid.Buttons.accept));
-		System.out.println("Clicked = " + clickImage(BwMatrixMeta.Metas.Raid.Dialogs.notEnoughShards));
+		System.out.println("Clicked play = " + clickImage(BwMatrixMeta.Metas.PvpArena.Buttons.play));
+		System.out.println("Clicked accept = " + clickImage(BwMatrixMeta.Metas.PvpArena.Buttons.accept));
+		System.out.println("Clicked fight1 = " + clickImage(BwMatrixMeta.Metas.PvpArena.Buttons.fight1));
+		System.out.println("Clicked tnf = " + clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmStartNotFullTeam));
 
 		//
 	}
@@ -74,15 +76,17 @@ public class TestApp extends AbstractApplication {
 			final RECT lpRect = new RECT();
 			if (!User32.INSTANCE.GetWindowRect(hwnd, lpRect))
 				throw new Win32Exception(com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError());
-			return new Rectangle(lpRect.left, lpRect.top, Math.abs(lpRect.right - lpRect.left),
-					Math.abs(lpRect.bottom - lpRect.top));
+			return new Rectangle(
+				lpRect.left, lpRect.top, 
+				Math.abs(lpRect.right - lpRect.left), Math.abs(lpRect.bottom - lpRect.top)
+			);
 		}
 	}
 
 	@SuppressWarnings("unused")
 	private void detectRaidRadioButtons() {
 		Tuple2<Point[], Byte> result = detectRadioButtons(
-				Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid()
+			Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid()
 		);
 		Point[] points = result._1;
 		byte selectedIndex = result._2;
@@ -93,7 +97,7 @@ public class TestApp extends AbstractApplication {
 	@SuppressWarnings("unused")
 	private void detectWorldBossRadioButtons() {
 		Tuple2<Point[], Byte> result = detectRadioButtons(
-				Configuration.screenResolutionProfile.getRectangleRadioButtonsOfWorldBoss()
+			Configuration.screenResolutionProfile.getRectangleRadioButtonsOfWorldBoss()
 		);
 		Point[] points = result._1;
 		byte selectedIndex = result._2;

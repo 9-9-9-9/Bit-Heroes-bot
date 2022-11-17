@@ -424,7 +424,7 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Globally.Dialogs.confirmStartNotFullTeam = BwMatrixMeta.from(//
-                "dialogs/globally.confirm-start-not-full-team?",
+                "dialogs/globally.confirm-start-not-full-team2?",
                 Configuration.screenResolutionProfile.getOffsetDialogStartWithoutFullTeam(), //
                 0xFFFFFF
         );
@@ -596,32 +596,32 @@ public class BwMatrixMeta {
 
         // PVP Arena
         Metas.PvpArena.Buttons.play = BwMatrixMeta.from(//
-                "buttons/pvp-arena.play?",
+                "buttons/pvp-arena.play2?",
                 Configuration.screenResolutionProfile.getOffsetButtonPlayPvpArena(), //
                 0xFFFFFF
         );
         Metas.PvpArena.Buttons.fight1 = BwMatrixMeta.from(//
-                "buttons/pvp-arena.fight?",
+                "buttons/pvp-arena.fight2?",
                 Configuration.screenResolutionProfile.getOffsetButtonFight1PvpArena(), //
                 0xFFFFFF
         );
         Metas.PvpArena.Buttons.accept = BwMatrixMeta.from(//
-                "buttons/pvp-arena.accept?",
+                "buttons/pvp-arena.accept2?",
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptPvpArena(), //
                 0xFFFFFF
         );
         Metas.PvpArena.Buttons.townOnWin = BwMatrixMeta.from(//
-                "buttons/pvp-arena.town-win?",
+                "buttons/pvp-arena.town-win2?",
                 Configuration.screenResolutionProfile.getOffsetButtonBackToTownFromPvpArenaOnWin(), //
                 0xFFFFFF
         );
         Metas.PvpArena.Buttons.townOnLose = BwMatrixMeta.from(//
-                "buttons/pvp-arena.town-defeat?",
+                "buttons/pvp-arena.town-defeat2?",
                 Configuration.screenResolutionProfile.getOffsetButtonBackToTownFromPvpArenaOnLose(), //
                 0xFFFFFF
         );
         Metas.PvpArena.Dialogs.notEnoughTicket = BwMatrixMeta.from(//
-                "dialogs/pvp-arena.not-enough-ticket?",
+                "dialogs/pvp-arena.not-enough-ticket2?",
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughPvpTicket(), //
                 0xFFFFFF
         );
@@ -773,7 +773,7 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Raid.Dialogs.notEnoughShards = BwMatrixMeta.from(//
-                "dialogs/raid.not-enough-shards-tp.bmp", //
+                "dialogs/raid.not-enough-shards2?", //
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughShards(), //
                 0xFFFFFF
         );
