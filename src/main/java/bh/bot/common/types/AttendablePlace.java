@@ -29,11 +29,11 @@ public class AttendablePlace {
 	    	case "raid":
 	    	case "gvg":
 	    	case "trials":
+	    	case "gauntlet":
+	    	case "invasion":
 	        	imgFile = imgCode + "2";
 	        	break;
 	    	case "expedition":
-	    	case "gauntlet":
-	    	case "invasion":
 	    	default:
 	    		imgFile = imgCode;
 	    		break;
