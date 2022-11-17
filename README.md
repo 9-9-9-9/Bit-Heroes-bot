@@ -6,7 +6,7 @@
 - [x] Raid (2.12.0)
 - [x] PVP (2.12.0)
 - [x] Trials (2.13.0)
-- [ ] GVG
+- [x] GVG (2.13.0)
 - [ ] WB Solo
 - [ ] WB Team
 - [ ] Invasion

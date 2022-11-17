@@ -434,12 +434,12 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Globally.Dialogs.areYouSureWantToExit = BwMatrixMeta.from(//
-                "dialogs/globally.are-you-sure-want-to-exit?",
+                "dialogs/globally.are-you-sure-want-to-exit2?",
                 Configuration.screenResolutionProfile.getOffsetDialogAreYouSureWantToExit(), //
                 0xFFFFFF
         );
         Metas.Globally.Dialogs.news = BwMatrixMeta.from(//
-                "dialogs/globally.news?",
+                "dialogs/globally.news2?",
                 Configuration.screenResolutionProfile.getOffsetDialogNews(), //
                 0xFFFFFF
         );
@@ -643,7 +643,7 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Invasion.Dialogs.notEnoughBadges = BwMatrixMeta.from(//
-                "dialogs/invasion.not-enough-badges?",
+                "dialogs/invasion.not-enough-badges2?",
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughInvasionBadges(), //
                 0xFFFFFF
         );
@@ -719,22 +719,22 @@ public class BwMatrixMeta {
 
         // GVG
         Metas.Gvg.Buttons.play = BwMatrixMeta.from(//
-                "buttons/gvg.play?",
+                "buttons/gvg.play2?",
                 Configuration.screenResolutionProfile.getOffsetButtonPlayGvg(), //
                 0xFFFFFF
         );
         Metas.Gvg.Buttons.fight = BwMatrixMeta.from(//
-                "buttons/gvg.fight?",
+                "buttons/gvg.fight2?",
                 Configuration.screenResolutionProfile.getOffsetButtonFight1Gvg(), //
                 0xFFFFFF
         );
         Metas.Gvg.Buttons.accept = BwMatrixMeta.from(//
-                "buttons/gvg.accept?",
+                "buttons/gvg.accept2?",
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptGvg(), //
                 0xFFFFFF
         );
         Metas.Gvg.Buttons.town = BwMatrixMeta.from(//
-                "buttons/gvg.town?",
+                "buttons/gvg.town2?",
                 Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedGvg(), //
                 0xFFFFFF
         );

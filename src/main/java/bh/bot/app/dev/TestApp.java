@@ -40,10 +40,11 @@ public class TestApp extends AbstractApplication {
 	protected void internalRun(String[] args) {
 		adjustScreenOffset();
 
-		System.out.println("Clicked play = " + clickImage(BwMatrixMeta.Metas.Trials.Buttons.play));
-		System.out.println("Clicked accept = " + clickImage(BwMatrixMeta.Metas.Trials.Buttons.accept));
-		System.out.println("Clicked town = " + clickImage(BwMatrixMeta.Metas.Trials.Buttons.town));
-		System.out.println("Clicked nat = " + clickImage(BwMatrixMeta.Metas.Trials.Dialogs.notEnoughTokens));
+		System.out.println("Clicked play = " + clickImage(BwMatrixMeta.Metas.Gvg.Buttons.play));
+		System.out.println("Clicked accept = " + clickImage(BwMatrixMeta.Metas.Gvg.Buttons.accept));
+		System.out.println("Clicked town = " + clickImage(BwMatrixMeta.Metas.Gvg.Buttons.town));
+		System.out.println("Clicked fight = " + clickImage(BwMatrixMeta.Metas.Gvg.Buttons.fight));
+		System.out.println("Clicked news = " + clickImage(BwMatrixMeta.Metas.Globally.Dialogs.news));
 
 		//
 	}
