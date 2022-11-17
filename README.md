@@ -1,4 +1,4 @@
-# IMPORTANT: Sadly, bot no longer works with new update Nov 16th, 2022
+## Sadly, most functions bot no longer works with new update Nov 16th, 2022
 ### Fixed functions:
 - [x] Fishing
 - [x] ReRun
@@ -8,13 +8,16 @@
 - [ ] Raid
 - [ ] GVG
 - [ ] Invasion
-- [ ] Expedition 1
-- [ ] Expedition 2
-- [ ] Expedition 3
-- [ ] Expedition 4
+- [ ] Idol Dimension (Expedition)
+- [ ] Inferno Dimension (Expedition)
+- [ ] Hallowed Dimension (Expedition)
+- [ ] Jammie Dimension (Expedition)
+- [ ] Battle Bards (Expedition)
 - [ ] Trials
 - [ ] Gauntlet
+- [ ] AFK
 
+___
 **Upgrade notes:** copy configuration files `user-config.properties` and `readonly.*.user-config.properties` from previous bot version's directory _(if you update the bot via auto-update method then no need to do this)_
 ___
 ## Bit Heroes bot
