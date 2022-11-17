@@ -1105,8 +1105,11 @@ public abstract class AbstractApplication {
 	}
 
 	private long closeEnterGameDialogNews() {
-		if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.news))
+		if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.news)) {
 			sendEscape();
+			info("Ya I'm here");
+			
+		}
 		return addSec(closeEnterGameDialogNewsSleepSecs);
 	}
 
