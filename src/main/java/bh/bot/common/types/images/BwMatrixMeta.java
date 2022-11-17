@@ -419,7 +419,7 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Globally.Dialogs.confirmQuitBattle = BwMatrixMeta.from(//
-                "dialogs/globally.confirm-quit-battle?",
+                "dialogs/globally.confirm-quit-battle2?",
                 Configuration.screenResolutionProfile.getOffsetDialogConfirmQuitBattle(), //
                 0xFFFFFF
         );

@@ -44,7 +44,7 @@ public class TestApp extends AbstractApplication {
 		System.out.println("Clicked accept = " + clickImage(BwMatrixMeta.Metas.Gvg.Buttons.accept));
 		System.out.println("Clicked town = " + clickImage(BwMatrixMeta.Metas.Gvg.Buttons.town));
 		System.out.println("Clicked fight = " + clickImage(BwMatrixMeta.Metas.Gvg.Buttons.fight));
-		System.out.println("Clicked news = " + clickImage(BwMatrixMeta.Metas.Globally.Dialogs.news));
+		System.out.println("Clicked cqb = " + clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmQuitBattle));
 
 		//
 	}
