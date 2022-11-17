@@ -4,16 +4,16 @@
 - [x] ReRun (2.11.0)
 - [x] Raid (2.12.0)
 - [x] PVP (2.12.0)
+- [x] Trials (2.13.0)
+- [ ] GVG
 - [ ] WB Solo
 - [ ] WB Team
-- [ ] GVG
 - [ ] Invasion
 - [ ] Idol Dimension (Expedition)
 - [ ] Inferno Dimension (Expedition)
 - [ ] Hallowed Dimension (Expedition)
 - [ ] Jammie Dimension (Expedition)
 - [ ] Battle Bards (Expedition)
-- [ ] Trials
 - [ ] Gauntlet
 - [ ] AFK
 

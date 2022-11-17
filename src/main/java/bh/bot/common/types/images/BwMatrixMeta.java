@@ -697,22 +697,22 @@ public class BwMatrixMeta {
 
         // Trials
         Metas.Trials.Buttons.play = BwMatrixMeta.from(//
-                "buttons/trials.play?",
+                "buttons/trials.play2?",
                 Configuration.screenResolutionProfile.getOffsetButtonPlayTrials(), //
                 0xFFFFFF
         );
         Metas.Trials.Buttons.accept = BwMatrixMeta.from(//
-                "buttons/trials.accept?",
+                "buttons/trials.accept2?",
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptTrials(), //
                 0xFFFFFF
         );
         Metas.Trials.Buttons.town = BwMatrixMeta.from(//
-                "buttons/trials.town?",
+                "buttons/trials.town2?",
                 Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedTrials(), //
                 0xFFFFFF
         );
         Metas.Trials.Dialogs.notEnoughTokens = BwMatrixMeta.from(//
-                "dialogs/trials.not-enough-tokens?",
+                "dialogs/trials.not-enough-tokens2?",
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughTrialsTokens(), //
                 0xFFFFFF
         );
