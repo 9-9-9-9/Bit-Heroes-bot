@@ -421,7 +421,7 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Globally.Dialogs.areYouStillThere = BwMatrixMeta.from(//
-                "dialogs/globally.are-you-still-there?",
+                "dialogs/globally.are-you-still-there2?",
                 Configuration.screenResolutionProfile.getOffsetDialogAreYouStillThere(), //
                 0xFFFFFF
         );
