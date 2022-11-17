@@ -1,6 +1,5 @@
-## Important: most functions of bot no longer works with new update Nov 16th, 2022
-## To the folks who using this bot but not giving this repo a Star: Fvck U
-### Fixed functions:
+## Welcome Bit Verse
+### Fixed functions since new BH update Nov 16, 2022:
 - [x] Fishing (2.11.0)
 - [x] ReRun (2.11.0)
 - [x] Raid (2.12.0)
@@ -17,6 +16,7 @@
 - [ ] Jammie Dimension (Expedition)
 - [ ] Battle Bards (Expedition)
 - [ ] Gauntlet
+## To the folks who using this bot but not giving this repo a Star: Fvck U
 
 ___
 **Upgrade notes:** copy configuration files `user-config.properties` and `readonly.*.user-config.properties` from previous bot version's directory _(if you update the bot via auto-update method then no need to do this)_

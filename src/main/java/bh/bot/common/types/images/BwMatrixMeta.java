@@ -628,17 +628,17 @@ public class BwMatrixMeta {
 
         // Invasion
         Metas.Invasion.Buttons.play = BwMatrixMeta.from(//
-                "buttons/invasion.play?",
+                "buttons/invasion.play2?",
                 Configuration.screenResolutionProfile.getOffsetButtonPlayInvasion(), //
                 0xFFFFFF
         );
         Metas.Invasion.Buttons.accept = BwMatrixMeta.from(//
-                "buttons/invasion.accept?",
+                "buttons/invasion.accept2?",
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptInvasion(), //
                 0xFFFFFF
         );
         Metas.Invasion.Buttons.town = BwMatrixMeta.from(//
-                "buttons/invasion.town?",
+                "buttons/invasion.town2?",
                 Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedInvasion(), //
                 0xFFFFFF
         );
@@ -741,17 +741,17 @@ public class BwMatrixMeta {
 
         // Gauntlet
         Metas.Gauntlet.Buttons.play = BwMatrixMeta.from(//
-                "buttons/gauntlet.play?", //
+                "buttons/gauntlet.play2?", //
                 Configuration.screenResolutionProfile.getOffsetButtonPlayGauntlet(), //
                 0xFFFFFF
         );
         Metas.Gauntlet.Buttons.accept = BwMatrixMeta.from(//
-                "buttons/gauntlet.accept?", //
+                "buttons/gauntlet.accept2?", //
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptGauntlet(), //
                 0xFFFFFF
         );
         Metas.Gauntlet.Buttons.town = BwMatrixMeta.from(//
-                "buttons/gauntlet.town?", //
+                "buttons/gauntlet.town2?", //
                 Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedGauntlet(), //
                 0xFFFFFF
         );
