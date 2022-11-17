@@ -7,7 +7,7 @@
 - [x] PVP (2.12.0)
 - [x] Trials (2.13.0)
 - [x] GVG (2.13.0)
-- [ ] WB Solo
+- [x] WB Solo (2.13.0)
 - [ ] WB Team
 - [ ] Invasion
 - [ ] Idol Dimension (Expedition)

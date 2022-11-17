@@ -1,8 +1,8 @@
 {
 	"bv": ["2.10.1","2.10.0","2.9.3","2.9.2","2.9.1","2.9.0","2.8.6","2.8.5","2.8.4","2.8.3","2.8.2","2.8.1","2.8.0","2.7.0","2.6.0","2.5.0","2.4.0","2.3.0","2.2.0","2.1.0","2.0.1","2.0.0"],
 	"bf": {
-		"2.13.0": ["afk","expedition","invasion","gauntlet","world-boss","world-boss-team"],
-		"2.12.0": ["afk","expedition","invasion","gauntlet","world-boss","world-boss-team","gvg","trials"],
-		"2.11.0": ["afk","expedition","invasion","gauntlet","world-boss","world-boss-team","gvg","trials","raid","pvp"]
+		"2.13.0": ["afk","expedition","invasion","gauntlet","world-boss-team"],
+		"2.12.0": ["afk","expedition","invasion","gauntlet","world-boss-team","world-boss","gvg","trials"],
+		"2.11.0": ["afk","expedition","invasion","gauntlet","world-boss-team","world-boss","gvg","trials","raid","pvp"]
 	}
 }
