@@ -209,7 +209,6 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta autoG;
                 public static BwMatrixMeta autoR;
                 public static BwMatrixMeta radioButton;
-                // public static BwMatrixMeta close;
                 public static BwMatrixMeta mapButtonOnFamiliarUi;
                 public static BwMatrixMeta persuade;
                 public static BwMatrixMeta persuadeBribe;
@@ -396,13 +395,6 @@ public class BwMatrixMeta {
                 Offset.none(), //
                 0x000000
         );
-        /*
-	        Metas.Globally.Buttons.close = BwMatrixMeta.from(//
-	                "buttons/globally.close?",
-	                Offset.none(), //
-	                0x000000
-	        );
-        */
         Metas.Globally.Buttons.mapButtonOnFamiliarUi = BwMatrixMeta.from(//
                 "buttons/globally.map-on-familiar-ui2?",
                 Configuration.screenResolutionProfile.getOffsetButtonMapOnFamiliarUi(), //
@@ -419,7 +411,7 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Globally.Dialogs.confirmQuitBattle = BwMatrixMeta.from(//
-                "dialogs/globally.confirm-quit-battle?",
+                "dialogs/globally.confirm-quit-battle2?",
                 Configuration.screenResolutionProfile.getOffsetDialogConfirmQuitBattle(), //
                 0xFFFFFF
         );
@@ -429,17 +421,17 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Globally.Dialogs.areYouStillThere = BwMatrixMeta.from(//
-                "dialogs/globally.are-you-still-there?",
+                "dialogs/globally.are-you-still-there2?",
                 Configuration.screenResolutionProfile.getOffsetDialogAreYouStillThere(), //
                 0xFFFFFF
         );
         Metas.Globally.Dialogs.areYouSureWantToExit = BwMatrixMeta.from(//
-                "dialogs/globally.are-you-sure-want-to-exit?",
+                "dialogs/globally.are-you-sure-want-to-exit2?",
                 Configuration.screenResolutionProfile.getOffsetDialogAreYouSureWantToExit(), //
                 0xFFFFFF
         );
         Metas.Globally.Dialogs.news = BwMatrixMeta.from(//
-                "dialogs/globally.news?",
+                "dialogs/globally.news2?",
                 Configuration.screenResolutionProfile.getOffsetDialogNews(), //
                 0xFFFFFF
         );
@@ -519,77 +511,77 @@ public class BwMatrixMeta {
 
         // World Boss
         Metas.WorldBoss.Buttons.summonOnListingPartiesWorldBoss = BwMatrixMeta.from(//
-                "buttons/world-boss.summon-party?",
+                "buttons/world-boss.summon-party2?",
                 Configuration.screenResolutionProfile.getOffsetButtonSummonOnListingPartiesWorldBoss(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.summonOnListingWorldBosses = BwMatrixMeta.from(//
-                "buttons/world-boss.summon-boss?",
+                "buttons/world-boss.summon-boss2?",
                 Configuration.screenResolutionProfile.getOffsetButtonSummonOnListingWorldBosses(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.summonOnSelectingWorldBossTierAndAndDifficulty = BwMatrixMeta.from(//
-                "buttons/world-boss.summon-tier-diff?",
+                "buttons/world-boss.summon-tier-diff2?",
                 Configuration.screenResolutionProfile.getOffsetButtonSummonOnSelectingWorldBossTierAndDifficulty(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.startBoss = BwMatrixMeta.from(//
-                "buttons/world-boss.start-boss?",
+                "buttons/world-boss.start-boss2?",
                 Configuration.screenResolutionProfile.getOffsetButtonStartWorldBoss(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.regroup = BwMatrixMeta.from(//
-                "buttons/world-boss.regroup-win?",
+                "buttons/world-boss.regroup2?",
                 Configuration.screenResolutionProfile.getOffsetButtonRegroupWorldBoss(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.regroupOnDefeated = BwMatrixMeta.from(//
-                "buttons/world-boss.regroup-lose?",
+                "buttons/world-boss.regroup2?",
                 Configuration.screenResolutionProfile.getOffsetButtonRegroupAfterDefeatByWorldBoss(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.ready = BwMatrixMeta.from(//
-                "buttons/world-boss.ready?",
+                "buttons/world-boss.ready2?",
                 Configuration.screenResolutionProfile.getOffsetButtonReadyWorldBossTeam(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.unready = BwMatrixMeta.from(//
-                "buttons/world-boss.unready?",
+                "buttons/world-boss.unready2?",
                 Configuration.screenResolutionProfile.getOffsetButtonUnReadyWorldBossTeam(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.invite1 = BwMatrixMeta.from(//
-                "buttons/world-boss.invite?",
+                "buttons/world-boss.invite2?",
                 Configuration.screenResolutionProfile.getOffsetButtonInvite1WorldBossTeam(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.invite2 = BwMatrixMeta.from(//
-                "buttons/world-boss.invite?",
+                "buttons/world-boss.invite2?",
                 Configuration.screenResolutionProfile.getOffsetButtonInvite2WorldBossTeam(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.invite3 = BwMatrixMeta.from(//
-                "buttons/world-boss.invite?",
+                "buttons/world-boss.invite2?",
                 Configuration.screenResolutionProfile.getOffsetButtonInvite3WorldBossTeam(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.invite4 = BwMatrixMeta.from(//
-                "buttons/world-boss.invite?",
+                "buttons/world-boss.invite2?",
                 Configuration.screenResolutionProfile.getOffsetButtonInvite4WorldBossTeam(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.invite5 = BwMatrixMeta.from(//
-                "buttons/world-boss.invite?",
+                "buttons/world-boss.invite2?",
                 Configuration.screenResolutionProfile.getOffsetButtonInvite5WorldBossTeam(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Dialogs.notEnoughXeals = BwMatrixMeta.from(//
-                "dialogs/world-boss.not-enough-xeals?",
+                "dialogs/world-boss.not-enough-xeals2?",
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughXeals(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Labels.labelInSummonDialog = BwMatrixMeta.from(//
-                "labels/world-boss-tp.bmp", //
+                "labels/world-boss.world-boss2?", //
                 Configuration.screenResolutionProfile.getOffsetLabelWorldBossInSummonDialog(), //
                 0xFFFFFF
         );
@@ -628,29 +620,29 @@ public class BwMatrixMeta {
 
         // Invasion
         Metas.Invasion.Buttons.play = BwMatrixMeta.from(//
-                "buttons/invasion.play?",
+                "buttons/invasion.play2?",
                 Configuration.screenResolutionProfile.getOffsetButtonPlayInvasion(), //
                 0xFFFFFF
         );
         Metas.Invasion.Buttons.accept = BwMatrixMeta.from(//
-                "buttons/invasion.accept?",
+                "buttons/invasion.accept2?",
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptInvasion(), //
                 0xFFFFFF
         );
         Metas.Invasion.Buttons.town = BwMatrixMeta.from(//
-                "buttons/invasion.town?",
+                "buttons/invasion.town2?",
                 Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedInvasion(), //
                 0xFFFFFF
         );
         Metas.Invasion.Dialogs.notEnoughBadges = BwMatrixMeta.from(//
-                "dialogs/invasion.not-enough-badges?",
+                "dialogs/invasion.not-enough-badges2?",
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughInvasionBadges(), //
                 0xFFFFFF
         );
 
         // Expedition
         Metas.Expedition.Buttons.play = BwMatrixMeta.from(//
-                "buttons/expedition.play?",
+                "buttons/expedition.play2?",
                 Configuration.screenResolutionProfile.getOffsetButtonPlayExpedition(), //
                 0xFFFFFF
         );
@@ -660,12 +652,12 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Expedition.Buttons.accept = BwMatrixMeta.from(//
-                "buttons/expedition.accept?",
+                "buttons/expedition.accept2?",
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptExpedition(), //
                 0xFFFFFF
         );
         Metas.Expedition.Buttons.town = BwMatrixMeta.from(//
-                "buttons/expedition.town?",
+                "buttons/expedition.town2?",
                 Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedExpedition(), //
                 0xFFFFFF
         );
@@ -697,61 +689,61 @@ public class BwMatrixMeta {
 
         // Trials
         Metas.Trials.Buttons.play = BwMatrixMeta.from(//
-                "buttons/trials.play?",
+                "buttons/trials.play2?",
                 Configuration.screenResolutionProfile.getOffsetButtonPlayTrials(), //
                 0xFFFFFF
         );
         Metas.Trials.Buttons.accept = BwMatrixMeta.from(//
-                "buttons/trials.accept?",
+                "buttons/trials.accept2?",
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptTrials(), //
                 0xFFFFFF
         );
         Metas.Trials.Buttons.town = BwMatrixMeta.from(//
-                "buttons/trials.town?",
+                "buttons/trials.town2?",
                 Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedTrials(), //
                 0xFFFFFF
         );
         Metas.Trials.Dialogs.notEnoughTokens = BwMatrixMeta.from(//
-                "dialogs/trials.not-enough-tokens?",
+                "dialogs/trials.not-enough-tokens2?",
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughTrialsTokens(), //
                 0xFFFFFF
         );
 
         // GVG
         Metas.Gvg.Buttons.play = BwMatrixMeta.from(//
-                "buttons/gvg.play?",
+                "buttons/gvg.play2?",
                 Configuration.screenResolutionProfile.getOffsetButtonPlayGvg(), //
                 0xFFFFFF
         );
         Metas.Gvg.Buttons.fight = BwMatrixMeta.from(//
-                "buttons/gvg.fight?",
+                "buttons/gvg.fight2?",
                 Configuration.screenResolutionProfile.getOffsetButtonFight1Gvg(), //
                 0xFFFFFF
         );
         Metas.Gvg.Buttons.accept = BwMatrixMeta.from(//
-                "buttons/gvg.accept?",
+                "buttons/gvg.accept2?",
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptGvg(), //
                 0xFFFFFF
         );
         Metas.Gvg.Buttons.town = BwMatrixMeta.from(//
-                "buttons/gvg.town?",
+                "buttons/gvg.town2?",
                 Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedGvg(), //
                 0xFFFFFF
         );
 
         // Gauntlet
         Metas.Gauntlet.Buttons.play = BwMatrixMeta.from(//
-                "buttons/gauntlet.play?", //
+                "buttons/gauntlet.play2?", //
                 Configuration.screenResolutionProfile.getOffsetButtonPlayGauntlet(), //
                 0xFFFFFF
         );
         Metas.Gauntlet.Buttons.accept = BwMatrixMeta.from(//
-                "buttons/gauntlet.accept?", //
+                "buttons/gauntlet.accept2?", //
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptGauntlet(), //
                 0xFFFFFF
         );
         Metas.Gauntlet.Buttons.town = BwMatrixMeta.from(//
-                "buttons/gauntlet.town?", //
+                "buttons/gauntlet.town2?", //
                 Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedGauntlet(), //
                 0xFFFFFF
         );
