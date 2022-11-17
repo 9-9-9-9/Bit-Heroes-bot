@@ -74,15 +74,17 @@ public class TestApp extends AbstractApplication {
 			final RECT lpRect = new RECT();
 			if (!User32.INSTANCE.GetWindowRect(hwnd, lpRect))
 				throw new Win32Exception(com.sun.jna.platform.win32.Kernel32.INSTANCE.GetLastError());
-			return new Rectangle(lpRect.left, lpRect.top, Math.abs(lpRect.right - lpRect.left),
-					Math.abs(lpRect.bottom - lpRect.top));
+			return new Rectangle(
+				lpRect.left, lpRect.top, 
+				Math.abs(lpRect.right - lpRect.left), Math.abs(lpRect.bottom - lpRect.top)
+			);
 		}
 	}
 
 	@SuppressWarnings("unused")
 	private void detectRaidRadioButtons() {
 		Tuple2<Point[], Byte> result = detectRadioButtons(
-				Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid()
+			Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid()
 		);
 		Point[] points = result._1;
 		byte selectedIndex = result._2;
@@ -93,7 +95,7 @@ public class TestApp extends AbstractApplication {
 	@SuppressWarnings("unused")
 	private void detectWorldBossRadioButtons() {
 		Tuple2<Point[], Byte> result = detectRadioButtons(
-				Configuration.screenResolutionProfile.getRectangleRadioButtonsOfWorldBoss()
+			Configuration.screenResolutionProfile.getRectangleRadioButtonsOfWorldBoss()
 		);
 		Point[] points = result._1;
 		byte selectedIndex = result._2;
