@@ -209,7 +209,6 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta autoG;
                 public static BwMatrixMeta autoR;
                 public static BwMatrixMeta radioButton;
-                // public static BwMatrixMeta close;
                 public static BwMatrixMeta mapButtonOnFamiliarUi;
                 public static BwMatrixMeta persuade;
                 public static BwMatrixMeta persuadeBribe;
@@ -396,13 +395,6 @@ public class BwMatrixMeta {
                 Offset.none(), //
                 0x000000
         );
-        /*
-	        Metas.Globally.Buttons.close = BwMatrixMeta.from(//
-	                "buttons/globally.close?",
-	                Offset.none(), //
-	                0x000000
-	        );
-        */
         Metas.Globally.Buttons.mapButtonOnFamiliarUi = BwMatrixMeta.from(//
                 "buttons/globally.map-on-familiar-ui2?",
                 Configuration.screenResolutionProfile.getOffsetButtonMapOnFamiliarUi(), //
