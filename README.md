@@ -5,10 +5,11 @@
 - [x] ReRun (2.11.0)
 - [x] Raid (2.12.0)
 - [x] PVP (2.12.0)
-- [x] Trials (2.13.0)
-- [x] GVG (2.13.0)
-- [x] WB Solo (2.13.0)
-- [x] WB Team
+- [x] Trials (3.0.0)
+- [x] GVG (3.0.0)
+- [x] WB Solo (3.0.0)
+- [x] WB Team (3.0.0)
+- [x] AFK (3.0.0)
 - [ ] Invasion
 - [ ] Idol Dimension (Expedition)
 - [ ] Inferno Dimension (Expedition)
@@ -16,7 +17,6 @@
 - [ ] Jammie Dimension (Expedition)
 - [ ] Battle Bards (Expedition)
 - [ ] Gauntlet
-- [ ] AFK
 
 ___
 **Upgrade notes:** copy configuration files `user-config.properties` and `readonly.*.user-config.properties` from previous bot version's directory _(if you update the bot via auto-update method then no need to do this)_
