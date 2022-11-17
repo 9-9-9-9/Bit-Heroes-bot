@@ -3,7 +3,7 @@
 - [x] Fishing (2.11.0)
 - [x] ReRun (2.11.0)
 - [x] Raid (2.12.0)
-- [ ] PVP
+- [x] PVP (2.12.0)
 - [ ] WB Solo
 - [ ] WB Team
 - [ ] GVG
