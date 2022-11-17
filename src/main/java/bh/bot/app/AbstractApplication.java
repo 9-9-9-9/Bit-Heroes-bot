@@ -750,8 +750,10 @@ public abstract class AbstractApplication {
 					}
 				}
 
-				for (Familiar f : argumentInfo.familiarToBribeWithGems)
-					warn("Will persuade %s with gems", f.name());
+				/* // TODO enable this if Bribe feature to be enabled again
+					for (Familiar f : argumentInfo.familiarToBribeWithGems)
+						warn("Will persuade %s with gems", f.name());
+				*/
 			}
 
 			if (st.persuade && argumentInfo.disablePersuade)
@@ -902,19 +904,21 @@ public abstract class AbstractApplication {
 
 				boolean doPersuadeGold = true;
 
-				if (argumentInfo.familiarToBribeWithGems.size() > 0) {
-					for (Tuple2<BwMatrixMeta, Familiar> target : persuadeTargets) {
-						PersuadeState ps = persuade(target._1, target._2, pPersuadeButton, pBribeButton);
-						if (ps == PersuadeState.NotAvailable) {
-							doPersuadeGold = false;
-							break;
-						}
-						if (ps == PersuadeState.SuccessGem || ps == PersuadeState.SuccessGold) {
-							doPersuadeGold = false;
-							break;
+				/* // TODO enable this if Bribe feature to be enabled again
+					if (argumentInfo.familiarToBribeWithGems.size() > 0) {
+						for (Tuple2<BwMatrixMeta, Familiar> target : persuadeTargets) {
+							PersuadeState ps = persuade(target._1, target._2, pPersuadeButton, pBribeButton);
+							if (ps == PersuadeState.NotAvailable) {
+								doPersuadeGold = false;
+								break;
+							}
+							if (ps == PersuadeState.SuccessGem || ps == PersuadeState.SuccessGold) {
+								doPersuadeGold = false;
+								break;
+							}
 						}
 					}
-				}
+				*/
 
 				if (doPersuadeGold) {
 					dev("doPersuadeGold");
