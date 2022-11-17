@@ -549,12 +549,12 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.ready = BwMatrixMeta.from(//
-                "buttons/world-boss.ready?",
+                "buttons/world-boss.ready2?",
                 Configuration.screenResolutionProfile.getOffsetButtonReadyWorldBossTeam(), //
                 0xFFFFFF
         );
         Metas.WorldBoss.Buttons.unready = BwMatrixMeta.from(//
-                "buttons/world-boss.unready?",
+                "buttons/world-boss.unready2?",
                 Configuration.screenResolutionProfile.getOffsetButtonUnReadyWorldBossTeam(), //
                 0xFFFFFF
         );

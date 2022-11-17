@@ -8,7 +8,7 @@
 - [x] Trials (2.13.0)
 - [x] GVG (2.13.0)
 - [x] WB Solo (2.13.0)
-- [ ] WB Team
+- [x] WB Team
 - [ ] Invasion
 - [ ] Idol Dimension (Expedition)
 - [ ] Inferno Dimension (Expedition)

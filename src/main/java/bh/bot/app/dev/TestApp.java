@@ -40,7 +40,8 @@ public class TestApp extends AbstractApplication {
 	protected void internalRun(String[] args) {
 		adjustScreenOffset();
 
-		System.out.println("Clicked nax = " + clickImage(BwMatrixMeta.Metas.WorldBoss.Dialogs.notEnoughXeals));
+		System.out.println("Clicked R = " + clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.ready));
+		System.out.println("Clicked U = " + clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.unready));
 
 		//
 	}
