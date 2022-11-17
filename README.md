@@ -1,4 +1,5 @@
-## Sadly, most functions bot no longer works with new update Nov 16th, 2022
+## Important: most functions of bot no longer works with new update Nov 16th, 2022
+## To the folks who using this bot but not giving this repo a Star: Fvck U
 ### Fixed functions:
 - [x] Fishing (2.11.0)
 - [x] ReRun (2.11.0)
@@ -30,7 +31,7 @@ ___
 
 [Wiki](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki)
 
-> To the guys who using this bot but not giving this repo a Star: Fvck U
+> To the folks who using this bot but not giving this repo a Star: Fvck U
 ___
 Supports **English user interface only** of [Bit Heroes on Steam](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Does-this-bot-supports-Steam-version-of-Bit-Heroes%3F) and [Bit Heroes on web](https://www.kongregate.com/games/Juppiomenz/bit-heroes) + [mini-client](https://github.com/9-9-9-9/Bit-Heroes-bot/wiki/Function-%22client%22-(mini-client-on-Chrome))
 
