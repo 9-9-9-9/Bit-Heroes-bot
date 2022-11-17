@@ -642,7 +642,7 @@ public class BwMatrixMeta {
 
         // Expedition
         Metas.Expedition.Buttons.play = BwMatrixMeta.from(//
-                "buttons/expedition.play?",
+                "buttons/expedition.play2?",
                 Configuration.screenResolutionProfile.getOffsetButtonPlayExpedition(), //
                 0xFFFFFF
         );
@@ -652,12 +652,12 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Expedition.Buttons.accept = BwMatrixMeta.from(//
-                "buttons/expedition.accept?",
+                "buttons/expedition.accept2?",
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptExpedition(), //
                 0xFFFFFF
         );
         Metas.Expedition.Buttons.town = BwMatrixMeta.from(//
-                "buttons/expedition.town?",
+                "buttons/expedition.town2?",
                 Configuration.screenResolutionProfile.getOffsetButtonTownAfterCompetedExpedition(), //
                 0xFFFFFF
         );
