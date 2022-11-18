@@ -1,22 +1,12 @@
-## Welcome Bit Verse
-### Fixed functions since new BH update Nov 16, 2022:
-- [x] Fishing (2.11.0)
-- [x] ReRun (2.11.0)
-- [x] Raid (2.12.0)
-- [x] PVP (2.12.0)
-- [x] Trials (3.0.0)
-- [x] GVG (3.0.0)
-- [x] WB Solo (3.0.0)
-- [x] WB Team (3.0.0)
-- [x] AFK (3.0.0)
-- [ ] Invasion
+## Welcome Bit Verse 
+### and new BH update at Nov 16 2022
+### Almost functions were fixed and back to work. Expedition will be fixed as soon as possible
 - [ ] Idol Dimension (Expedition)
 - [ ] Inferno Dimension (Expedition)
 - [ ] Hallowed Dimension (Expedition)
 - [ ] Jammie Dimension (Expedition)
 - [ ] Battle Bards (Expedition)
-- [ ] Gauntlet
-## To the folks who using this bot but not giving this repo a Star: Fvck U
+## To the folks who using this bot but not giving this repository a Star: Fvck U, from the 8 pixels world to the 4D reality
 
 ___
 **Upgrade notes:** copy configuration files `user-config.properties` and `readonly.*.user-config.properties` from previous bot version's directory _(if you update the bot via auto-update method then no need to do this)_
