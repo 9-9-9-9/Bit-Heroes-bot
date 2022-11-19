@@ -77,8 +77,8 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
 								.reactiveAuto() //
 								.autoExit() //
 								.closeEnterGameNewsDialog() //
-                                .persuade() //
-                                .detectChatboxDirectMessage() //
+								.persuade() //
+								.detectChatboxDirectMessage() //
 								.build() //
 				), //
                 () -> doCheckGameScreenOffset(masterSwitch) //

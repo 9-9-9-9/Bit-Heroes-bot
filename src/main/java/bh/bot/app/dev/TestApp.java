@@ -40,12 +40,6 @@ public class TestApp extends AbstractApplication {
 	protected void internalRun(String[] args) {
 		adjustScreenOffset();
 
-		boolean c = clickImage(BwMatrixMeta.Metas.Globally.Buttons.sendMessage);
-		if (c) {
-			InteractionUtil.Keyboard.sendEscape();
-		}
-		System.out.println("Clicked SM = " + c);
-
 		//
 	}
 
