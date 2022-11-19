@@ -40,7 +40,11 @@ public class TestApp extends AbstractApplication {
 	protected void internalRun(String[] args) {
 		adjustScreenOffset();
 
-		System.out.println("Clicked U = " + clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.unready));
+		boolean c = clickImage(BwMatrixMeta.Metas.Globally.Buttons.sendMessage);
+		if (c) {
+			InteractionUtil.Keyboard.sendEscape();
+		}
+		System.out.println("Clicked SM = " + c);
 
 		//
 	}
