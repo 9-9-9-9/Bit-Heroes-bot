@@ -78,6 +78,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
 								.autoExit() //
 								.closeEnterGameNewsDialog() //
                                 .persuade() //
+                                .detectChatboxDirectMessage() //
 								.build() //
 				), //
                 () -> doCheckGameScreenOffset(masterSwitch) //

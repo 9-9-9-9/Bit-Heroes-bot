@@ -64,6 +64,10 @@ cat <<EOF > ./release/user-config.properties
 # Alter interval between loops of checking images, if you believe your PC is fast, you can use this key for a faster progression. Default interval for most functions is 5 seconds (please see at --help of each function), accepted format is: "number" = number of seconds / "number" + "s" = number of seconds / "number" + "ms" = number of milliseconds, eg: 50ms = loop every 50 milliseconds, or 5000ms equals to 5 seconds
 #interval.loop.main=1s
 
+# Normally, when someone send you a message (DM), bot got confused by the chat box and can not do anything, then you will be disconnected after amount if time
+# by setting the following flag to "true", bot will take and save a screenshot into folder 'out\chatbox', close the chat box then continue it's work
+#behavior.close-chat-box-direct-message=true
+
 # Google Chrome path, for Windows only
 #external.application.chrome.path=C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe
 

@@ -213,6 +213,7 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta persuade;
                 public static BwMatrixMeta persuadeBribe;
                 public static BwMatrixMeta sendMessage;
+                public static BwMatrixMeta closeChatBox;
             }
 
             public static class Dialogs {
@@ -415,6 +416,11 @@ public class BwMatrixMeta {
                 "buttons/globally.send-message2?",
                 Configuration.screenResolutionProfile.getOffsetButtonSendMessage(), //
                 0xCEDEB5
+        );
+        Metas.Globally.Buttons.closeChatBox = BwMatrixMeta.from(//
+                "buttons/globally.close-chatbox2?",
+                Configuration.screenResolutionProfile.getOffsetButtonCloseChatBox(), //
+                0xFFFFFF
         );
         Metas.Globally.Dialogs.confirmQuitBattle = BwMatrixMeta.from(//
                 "dialogs/globally.confirm-quit-battle2?",

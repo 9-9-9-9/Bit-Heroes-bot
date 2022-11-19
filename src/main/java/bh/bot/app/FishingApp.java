@@ -88,6 +88,7 @@ public class FishingApp extends AbstractApplication {
 								.builder() //
 								.clickDisconnect() //
 								.autoExit() //
+                                .detectChatboxDirectMessage() //
 								.build() //
 				), //
 				() -> doCheckGameScreenOffset(masterSwitch) //

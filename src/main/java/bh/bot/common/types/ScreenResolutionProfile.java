@@ -212,6 +212,8 @@ public abstract class ScreenResolutionProfile {
 	
 	public abstract Offset getOffsetButtonSendMessage();
 	
+	public abstract Offset getOffsetButtonCloseChatBox();
+	
 	public abstract Offset getOffsetLabelPersuadeKaleido();
 
 	public abstract Offset getOffsetLabelPersuadeViolace();
@@ -734,6 +736,11 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetButtonSendMessage() {
 			return new Offset(507, 367);
+		}
+
+		@Override
+		public Offset getOffsetButtonCloseChatBox() {
+			return new Offset(603, 101);
 		}
 
 		@Override
