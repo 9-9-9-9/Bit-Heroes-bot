@@ -6,7 +6,7 @@
 - [ ] Hallowed Dimension (Expedition)
 - [ ] Jammie Dimension (Expedition)
 - [ ] Battle Bards (Expedition)
-## To the folks who using this bot but not giving this repository a Star: Fvck U, from the 8 pixels world to the 4D reality
+## To the folks who are using this bot but not giving this repository a Star: **Fvck U! from the 8 pixels world to the 4D reality!**
 
 ___
 **Upgrade notes:** copy configuration files `user-config.properties` and `readonly.*.user-config.properties` from previous bot version's directory _(if you update the bot via auto-update method then no need to do this)_
