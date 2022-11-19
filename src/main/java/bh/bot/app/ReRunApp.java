@@ -46,7 +46,8 @@ public class ReRunApp extends AbstractApplication {
 								.clickDisconnect() //
 								.reactiveAuto() //
 								.autoExit() //
-                                .persuade() //
+								.persuade() //
+								.detectChatboxDirectMessage() //
 								.build() //
 				), //
                 () -> detectDefeatedOnRaid(masterSwitch),

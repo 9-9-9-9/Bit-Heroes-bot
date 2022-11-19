@@ -232,6 +232,7 @@ public abstract class AbstractApplication {
 		mkdir("out");
 		mkdir("out", "images");
 		mkdir("out", "images", getAppCode());
+		mkdir("out", "chatbox");
 	}
 
 	@SuppressWarnings("SameParameterValue")
@@ -265,6 +266,10 @@ public abstract class AbstractApplication {
 		File file = Paths
 				.get("out", "images", getAppCode(), prefix + "_" + System.currentTimeMillis() + ".bmp")
 				.toFile();
+		saveImage(img, file);
+	}
+
+	protected void saveImage(BufferedImage img, File file) {;
 		try {
 			ImageIO.write(img, "bmp", file);
 		} catch (IOException e) {
@@ -707,6 +712,7 @@ public abstract class AbstractApplication {
 	private static final int persuadeSleepSecsIntervalInCaseManual = 30;
 	private static final int persuadeSleepSecsAwaitAction = 20;
 	private static final int showWarningWorldBossTeamSleepSecs = 60;
+	private static final int detectChatboxDirectMessageSleepSecs = 60;
 
 	protected void internalDoSmallTasks(AtomicBoolean masterSwitch, SmallTasks st) {
 		try {
@@ -720,6 +726,8 @@ public abstract class AbstractApplication {
 			boolean persuade = st.persuade && !argumentInfo.disablePersuade;
 			long nextShowWarningWorldBossTeam = addSec(showWarningWorldBossTeamSleepSecs);
 			boolean showWarningWorldBossTeam = st.showWarningWorldBossTeam;
+			long nextDetectChatBoxDirectMessage = addSec(detectChatboxDirectMessageSleepSecs);
+			boolean closeChatBoxDirectMessage = Configuration.closeChatBoxDirectMessage;
 
 			if (persuade) {
 				info("Auto persuade had been turned on, that means in case of any persuade screen appears, bot will automatically persuade the monster with Gold. If you want to disable this feature, you can use '%s' flag", FlagDisablePersuade.FlagName);
@@ -767,6 +775,14 @@ public abstract class AbstractApplication {
 						.yellow(" to persuade/bribe manually, otherwise bot can't continue your tasks and becomes waste of resources")
 						.reset()
 				);
+			
+			if (st.detectChatboxDirectMessage) {
+				if (closeChatBoxDirectMessage) {
+					warn("You had configured to close chatbox direct message, screenshot of the message will be saved in folder %s", saveChatboxDirectMessageImageTo);
+				} else {
+					warn("You did not configure to close chatbox direct message, so the income messages will stay as is and you might be disconnected after amount of time. Screenshot of the message will be saved in folder %s", saveChatboxDirectMessageImageTo);
+				}
+			}
 
 			while (!masterSwitch.get()) {
 				sleep(1_000);
@@ -794,6 +810,10 @@ public abstract class AbstractApplication {
 					warningWatchWorldBossTeam(ColorizeUtil.formatWarning);
 					nextShowWarningWorldBossTeam = addSec(showWarningWorldBossTeamSleepSecs);
 				}
+
+
+				if (st.detectChatboxDirectMessage && nextDetectChatBoxDirectMessage <= System.currentTimeMillis())
+					nextDetectChatBoxDirectMessage = detectChatBoxDirectMessage(closeChatBoxDirectMessage, masterSwitch);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -814,6 +834,7 @@ public abstract class AbstractApplication {
 		public final boolean closeEnterGameNewsDialog;
 		public final boolean persuade;
 		public final boolean showWarningWorldBossTeam;
+		public final boolean detectChatboxDirectMessage;
 
 		private SmallTasks(Builder b) {
 			this.clickTalk = b.f(0);
@@ -823,6 +844,7 @@ public abstract class AbstractApplication {
 			this.closeEnterGameNewsDialog = b.f(4);
 			this.persuade = b.f(5);
 			this.showWarningWorldBossTeam = b.f(6);
+			this.detectChatboxDirectMessage = b.f(7);
 		}
 
 		public static Builder builder() {
@@ -871,6 +893,10 @@ public abstract class AbstractApplication {
 
 			public Builder warningWorldBossTeam() {
 				return this.set(6);
+			}
+
+			public Builder detectChatboxDirectMessage() {
+				return this.set(7);
 			}
 		}
 	}
@@ -1045,6 +1071,48 @@ public abstract class AbstractApplication {
 			}
 		}
 		return addSec(detectDcSleepSecs);
+	}
+
+	private static final String saveChatboxDirectMessageImageTo = "out\\chatbox";
+	private long detectChatBoxDirectMessage(boolean closeChatBoxDirectMessage, AtomicBoolean masterSwitch) {
+		if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.sendMessage)) {
+			try {
+				Telegram.sendMessage("Someone sent you a direct message", false);
+			} catch (Throwable t) {
+				err("Failed to send telegram message");
+				err(t);
+			} finally {
+				if (!closeChatBoxDirectMessage)
+					masterSwitch.set(true);
+			}
+			
+			try {
+				int x = Configuration.gameScreenOffset.X.get();
+				int y = Configuration.gameScreenOffset.Y.get();
+				int w = Configuration.screenResolutionProfile.getSupportedGameResolutionWidth();
+				int h = Configuration.screenResolutionProfile.getSupportedGameResolutionHeight();
+
+				BufferedImage sc = InteractionUtil.Screen.captureScreen(x, y, w, h);
+				try {
+					File file = Paths
+							.get("out", "chatbox", "direct_message_" + System.currentTimeMillis() + ".bmp")
+							.toFile();
+					saveImage(sc, file);
+					warn("Someone sent you a direct message, screenshot of the message has been saved into folder %s", saveChatboxDirectMessageImageTo);
+				} finally {
+					freeMem(sc);
+				}
+			} catch (Throwable t) {
+				err("Failed to capture and save direct message");
+				err(t);
+			}
+			
+			if (closeChatBoxDirectMessage) {
+				clickImage(BwMatrixMeta.Metas.Globally.Buttons.closeChatBox);
+			}
+			
+		}
+		return addSec(detectChatboxDirectMessageSleepSecs);
 	}
 
 	@SuppressWarnings("FieldCanBeLocal")

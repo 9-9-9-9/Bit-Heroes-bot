@@ -36,6 +36,7 @@ public class Configuration {
     public static AtomicOffset gameScreenOffset;
     public static final boolean enableDevFeatures = new File("im.dev").exists();
     public static boolean noThrowWhenImageNotAvailable = false;
+    public static boolean closeChatBoxDirectMessage = false;
 
     public static class Interval {
 
@@ -119,6 +120,8 @@ public class Configuration {
         }
 
         noThrowWhenImageNotAvailable = StringUtil.isTrue(read("dev.no-throw-when-image-not-available"));
+        
+        closeChatBoxDirectMessage = StringUtil.isTrue(read("behavior.close-chat-box-direct-message"));
 
         if (parseArgumentsResult.mainLoopInterval >= FlagAlterLoopInterval.minimumValue) {
             Interval.Loop.main = parseArgumentsResult.mainLoopInterval;
