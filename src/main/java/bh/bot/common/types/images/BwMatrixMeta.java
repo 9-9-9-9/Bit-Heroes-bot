@@ -659,7 +659,7 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Expedition.Buttons.enter = BwMatrixMeta.from(//
-                "buttons/expedition.enter?",
+                "buttons/expedition.enter2?",
                 Configuration.screenResolutionProfile.getOffsetButtonEnterExpedition(), //
                 0xFFFFFF
         );
@@ -684,7 +684,7 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Expedition.Labels.infernoDimension = BwMatrixMeta.from(//
-                "labels/expedition.inferno-dimension?",
+                "labels/expedition.inferno-dimension2?",
                 Configuration.screenResolutionProfile.getOffsetLabelInfernoDimension(), //
                 0xFFFFFF
         );

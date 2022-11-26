@@ -2,10 +2,10 @@
 ### and new BH update at Nov 16 2022
 ### Almost functions were fixed and back to work. Expedition will be fixed as soon as possible
 - [ ] Idol Dimension (Expedition)
-- [ ] Inferno Dimension (Expedition)
 - [ ] Hallowed Dimension (Expedition)
 - [ ] Jammie Dimension (Expedition)
 - [ ] Battle Bards (Expedition)
+- [x] Inferno Dimension (Expedition)
 ## To the folks who are using this bot but not giving this repository a Star: **Fvck U! from the 8 pixels world to the 4D reality!**
 
 ___
