@@ -31,9 +31,9 @@ public class AttendablePlace {
 	    	case "trials":
 	    	case "gauntlet":
 	    	case "invasion":
+	    	case "expedition":
 	        	imgFile = imgCode + "2";
 	        	break;
-	    	case "expedition":
 	    	default:
 	    		imgFile = imgCode;
 	    		break;
