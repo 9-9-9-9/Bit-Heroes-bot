@@ -1,6 +1,8 @@
 ## Welcome Bit Verse 
-### and new BH update at Nov 16 2022
+### and new BH update at Nov 16th 2022 & Nov 28th 2022
 ### Almost functions were fixed and back to work. Expedition will be fixed as soon as possible
+- [ ] Invasion
+- [ ] Gauntlet
 - [ ] Idol Dimension (Expedition)
 - [ ] Hallowed Dimension (Expedition)
 - [ ] Jammie Dimension (Expedition)
