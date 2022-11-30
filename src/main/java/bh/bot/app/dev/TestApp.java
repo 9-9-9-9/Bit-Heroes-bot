@@ -41,7 +41,16 @@ public class TestApp extends AbstractApplication {
 		adjustScreenOffset();
 
 		//
-		findAttendablePlaces();
+		Tuple2<Point[], Byte> result = detectRadioButtons(
+				Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid()
+		);
+		Point[] points = result._1;
+		int selectedLevel = result._2 + 1;
+		info("Selected %d", selectedLevel);
+		for (int i = 0; i < points.length; i++) {
+			Point p = points[i];
+			info("[%d] %d,%d", i + 1, p.x - Configuration.gameScreenOffset.X.get(), p.y - Configuration.gameScreenOffset.Y.get());
+		}
 	}
 
 	private static void testParseTime() {
