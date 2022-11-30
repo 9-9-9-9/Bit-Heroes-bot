@@ -77,7 +77,7 @@ public class InteractionUtil {
 		public static void clickRadioButton(int level, Point[] points, String evName) {
 			if (level < 1 || level > points.length)
 				throw new InvalidDataException(
-						"Can not select level %d of %s because it's not exists, do you setup wrongly?", level, evName
+						"Can not select level %d/%d of %s because it's not exists, do you setup wrongly?", level, points.length, evName
 				);
 			Point p = points[level - 1];
 			moveCursor(new Point(p.x + 7, p.y + 7));

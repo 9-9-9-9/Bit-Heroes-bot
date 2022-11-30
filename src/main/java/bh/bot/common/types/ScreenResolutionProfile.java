@@ -510,7 +510,7 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetButtonAuto() {
-			return new Offset(778, 213);
+			return new Offset(777, 214);
 		}
 
 		@Override

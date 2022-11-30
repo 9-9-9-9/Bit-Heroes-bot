@@ -605,7 +605,9 @@ public abstract class AbstractApplication {
 
 		try (ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(
 				new Offset(Math.max(0, scanRect.x - positionTolerant), Math.max(0, scanRect.y - positionTolerant)),
-				scanRect.width + positionTolerant * 2, scanRect.height + positionTolerant * 2)) {
+				scanRect.width + positionTolerant * 2, 
+				scanRect.height + positionTolerant * 2
+		)) {
 			BufferedImage sc = screenCapturedResult.image;
 			saveDebugImage(sc, "detectRadioButtons");
 
@@ -675,7 +677,7 @@ public abstract class AbstractApplication {
 						else {
 							if (selectedRadioButtonIndex != curRadioButtonIndex)
 								throw new InvalidDataException(
-										"Found more than one selected radio button which is absolutely wrong!"
+										String.format("Found more than one selected radio button which is absolutely wrong! (no.%d conflicts with no.%d)", curRadioButtonIndex + 1, selectedRadioButtonIndex + 1)
 								);
 						}
 						break;
@@ -687,6 +689,7 @@ public abstract class AbstractApplication {
 							x, y
 					);
 					startingCoords.add(new Point(x, y));
+					x += Math.max(0, im.getWidth() - 2);
 				}
 			}
 
