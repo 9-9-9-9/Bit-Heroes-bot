@@ -383,12 +383,12 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Globally.Buttons.autoG = BwMatrixMeta.from(//
-                "buttons/globally.auto-green2?",
+                "buttons/globally.auto-green3?",
                 Configuration.screenResolutionProfile.getOffsetButtonAuto(), //
                 0xFFFFFF
         );
         Metas.Globally.Buttons.autoR = BwMatrixMeta.from(//
-                "buttons/globally.auto-red2?",
+                "buttons/globally.auto-red3?",
                 Configuration.screenResolutionProfile.getOffsetButtonAuto(), //
                 0xFFFFFF
         );

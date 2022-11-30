@@ -24,7 +24,6 @@ public class AttendablePlace {
         
         String imgFile;
         switch(imgCode) {
-	    	case "pvp":
 	    	case "world-boss":
 	    	case "raid":
 	    	case "gvg":
@@ -33,6 +32,9 @@ public class AttendablePlace {
 	    	case "invasion":
 	    	case "expedition":
 	        	imgFile = imgCode + "2";
+	        	break;
+	    	case "pvp":
+	        	imgFile = imgCode + "3";
 	        	break;
 	    	default:
 	    		imgFile = imgCode;
