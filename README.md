@@ -2,8 +2,6 @@
 ### and new BH update at Nov 16th 2022 & Nov 28th 2022
 ### Remaining features need to be updated
 - [ ] Invasion
-- [ ] Gauntlet
-- [ ] GVG
 - [ ] Idol Dimension (Expedition)
 - [ ] Hallowed Dimension (Expedition)
 - [ ] Jammie Dimension (Expedition)
