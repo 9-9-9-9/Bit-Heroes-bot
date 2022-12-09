@@ -418,7 +418,7 @@ public class BwMatrixMeta {
                 0xCEDEB5
         );
         Metas.Globally.Buttons.closeChatBox = BwMatrixMeta.from(//
-                "buttons/globally.close-chatbox2?",
+                "buttons/globally.close-chatbox3?",
                 Configuration.screenResolutionProfile.getOffsetButtonCloseChatBox(), //
                 0xFFFFFF
         );

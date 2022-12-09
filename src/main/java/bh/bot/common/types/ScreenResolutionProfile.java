@@ -740,7 +740,7 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetButtonCloseChatBox() {
-			return new Offset(603, 101);
+			return new Offset(598, 98);
 		}
 
 		@Override
