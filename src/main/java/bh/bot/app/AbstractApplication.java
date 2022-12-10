@@ -709,7 +709,7 @@ public abstract class AbstractApplication {
 	private static final int smallTalkSleepSecs = 60;
 	private static final int smallTalkSleepSecsWhenClicked = 3;
 	private static final int detectDcSleepSecs = 60;
-	private static final int reactiveAutoSleepSecs = 10;
+	private static final int reactiveAutoSleepSecs = 5;
 	private static final int closeEnterGameDialogNewsSleepSecs = 60;
 	private static final int persuadeSleepSecs = 60;
 	private static final int persuadeSleepSecsIntervalInCaseManual = 30;
@@ -1119,7 +1119,7 @@ public abstract class AbstractApplication {
 	}
 
 	@SuppressWarnings("FieldCanBeLocal")
-	private final byte maxContinousRed = 6;
+	private final byte maxContinousRed = 4;
 
 	private long autoReactiveAuto(AtomicInteger continousRed) {
 		long next = addSec(reactiveAutoSleepSecs);
