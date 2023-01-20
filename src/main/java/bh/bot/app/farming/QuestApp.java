@@ -17,22 +17,12 @@ import java.util.List;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 
-@AppMeta(code = "quest", name = "Quest", displayOrder = 8)
+@AppMeta(code = "quest", name = "Quest", displayOrder = 1)
 @RequireSingleInstance
 public class QuestApp extends AbstractDoFarmingApp {
     @Override
     protected boolean readMoreInput() throws IOException {
-        userConfig = getPredefinedUserConfigFromProfileName("You want to do Quests so you have to specific profile name first!\nSelect an existing profile:");
-
-        try {
-            info(ColorizeUtil.formatInfo, "You have chosen to select target on %s of Quests", userConfig.getPvpTargetDesc());
-            return true;
-        } catch (InvalidDataException ex2) {
-            err(ex2.getMessage());
-            printRequiresSetting();
-            Main.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
-            return false;
-        }
+        return true;
     }
 
     @Override
@@ -45,9 +35,15 @@ public class QuestApp extends AbstractDoFarmingApp {
         return QuestApp.getPredefinedImageActions();
     }
 
+    // @Override
+    // protected boolean doCustomAction() {
+    //     return true;
+    //     // return tryEnterWorldBoss(true, userConfig, isWorldBossBlocked);
+    // }
+
     public static List<NextAction> getPredefinedImageActions() {
         return Arrays.asList(
-                new NextAction(BwMatrixMeta.Metas.Dungeons.Buttons.rerun, true, false),
+                new NextAction(BwMatrixMeta.Metas.Dungeons.Buttons.rerun, false, false),
                 new NextAction(BwMatrixMeta.Metas.Dungeons.Dialogs.notEnoughEnergy, false, true)
         );
     }
@@ -55,5 +51,10 @@ public class QuestApp extends AbstractDoFarmingApp {
     @Override
     protected String getLimitationExplain() {
         return "Quest does not support level select, so choose it before turn this on";
+    }
+
+    @Override
+    protected int getDefaultMainLoopInterval() {
+        return 10_000;
     }
 }

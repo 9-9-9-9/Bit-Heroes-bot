@@ -30,6 +30,7 @@ public class AttendablePlace {
 	    	case "invasion":
 	    	case "trials":
 	    	case "gvg":
+            case "quest":
 	    	case "gauntlet":
 	    	case "expedition":
 	        	imgFile = imgCode + "3";
