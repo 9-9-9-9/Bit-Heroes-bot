@@ -243,6 +243,10 @@ public class BwMatrixMeta {
             public static class Buttons {
                 public static BwMatrixMeta rerun;
             }
+
+            public static class Dialogs {
+                public static BwMatrixMeta notEnoughEnergy;
+            }
         }
 
         public static class Fishing {
@@ -450,7 +454,13 @@ public class BwMatrixMeta {
         Metas.Dungeons.Buttons.rerun = BwMatrixMeta.from(//
                 "buttons/dungeons.rerun2?",
                 Configuration.screenResolutionProfile.getOffsetButtonDungeonReRun(), //
-                0xFFFFFF);
+                0xFFFFFF
+        );
+        Metas.Dungeons.Dialogs.notEnoughEnergy = BwMatrixMeta.from(//
+                "dialogs/dungeons.not-enough-energy2?",
+                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughDungeonEnergy(), //
+                0xFFFFFF
+        );
         
         // Persuade
         Metas.Persuade.Labels.kaleido = BwMatrixMeta.from(//

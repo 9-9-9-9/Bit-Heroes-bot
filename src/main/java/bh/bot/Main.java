@@ -74,6 +74,7 @@ public class Main {
 					WorldBossTeamApp.class, //
 					RaidApp.class, //
 					PvpApp.class, //
+					QuestApp.class, //
 					InvasionApp.class, //
 					ExpeditionApp.class, //
 					TrialsApp.class, //

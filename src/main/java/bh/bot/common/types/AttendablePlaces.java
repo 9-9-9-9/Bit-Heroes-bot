@@ -14,6 +14,7 @@ public class AttendablePlaces {
         public static final int Pvp         = 0b00100000;
         public static final int WorldBoss   = 0b01000000;
         public static final int Raid        = 0b10000000;
+        public static final int Quest       = 0b11000000;
     }
 
     public static AttendablePlace invasion = null;
@@ -25,6 +26,8 @@ public class AttendablePlaces {
     public static AttendablePlace pvp = null;
     public static AttendablePlace worldBoss = null;
     public static AttendablePlace raid = null;
+    public static AttendablePlace quest = null;
+
 
     static {
         try {
@@ -37,6 +40,7 @@ public class AttendablePlaces {
             pvp = new AttendablePlace("PVP", AttendablePlaces.Ids.Pvp, "pvp", true);
             worldBoss = new AttendablePlace("World Boss", AttendablePlaces.Ids.WorldBoss, "world-boss", true, 60);
             raid = new AttendablePlace("Raid", AttendablePlaces.Ids.Raid, "raid", true, 120);
+            quest = new AttendablePlace("Quest", AttendablePlaces.Ids.Quest,  "quest", true, 120);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -156,6 +156,8 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetDialogNotEnoughInvasionBadges();
 
+	public abstract Offset getOffsetDialogNotEnoughDungeonEnergy();
+
 	public abstract Offset getOffsetButtonPlayTrials();
 
 	public abstract Offset getOffsetButtonAcceptTrials();
@@ -450,6 +452,11 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetDialogNotEnoughInvasionBadges() {
+			return new Offset(279, 231);
+		}
+
+		@Override
+		public Offset getOffsetDialogNotEnoughDungeonEnergy() {
 			return new Offset(279, 231);
 		}
 
