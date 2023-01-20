@@ -1326,15 +1326,19 @@ public abstract class AbstractApplication {
 			return false;
 		}
 		// mouseMoveAndClickAndHide(coord);
-		BwMatrixMeta.Metas.Dungeons.Labels.enterLevel.setLastMatchPoint(coord.x, coord.y);
-		Point starCoords = findImage(BwMatrixMeta.Metas.Dungeons.Labels.zones);
+		BwMatrixMeta.Metas.Dungeons.Labels.zones.setLastMatchPoint(coord.x, coord.y);
+		Point starCoords = findImage(BwMatrixMeta.Metas.Dungeons.Buttons.star);
+		debug("Trying to detect stars");
 		if (starCoords == null)
 			return false;
+		mouseMoveAndClickAndHide(starCoords);
+		debug("Found a star");
 		sleep(500);
 		// TODO: Find if difficulty is an option to use, otherwise enter
 		Point difficultyCoords = findImage(BwMatrixMeta.Metas.Dungeons.Labels.enterLevel);
 		if (difficultyCoords != null) {
 			mouseMoveAndClickAndHide(difficultyCoords);
+			return true;
 		}
 		if (UserConfig.isNormalMode(userConfig.questMode)) {
 			mouseMoveAndClickAndHide(

@@ -45,6 +45,7 @@ public class QuestApp extends AbstractDoFarmingApp {
 
     public static List<NextAction> getPredefinedImageActions() {
         return Arrays.asList(
+            new NextAction(BwMatrixMeta.Metas.Dungeons.Buttons.accept, false, false),
                 new NextAction(BwMatrixMeta.Metas.Dungeons.Buttons.rerun, false, false),
                 new NextAction(BwMatrixMeta.Metas.Dungeons.Dialogs.notEnoughEnergy, false, true)
         );
@@ -57,6 +58,6 @@ public class QuestApp extends AbstractDoFarmingApp {
 
     @Override
     protected int getDefaultMainLoopInterval() {
-        return 10_000;
+        return 1_000;
     }
 }
