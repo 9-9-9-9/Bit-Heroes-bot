@@ -14,6 +14,8 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetButtonDungeonReRun();
 
+	public abstract Offset getOffsetButtonDungeonStar();
+
 	public abstract Offset getOffsetButtonTalkRightArrow();
 
 	public abstract Offset getOffsetButtonReconnect();
@@ -157,6 +159,10 @@ public abstract class ScreenResolutionProfile {
 	public abstract Offset getOffsetDialogNotEnoughInvasionBadges();
 
 	public abstract Offset getOffsetDialogNotEnoughDungeonEnergy();
+	
+	public abstract Offset getOffsetLabelDungeonEnterLevel();
+
+	public abstract Offset getOffsetLabelDungeonZones();
 
 	public abstract Offset getOffsetButtonPlayTrials();
 
@@ -258,6 +264,11 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetButtonDungeonReRun() {
 			return new Offset(309, 468);
+		}
+
+		@Override
+		public Offset getOffsetButtonDungeonStar() {
+			return new Offset(400, 260);
 		}
 
 		@Override
@@ -458,6 +469,16 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetDialogNotEnoughDungeonEnergy() {
 			return new Offset(279, 231);
+		}
+
+		@Override
+		public Offset getOffsetLabelDungeonEnterLevel() {
+			return new Offset(415, 433);
+		}
+
+		@Override
+		public Offset getOffsetLabelDungeonZones() {
+			return new Offset(104, 62);
 		}
 
 		@Override

@@ -13,6 +13,7 @@ import bh.bot.common.utils.ColorizeUtil;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
@@ -20,6 +21,8 @@ import static bh.bot.common.Log.info;
 @AppMeta(code = "quest", name = "Quest", displayOrder = 1)
 @RequireSingleInstance
 public class QuestApp extends AbstractDoFarmingApp {
+    private final Supplier<Boolean> isQuestBlocked = () -> false;
+
     @Override
     protected boolean readMoreInput() throws IOException {
         return true;
@@ -35,11 +38,10 @@ public class QuestApp extends AbstractDoFarmingApp {
         return QuestApp.getPredefinedImageActions();
     }
 
-    // @Override
-    // protected boolean doCustomAction() {
-    //     return true;
-    //     // return tryEnterWorldBoss(true, userConfig, isWorldBossBlocked);
-    // }
+    @Override
+    protected boolean doCustomAction() {
+        return tryEnterQuest(true, userConfig, isQuestBlocked);
+    }
 
     public static List<NextAction> getPredefinedImageActions() {
         return Arrays.asList(

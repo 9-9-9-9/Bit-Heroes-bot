@@ -242,10 +242,17 @@ public class BwMatrixMeta {
         public static class Dungeons {
             public static class Buttons {
                 public static BwMatrixMeta rerun;
+                public static BwMatrixMeta star;
             }
 
             public static class Dialogs {
                 public static BwMatrixMeta notEnoughEnergy;
+            }
+
+            public static class Labels {
+                public static BwMatrixMeta zones;
+                public static BwMatrixMeta enterLevel;
+
             }
         }
 
@@ -456,9 +463,24 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetButtonDungeonReRun(), //
                 0xFFFFFF
         );
+        Metas.Dungeons.Buttons.star = BwMatrixMeta.from(//
+                "buttons/dungeons.star2?",
+                Configuration.screenResolutionProfile.getOffsetButtonDungeonStar(), //
+                0xFFFFFF
+        );
         Metas.Dungeons.Dialogs.notEnoughEnergy = BwMatrixMeta.from(//
                 "dialogs/dungeons.not-enough-energy2?",
                 Configuration.screenResolutionProfile.getOffsetDialogNotEnoughDungeonEnergy(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Labels.enterLevel = BwMatrixMeta.from(//
+                "labels/quest.enter2?",
+                Configuration.screenResolutionProfile.getOffsetLabelDungeonEnterLevel(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Labels.zones = BwMatrixMeta.from(//
+                "labels/quest.zones2?",
+                Configuration.screenResolutionProfile.getOffsetLabelDungeonZones(), //
                 0xFFFFFF
         );
         

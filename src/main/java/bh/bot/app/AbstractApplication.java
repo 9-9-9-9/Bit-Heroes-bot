@@ -1315,6 +1315,57 @@ public abstract class AbstractApplication {
 		return clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses);
 	}
 
+	protected boolean tryEnterQuest(boolean doQuest, UserConfig userConfig, Supplier<Boolean> isBlocked) {
+		// TODO: Add Label Image(s) to confirm quest window is open (ZONES)
+		Point coord = findImage(BwMatrixMeta.Metas.Dungeons.Labels.zones);
+		if (coord == null)
+			return false;
+
+		if (isBlocked.get() || !doQuest) {
+			spamEscape(1);
+			return false;
+		}
+		// mouseMoveAndClickAndHide(coord);
+		BwMatrixMeta.Metas.Dungeons.Labels.enterLevel.setLastMatchPoint(coord.x, coord.y);
+		Point starCoords = findImage(BwMatrixMeta.Metas.Dungeons.Labels.zones);
+		if (starCoords == null)
+			return false;
+		sleep(500);
+		// TODO: Find if difficulty is an option to use, otherwise enter
+		Point difficultyCoords = findImage(BwMatrixMeta.Metas.Dungeons.Labels.enterLevel);
+		if (difficultyCoords != null) {
+			mouseMoveAndClickAndHide(difficultyCoords);
+		}
+		if (UserConfig.isNormalMode(userConfig.questMode)) {
+			mouseMoveAndClickAndHide(
+					fromRelativeToAbsoluteBasedOnPreviousResult(
+							BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
+							coord, 
+							Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()
+					)
+			);
+		} else if (UserConfig.isHardMode(userConfig.questMode)) {
+			mouseMoveAndClickAndHide(
+					fromRelativeToAbsoluteBasedOnPreviousResult(
+							BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
+							coord, 
+							Configuration.screenResolutionProfile.getOffsetButtonEnterHardRaid()
+					)
+			);
+		} else if (UserConfig.isHeroicMode(userConfig.questMode)) {
+			mouseMoveAndClickAndHide(
+					fromRelativeToAbsoluteBasedOnPreviousResult(
+							BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
+							coord, 
+							Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicRaid()
+					)
+			);
+		} else {
+			throw new InvalidDataException("Unknown quest mode value: %d", userConfig.questMode);
+		}
+		return true;
+	}
+
 	protected boolean tryEnterRaid(boolean doRaid, UserConfig userConfig, Supplier<Boolean> isBlocked) {
 		Point coord = findImage(BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog);
 		if (coord == null)
