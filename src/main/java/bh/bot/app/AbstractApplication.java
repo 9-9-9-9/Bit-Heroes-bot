@@ -1316,7 +1316,6 @@ public abstract class AbstractApplication {
 	}
 
 	protected boolean tryEnterQuest(boolean doQuest, UserConfig userConfig, Supplier<Boolean> isBlocked) {
-		// TODO: Add Label Image(s) to confirm quest window is open (ZONES)
 		Point coord = findImage(BwMatrixMeta.Metas.Dungeons.Labels.zones);
 		if (coord == null)
 			return false;
@@ -1325,10 +1324,10 @@ public abstract class AbstractApplication {
 			spamEscape(1);
 			return false;
 		}
-		// mouseMoveAndClickAndHide(coord);
 		BwMatrixMeta.Metas.Dungeons.Labels.zones.setLastMatchPoint(coord.x, coord.y);
-		Point starCoords = findImage(BwMatrixMeta.Metas.Dungeons.Buttons.star);
 		debug("Trying to detect stars");
+		// Todo: Scan in a few areas
+		Point starCoords = findImage(BwMatrixMeta.Metas.Dungeons.Buttons.star);
 		if (starCoords == null)
 			return false;
 		mouseMoveAndClickAndHide(starCoords);

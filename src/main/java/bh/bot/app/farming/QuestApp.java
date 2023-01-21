@@ -18,14 +18,29 @@ import java.util.function.Supplier;
 import static bh.bot.common.Log.err;
 import static bh.bot.common.Log.info;
 
-@AppMeta(code = "quest", name = "Quest", displayOrder = 1)
+@AppMeta(code = "quest", name = "Quest", displayOrder = 1, argRequired = false, argDefault = "2", argType = "number")
 @RequireSingleInstance
 public class QuestApp extends AbstractDoFarmingApp {
     private final Supplier<Boolean> isQuestBlocked = () -> false;
+    private UserConfig userConfig;
 
     @Override
     protected boolean readMoreInput() throws IOException {
-        return true;
+        userConfig = getPredefinedUserConfigFromProfileName("You want to do Quests so you have to specific profile name first!\nSelect an existing profile:");
+
+        try {
+            info(
+                    ColorizeUtil.formatInfo,
+                    "You have selected %s mode",
+                    userConfig.getQuestModeDesc()
+            );
+            return true;
+        } catch (InvalidDataException ex2) {
+            err(ex2.getMessage());
+            printRequiresSetting();
+            Main.exit(Main.EXIT_CODE_INCORRECT_LEVEL_AND_DIFFICULTY_CONFIGURATION);
+            return false;
+        }
     }
 
     @Override

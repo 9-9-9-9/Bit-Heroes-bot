@@ -116,10 +116,10 @@ public class AfkApp extends AbstractApplication {
         waitDone( //
                 () -> doLoop( //
                         masterSwitch, finalUserConfig, //
-                        eventList.contains(AttendablePlaces.quest), //
                         eventList.contains(AttendablePlaces.pvp), //
                         eventList.contains(AttendablePlaces.worldBoss), //
                         eventList.contains(AttendablePlaces.raid), //
+                        eventList.contains(AttendablePlaces.quest), //
                         eventList.contains(AttendablePlaces.gvg), //
                         eventList.contains(AttendablePlaces.invasion), //
                         eventList.contains(AttendablePlaces.expedition), //
@@ -157,6 +157,7 @@ public class AfkApp extends AbstractApplication {
                         boolean doGauntlet //
     ) {
         try {
+            
             info(ColorizeUtil.formatInfo, "\n\nStarting AFK");
             boolean isUnknownGvgOrInvasionOrExpedition = (doGvg && doInvasion) || (doGvg && doExpedition)
                     || (doInvasion && doExpedition);
@@ -164,6 +165,10 @@ public class AfkApp extends AbstractApplication {
             int continuousNotFound = 0;
             final Point coordinateHideMouse = new Point(0, 0);
             final ArrayList<Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>>> taskList = new ArrayList<>();
+            // Add Questing as first task
+            if (doQuest)
+                taskList.add(new Tuple3<>(AttendablePlaces.quest, blockQuestUntil, QuestApp.getPredefinedImageActions()));
+
             NextAction naBtnFightPvp = null;
             if (doPvp) {
                 List<AbstractDoFarmingApp.NextAction> pvpPia = PvpApp.getPredefinedImageActions();
@@ -204,9 +209,6 @@ public class AfkApp extends AbstractApplication {
                         GauntletApp.getPredefinedImageActions()));
             if (doRaid)
                 taskList.add(new Tuple3<>(AttendablePlaces.raid, blockRaidUntil, RaidApp.getPredefinedImageActions()));
-
-            if (doQuest)
-                taskList.add(new Tuple3<>(AttendablePlaces.quest, blockQuestUntil, QuestApp.getPredefinedImageActions()));
 
             for (Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>> tp : taskList) {
                 for (AbstractDoFarmingApp.NextAction na : tp._3) {
