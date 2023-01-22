@@ -1348,7 +1348,7 @@ public abstract class AbstractApplication {
 		// Todo: Scan in a few areas
 		Point levelCoords = null;
 		debug("Looking for boss level");
-		Point bossCoords = game.findQuest(BwMatrixMeta.Metas.Dungeons.Buttons.bossLevel);
+		Point bossCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.bossLevel, 63, 96, 96, 115);
 		if (bossCoords == null) {
 			debug("Looking for stars level");
 			Point starCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.star, 63, 96, 36, 115);
