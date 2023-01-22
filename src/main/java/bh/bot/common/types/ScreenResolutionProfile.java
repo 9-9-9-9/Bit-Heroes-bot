@@ -213,6 +213,12 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetButtonEnterHeroicRaid();
 
+	public abstract Offset getOffsetButtonEnterNormalQuest();
+
+	public abstract Offset getOffsetButtonEnterHardQuest();
+
+	public abstract Offset getOffsetButtonEnterHeroicQuest();
+
 	public abstract Offset getOffsetButtonMapOnFamiliarUi();
 
 	public abstract Offset getOffsetDialogAreYouSureWantToExit();
@@ -599,6 +605,21 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetButtonEnterHeroicRaid() {
 			return new Offset(590, 233);
+		}
+
+		@Override
+		public Offset getOffsetButtonEnterNormalQuest() {
+			return new Offset(135, 223);
+		}
+
+		@Override
+		public Offset getOffsetButtonEnterHardQuest() {
+			return new Offset(327, 223);
+		}
+
+		@Override
+		public Offset getOffsetButtonEnterHeroicQuest() {
+			return new Offset(520, 223);
 		}
 
 		@Override

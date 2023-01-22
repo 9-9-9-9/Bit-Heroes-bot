@@ -62,14 +62,14 @@ public abstract class AbstractApplication {
 
 		if (this.argumentInfo.enableSavingDebugImages)
 			info("Enabled saving debug images");
-		
+
 		initOutputDirectories();
-		
+
 		if (isRequiredToLoadImages())
 			BwMatrixMeta.load();
-		
+
 		Telegram.setAppName(getAppName());
-		
+
 		warn(getLimitationExplain());
 
 		if (launchInfo.shutdownAfterExit) {
@@ -149,8 +149,10 @@ public abstract class AbstractApplication {
 				// mutex acquired
 				debug("Acquired Mutex handle");
 			} else {
-				err("'%s' of %s is not allowed to run multiple instances at the same time because it may causes unexpected issues, please close previous process first!!!", this.getClass().getAnnotation(AppMeta.class).name(), Main.botName);
-				err("If this message is wrong and you are only running a single instance of %s, please relaunch with flag `%s`", Main.botName, new FlagDisableMutex().getCode());
+				err("'%s' of %s is not allowed to run multiple instances at the same time because it may causes unexpected issues, please close previous process first!!!",
+						this.getClass().getAnnotation(AppMeta.class).name(), Main.botName);
+				err("If this message is wrong and you are only running a single instance of %s, please relaunch with flag `%s`",
+						Main.botName, new FlagDisableMutex().getCode());
 				Main.exit(Main.EXIT_CODE_MULTIPLE_INSTANCE_DETECTED);
 			}
 		} catch (Throwable t) {
@@ -186,7 +188,7 @@ public abstract class AbstractApplication {
 		if (skipCheckVersion())
 			return;
 
-		//noinspection CodeBlock2Expr
+		// noinspection CodeBlock2Expr
 		Rad.exec(33, () -> {
 			CompletableFuture.runAsync(() -> {
 				if (!VersionUtil.checkForLatestVersion())
@@ -213,7 +215,8 @@ public abstract class AbstractApplication {
 
 			long timeLeft;
 			while ((timeLeft = deadline - System.currentTimeMillis()) > 0) {
-				info(ColorizeUtil.formatError,  "Game window is going to be closed after %d minute%s", waitXMinutes, waitXMinutes > 1 ? "s" : "");
+				info(ColorizeUtil.formatError, "Game window is going to be closed after %d minute%s", waitXMinutes,
+						waitXMinutes > 1 ? "s" : "");
 				waitXMinutes--;
 				sleep((int) Math.min(60_000, timeLeft + 1));
 			}
@@ -269,7 +272,8 @@ public abstract class AbstractApplication {
 		saveImage(img, file);
 	}
 
-	protected void saveImage(BufferedImage img, File file) {;
+	protected void saveImage(BufferedImage img, File file) {
+		;
 		try {
 			ImageIO.write(img, "bmp", file);
 		} catch (IOException e) {
@@ -354,7 +358,7 @@ public abstract class AbstractApplication {
 				sb.append(" milliseconds)");
 			} else {
 				sb.append("around ");
-				sb.append(Math.round((double)defaultMainLoopInterval / 1_000));
+				sb.append(Math.round((double) defaultMainLoopInterval / 1_000));
 				sb.append(" seconds (");
 				sb.append(defaultMainLoopInterval);
 				sb.append(" milliseconds)");
@@ -417,8 +421,7 @@ public abstract class AbstractApplication {
 						blackPixelDRgb, //
 						sc.getRGB(px[0], px[1]) & 0xFFFFFF, //
 						Configuration.Tolerant.color, //
-						im.getOriginalPixelPart(px[0], px[1])
-				)) {
+						im.getOriginalPixelPart(px[0], px[1]))) {
 					return null;
 				}
 			}
@@ -605,9 +608,8 @@ public abstract class AbstractApplication {
 
 		try (ScreenCapturedResult screenCapturedResult = captureElementInEstimatedArea(
 				new Offset(Math.max(0, scanRect.x - positionTolerant), Math.max(0, scanRect.y - positionTolerant)),
-				scanRect.width + positionTolerant * 2, 
-				scanRect.height + positionTolerant * 2
-		)) {
+				scanRect.width + positionTolerant * 2,
+				scanRect.height + positionTolerant * 2)) {
 			BufferedImage sc = screenCapturedResult.image;
 			saveDebugImage(sc, "detectRadioButtons");
 
@@ -677,8 +679,9 @@ public abstract class AbstractApplication {
 						else {
 							if (selectedRadioButtonIndex != curRadioButtonIndex)
 								throw new InvalidDataException(
-										String.format("Found more than one selected radio button which is absolutely wrong! (no.%d conflicts with no.%d)", curRadioButtonIndex + 1, selectedRadioButtonIndex + 1)
-								);
+										String.format(
+												"Found more than one selected radio button which is absolutely wrong! (no.%d conflicts with no.%d)",
+												curRadioButtonIndex + 1, selectedRadioButtonIndex + 1));
 						}
 						break;
 					}
@@ -686,8 +689,7 @@ public abstract class AbstractApplication {
 					optionalDebug(debug, "detectRadioButtons captured at %3d,%3d with size %3dx%3d, match at %3d,%3d",
 							screenCapturedResult.x, screenCapturedResult.y,
 							screenCapturedResult.w, screenCapturedResult.h,
-							x, y
-					);
+							x, y);
 					startingCoords.add(new Point(x, y));
 					x += Math.max(0, im.getWidth() - 2);
 				}
@@ -699,10 +701,9 @@ public abstract class AbstractApplication {
 
 			return new Tuple2<>(
 					startingCoords.stream()
-					.map(c -> new Point(screenCapturedResult.x + c.x, screenCapturedResult.y + c.y))
-					.toArray(Point[]::new),
-					(byte) selectedRadioButtonIndex
-			);
+							.map(c -> new Point(screenCapturedResult.x + c.x, screenCapturedResult.y + c.y))
+							.toArray(Point[]::new),
+					(byte) selectedRadioButtonIndex);
 		}
 	}
 
@@ -733,24 +734,30 @@ public abstract class AbstractApplication {
 			boolean closeChatBoxDirectMessage = Configuration.closeChatBoxDirectMessage;
 
 			if (persuade) {
-				info("Auto persuade had been turned on, that means in case of any persuade screen appears, bot will automatically persuade the monster with Gold. If you want to disable this feature, you can use '%s' flag", FlagDisablePersuade.FlagName);
+				info("Auto persuade had been turned on, that means in case of any persuade screen appears, bot will automatically persuade the monster with Gold. If you want to disable this feature, you can use '%s' flag",
+						FlagDisablePersuade.FlagName);
 				if (Configuration.enableDevFeatures) {
 					final String fileBribeName = "bribe.txt";
 					File fBribe = new File(fileBribeName);
 					if (fBribe.exists() && fBribe.isFile()) {
-						List<String> familiarsToBribe = Files.readAllLines(fBribe.toPath()).stream().filter(StringUtil::isNotBlank).map(String::trim).collect(Collectors.toList());
+						List<String> familiarsToBribe = Files.readAllLines(fBribe.toPath()).stream()
+								.filter(StringUtil::isNotBlank).map(String::trim).collect(Collectors.toList());
 						if (familiarsToBribe.size() > 0) {
 							FlagBribe flagBribe = new FlagBribe();
 							ArrayList<Familiar> familiars = new ArrayList<>();
 							boolean ignoreFile = false;
 							for (String famName : familiarsToBribe)
 								try {
-									familiars.add(flagBribe.parseParam(String.format("%s=%s", flagBribe.getCode(), famName)));
+									familiars.add(
+											flagBribe.parseParam(String.format("%s=%s", flagBribe.getCode(), famName)));
 								} catch (NotSupportedException ignored) {
-									throw new InvalidDataException("Familiar's name '%s' within file %s is not supported!", famName, fileBribeName);
+									throw new InvalidDataException(
+											"Familiar's name '%s' within file %s is not supported!", famName,
+											fileBribeName);
 								} catch (Exception ex2) {
 									dev(ex2);
-									err("Error occurs while trying to parse %s file. Content within that file will be ignored. Please raise an issue on my GitHub repo", fileBribeName);
+									err("Error occurs while trying to parse %s file. Content within that file will be ignored. Please raise an issue on my GitHub repo",
+											fileBribeName);
 									ignoreFile = true;
 									break;
 								}
@@ -761,10 +768,11 @@ public abstract class AbstractApplication {
 					}
 				}
 
-				/* // TODO enable this if Bribe feature to be enabled again
-					for (Familiar f : argumentInfo.familiarToBribeWithGems)
-						warn("Will persuade %s with gems", f.name());
-				*/
+				/*
+				 * // TODO enable this if Bribe feature to be enabled again
+				 * for (Familiar f : argumentInfo.familiarToBribeWithGems)
+				 * warn("Will persuade %s with gems", f.name());
+				 */
 			}
 
 			if (st.persuade && argumentInfo.disablePersuade)
@@ -776,14 +784,15 @@ public abstract class AbstractApplication {
 						.yellow(" for all kind of familiars or ")
 						.red("always stay in front of your computer")
 						.yellow(" to persuade/bribe manually, otherwise bot can't continue your tasks and becomes waste of resources")
-						.reset()
-				);
-			
+						.reset());
+
 			if (st.detectChatboxDirectMessage) {
 				if (closeChatBoxDirectMessage) {
-					warn("You had configured to close chatbox direct message, screenshot of the message will be saved in folder %s", saveChatboxDirectMessageImageTo);
+					warn("You had configured to close chatbox direct message, screenshot of the message will be saved in folder %s",
+							saveChatboxDirectMessageImageTo);
 				} else {
-					warn("You did not configure to close chatbox direct message, so the income messages will stay as is and you might be disconnected after amount of time. Screenshot of the message will be saved in folder %s", saveChatboxDirectMessageImageTo);
+					warn("You did not configure to close chatbox direct message, so the income messages will stay as is and you might be disconnected after amount of time. Screenshot of the message will be saved in folder %s",
+							saveChatboxDirectMessageImageTo);
 				}
 			}
 
@@ -808,15 +817,14 @@ public abstract class AbstractApplication {
 				if (persuade && nextPersuade <= System.currentTimeMillis())
 					nextPersuade = doPersuade(continousPersuadeScreen);
 
-				if (showWarningWorldBossTeam && nextShowWarningWorldBossTeam <= System.currentTimeMillis())
-				{
+				if (showWarningWorldBossTeam && nextShowWarningWorldBossTeam <= System.currentTimeMillis()) {
 					warningWatchWorldBossTeam(ColorizeUtil.formatWarning);
 					nextShowWarningWorldBossTeam = addSec(showWarningWorldBossTeamSleepSecs);
 				}
 
-
 				if (st.detectChatboxDirectMessage && nextDetectChatBoxDirectMessage <= System.currentTimeMillis())
-					nextDetectChatBoxDirectMessage = detectChatBoxDirectMessage(closeChatBoxDirectMessage, masterSwitch);
+					nextDetectChatBoxDirectMessage = detectChatBoxDirectMessage(closeChatBoxDirectMessage,
+							masterSwitch);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -906,6 +914,7 @@ public abstract class AbstractApplication {
 
 	private List<Tuple2<BwMatrixMeta, Familiar>> persuadeTargets = null;
 	private boolean anyManuallyPersuade = false;
+
 	private long doPersuade(AtomicInteger continousPersuadeScreen) {
 		Point pBribeButton = findImage(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe);
 		Point pPersuadeButton = pBribeButton != null ? null : findImage(BwMatrixMeta.Metas.Globally.Buttons.persuade);
@@ -928,26 +937,27 @@ public abstract class AbstractApplication {
 							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.quirrel, Familiar.Quirrel),
 							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.gobby, Familiar.Gobby),
 							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.rugumz, Familiar.Rugumz),
-							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.moghur, Familiar.Moghur)
-					);
+							new Tuple2<>(BwMatrixMeta.Metas.Persuade.Labels.moghur, Familiar.Moghur));
 
 				boolean doPersuadeGold = true;
 
-				/* // TODO enable this if Bribe feature to be enabled again
-					if (argumentInfo.familiarToBribeWithGems.size() > 0) {
-						for (Tuple2<BwMatrixMeta, Familiar> target : persuadeTargets) {
-							PersuadeState ps = persuade(target._1, target._2, pPersuadeButton, pBribeButton);
-							if (ps == PersuadeState.NotAvailable) {
-								doPersuadeGold = false;
-								break;
-							}
-							if (ps == PersuadeState.SuccessGem || ps == PersuadeState.SuccessGold) {
-								doPersuadeGold = false;
-								break;
-							}
-						}
-					}
-				*/
+				/*
+				 * // TODO enable this if Bribe feature to be enabled again
+				 * if (argumentInfo.familiarToBribeWithGems.size() > 0) {
+				 * for (Tuple2<BwMatrixMeta, Familiar> target : persuadeTargets) {
+				 * PersuadeState ps = persuade(target._1, target._2, pPersuadeButton,
+				 * pBribeButton);
+				 * if (ps == PersuadeState.NotAvailable) {
+				 * doPersuadeGold = false;
+				 * break;
+				 * }
+				 * if (ps == PersuadeState.SuccessGem || ps == PersuadeState.SuccessGold) {
+				 * doPersuadeGold = false;
+				 * break;
+				 * }
+				 * }
+				 * }
+				 */
 
 				if (doPersuadeGold) {
 					dev("doPersuadeGold");
@@ -1034,13 +1044,15 @@ public abstract class AbstractApplication {
 			if (pPersuadeButton != null) {
 				p = pPersuadeButton;
 			} else if (pBribeButton != null) {
-				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe, pBribeButton, Configuration.screenResolutionProfile.getOffsetButtonPersuade());
+				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuadeBribe,
+						pBribeButton, Configuration.screenResolutionProfile.getOffsetButtonPersuade());
 			}
 		} else {
 			if (pBribeButton != null) {
 				p = pBribeButton;
 			} else if (pPersuadeButton != null) {
-				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuade, pPersuadeButton, Configuration.screenResolutionProfile.getOffsetButtonBribePersuade());
+				p = fromRelativeToAbsoluteBasedOnPreviousResult(BwMatrixMeta.Metas.Globally.Buttons.persuade,
+						pPersuadeButton, Configuration.screenResolutionProfile.getOffsetButtonBribePersuade());
 			}
 		}
 
@@ -1077,6 +1089,7 @@ public abstract class AbstractApplication {
 	}
 
 	private static final String saveChatboxDirectMessageImageTo = "out\\chatbox";
+
 	private long detectChatBoxDirectMessage(boolean closeChatBoxDirectMessage, AtomicBoolean masterSwitch) {
 		if (clickImage(BwMatrixMeta.Metas.Globally.Buttons.sendMessage)) {
 			try {
@@ -1088,7 +1101,7 @@ public abstract class AbstractApplication {
 				if (!closeChatBoxDirectMessage)
 					masterSwitch.set(true);
 			}
-			
+
 			try {
 				int x = Configuration.gameScreenOffset.X.get();
 				int y = Configuration.gameScreenOffset.Y.get();
@@ -1101,7 +1114,8 @@ public abstract class AbstractApplication {
 							.get("out", "chatbox", "direct_message_" + System.currentTimeMillis() + ".bmp")
 							.toFile();
 					saveImage(sc, file);
-					warn("Someone sent you a direct message, screenshot of the message has been saved into folder %s", saveChatboxDirectMessageImageTo);
+					warn("Someone sent you a direct message, screenshot of the message has been saved into folder %s",
+							saveChatboxDirectMessageImageTo);
 				} finally {
 					freeMem(sc);
 				}
@@ -1109,11 +1123,11 @@ public abstract class AbstractApplication {
 				err("Failed to capture and save direct message");
 				err(t);
 			}
-			
+
 			if (closeChatBoxDirectMessage) {
 				clickImage(BwMatrixMeta.Metas.Globally.Buttons.closeChatBox);
 			}
-			
+
 		}
 		return addSec(detectChatboxDirectMessageSleepSecs);
 	}
@@ -1179,7 +1193,7 @@ public abstract class AbstractApplication {
 		if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.news)) {
 			sendEscape();
 			info("Ya I'm here");
-			
+
 		}
 		return addSec(closeEnterGameDialogNewsSleepSecs);
 	}
@@ -1315,7 +1329,8 @@ public abstract class AbstractApplication {
 		return clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses);
 	}
 
-	protected boolean tryEnterQuest(boolean doQuest, UserConfig userConfig, Supplier<Boolean> isBlocked, InteractionUtil.Screen.Game game) {
+	protected boolean tryEnterQuest(boolean doQuest, UserConfig userConfig, Supplier<Boolean> isBlocked,
+			InteractionUtil.Screen.Game game) {
 		Point coord = findImage(BwMatrixMeta.Metas.Dungeons.Labels.zones);
 		if (coord == null)
 			return false;
@@ -1332,41 +1347,34 @@ public abstract class AbstractApplication {
 			return false;
 		mouseMoveAndClickAndHide(starCoords);
 		debug("Found a star");
-		sleep(500);
+		sleep(1_000);
 		// TODO: Find if difficulty is an option to use, otherwise enter
+		debug("Trying to enter level");
 		Point difficultyCoords = findImage(BwMatrixMeta.Metas.Dungeons.Labels.enterLevel);
 		if (difficultyCoords != null) {
+			debug("Clicking to enter level");
 			mouseMoveAndClickAndHide(difficultyCoords);
 			return true;
 		}
+
+		BwMatrixMeta im = null;
 		if (UserConfig.isNormalMode(userConfig.questMode)) {
-			mouseMoveAndClickAndHide(
-					fromRelativeToAbsoluteBasedOnPreviousResult(
-							BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
-							coord, 
-							Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()
-					)
-			);
+			im = BwMatrixMeta.Metas.Dungeons.Buttons.difficultyNormal;
 		} else if (UserConfig.isHardMode(userConfig.questMode)) {
-			mouseMoveAndClickAndHide(
-					fromRelativeToAbsoluteBasedOnPreviousResult(
-							BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
-							coord, 
-							Configuration.screenResolutionProfile.getOffsetButtonEnterHardRaid()
-					)
-			);
+			im = BwMatrixMeta.Metas.Dungeons.Buttons.difficultyHard;
 		} else if (UserConfig.isHeroicMode(userConfig.questMode)) {
-			mouseMoveAndClickAndHide(
-					fromRelativeToAbsoluteBasedOnPreviousResult(
-							BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
-							coord, 
-							Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicRaid()
-					)
-			);
+			im = BwMatrixMeta.Metas.Dungeons.Buttons.difficultyHeroic;
 		} else {
 			throw new InvalidDataException("Unknown quest mode value: %d", userConfig.questMode);
 		}
-		return true;
+		Point difficultyModeCoords = findImage(im);
+		if (difficultyModeCoords != null) {
+			debug("Clicking to enter level");
+			mouseMoveAndClickAndHide(difficultyModeCoords);
+			return true;
+		}
+		debug("Failed to enter level");
+		return false;
 	}
 
 	protected boolean tryEnterRaid(boolean doRaid, UserConfig userConfig, Supplier<Boolean> isBlocked) {
@@ -1381,8 +1389,7 @@ public abstract class AbstractApplication {
 		mouseMoveAndClickAndHide(coord);
 		BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog.setLastMatchPoint(coord.x, coord.y);
 		Tuple2<Point[], Byte> result = detectRadioButtons(
-				Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid()
-		);
+				Configuration.screenResolutionProfile.getRectangleRadioButtonsOfRaid());
 		Point[] points = result._1;
 		int selectedLevel = result._2 + 1;
 		info("Found %d raid levels, selected %s", points.length, UserConfig.getRaidLevelDesc(selectedLevel));
@@ -1404,34 +1411,26 @@ public abstract class AbstractApplication {
 				fromRelativeToAbsoluteBasedOnPreviousResult(
 						BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
 						coord,
-						Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid()
-				)
-		);
+						Configuration.screenResolutionProfile.getOffsetButtonSummonOfRaid()));
 		sleep(5_000);
 		if (UserConfig.isNormalMode(userConfig.raidMode)) {
 			mouseMoveAndClickAndHide(
 					fromRelativeToAbsoluteBasedOnPreviousResult(
 							BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
-							coord, 
-							Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()
-					)
-			);
+							coord,
+							Configuration.screenResolutionProfile.getOffsetButtonEnterNormalRaid()));
 		} else if (UserConfig.isHardMode(userConfig.raidMode)) {
 			mouseMoveAndClickAndHide(
 					fromRelativeToAbsoluteBasedOnPreviousResult(
 							BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
-							coord, 
-							Configuration.screenResolutionProfile.getOffsetButtonEnterHardRaid()
-					)
-			);
+							coord,
+							Configuration.screenResolutionProfile.getOffsetButtonEnterHardRaid()));
 		} else if (UserConfig.isHeroicMode(userConfig.raidMode)) {
 			mouseMoveAndClickAndHide(
 					fromRelativeToAbsoluteBasedOnPreviousResult(
 							BwMatrixMeta.Metas.Raid.Labels.labelInSummonDialog,
-							coord, 
-							Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicRaid()
-					)
-			);
+							coord,
+							Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicRaid()));
 		} else {
 			throw new InvalidDataException("Unknown raid mode value: %d", userConfig.raidMode);
 		}
@@ -1518,7 +1517,7 @@ public abstract class AbstractApplication {
 						warn("Unable to perform auto adjust game screen offset due to error: %s", result._2);
 						continue;
 					}
-					
+
 					if (result._4.X != x || result._4.Y != y) {
 						Configuration.gameScreenOffset.set(result._4);
 						x = result._4.X;
@@ -1528,7 +1527,7 @@ public abstract class AbstractApplication {
 					} else {
 						debug("screen offset not change");
 					}
-					
+
 					if (jna instanceof SteamWindowsJna && gameWindowHwndByJna != null) {
 						jna.setGameWindowOnTop(gameWindowHwndByJna);
 					}
@@ -1619,8 +1618,9 @@ public abstract class AbstractApplication {
 		sb.append(ask);
 
 		if (!hasExistingProfile)
-			sb.append(Cu.i().red("\nYou haven't configurated any profile, please launch ").yellow(Extensions.scriptFileName("setting")).red(" to make one").reset().toString());
-		
+			sb.append(Cu.i().red("\nYou haven't configurated any profile, please launch ")
+					.yellow(Extensions.scriptFileName("setting")).red(" to make one").reset().toString());
+
 		return readInput(sb.toString(), desc, s -> {
 			s = s.trim().toLowerCase();
 			if (!ValidationUtil.isValidUserProfileName(s))
@@ -1658,11 +1658,17 @@ public abstract class AbstractApplication {
 	}
 
 	protected void warningPvpTargetSelectionCase() {
-		info(Cu.i().yellow("** WARNING ** ").red("about selecting PVP target").yellow(" feature, to prevent wrong targeting and un-expected loss on other target-selectable ranking like GVG... (which having the same target-selection method), ").cyan("while doing AFK").yellow(", this feature works and ").cyan("only works when bot itself attends to PVP").yellow(" by selecting the PVP icon (top left of game screen). That means if you select the PVP icon yourself or enter PVP before bot click etc.., it only select the first line as target as default").reset());
+		info(Cu.i().yellow("** WARNING ** ").red("about selecting PVP target").yellow(
+				" feature, to prevent wrong targeting and un-expected loss on other target-selectable ranking like GVG... (which having the same target-selection method), ")
+				.cyan("while doing AFK").yellow(", this feature works and ")
+				.cyan("only works when bot itself attends to PVP")
+				.yellow(" by selecting the PVP icon (top left of game screen). That means if you select the PVP icon yourself or enter PVP before bot click etc.., it only select the first line as target as default")
+				.reset());
 	}
 
 	protected void warningWatchWorldBossTeam(Function<Ansi, Ansi> ansiFormat) {
-		info(ansiFormat, "*** NOTICE: REMEMBER YOU HAVE TO WATCH/CHECK THE GAME SOMETIME TO PREVENT UN-EXPECTED HANG/LOSS DUE TO UN-MANAGED BEHAVIORS LIKE MISSING MEMBERS, RE-GROUP FAILED, INCORRECT GROUP MATCHING...ETC ***");
+		info(ansiFormat,
+				"*** NOTICE: REMEMBER YOU HAVE TO WATCH/CHECK THE GAME SOMETIME TO PREVENT UN-EXPECTED HANG/LOSS DUE TO UN-MANAGED BEHAVIORS LIKE MISSING MEMBERS, RE-GROUP FAILED, INCORRECT GROUP MATCHING...ETC ***");
 	}
 
 	protected int getDefaultMainLoopInterval() {

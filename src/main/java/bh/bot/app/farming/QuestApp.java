@@ -62,8 +62,8 @@ public class QuestApp extends AbstractDoFarmingApp {
     public static List<NextAction> getPredefinedImageActions() {
         return Arrays.asList(
             new NextAction(BwMatrixMeta.Metas.Dungeons.Buttons.accept, false, false),
-                new NextAction(BwMatrixMeta.Metas.Dungeons.Buttons.rerun, false, false),
-                new NextAction(BwMatrixMeta.Metas.Dungeons.Dialogs.notEnoughEnergy, false, true)
+            new NextAction(BwMatrixMeta.Metas.Dungeons.Buttons.rerun, false, false),
+            new NextAction(BwMatrixMeta.Metas.Dungeons.Dialogs.notEnoughEnergy, false, true)
         );
     }
 

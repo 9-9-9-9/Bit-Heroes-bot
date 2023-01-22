@@ -244,6 +244,9 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta rerun;
                 public static BwMatrixMeta star;
                 public static BwMatrixMeta accept;
+                public static BwMatrixMeta difficultyNormal;
+                public static BwMatrixMeta difficultyHard;
+                public static BwMatrixMeta difficultyHeroic;
 
             }
 
@@ -473,6 +476,21 @@ public class BwMatrixMeta {
         Metas.Dungeons.Buttons.accept = BwMatrixMeta.from(//
                 "buttons/dungeons.accept2?",
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptTrials(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.difficultyHard = BwMatrixMeta.from(//
+                "buttons/dungeons.hard2?",
+                Configuration.screenResolutionProfile.getOffsetButtonEnterHardQuest(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.difficultyHeroic = BwMatrixMeta.from(//
+                "buttons/dungeons.heroic2?",
+                Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicQuest(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.difficultyNormal = BwMatrixMeta.from(//
+                "buttons/dungeons.normal2?",
+                Configuration.screenResolutionProfile.getOffsetButtonEnterNormalQuest(), //
                 0xFFFFFF
         );
         Metas.Dungeons.Dialogs.notEnoughEnergy = BwMatrixMeta.from(//
