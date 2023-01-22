@@ -255,6 +255,30 @@ public class InteractionUtil {
 				minX += Configuration.gameScreenOffset.X.get();
 				maxX += Configuration.gameScreenOffset.X.get();
 				firstY += Configuration.gameScreenOffset.Y.get();
+
+				return findByScanColumn(levelIm, minX, maxX, stepY, firstY, 5);
+			}
+
+			public Point findByScanScreen(BwMatrixMeta im, int minX, int maxX, int stepY, int firstY) {
+				int maxScreen = 800;
+				Point located = null;
+				int currentX = minX;
+				int currentMaxX = maxX;
+				int step = maxX - minX;
+				while (located == null && currentMaxX < maxScreen) {
+					located = findByScanColumn(im, currentX, currentMaxX, stepY, firstY, 5);
+					if (located == null) {
+						currentX += step;
+						currentMaxX += step;
+					}
+				}
+				return located;
+			}
+
+			public Point findByScanColumn(BwMatrixMeta im, int minX, int maxX, int stepY, int firstY, int numberOfScans) {
+				minX += Configuration.gameScreenOffset.X.get();
+				maxX += Configuration.gameScreenOffset.X.get();
+				firstY += Configuration.gameScreenOffset.Y.get();
 				
 				final boolean debug = false;
 
@@ -262,13 +286,12 @@ public class InteractionUtil {
 				final int scanWidth = maxX - minX + 1 + positionTolerant * 2;
 				final int scanHeight = Math.abs(stepY) + positionTolerant * 2;
 				final int scanX = Math.max(0, minX - positionTolerant);
-				final int numberOfAttendablePlacesPerColumn = 5;
-				for (int i = 0; i < numberOfAttendablePlacesPerColumn; i++) {
+				final int numberOfColumns = Math.min(numberOfScans, 5);
+				for (int i = 0; i < numberOfColumns; i++) {
 					final int scanY = Math.max(0, firstY + stepY * i - positionTolerant);
 					BufferedImage sc = captureScreen(scanX, scanY, scanWidth, scanHeight);
 					try {
-						instance.saveDebugImage(sc, String.format("findQuest_%d_", i));
-						final BwMatrixMeta im = levelIm;
+						instance.saveDebugImage(sc, String.format("scanColumn_%d_%s_", i, im.getImageNameCode()));
 						if (im.throwIfNotAvailable())
 							continue;
 						//
@@ -288,7 +311,7 @@ public class InteractionUtil {
 											Configuration.Tolerant.color,
 											im.getOriginalPixelPart(px[0], px[1]))) {
 										allGood = false;
-										optionalDebug(debug, "findQuest first match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
+										optionalDebug(debug, "scanColumn first match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
 										break;
 									}
 								}
@@ -301,7 +324,7 @@ public class InteractionUtil {
 												srcRgb, //
 												Configuration.Tolerant.color)) {
 											allGood = false;
-											optionalDebug(debug, "findQuest second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
+											optionalDebug(debug, "scanColumn second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
 											break;
 										}
 									}
@@ -310,7 +333,7 @@ public class InteractionUtil {
 								if (allGood) {
 									go = false;
 									p = new Point(scanX + x, scanY + y);
-									optionalDebug(debug, "findQuest result %d, %d", p.x, p.y);
+									optionalDebug(debug, "scanColumn result %d, %d", p.x, p.y);
 								}
 							}
 						}

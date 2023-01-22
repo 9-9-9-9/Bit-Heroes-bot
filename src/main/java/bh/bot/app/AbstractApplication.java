@@ -1351,10 +1351,10 @@ public abstract class AbstractApplication {
 		Point bossCoords = game.findQuest(BwMatrixMeta.Metas.Dungeons.Buttons.bossLevel);
 		if (bossCoords == null) {
 			debug("Looking for stars level");
-			Point starCoords = game.findQuest(BwMatrixMeta.Metas.Dungeons.Buttons.star);
+			Point starCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.star, 63, 96, 36, 115);
 			if (starCoords == null) {
 			debug("Looking for empty stars level");
-				Point emptyStarCoords = game.findQuest(BwMatrixMeta.Metas.Dungeons.Buttons.emptyStar);
+				Point emptyStarCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.emptyStar, 63, 96, 36, 115);
 				if (emptyStarCoords == null) {
 					debug("Looking for next level");
 					Point nextLevelCoords = game.findQuest(BwMatrixMeta.Metas.Dungeons.Buttons.questLevel);
@@ -1375,8 +1375,9 @@ public abstract class AbstractApplication {
 			return false;
 		}
 		debug("Found a valid level");
+		debug(levelCoords);
 		mouseMoveAndClickAndHide(levelCoords);
-		sleep(1_000);
+		sleep(2_000);
 		// TODO: Find if difficulty is an option to use, otherwise enter
 		debug("Trying to enter level");
 		Point difficultyCoords = findImage(BwMatrixMeta.Metas.Dungeons.Labels.enterLevel);
