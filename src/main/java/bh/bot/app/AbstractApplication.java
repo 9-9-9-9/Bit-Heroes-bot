@@ -1357,7 +1357,7 @@ public abstract class AbstractApplication {
 				Point emptyStarCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.emptyStar, 63, 96, 36, 115);
 				if (emptyStarCoords == null) {
 					debug("Looking for next level");
-					Point nextLevelCoords = game.findQuest(BwMatrixMeta.Metas.Dungeons.Buttons.questLevel);
+					Point nextLevelCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.questLevel, 63, 96, 36, 115);
 					if (nextLevelCoords == null) {
 					} else {
 						levelCoords = nextLevelCoords;

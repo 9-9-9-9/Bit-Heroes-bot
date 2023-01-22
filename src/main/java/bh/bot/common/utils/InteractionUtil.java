@@ -242,23 +242,6 @@ public class InteractionUtil {
 				return null;
 			}
 
-			public Point findQuest(BwMatrixMeta levelIm) {
-				int minX, maxX, stepY, firstY;
-				Tuple4<Integer, Integer, Integer, Integer> backwardsScan = Configuration
-						.screenResolutionProfile
-						.getBackwardScanQuests();
-				minX = backwardsScan._1;
-				firstY = backwardsScan._2;
-				stepY = backwardsScan._3;
-				maxX = backwardsScan._4;
-
-				minX += Configuration.gameScreenOffset.X.get();
-				maxX += Configuration.gameScreenOffset.X.get();
-				firstY += Configuration.gameScreenOffset.Y.get();
-
-				return findByScanColumn(levelIm, minX, maxX, stepY, firstY, 5);
-			}
-
 			public Point findByScanScreen(BwMatrixMeta im, int minX, int maxX, int stepY, int firstY) {
 				int maxScreen = 800;
 				Point located = null;

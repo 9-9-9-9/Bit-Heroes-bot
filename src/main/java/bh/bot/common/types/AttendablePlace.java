@@ -18,32 +18,32 @@ public class AttendablePlace {
         this(name, id, imgName, left, (short) 30);
     }
 
-    public AttendablePlace(String name, int id, String imgCode, boolean left, int procedureTicketMinutes) throws IOException {
+    public AttendablePlace(String name, int id, String imgCode, boolean left, int procedureTicketMinutes)
+            throws IOException {
         this.name = name;
         this.id = id;
-        
+
         String imgFile;
-        switch(imgCode) {
-	    	case "pvp":
-	    	case "world-boss":
-	    	case "raid":
-	    	case "invasion":
-	    	case "trials":
-	    	case "gvg":
+        switch (imgCode) {
+            case "pvp":
+            case "world-boss":
+            case "raid":
+            case "invasion":
+            case "trials":
+            case "gvg":
             case "quest":
-	    	case "gauntlet":
-	    	case "expedition":
-	        	imgFile = imgCode + "3";
-	        	break;
-	    	default:
-	    		imgFile = imgCode;
-	    		break;
+            case "gauntlet":
+            case "expedition":
+                imgFile = imgCode + "3";
+                break;
+            default:
+                imgFile = imgCode;
+                break;
         }
         this.img = BwMatrixMeta.from(
                 String.format("labels/attendable-places/%s?", imgFile),
                 new Offset(0, 0),
-                0xFFFFFF
-        );
+                0xFFFFFF);
         this.left = left;
         this.procedureTicketMinutes = (short) procedureTicketMinutes;
     }

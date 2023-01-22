@@ -14,7 +14,7 @@ public class AttendablePlaces {
         public static final int Pvp         = 0b00100000;
         public static final int WorldBoss   = 0b01000000;
         public static final int Raid        = 0b10000000;
-        public static final int Quest       = 0b11000000;
+        public static final int Quest       = 0b00000011;
     }
 
     public static AttendablePlace invasion = null;

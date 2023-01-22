@@ -77,10 +77,4 @@ public class QuestApp extends AbstractDoFarmingApp {
     protected int getDefaultMainLoopInterval() {
         return 1_000;
     }
-
-    @SuppressWarnings("unused")
-	private Point findQuest(BwMatrixMeta levelIm) {
-		return this.gameScreenInteractor.findQuest(levelIm);
-	}
-    
 }

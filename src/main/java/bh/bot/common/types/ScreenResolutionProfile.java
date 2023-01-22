@@ -44,11 +44,6 @@ public abstract class ScreenResolutionProfile {
 																											// forward,
 																											// max x
 
-	public abstract Tuple4<Integer, Integer, Integer, Integer> getBackwardScanQuests();						// min x, max
-																											// y, step
-																											// backward,
-																											// max x
-
 	public abstract Offset getOffsetButtonSummonOnListingPartiesWorldBoss();
 
 	public abstract Offset getOffsetLabelWorldBossInSummonDialog();
@@ -337,11 +332,6 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftSideAttendablePlaces() {
 			return new Tuple4<>(14, 0, 96, 59);
-		}
-
-		@Override
-		public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanQuests() {
-			return new Tuple4<>(63, 108, 96, 737);
 		}
 
 		@Override
