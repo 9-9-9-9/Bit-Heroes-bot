@@ -1353,11 +1353,13 @@ public abstract class AbstractApplication {
 			debug("Looking for stars level");
 			Point starCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.star, 63, 96, 36, 115);
 			if (starCoords == null) {
-			debug("Looking for empty stars level");
-				Point emptyStarCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.emptyStar, 63, 96, 36, 115);
+				debug("Looking for empty stars level");
+				Point emptyStarCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.emptyStar, 63, 96, 36,
+						115);
 				if (emptyStarCoords == null) {
 					debug("Looking for next level");
-					Point nextLevelCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.questLevel, 63, 96, 36, 115);
+					Point nextLevelCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.questLevel, 63,
+							96, 36, 115);
 					if (nextLevelCoords == null) {
 					} else {
 						levelCoords = nextLevelCoords;
@@ -1378,7 +1380,6 @@ public abstract class AbstractApplication {
 		debug(levelCoords);
 		mouseMoveAndClickAndHide(levelCoords);
 		sleep(2_000);
-		// TODO: Find if difficulty is an option to use, otherwise enter
 		debug("Trying to enter level");
 		Point difficultyCoords = findImage(BwMatrixMeta.Metas.Dungeons.Labels.enterLevel);
 		if (difficultyCoords != null) {
