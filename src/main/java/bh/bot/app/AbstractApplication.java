@@ -1315,21 +1315,23 @@ public abstract class AbstractApplication {
 		return clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses);
 	}
 
-	protected Point tryFindQuest(boolean doQuest, UserConfig userConfig, Supplier<Boolean> isBlocked) {
+	protected boolean tryEnterQuest(boolean doQuest, UserConfig userConfig, Supplier<Boolean> isBlocked, InteractionUtil.Screen.Game game) {
 		Point coord = findImage(BwMatrixMeta.Metas.Dungeons.Labels.zones);
 		if (coord == null)
-			return null;
+			return false;
 
 		if (isBlocked.get() || !doQuest) {
 			spamEscape(1);
-			return null;
+			return false;
 		}
 		BwMatrixMeta.Metas.Dungeons.Labels.zones.setLastMatchPoint(coord.x, coord.y);
-		return coord;
-	}
-
-	protected boolean tryEnterQuest(boolean doQuest, UserConfig userConfig, Supplier<Boolean> isBlocked, Point coord, Point starCoords) {
+		debug("Trying to detect stars");
+		// Todo: Scan in a few areas
+		Point starCoords = game.findQuest();
+		if (starCoords == null)
+			return false;
 		mouseMoveAndClickAndHide(starCoords);
+		debug("Found a star");
 		sleep(500);
 		// TODO: Find if difficulty is an option to use, otherwise enter
 		Point difficultyCoords = findImage(BwMatrixMeta.Metas.Dungeons.Labels.enterLevel);

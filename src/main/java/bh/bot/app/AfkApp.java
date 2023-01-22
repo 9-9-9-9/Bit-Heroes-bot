@@ -342,7 +342,7 @@ public class AfkApp extends AbstractApplication {
                     continue ML;
                 }
 
-                if (tryEnterQuest(doQuest, userConfig, isQuestBlocked)) {
+                if (tryEnterQuest(doQuest, userConfig, isQuestBlocked, this.gameScreenInteractor)) {
                     debug("tryEnterQuest");
                     continuousNotFound = 0;
                     moveCursor(coordinateHideMouse);

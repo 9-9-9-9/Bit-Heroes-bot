@@ -56,15 +56,7 @@ public class QuestApp extends AbstractDoFarmingApp {
 
     @Override
     protected boolean doCustomAction() {
-        Point coord = tryFindQuest(true, userConfig, isQuestBlocked);
-        if (coord == null) {
-            return false;
-        }
-		Point starCoords = this.gameScreenInteractor.findQuest();
-		if (starCoords == null)
-			return false;
-        boolean didEnter = tryEnterQuest(true, userConfig, isQuestBlocked, coord, starCoords);
-        return didEnter;
+        return tryEnterQuest(true, userConfig, isQuestBlocked, this.gameScreenInteractor);
     }
 
     public static List<NextAction> getPredefinedImageActions() {
