@@ -10,6 +10,7 @@ import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.utils.ColorizeUtil;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +56,15 @@ public class QuestApp extends AbstractDoFarmingApp {
 
     @Override
     protected boolean doCustomAction() {
-        return tryEnterQuest(true, userConfig, isQuestBlocked);
+        Point coord = tryFindQuest(true, userConfig, isQuestBlocked);
+        if (coord == null) {
+            return false;
+        }
+		Point starCoords = this.gameScreenInteractor.findQuest();
+		if (starCoords == null)
+			return false;
+        boolean didEnter = tryEnterQuest(true, userConfig, isQuestBlocked, coord, starCoords);
+        return didEnter;
     }
 
     public static List<NextAction> getPredefinedImageActions() {
@@ -75,4 +84,10 @@ public class QuestApp extends AbstractDoFarmingApp {
     protected int getDefaultMainLoopInterval() {
         return 1_000;
     }
+
+    @SuppressWarnings("unused")
+	private Point findQuest() {
+		return this.gameScreenInteractor.findQuest();
+	}
+    
 }

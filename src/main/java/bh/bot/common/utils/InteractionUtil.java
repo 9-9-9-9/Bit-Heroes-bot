@@ -6,6 +6,7 @@ import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.images.BwMatrixMeta;
+import bh.bot.common.types.images.BwMatrixMeta.Metas;
 import bh.bot.common.types.tuples.Tuple4;
 
 import java.awt.*;
@@ -226,6 +227,90 @@ public class InteractionUtil {
 									go = false;
 									p = new Point(scanX + x, scanY + y);
 									optionalDebug(debug, "findAttendablePlace result %d, %d", p.x, p.y);
+								}
+							}
+						}
+
+						if (!go)
+							return p;
+						//
+
+					} finally {
+						freeMem(sc);
+					}
+				}
+				return null;
+			}
+
+			public Point findQuest() {
+				int minX, maxX, stepY, firstY;
+				Tuple4<Integer, Integer, Integer, Integer> backwardsScan = Configuration
+						.screenResolutionProfile
+						.getBackwardScanQuests();
+				minX = backwardsScan._1;
+				firstY = backwardsScan._2;
+				stepY = backwardsScan._3;
+				maxX = backwardsScan._4;
+
+				minX += Configuration.gameScreenOffset.X.get();
+				maxX += Configuration.gameScreenOffset.X.get();
+				firstY += Configuration.gameScreenOffset.Y.get();
+				
+				final boolean debug = false;
+
+				final int positionTolerant = Math.abs(Math.min(Configuration.Tolerant.position, Math.abs(stepY)));
+				final int scanWidth = maxX - minX + 1 + positionTolerant * 2;
+				final int scanHeight = Math.abs(stepY) + positionTolerant * 2;
+				final int scanX = Math.max(0, minX - positionTolerant);
+				final int numberOfAttendablePlacesPerColumn = 5;
+				for (int i = 0; i < numberOfAttendablePlacesPerColumn; i++) {
+					final int scanY = Math.max(0, firstY + stepY * i - positionTolerant);
+					BufferedImage sc = captureScreen(scanX, scanY, scanWidth, scanHeight);
+					try {
+						instance.saveDebugImage(sc, String.format("findQuest_%d_", i));
+						final BwMatrixMeta im = Metas.Dungeons.Buttons.star;
+						if (im.throwIfNotAvailable())
+							continue;
+						//
+						boolean go = true;
+						Point p = new Point();
+						final int blackPixelRgb = im.getBlackPixelRgb();
+						final ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
+						for (int y = sc.getHeight() - im.getHeight() - 1; y >= 0 && go; y--) {
+							for (int x = sc.getWidth() - im.getWidth() - 1; x >= 0 && go; x--) {
+								boolean allGood = true;
+
+								for (int[] px : im.getBlackPixels()) {
+									int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
+									if (!ImageUtil.areColorsSimilar(//
+											blackPixelDRgb, //
+											srcRgb, //
+											Configuration.Tolerant.color,
+											im.getOriginalPixelPart(px[0], px[1]))) {
+										allGood = false;
+										optionalDebug(debug, "findQuest first match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
+										break;
+									}
+								}
+
+								if (allGood) {
+									for (int[] px : im.getNonBlackPixels()) {
+										int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
+										if (ImageUtil.areColorsSimilar(//
+												blackPixelRgb, //
+												srcRgb, //
+												Configuration.Tolerant.color)) {
+											allGood = false;
+											optionalDebug(debug, "findQuest second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
+											break;
+										}
+									}
+								}
+
+								if (allGood) {
+									go = false;
+									p = new Point(scanX + x, scanY + y);
+									optionalDebug(debug, "findQuest result %d, %d", p.x, p.y);
 								}
 							}
 						}
