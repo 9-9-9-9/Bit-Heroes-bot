@@ -242,7 +242,7 @@ public class InteractionUtil {
 				return null;
 			}
 
-			public Point findQuest() {
+			public Point findQuest(BwMatrixMeta levelIm) {
 				int minX, maxX, stepY, firstY;
 				Tuple4<Integer, Integer, Integer, Integer> backwardsScan = Configuration
 						.screenResolutionProfile
@@ -268,7 +268,7 @@ public class InteractionUtil {
 					BufferedImage sc = captureScreen(scanX, scanY, scanWidth, scanHeight);
 					try {
 						instance.saveDebugImage(sc, String.format("findQuest_%d_", i));
-						final BwMatrixMeta im = Metas.Dungeons.Buttons.star;
+						final BwMatrixMeta im = levelIm;
 						if (im.throwIfNotAvailable())
 							continue;
 						//

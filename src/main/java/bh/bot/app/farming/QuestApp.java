@@ -63,6 +63,7 @@ public class QuestApp extends AbstractDoFarmingApp {
         return Arrays.asList(
             new NextAction(BwMatrixMeta.Metas.Dungeons.Buttons.accept, false, false),
             new NextAction(BwMatrixMeta.Metas.Dungeons.Buttons.rerun, false, false),
+            new NextAction(BwMatrixMeta.Metas.Dungeons.Buttons.collect, false, false),
             new NextAction(BwMatrixMeta.Metas.Dungeons.Dialogs.notEnoughEnergy, false, true)
         );
     }
@@ -78,8 +79,8 @@ public class QuestApp extends AbstractDoFarmingApp {
     }
 
     @SuppressWarnings("unused")
-	private Point findQuest() {
-		return this.gameScreenInteractor.findQuest();
+	private Point findQuest(BwMatrixMeta levelIm) {
+		return this.gameScreenInteractor.findQuest(levelIm);
 	}
     
 }

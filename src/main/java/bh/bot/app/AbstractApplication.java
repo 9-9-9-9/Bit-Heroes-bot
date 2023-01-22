@@ -1340,13 +1340,42 @@ public abstract class AbstractApplication {
 			return false;
 		}
 		BwMatrixMeta.Metas.Dungeons.Labels.zones.setLastMatchPoint(coord.x, coord.y);
-		debug("Trying to detect stars");
+		debug("Trying to detect a valid level");
+		// First check for the Boss level
+		// Second check for any place with a star
+		// Third check for any place without a star
+		// Fourth check for any level
 		// Todo: Scan in a few areas
-		Point starCoords = game.findQuest();
-		if (starCoords == null)
+		Point levelCoords = null;
+		debug("Looking for boss level");
+		Point bossCoords = game.findQuest(BwMatrixMeta.Metas.Dungeons.Buttons.bossLevel);
+		if (bossCoords == null) {
+			debug("Looking for stars level");
+			Point starCoords = game.findQuest(BwMatrixMeta.Metas.Dungeons.Buttons.star);
+			if (starCoords == null) {
+			debug("Looking for empty stars level");
+				Point emptyStarCoords = game.findQuest(BwMatrixMeta.Metas.Dungeons.Buttons.emptyStar);
+				if (emptyStarCoords == null) {
+					debug("Looking for next level");
+					Point nextLevelCoords = game.findQuest(BwMatrixMeta.Metas.Dungeons.Buttons.questLevel);
+					if (nextLevelCoords == null) {
+					} else {
+						levelCoords = nextLevelCoords;
+					}
+				} else {
+					levelCoords = emptyStarCoords;
+				}
+			} else {
+				levelCoords = starCoords;
+			}
+		} else {
+			levelCoords = bossCoords;
+		}
+		if (levelCoords == null) {
 			return false;
-		mouseMoveAndClickAndHide(starCoords);
-		debug("Found a star");
+		}
+		debug("Found a valid level");
+		mouseMoveAndClickAndHide(levelCoords);
 		sleep(1_000);
 		// TODO: Find if difficulty is an option to use, otherwise enter
 		debug("Trying to enter level");

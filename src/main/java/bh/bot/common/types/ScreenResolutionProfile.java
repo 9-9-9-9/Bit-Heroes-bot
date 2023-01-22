@@ -173,6 +173,8 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetButtonAcceptTrials();
 
+	public abstract Offset getOffsetButtonCollectQuest();
+
 	public abstract Offset getOffsetButtonTownAfterCompetedTrials();
 
 	public abstract Offset getOffsetDialogNotEnoughTrialsTokens();
@@ -505,6 +507,11 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetButtonAcceptTrials() {
 			return new Offset(474, 457);
+		}
+
+		@Override
+		public Offset getOffsetButtonCollectQuest() {
+			return new Offset(331, 358);
 		}
 
 		@Override
