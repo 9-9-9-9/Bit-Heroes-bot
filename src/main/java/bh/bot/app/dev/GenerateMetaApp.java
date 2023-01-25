@@ -2,6 +2,7 @@ package bh.bot.app.dev;
 
 import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
+import bh.bot.app.ChangeCharacterApp;
 import bh.bot.app.FishingApp;
 import bh.bot.app.ReRunApp;
 import bh.bot.common.exceptions.InvalidDataException;
@@ -29,6 +30,7 @@ public class GenerateMetaApp extends AbstractApplication {
         List<AbstractApplication> apps = Arrays.asList(
                 new ReRunApp(), //
                 new FishingApp(), //
+                new ChangeCharacterApp(), //
                 new AfkApp() //
         );
 
