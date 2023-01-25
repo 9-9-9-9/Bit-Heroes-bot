@@ -1346,21 +1346,37 @@ public abstract class AbstractApplication {
 		// Third check for any place without a star
 		// Fourth check for any level
 		// Todo: Scan in a few areas
-		Point levelCoords = null;
+		ArrayList<Point> levelCoords = null;
 		debug("Looking for boss level");
-		Point bossCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.bossLevel, 63, 96, 96, 115);
-		if (bossCoords == null) {
+		ArrayList<Point> bossCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.bossLevel, 63, 96, 96, 115);
+		boolean foundBossCoords = false;
+		boolean foundStarCoords = false;
+		boolean foundEmptyStarCoords = false;
+		boolean foundNextLevelCoords = false;
+		try { 
+			foundBossCoords = bossCoords.get(0) == null;
+		} catch (IndexOutOfBoundsException e) {}
+		if (!foundBossCoords) {
 			debug("Looking for stars level");
-			Point starCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.star, 63, 96, 36, 115);
-			if (starCoords == null) {
+			ArrayList<Point> starCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.star, 63, 96, 36, 115);
+			try { 
+				foundStarCoords = starCoords.get(0) == null;
+			} catch (IndexOutOfBoundsException e) {}
+			if (!foundStarCoords) {
 				debug("Looking for empty stars level");
-				Point emptyStarCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.emptyStar, 63, 96, 36,
+				ArrayList<Point> emptyStarCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.emptyStar, 63, 96, 36,
 						115);
-				if (emptyStarCoords == null) {
+				try { 
+					foundEmptyStarCoords = emptyStarCoords.get(0) == null;
+				} catch (IndexOutOfBoundsException e) {}
+				if (!foundEmptyStarCoords) {
 					debug("Looking for next level");
-					Point nextLevelCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.questLevel, 63,
+					ArrayList<Point> nextLevelCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.questLevel, 63,
 							96, 36, 115);
-					if (nextLevelCoords == null) {
+					try { 
+						foundNextLevelCoords = nextLevelCoords.get(0) == null;
+					} catch (IndexOutOfBoundsException e) {}
+					if (!foundNextLevelCoords) {
 					} else {
 						levelCoords = nextLevelCoords;
 					}
@@ -1376,11 +1392,15 @@ public abstract class AbstractApplication {
 		if (levelCoords == null) {
 			return false;
 		}
-		debug("Found a valid level");
+		debug("Found some valid possible levels");
 		debug(levelCoords);
-		mouseMoveAndClickAndHide(levelCoords);
-		sleep(2_000);
-		debug("Trying to enter level");
+		for (int i = 0; i < levelCoords.size(); i++) {
+			Point level = levelCoords.get(i);
+			debug("Trying to enter level " + level);
+			mouseMoveAndClickAndHide(level);
+			sleep(2_000);
+			// TODO: If (quest header of some sort clickable) breakLoop
+		}
 		Point difficultyCoords = findImage(BwMatrixMeta.Metas.Dungeons.Labels.enterLevel);
 		if (difficultyCoords != null) {
 			debug("Clicking to enter level");

@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.optionalDebug;
@@ -242,20 +243,23 @@ public class InteractionUtil {
 				return null;
 			}
 
-			public Point findByScanScreen(BwMatrixMeta im, int minX, int maxX, int stepY, int firstY) {
+			public ArrayList<Point> findByScanScreen(BwMatrixMeta im, int minX, int maxX, int stepY, int firstY) {
 				int maxScreen = 800;
+				ArrayList<Point> points = new ArrayList<>();
 				Point located = null;
 				int currentX = minX;
 				int currentMaxX = maxX;
 				int step = maxX - minX;
 				while (located == null && currentMaxX < maxScreen) {
-					located = findByScanColumn(im, currentX, currentMaxX, stepY, firstY, 5);
-					if (located == null) {
-						currentX += step;
-						currentMaxX += step;
+					int loops = (int) Math.ceil((520 - firstY) / stepY);
+					located = findByScanColumn(im, currentX, currentMaxX, stepY, firstY, loops);
+					currentX += step;
+					currentMaxX += step;
+					if (located != null) {
+						points.add(located);
 					}
 				}
-				return located;
+				return points;
 			}
 
 			public Point findByScanColumn(BwMatrixMeta im, int minX, int maxX, int stepY, int firstY, int numberOfScans) {
