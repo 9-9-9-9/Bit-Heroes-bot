@@ -45,6 +45,7 @@ public class FlagExitAfterAmountOfSeconds extends FlagPattern<Integer> {
         return instance instanceof ReRunApp
                 || instance instanceof FishingApp
                 || instance instanceof AbstractDoFarmingApp
+                || instance instanceof ChangeCharacterApp
                 || instance instanceof AfkApp;
     }
 }

@@ -239,6 +239,21 @@ public class BwMatrixMeta {
             }
         }
 
+        public static class Character {
+            public static class Labels {
+                public static BwMatrixMeta heroes;
+            }
+                
+            public static class Dialogs {
+                public static BwMatrixMeta loading;
+            }
+                
+            public static class Buttons {        
+                public static BwMatrixMeta characterSelect;
+                public static BwMatrixMeta confirm;
+            }
+        }
+
         public static class Dungeons {
             public static class Buttons {
                 public static BwMatrixMeta rerun;
@@ -497,6 +512,28 @@ public class BwMatrixMeta {
                 "labels/persuade.moghur?",
                 Configuration.screenResolutionProfile.getOffsetLabelPersuadeMoghur(), //
                 0xFF807D
+        );
+
+        // Character Select
+        Metas.Character.Dialogs.loading = BwMatrixMeta.from(//
+                "dialogs/character.loading2?",
+                Configuration.screenResolutionProfile.getOffsetDialogCharacterLoading(), //
+                0xFFFFFF
+        );
+        Metas.Character.Buttons.confirm = BwMatrixMeta.from(//
+                "buttons/character.confirm2?",
+                Configuration.screenResolutionProfile.getOffsetLabelCharacterConfirm(), //
+                0xFFFFFF
+        );
+        Metas.Character.Buttons.characterSelect = BwMatrixMeta.from(//
+                "buttons/character.select2?",
+                Configuration.screenResolutionProfile.getOffsetLabelCharacterSelect(), //
+                0xFFFFFF
+        );
+        Metas.Character.Labels.heroes = BwMatrixMeta.from(//
+                "labels/character.heroes2?",
+                Configuration.screenResolutionProfile.getOffsetLabelCharacterHeroes(), //
+                0xFFFFFF
         );
         
         // Fishing
