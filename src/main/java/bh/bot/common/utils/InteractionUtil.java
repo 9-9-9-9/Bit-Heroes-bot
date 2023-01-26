@@ -244,19 +244,21 @@ public class InteractionUtil {
 			}
 
 			public ArrayList<Point> findByScanScreen(BwMatrixMeta im, int minX, int maxX, int stepY, int firstY) {
-				int maxScreen = 800;
+				int maxScreenWidth = 800;
+				int maxScreenHeight = 520;
 				ArrayList<Point> points = new ArrayList<>();
 				Point located = null;
 				int currentX = minX;
 				int currentMaxX = maxX;
 				int step = maxX - minX;
-				while (located == null && currentMaxX < maxScreen) {
-					int loops = (int) Math.ceil((520 - firstY) / stepY);
+				while ( currentMaxX < maxScreenWidth) {
+					int loops = (int) Math.floor((maxScreenHeight - firstY) / stepY);
 					located = findByScanColumn(im, currentX, currentMaxX, stepY, firstY, loops);
 					currentX += step;
 					currentMaxX += step;
 					if (located != null) {
 						points.add(located);
+						located = null;
 					}
 				}
 				return points;

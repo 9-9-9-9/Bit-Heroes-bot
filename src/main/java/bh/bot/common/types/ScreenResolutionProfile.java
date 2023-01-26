@@ -166,6 +166,10 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetButtonPlayTrials();
 
+	public abstract Offset getOffsetButtonEnergyDungeon();
+
+	public abstract Offset getOffsetButtonHeroicEnergyDungeon();
+
 	public abstract Offset getOffsetButtonAcceptTrials();
 
 	public abstract Offset getOffsetButtonCollectQuest();
@@ -492,6 +496,15 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetButtonPlayTrials() {
 			return new Offset(517, 271);
+		}
+
+		@Override
+		public Offset getOffsetButtonEnergyDungeon() {
+			return new Offset(275, 400);
+		}
+		@Override
+		public Offset getOffsetButtonHeroicEnergyDungeon() {
+			return new Offset(550, 150);
 		}
 
 		@Override

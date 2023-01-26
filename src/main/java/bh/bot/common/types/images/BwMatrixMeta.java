@@ -248,6 +248,8 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta questLevel;
                 public static BwMatrixMeta accept;
                 public static BwMatrixMeta collect;
+                public static BwMatrixMeta energy;
+                public static BwMatrixMeta heroicEnergy;
                 public static BwMatrixMeta difficultyNormal;
                 public static BwMatrixMeta difficultyHard;
                 public static BwMatrixMeta difficultyHeroic;
@@ -256,7 +258,6 @@ public class BwMatrixMeta {
 
             public static class Dialogs {
                 public static BwMatrixMeta notEnoughEnergy;
-                public static BwMatrixMeta level;
             }
 
             public static class Labels {
@@ -501,6 +502,16 @@ public class BwMatrixMeta {
         Metas.Dungeons.Buttons.collect = BwMatrixMeta.from(//
                 "buttons/dungeons.collect2?",
                 Configuration.screenResolutionProfile.getOffsetButtonAcceptTrials(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.energy = BwMatrixMeta.from(//
+                "buttons/dungeons.energy2?",
+                Configuration.screenResolutionProfile.getOffsetButtonEnergyDungeon(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.heroicEnergy = BwMatrixMeta.from(//
+                "buttons/dungeons.heroic-energy2?",
+                Configuration.screenResolutionProfile.getOffsetButtonHeroicEnergyDungeon(), //
                 0xFFFFFF
         );
         Metas.Dungeons.Buttons.difficultyHard = BwMatrixMeta.from(//
