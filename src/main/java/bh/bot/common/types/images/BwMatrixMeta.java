@@ -256,6 +256,7 @@ public class BwMatrixMeta {
 
             public static class Dialogs {
                 public static BwMatrixMeta notEnoughEnergy;
+                public static BwMatrixMeta level;
             }
 
             public static class Labels {
