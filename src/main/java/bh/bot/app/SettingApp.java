@@ -97,7 +97,10 @@ public class SettingApp extends AbstractApplication {
             tmp = readIntInput(sb.toString(), modeRange._1, modeRange._2);
             raidMode = tmp == null ? raidMode : tmp;
             //
-            sb.append("Specific Quest mode?");
+            sb = new StringBuilder("All Quest's difficulty mode:\n");
+            for (byte rl = modeRange._1; rl <= modeRange._2; rl++)
+                sb.append(String.format("  %2d. %s\n", rl, UserConfig.getDifficultyModeDesc(rl, "Quest")));
+            sb.append("Specific Quest mode? This will be used when a level with difficulties happens to be selected");
             tmp = readIntInput(sb.toString(), modeRange._1, modeRange._2);
             questMode = tmp == null ? questMode : tmp;
             //
