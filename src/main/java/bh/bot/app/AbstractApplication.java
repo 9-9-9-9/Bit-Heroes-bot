@@ -215,8 +215,7 @@ public abstract class AbstractApplication {
 
 			long timeLeft;
 			while ((timeLeft = deadline - System.currentTimeMillis()) > 0) {
-				info(ColorizeUtil.formatError, "Game window is going to be closed after %d minute%s", waitXMinutes,
-						waitXMinutes > 1 ? "s" : "");
+				info(ColorizeUtil.formatError, "Game window is going to be closed after %d minute%s", waitXMinutes, waitXMinutes > 1 ? "s" : "");
 				waitXMinutes--;
 				sleep((int) Math.min(60_000, timeLeft + 1));
 			}
@@ -272,8 +271,7 @@ public abstract class AbstractApplication {
 		saveImage(img, file);
 	}
 
-	protected void saveImage(BufferedImage img, File file) {
-		;
+	protected void saveImage(BufferedImage img, File file) {;
 		try {
 			ImageIO.write(img, "bmp", file);
 		} catch (IOException e) {
