@@ -8,15 +8,15 @@
 
 :: Switch to Character #1
 echo 'e' | call web.bot.bat change-character 1
-echo 'e' | call web.bot.bat afk a --ear
+echo 'e' | call web.bot.bat afk a --ear --profile=name1
 
 :: Switch to Character #3
 echo 'e' | call web.bot.bat change-character 2
-echo 'e' | call web.bot.bat afk a --ear
+echo 'e' | call web.bot.bat afk a --ear --profile=name2
 
 :: Switch to Character #3
 echo 'e' | call web.bot.bat change-character 3
-echo 'e' | call web.bot.bat afk a --ear
+echo 'e' | call web.bot.bat afk a --ear --profile=name3
 
 :: Call itself to go in an infinite loop
 call MultiCharacter.AFK.web.bat
