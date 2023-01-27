@@ -3,4 +3,4 @@
 :: Consider adding `--profile=YourProfileName` so you no longer needed to select profile manually
 :: You can remove flag `--ear` to keep game online all day (but still gone if you got Disconnected)
 :: With steam version of BH, refer to AFK.steam.bat file
-call web.bot.bat afk a --ear --profile=dare
+call web.bot.bat afk a --ear
