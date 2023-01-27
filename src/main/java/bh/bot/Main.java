@@ -14,6 +14,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import bh.bot.app.*;
 import bh.bot.app.dev.*;
 import bh.bot.app.farming.*;
 import bh.bot.common.extensions.Rad;
@@ -22,12 +23,6 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.fusesource.jansi.AnsiConsole;
 
-import bh.bot.app.AbstractApplication;
-import bh.bot.app.AfkApp;
-import bh.bot.app.FishingApp;
-import bh.bot.app.GenMiniClient;
-import bh.bot.app.ReRunApp;
-import bh.bot.app.SettingApp;
 import bh.bot.common.Configuration;
 import bh.bot.common.OS;
 import bh.bot.common.Telegram;
@@ -79,7 +74,8 @@ public class Main {
 					TrialsApp.class, //
 					GvgApp.class, //
 					GauntletApp.class, //
-					GenMiniClient.class,
+					GenMiniClient.class, //
+					ChangeCharacterApp.class,
 // Dev functions
 					ExtractMatrixApp.class, //
 					ImportTpImageApp.class, //

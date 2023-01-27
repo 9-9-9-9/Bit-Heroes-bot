@@ -1,7 +1,6 @@
 package bh.bot.app;
 
-import static bh.bot.common.Log.info;
-import static bh.bot.common.Log.debug;
+import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
@@ -20,9 +19,15 @@ import bh.bot.common.utils.ColorizeUtil;
 import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.ThreadUtil;
 
-@AppMeta(code = "character", name = "Change Character", displayOrder = 1, argType = "number", argAsk = "What character slot do you want to pick?", argDefault = "1", argRequired = true)
+@AppMeta(code = "change-character", name = "Change Character", displayOrder = 1, argType = "number", argAsk = "What character slot do you want to pick?", argDefault = "1", argRequired = true)
 @RequireSingleInstance
 public class ChangeCharacterApp extends AbstractApplication {
+
+    private static final Offset[] characterSelectionButtonOffsets = new Offset[]{
+            new Offset(250, 200), // # 1
+            new Offset(375, 200), // # 2
+            new Offset(500, 200), // # 3
+    };
 
     @Override
     protected void internalRun(String[] args) {
@@ -35,7 +40,13 @@ public class ChangeCharacterApp extends AbstractApplication {
         }
 
         final int characterSlot = arg;
-        info("Character in slot %3d ", characterSlot);
+
+        if (characterSlot < 1 || characterSlot > characterSelectionButtonOffsets.length) {
+            err("Invalid character slot, must be in range 1 to %d", characterSelectionButtonOffsets.length);
+            System.exit(1);
+        }
+
+        info("Character in slot %d", characterSlot);
         AtomicBoolean masterSwitch = new AtomicBoolean(false);
         ThreadUtil.waitDone(
                 () -> doLoopClickImage(characterSlot, masterSwitch),
@@ -45,7 +56,6 @@ public class ChangeCharacterApp extends AbstractApplication {
                                 .builder() //
                                 .clickTalk() //
                                 .clickDisconnect() //
-                                .reactiveAuto() //
                                 .autoExit() //
                                 .detectChatboxDirectMessage() //
                                 .build() //
@@ -89,15 +99,8 @@ public class ChangeCharacterApp extends AbstractApplication {
                         }
                     } else {
                         debug("Selecting Character in Slot #" + characterSlot);
-                        if (characterSlot == 1) {
-                            InteractionUtil.Mouse.mouseMoveAndClickAndHide(new Offset(250, 200).toScreenCoordinate());
-                        } else if (characterSlot == 2) {
-                            InteractionUtil.Mouse.mouseMoveAndClickAndHide(new Offset(375, 200).toScreenCoordinate());
-                        } else if (characterSlot == 3) {
-                            InteractionUtil.Mouse.mouseMoveAndClickAndHide(new Offset(500, 200).toScreenCoordinate());
-                        } else {
-                            throw new NotSupportedException("Cannot select character in this slot.");
-                        }
+
+                        InteractionUtil.Mouse.mouseMoveAndClickAndHide(characterSelectionButtonOffsets[characterSlot-1].toScreenCoordinate());
                         sleep(mainLoopInterval);
                         if (clickImage(BwMatrixMeta.Metas.Character.Buttons.confirm)) {
                             info(ColorizeUtil.formatInfo, "\n\nCharacter Changed to Slot #" + characterSlot);
