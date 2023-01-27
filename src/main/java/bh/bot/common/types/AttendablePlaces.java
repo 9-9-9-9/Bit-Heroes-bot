@@ -5,16 +5,16 @@ import java.io.IOException;
 public class AttendablePlaces {
     public static class Ids {
         // Right
-        public static final int Invasion    = 0b00000001;
-        public static final int Trials      = 0b00000010;
-        public static final int GvG         = 0b00000100;
-        public static final int Gauntlet    = 0b00001000;
-        public static final int Expedition  = 0b00010000;
+        public static final long Invasion    = 0b000000001;
+        public static final long Trials      = 0b000000010;
+        public static final long GvG         = 0b000000100;
+        public static final long Gauntlet    = 0b000001000;
+        public static final long Expedition  = 0b000010000;
         // Left
-        public static final int Pvp         = 0b00100000;
-        public static final int WorldBoss   = 0b01000000;
-        public static final int Raid        = 0b10000000;
-        public static final int Quest       = 0b00000011;
+        public static final long Pvp         = 0b000100000;
+        public static final long WorldBoss   = 0b001000000;
+        public static final long Raid        = 0b010000000;
+        public static final long Quest       = 0b100000000;
     }
 
     public static AttendablePlace invasion = null;

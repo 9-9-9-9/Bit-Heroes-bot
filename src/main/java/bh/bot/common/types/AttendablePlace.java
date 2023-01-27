@@ -9,16 +9,16 @@ import java.util.stream.Collectors;
 
 public class AttendablePlace {
     public final String name;
-    public final int id;
+    public final long id;
     public final BwMatrixMeta img;
     public final boolean left;
     public final short procedureTicketMinutes;
 
-    public AttendablePlace(String name, int id, String imgName, boolean left) throws IOException {
+    public AttendablePlace(String name, long id, String imgName, boolean left) throws IOException {
         this(name, id, imgName, left, (short) 30);
     }
 
-    public AttendablePlace(String name, int id, String imgCode, boolean left, int procedureTicketMinutes)
+    public AttendablePlace(String name, long id, String imgCode, boolean left, int procedureTicketMinutes)
             throws IOException {
         this.name = name;
         this.id = id;
@@ -48,7 +48,7 @@ public class AttendablePlace {
         this.procedureTicketMinutes = (short) procedureTicketMinutes;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
