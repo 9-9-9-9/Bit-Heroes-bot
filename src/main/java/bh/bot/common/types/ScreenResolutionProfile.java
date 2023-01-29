@@ -22,6 +22,8 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetButtonDungeonReRun();
 
+	public abstract Offset getOffsetButtonDungeonStar();
+
 	public abstract Offset getOffsetButtonTalkRightArrow();
 
 	public abstract Offset getOffsetButtonReconnect();
@@ -164,9 +166,21 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetDialogNotEnoughInvasionBadges();
 
+	public abstract Offset getOffsetDialogNotEnoughDungeonEnergy();
+	
+	public abstract Offset getOffsetLabelDungeonEnterLevel();
+
+	public abstract Offset getOffsetLabelDungeonZones();
+
 	public abstract Offset getOffsetButtonPlayTrials();
 
+	public abstract Offset getOffsetButtonEnergyDungeon();
+
+	public abstract Offset getOffsetButtonHeroicEnergyDungeon();
+
 	public abstract Offset getOffsetButtonAcceptTrials();
+
+	public abstract Offset getOffsetButtonCollectQuest();
 
 	public abstract Offset getOffsetButtonTownAfterCompetedTrials();
 
@@ -208,9 +222,17 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetButtonEnterHeroicRaid();
 
+	public abstract Offset getOffsetButtonEnterNormalQuest();
+
+	public abstract Offset getOffsetButtonEnterHardQuest();
+
+	public abstract Offset getOffsetButtonEnterHeroicQuest();
+
 	public abstract Offset getOffsetButtonMapOnFamiliarUi();
 
 	public abstract Offset getOffsetDialogAreYouSureWantToExit();
+
+	public abstract Offset getOffsetDialogLeaveThisDungeon();
 
 	public abstract Offset getOffsetDialogNews();
 
@@ -287,6 +309,11 @@ public abstract class ScreenResolutionProfile {
 		}
 
 		@Override
+		public Offset getOffsetButtonDungeonStar() {
+			return new Offset(400, 260);
+		}
+
+		@Override
 		public Offset getOffsetButtonTalkRightArrow() {
 			return new Offset(718, 287);
 		}
@@ -338,7 +365,7 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftSideAttendablePlaces() {
-			return new Tuple4<>(14, 96, 72, 59);
+			return new Tuple4<>(14, 0, 96, 59);
 		}
 
 		@Override
@@ -482,13 +509,42 @@ public abstract class ScreenResolutionProfile {
 		}
 
 		@Override
+		public Offset getOffsetDialogNotEnoughDungeonEnergy() {
+			return new Offset(279, 231);
+		}
+
+		@Override
+		public Offset getOffsetLabelDungeonEnterLevel() {
+			return new Offset(415, 433);
+		}
+
+		@Override
+		public Offset getOffsetLabelDungeonZones() {
+			return new Offset(104, 62);
+		}
+
+		@Override
 		public Offset getOffsetButtonPlayTrials() {
 			return new Offset(517, 271);
 		}
 
 		@Override
+		public Offset getOffsetButtonEnergyDungeon() {
+			return new Offset(275, 400);
+		}
+		@Override
+		public Offset getOffsetButtonHeroicEnergyDungeon() {
+			return new Offset(550, 150);
+		}
+
+		@Override
 		public Offset getOffsetButtonAcceptTrials() {
 			return new Offset(474, 457);
+		}
+
+		@Override
+		public Offset getOffsetButtonCollectQuest() {
+			return new Offset(331, 358);
 		}
 
 		@Override
@@ -592,12 +648,32 @@ public abstract class ScreenResolutionProfile {
 		}
 
 		@Override
+		public Offset getOffsetButtonEnterNormalQuest() {
+			return new Offset(135, 223);
+		}
+
+		@Override
+		public Offset getOffsetButtonEnterHardQuest() {
+			return new Offset(327, 223);
+		}
+
+		@Override
+		public Offset getOffsetButtonEnterHeroicQuest() {
+			return new Offset(520, 223);
+		}
+
+		@Override
 		public Offset getOffsetButtonMapOnFamiliarUi() {
 			return new Offset(66, 135);
 		}
 
 		@Override
 		public Offset getOffsetDialogAreYouSureWantToExit() {
+			return new Offset(289, 231);
+		}
+
+		@Override
+		public Offset getOffsetDialogLeaveThisDungeon() {
 			return new Offset(289, 231);
 		}
 

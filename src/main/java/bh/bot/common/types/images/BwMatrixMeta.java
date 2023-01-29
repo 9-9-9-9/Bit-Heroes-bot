@@ -221,6 +221,7 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta confirmStartNotFullTeam;
                 public static BwMatrixMeta areYouStillThere;
                 public static BwMatrixMeta areYouSureWantToExit;
+                public static BwMatrixMeta leaveThisDungeon;
                 public static BwMatrixMeta news;
             }
         }
@@ -257,6 +258,28 @@ public class BwMatrixMeta {
         public static class Dungeons {
             public static class Buttons {
                 public static BwMatrixMeta rerun;
+                public static BwMatrixMeta star;
+                public static BwMatrixMeta emptyStar;
+                public static BwMatrixMeta bossLevel;
+                public static BwMatrixMeta questLevel;
+                public static BwMatrixMeta accept;
+                public static BwMatrixMeta collect;
+                public static BwMatrixMeta energy;
+                public static BwMatrixMeta heroicEnergy;
+                public static BwMatrixMeta difficultyNormal;
+                public static BwMatrixMeta difficultyHard;
+                public static BwMatrixMeta difficultyHeroic;
+
+            }
+
+            public static class Dialogs {
+                public static BwMatrixMeta notEnoughEnergy;
+            }
+
+            public static class Labels {
+                public static BwMatrixMeta zones;
+                public static BwMatrixMeta enterLevel;
+
             }
         }
 
@@ -457,6 +480,11 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetDialogAreYouSureWantToExit(), //
                 0xFFFFFF
         );
+        Metas.Globally.Dialogs.leaveThisDungeon = BwMatrixMeta.from(//
+                "dialogs/globally.leave-this-dungeon2?",
+                Configuration.screenResolutionProfile.getOffsetDialogLeaveThisDungeon(), //
+                0xFFFFFF
+        );
         Metas.Globally.Dialogs.news = BwMatrixMeta.from(//
                 "dialogs/globally.news2?",
                 Configuration.screenResolutionProfile.getOffsetDialogNews(), //
@@ -465,7 +493,78 @@ public class BwMatrixMeta {
         Metas.Dungeons.Buttons.rerun = BwMatrixMeta.from(//
                 "buttons/dungeons.rerun2?",
                 Configuration.screenResolutionProfile.getOffsetButtonDungeonReRun(), //
-                0xFFFFFF);
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.star = BwMatrixMeta.from(//
+                "buttons/dungeons.star2?",
+                Configuration.screenResolutionProfile.getOffsetButtonDungeonStar(), //
+                0x000000
+        );
+        Metas.Dungeons.Buttons.emptyStar = BwMatrixMeta.from(//
+                "buttons/dungeons.bStar2?",
+                new Offset(0, 0), //
+                0x000000
+        );
+        Metas.Dungeons.Buttons.bossLevel = BwMatrixMeta.from(//
+                "buttons/dungeons.boss2?",
+                new Offset(0, 0), //
+                0x6066AD
+        );
+        Metas.Dungeons.Buttons.questLevel = BwMatrixMeta.from(//
+                "buttons/dungeons.level2?",
+                Configuration.screenResolutionProfile.getOffsetButtonDungeonStar(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.accept = BwMatrixMeta.from(//
+                "buttons/dungeons.accept2?",
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptTrials(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.collect = BwMatrixMeta.from(//
+                "buttons/dungeons.collect2?",
+                Configuration.screenResolutionProfile.getOffsetButtonAcceptTrials(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.energy = BwMatrixMeta.from(//
+                "buttons/dungeons.energy2?",
+                Configuration.screenResolutionProfile.getOffsetButtonEnergyDungeon(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.heroicEnergy = BwMatrixMeta.from(//
+                "buttons/dungeons.heroic-energy2?",
+                Configuration.screenResolutionProfile.getOffsetButtonHeroicEnergyDungeon(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.difficultyHard = BwMatrixMeta.from(//
+                "buttons/dungeons.hard2?",
+                Configuration.screenResolutionProfile.getOffsetButtonEnterHardQuest(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.difficultyHeroic = BwMatrixMeta.from(//
+                "buttons/dungeons.heroic2?",
+                Configuration.screenResolutionProfile.getOffsetButtonEnterHeroicQuest(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Buttons.difficultyNormal = BwMatrixMeta.from(//
+                "buttons/dungeons.normal2?",
+                Configuration.screenResolutionProfile.getOffsetButtonEnterNormalQuest(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Dialogs.notEnoughEnergy = BwMatrixMeta.from(//
+                "dialogs/dungeons.not-enough-energy2?",
+                Configuration.screenResolutionProfile.getOffsetDialogNotEnoughDungeonEnergy(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Labels.enterLevel = BwMatrixMeta.from(//
+                "labels/dungeons.enter2?",
+                Configuration.screenResolutionProfile.getOffsetLabelDungeonEnterLevel(), //
+                0xFFFFFF
+        );
+        Metas.Dungeons.Labels.zones = BwMatrixMeta.from(//
+                "labels/dungeons.zones2?",
+                Configuration.screenResolutionProfile.getOffsetLabelDungeonZones(), //
+                0xFFFFFF
+        );
         
         // Persuade
         Metas.Persuade.Labels.kaleido = BwMatrixMeta.from(//

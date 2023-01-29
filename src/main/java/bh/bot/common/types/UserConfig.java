@@ -6,6 +6,7 @@ import bh.bot.common.types.tuples.Tuple2;
 public class UserConfig {
     public static final String raidLevelKey = "ig.user.raid.level";
     public static final String raidModeKey = "ig.user.raid.mode";
+    public static final String questModeKey = "ig.user.quest.mode";
     public static final String worldBossLevelKey = "ig.user.world-boss.level";
     public static final String expeditionPlaceKey = "ig.user.expedition.place";
     public static final String pvpTargetKey = "ig.user.pvp.target";
@@ -26,16 +27,18 @@ public class UserConfig {
     public final String cfgProfileName;
     public final byte raidLevel;
     public final byte raidMode;
+    public final byte questMode;
     public final byte worldBossLevel;
     public final byte expeditionPlace;
     public final byte pvpTarget;
 
-    public UserConfig(String cfgProfileName, byte raidLevel, byte raidMode, byte worldBossLevel, byte expeditionPlace, byte pvpTarget) {
+    public UserConfig(String cfgProfileName, byte raidLevel, byte raidMode, byte worldBossLevel, byte expeditionPlace, byte pvpTarget, byte questMode) {
         this.cfgProfileName = cfgProfileName;
         this.raidLevel = raidLevel;
         this.raidMode = raidMode;
         this.worldBossLevel = worldBossLevel;
         this.expeditionPlace = expeditionPlace;
+        this.questMode = questMode;
         this.pvpTarget = (byte)Math.max(pvpTargetMin, pvpTarget);
     }
 
@@ -70,6 +73,10 @@ public class UserConfig {
 
     public String getRaidModeDesc() {
         return getDifficultyModeDesc(raidMode, "Raid");
+    }
+
+    public String getQuestModeDesc() {
+        return getDifficultyModeDesc(questMode, "Quest");
     }
 
     public boolean isValidRaidLevel() {

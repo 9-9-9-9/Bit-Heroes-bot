@@ -4,6 +4,7 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
 import bh.bot.app.farming.ExpeditionApp;
 import bh.bot.app.farming.PvpApp;
+import bh.bot.app.farming.QuestApp;
 import bh.bot.app.farming.RaidApp;
 import bh.bot.app.farming.WorldBossApp;
 import bh.bot.common.exceptions.InvalidFlagException;
@@ -43,7 +44,8 @@ public class FlagProfileName extends FlagPattern<String> {
                 || instance instanceof WorldBossApp
                 || instance instanceof RaidApp
                 || instance instanceof ExpeditionApp
-                || instance instanceof PvpApp;
+                || instance instanceof PvpApp
+                || instance instanceof QuestApp;
     }
 
     @Override

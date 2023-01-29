@@ -29,10 +29,11 @@ public class SettingApp extends AbstractApplication {
             if (file.exists() && file.isDirectory())
                 throw new InvalidDataException("%s is a directory", fileName);
             Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(cfgProfileName);
-            int raidLevel, raidMode, worldBossLevel, expeditionPlace, pvpTarget;
+            int raidLevel, raidMode, worldBossLevel, expeditionPlace, pvpTarget, questMode;
             if (resultLoadUserConfig._1) {
                 raidLevel = resultLoadUserConfig._2.raidLevel;
                 raidMode = resultLoadUserConfig._2.raidMode;
+                questMode = resultLoadUserConfig._2.questMode;
                 worldBossLevel = resultLoadUserConfig._2.worldBossLevel;
                 expeditionPlace = resultLoadUserConfig._2.expeditionPlace;
                 pvpTarget = resultLoadUserConfig._2.pvpTarget;
@@ -46,6 +47,11 @@ public class SettingApp extends AbstractApplication {
                     info(ColorizeUtil.formatInfo, "Selected Raid mode %s", resultLoadUserConfig._2.getRaidModeDesc());
                 else
                     info(ColorizeUtil.formatInfo, "You haven't specified Raid mode (Normal/Hard/Heroic)");
+
+                if (UserConfig.isValidDifficultyMode(resultLoadUserConfig._2.questMode))
+                    info(ColorizeUtil.formatInfo, "Selected Quest mode %s", resultLoadUserConfig._2.getQuestModeDesc());
+                else
+                info(ColorizeUtil.formatInfo, "You haven't specified Quest mode (Normal/Hard/Heroic)");
 
                 if (resultLoadUserConfig._2.isValidWorldBossLevel())
                     info(ColorizeUtil.formatInfo, "Selected World Boss (Solo) %s", resultLoadUserConfig._2.getWorldBossLevelDesc());
@@ -67,6 +73,7 @@ public class SettingApp extends AbstractApplication {
             } else {
                 raidLevel = 0;
                 raidMode = 0;
+                questMode = 0;
                 worldBossLevel = 0;
                 expeditionPlace = 0;
                 pvpTarget = 0;
@@ -89,6 +96,13 @@ public class SettingApp extends AbstractApplication {
             sb.append("Specific Raid mode?");
             tmp = readIntInput(sb.toString(), modeRange._1, modeRange._2);
             raidMode = tmp == null ? raidMode : tmp;
+            //
+            sb = new StringBuilder("All Quest's difficulty mode:\n");
+            for (byte rl = modeRange._1; rl <= modeRange._2; rl++)
+                sb.append(String.format("  %2d. %s\n", rl, UserConfig.getDifficultyModeDesc(rl, "Quest")));
+            sb.append("Specific Quest mode? This will be used when a level with difficulties happens to be selected");
+            tmp = readIntInput(sb.toString(), modeRange._1, modeRange._2);
+            questMode = tmp == null ? questMode : tmp;
             //
             final Tuple2<Byte, Byte> woldBossLevelRange = UserConfig.getWorldBossLevelRange();
             sb = new StringBuilder("All World Boss levels:\n");
@@ -115,13 +129,18 @@ public class SettingApp extends AbstractApplication {
             tmp = readIntInput(sb.toString(), pvpTargetRange._1, pvpTargetRange._2);
             pvpTarget = tmp == null ? pvpTarget : tmp;
             //
-            UserConfig newCfg = new UserConfig(cfgProfileName, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel, (byte) expeditionPlace, (byte) pvpTarget);
+            UserConfig newCfg = new UserConfig(cfgProfileName, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel, (byte) expeditionPlace, (byte) pvpTarget, (byte) questMode);
 
             sb = new StringBuilder("Your setting:\n");
             if (newCfg.isValidRaidLevel() && UserConfig.isValidDifficultyMode(newCfg.raidMode))
                 sb.append(String.format("  %s mode of raid %s", UserConfig.getDifficultyModeDesc((byte) raidMode, "Raid"), UserConfig.getRaidLevelDesc((byte) raidLevel)));
             else
                 sb.append("  raid has not been set");
+            sb.append('\n');
+            if (UserConfig.isValidDifficultyMode(newCfg.questMode))
+                sb.append(String.format("  %s mode of quest", UserConfig.getDifficultyModeDesc((byte) questMode, "Quest")));
+            else
+                sb.append("  quest has not been set");
             sb.append('\n');
             if (newCfg.isValidWorldBossLevel())
                 sb.append(String.format("  world boss (solo) %s", UserConfig.getWorldBossLevelDesc((byte) worldBossLevel)));
@@ -151,6 +170,7 @@ public class SettingApp extends AbstractApplication {
             if (save) {
                 sb = new StringBuilder();
                 sb.append(String.format("%s=%d\n", UserConfig.raidLevelKey, raidLevel));
+                sb.append(String.format("%s=%d\n", UserConfig.questModeKey, questMode));
                 sb.append(String.format("%s=%d\n", UserConfig.raidModeKey, raidMode));
                 sb.append(String.format("%s=%d\n", UserConfig.worldBossLevelKey, worldBossLevel));
                 sb.append(String.format("%s=%d\n", UserConfig.expeditionPlaceKey, expeditionPlace));

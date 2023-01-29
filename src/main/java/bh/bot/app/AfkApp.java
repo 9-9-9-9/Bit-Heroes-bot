@@ -48,6 +48,7 @@ public class AfkApp extends AbstractApplication {
     private final AtomicLong blockPvpUntil = new AtomicLong(0);
     private final AtomicLong blockWorldBossUntil = new AtomicLong(0);
     private final AtomicLong blockRaidUntil = new AtomicLong(0);
+    private final AtomicLong blockQuestUntil = new AtomicLong(0);
     private final AtomicLong blockGvgAndInvasionAndExpeditionUntil = new AtomicLong(0);
     private final AtomicLong blockTrialsAndGauntletUntil = new AtomicLong(0);
     private final AtomicBoolean isOnPvp = new AtomicBoolean(false);
@@ -63,16 +64,21 @@ public class AfkApp extends AbstractApplication {
             eventList = getAttendablePlaces(getEventListFromArg(args));
 
             boolean doRaid = eventList.contains(AttendablePlaces.raid);
+            boolean doQuest = eventList.contains(AttendablePlaces.quest);
             boolean doWorldBoss = eventList.contains(AttendablePlaces.worldBoss);
             boolean doExpedition = eventList.contains(AttendablePlaces.expedition);
             boolean doPVP = eventList.contains(AttendablePlaces.pvp);
-            if (doRaid || doWorldBoss || doExpedition || doPVP) {
+            if (doRaid || doWorldBoss || doExpedition || doPVP || doQuest) {
                 userConfig = getPredefinedUserConfigFromProfileName("You want to do Raid/World Boss (Solo)/Expedition/PVP so you have to specific profile name first!\nSelect an existing profile:");
 
                 try {
                     if (doRaid) {
                         info(ColorizeUtil.formatInfo, "You have selected %s mode of %s", userConfig.getRaidModeDesc(),
                                 userConfig.getRaidLevelDesc());
+                    }
+
+                    if (doQuest) {
+                        info(ColorizeUtil.formatInfo, "You have selected %s mode", userConfig.getQuestModeDesc());
                     }
 
                     if (doWorldBoss) {
@@ -113,6 +119,7 @@ public class AfkApp extends AbstractApplication {
                         eventList.contains(AttendablePlaces.pvp), //
                         eventList.contains(AttendablePlaces.worldBoss), //
                         eventList.contains(AttendablePlaces.raid), //
+                        eventList.contains(AttendablePlaces.quest), //
                         eventList.contains(AttendablePlaces.gvg), //
                         eventList.contains(AttendablePlaces.invasion), //
                         eventList.contains(AttendablePlaces.expedition), //
@@ -130,6 +137,7 @@ public class AfkApp extends AbstractApplication {
                                 .closeEnterGameNewsDialog() //
                                 .persuade() //
                                 .detectChatboxDirectMessage() //
+                                .preventLeaveDungeon() //
                                 .build() //
                 ), //
                 () -> doCheckGameScreenOffset(masterSwitch) //
@@ -142,6 +150,7 @@ public class AfkApp extends AbstractApplication {
                         boolean doPvp, //
                         boolean doWorldBoss, //
                         boolean doRaid, //
+                        boolean doQuest, //
                         boolean doGvg, //
                         boolean doInvasion, //
                         boolean doExpedition, //
@@ -149,6 +158,7 @@ public class AfkApp extends AbstractApplication {
                         boolean doGauntlet //
     ) {
         try {
+            
             info(ColorizeUtil.formatInfo, "\n\nStarting AFK");
             boolean isUnknownGvgOrInvasionOrExpedition = (doGvg && doInvasion) || (doGvg && doExpedition)
                     || (doInvasion && doExpedition);
@@ -156,6 +166,10 @@ public class AfkApp extends AbstractApplication {
             int continuousNotFound = 0;
             final Point coordinateHideMouse = new Point(0, 0);
             final ArrayList<Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>>> taskList = new ArrayList<>();
+            // Add Questing as first task
+            if (doQuest)
+                taskList.add(new Tuple3<>(AttendablePlaces.quest, blockQuestUntil, QuestApp.getPredefinedImageActions()));
+
             NextAction naBtnFightPvp = null;
             if (doPvp) {
                 List<AbstractDoFarmingApp.NextAction> pvpPia = PvpApp.getPredefinedImageActions();
@@ -206,6 +220,7 @@ public class AfkApp extends AbstractApplication {
             }
 
             ArrayList<AbstractDoFarmingApp.NextAction> outOfTurnNextActionList = new ArrayList<>();
+            addOutOfTurnActionsToList(outOfTurnNextActionList, QuestApp.getPredefinedImageActions());
             addOutOfTurnActionsToList(outOfTurnNextActionList, PvpApp.getPredefinedImageActions());
             addOutOfTurnActionsToList(outOfTurnNextActionList, WorldBossApp.getPredefinedImageActions());
             addOutOfTurnActionsToList(outOfTurnNextActionList, RaidApp.getPredefinedImageActions());
@@ -226,11 +241,14 @@ public class AfkApp extends AbstractApplication {
 
             final Supplier<Boolean> isWorldBossBlocked = () -> !isNotBlocked(blockWorldBossUntil);
             final Supplier<Boolean> isRaidBlocked = () -> !isNotBlocked(blockRaidUntil);
+            final Supplier<Boolean> isQuestBlocked = () -> !isNotBlocked(blockQuestUntil);
 
             Main.warningSupport();
 
             if (doRaid)
                 info(ColorizeUtil.formatInfo, "Raid: %s of %s", userConfig.getRaidModeDesc(), userConfig.getRaidLevelDesc());
+            if (doQuest)
+                info(ColorizeUtil.formatInfo, "Quest: %s", userConfig.getQuestModeDesc());
             if (doWorldBoss)
                 info(ColorizeUtil.formatInfo, "World Boss: %s", userConfig.getWorldBossLevelDesc());
             if (doExpedition)
@@ -320,6 +338,13 @@ public class AfkApp extends AbstractApplication {
 
                 if (tryEnterRaid(doRaid, userConfig, isRaidBlocked)) {
                     debug("tryEnterRaid");
+                    continuousNotFound = 0;
+                    moveCursor(coordinateHideMouse);
+                    continue ML;
+                }
+
+                if (tryEnterQuest(doQuest, userConfig, isQuestBlocked, this.gameScreenInteractor)) {
+                    debug("tryEnterQuest");
                     continuousNotFound = 0;
                     moveCursor(coordinateHideMouse);
                     continue ML;
@@ -461,6 +486,8 @@ public class AfkApp extends AbstractApplication {
             x = blockWorldBossUntil;
         else if (attendablePlace == AttendablePlaces.raid)
             x = blockRaidUntil;
+        else if (attendablePlace == AttendablePlaces.quest)
+            x = blockQuestUntil;
         else if (attendablePlace == AttendablePlaces.gvg || attendablePlace == AttendablePlaces.invasion
                 || attendablePlace == AttendablePlaces.expedition)
             x = blockGvgAndInvasionAndExpeditionUntil;
@@ -480,6 +507,7 @@ public class AfkApp extends AbstractApplication {
                 AttendablePlaces.gvg, //
                 AttendablePlaces.gauntlet, //
 
+                AttendablePlaces.quest, //
                 AttendablePlaces.pvp, //
                 AttendablePlaces.worldBoss, //
                 AttendablePlaces.raid //
@@ -502,12 +530,15 @@ public class AfkApp extends AbstractApplication {
             eventList.add(AttendablePlaces.worldBoss);
         if (argumentInfo.eRaid || afkBatch.doRaid)
             eventList.add(AttendablePlaces.raid);
+        if (argumentInfo.eQuest || afkBatch.doQuest)
+            eventList.add(AttendablePlaces.quest);
         //
         if (eventList.size() == 0) {
             final List<MenuItem> menuItems = Stream.of(
                     MenuItem.from(AttendablePlaces.pvp),
                     MenuItem.from(AttendablePlaces.worldBoss),
                     MenuItem.from(AttendablePlaces.raid),
+                    MenuItem.from(AttendablePlaces.quest),
                     MenuItem.from("GVG/Expedition/Invasion", AttendablePlaces.gvg, AttendablePlaces.expedition, AttendablePlaces.invasion),
                     MenuItem.from("Trials/Gauntlet", AttendablePlaces.trials, AttendablePlaces.gauntlet),
                     MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid),
@@ -590,6 +621,7 @@ public class AfkApp extends AbstractApplication {
     private static final char codeWorldBoss1 = 'B';
     private static final char codeWorldBoss2 = 'W';
     private static final char codeRaid = 'R';
+    private static final char codeQuest = 'Q';
     private static final char codeInvasion = 'I';
     private static final char codeExpedition = 'E';
     private static final char codeGVG = 'V';
@@ -600,12 +632,13 @@ public class AfkApp extends AbstractApplication {
     private static final char codeComboTrialsGauntlet = '3';
     private static final char codeComboAll = 'A';
 
-    private static final String shortDescArg = String.format("%s (PVP), %s (World Boss), %s (Raid), %s (Invasion), %s (Expedition), %s (GVG), %s (Gauntlet), %s (Trials), %s (PVP/World Boss/Raid), %s (Invasion/GVG/Expedition), %s (Trials/Gauntlet), %s (All)", codePvp, codeWorldBoss1, codeRaid, codeInvasion, codeExpedition, codeGVG, codeGauntlet, codeTrials, codeComboPvpWorldBossRaid, codeComboInvasionGvgExpedition, codeComboTrialsGauntlet, codeComboAll);
+    private static final String shortDescArg = String.format("%s (PVP), %s (World Boss), %s (Raid), %s (Quest), %s (Invasion), %s (Expedition), %s (GVG), %s (Gauntlet), %s (Trials), %s (PVP/World Boss/Raid), %s (Invasion/GVG/Expedition), %s (Trials/Gauntlet), %s (All)", codePvp, codeWorldBoss1, codeRaid, codeQuest, codeInvasion, codeExpedition, codeGVG, codeGauntlet, codeTrials, codeComboPvpWorldBossRaid, codeComboInvasionGvgExpedition, codeComboTrialsGauntlet, codeComboAll);
 
     private static class AfkBatch {
         public boolean doPvp;
         public boolean doWorldBoss;
         public boolean doRaid;
+        public boolean doQuest;
         public boolean doInvasion;
         public boolean doExpedition;
         public boolean doGvg;
@@ -622,6 +655,7 @@ public class AfkApp extends AbstractApplication {
                     result.doPvp = true;
                     result.doWorldBoss = true;
                     result.doRaid = true;
+                    result.doQuest = true;
                     result.doInvasion = true;
                     result.doExpedition = true;
                     result.doGvg = true;
@@ -644,6 +678,8 @@ public class AfkApp extends AbstractApplication {
                     result.doWorldBoss = true;
                 } else if (c == codeRaid) {
                     result.doRaid = true;
+                } else if (c == codeQuest) {
+                    result.doQuest = true;
                 } else if (c == codeInvasion) {
                     result.doInvasion = true;
                 } else if (c == codeGVG) {

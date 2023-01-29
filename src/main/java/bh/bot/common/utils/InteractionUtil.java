@@ -6,12 +6,14 @@ import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.images.BwMatrixMeta;
+import bh.bot.common.types.images.BwMatrixMeta.Metas;
 import bh.bot.common.types.tuples.Tuple4;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.optionalDebug;
@@ -226,6 +228,101 @@ public class InteractionUtil {
 									go = false;
 									p = new Point(scanX + x, scanY + y);
 									optionalDebug(debug, "findAttendablePlace result %d, %d", p.x, p.y);
+								}
+							}
+						}
+
+						if (!go)
+							return p;
+						//
+
+					} finally {
+						freeMem(sc);
+					}
+				}
+				return null;
+			}
+
+			public ArrayList<Point> findByScanScreen(BwMatrixMeta im, int minX, int maxX, int stepY, int firstY) {
+				int maxScreenWidth = 800;
+				int maxScreenHeight = 520;
+				ArrayList<Point> points = new ArrayList<>();
+				Point located = null;
+				int currentX = minX;
+				int currentMaxX = maxX;
+				int step = maxX - minX;
+				while ( currentMaxX < maxScreenWidth) {
+					int loops = (int) Math.floor((maxScreenHeight - firstY) / stepY);
+					located = findByScanColumn(im, currentX, currentMaxX, stepY, firstY, loops);
+					currentX += step;
+					currentMaxX += step;
+					if (located != null) {
+						points.add(located);
+						located = null;
+					}
+				}
+				return points;
+			}
+
+			public Point findByScanColumn(BwMatrixMeta im, int minX, int maxX, int stepY, int firstY, int numberOfScans) {
+				minX += Configuration.gameScreenOffset.X.get();
+				maxX += Configuration.gameScreenOffset.X.get();
+				firstY += Configuration.gameScreenOffset.Y.get();
+				
+				final boolean debug = false;
+
+				final int positionTolerant = Math.abs(Math.min(Configuration.Tolerant.position, Math.abs(stepY)));
+				final int scanWidth = maxX - minX + 1 + positionTolerant * 2;
+				final int scanHeight = Math.abs(stepY) + positionTolerant * 2;
+				final int scanX = Math.max(0, minX - positionTolerant);
+				final int numberOfColumns = Math.min(numberOfScans, 5);
+				for (int i = 0; i < numberOfColumns; i++) {
+					final int scanY = Math.max(0, firstY + stepY * i - positionTolerant);
+					BufferedImage sc = captureScreen(scanX, scanY, scanWidth, scanHeight);
+					try {
+						instance.saveDebugImage(sc, String.format("scanColumn_%d_%s_", i, im.getImageNameCode()));
+						if (im.throwIfNotAvailable())
+							continue;
+						//
+						boolean go = true;
+						Point p = new Point();
+						final int blackPixelRgb = im.getBlackPixelRgb();
+						final ImageUtil.DynamicRgb blackPixelDRgb = im.getBlackPixelDRgb();
+						for (int y = sc.getHeight() - im.getHeight() - 1; y >= 0 && go; y--) {
+							for (int x = sc.getWidth() - im.getWidth() - 1; x >= 0 && go; x--) {
+								boolean allGood = true;
+
+								for (int[] px : im.getBlackPixels()) {
+									int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
+									if (!ImageUtil.areColorsSimilar(//
+											blackPixelDRgb, //
+											srcRgb, //
+											Configuration.Tolerant.color,
+											im.getOriginalPixelPart(px[0], px[1]))) {
+										allGood = false;
+										optionalDebug(debug, "scanColumn first match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
+										break;
+									}
+								}
+
+								if (allGood) {
+									for (int[] px : im.getNonBlackPixels()) {
+										int srcRgb = sc.getRGB(x + px[0], y + px[1]) & 0xFFFFFF;
+										if (ImageUtil.areColorsSimilar(//
+												blackPixelRgb, //
+												srcRgb, //
+												Configuration.Tolerant.color)) {
+											allGood = false;
+											optionalDebug(debug, "scanColumn second match failed at %d,%d (%d,%d)", x + px[0], y + px[1], px[0], px[1]);
+											break;
+										}
+									}
+								}
+
+								if (allGood) {
+									go = false;
+									p = new Point(scanX + x, scanY + y);
+									optionalDebug(debug, "scanColumn result %d, %d", p.x, p.y);
 								}
 							}
 						}
