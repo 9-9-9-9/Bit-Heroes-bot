@@ -2,6 +2,7 @@ package bh.bot.common.types.flags;
 
 import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
+import bh.bot.app.ChangeCharacterApp;
 import bh.bot.app.FishingApp;
 import bh.bot.app.ReRunApp;
 import bh.bot.app.farming.AbstractDoFarmingApp;
@@ -41,6 +42,7 @@ public class FlagShutdownAfterExit extends FlagPattern.NonParamFlag {
                 || instance instanceof FishingApp
                 || instance instanceof AbstractDoFarmingApp
                 || instance instanceof AfkApp
+                || instance instanceof ChangeCharacterApp
                 || instance instanceof WorldBossTeamApp;
     }
 
