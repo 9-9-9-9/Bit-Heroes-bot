@@ -224,6 +224,8 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetDialogAreYouSureWantToExit();
 
+	public abstract Offset getOffsetDialogLeaveThisDungeon();
+
 	public abstract Offset getOffsetDialogNews();
 
 	public abstract Offset getOffsetButtonPersuade();
@@ -639,6 +641,11 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetDialogAreYouSureWantToExit() {
+			return new Offset(289, 231);
+		}
+
+		@Override
+		public Offset getOffsetDialogLeaveThisDungeon() {
 			return new Offset(289, 231);
 		}
 

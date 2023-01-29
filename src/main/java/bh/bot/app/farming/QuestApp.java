@@ -10,7 +10,6 @@ import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.images.BwMatrixMeta;
 import bh.bot.common.utils.ColorizeUtil;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
