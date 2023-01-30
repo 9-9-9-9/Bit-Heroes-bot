@@ -290,7 +290,7 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetLabelCharacterConfirm() {
-			return new Offset(350, 400);
+			return new Offset(350, 425);
 		}
 
 		@Override
@@ -530,7 +530,7 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetButtonEnergyDungeon() {
-			return new Offset(275, 400);
+			return new Offset(275, 425);
 		}
 		@Override
 		public Offset getOffsetButtonHeroicEnergyDungeon() {
