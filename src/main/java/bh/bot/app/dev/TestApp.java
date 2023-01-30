@@ -41,6 +41,9 @@ public class TestApp extends AbstractApplication {
 		adjustScreenOffset();
 
 		//
+		long start = System.currentTimeMillis();
+		findAttendablePlaces();
+		info("Elapsed time %d", System.currentTimeMillis() - start);
 	}
 
 	private static void testParseTime() {
@@ -110,7 +113,8 @@ public class TestApp extends AbstractApplication {
 				AttendablePlaces.gauntlet, //
 				AttendablePlaces.pvp, //
 				AttendablePlaces.worldBoss, //
-				AttendablePlaces.raid //
+				AttendablePlaces.raid, //
+				AttendablePlaces.quest //
 		);
 		allAttendablePlaces.forEach(ap -> {
 			Point point = this.gameScreenInteractor.findAttendablePlace(ap);
