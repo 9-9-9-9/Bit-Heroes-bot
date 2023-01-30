@@ -290,7 +290,7 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetLabelCharacterConfirm() {
-			return new Offset(350, 400);
+			return new Offset(350, 425);
 		}
 
 		@Override
