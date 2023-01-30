@@ -365,7 +365,7 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Tuple4<Integer, Integer, Integer, Integer> getBackwardScanLeftSideAttendablePlaces() {
-			return new Tuple4<>(14, 0, 96, 59);
+			return new Tuple4<>(14, 72, 72, 59);
 		}
 
 		@Override
