@@ -627,7 +627,7 @@ public class BwMatrixMeta {
         Metas.Character.Buttons.characterSelect = BwMatrixMeta.from(//
                 "buttons/character.select2?",
                 Configuration.screenResolutionProfile.getOffsetLabelCharacterSelect(), //
-                0xFFFFFF
+                0x000000
         );
         Metas.Character.Labels.heroes = BwMatrixMeta.from(//
                 "labels/character.heroes2?",
