@@ -4,13 +4,11 @@ import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
-import java.awt.Point;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
-import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.annotations.RequireSingleInstance;
