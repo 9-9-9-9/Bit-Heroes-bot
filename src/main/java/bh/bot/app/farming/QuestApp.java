@@ -41,15 +41,14 @@ public class QuestApp extends AbstractDoFarmingApp {
                     "You have selected %s order",
                     userConfig.getQuestOrderDesc()
             );
-            QuestOrder order = new QuestOrder();
             for (int i = 0; i < userConfig.questOrder.length(); i++) {
                 char charKey = userConfig.questOrder.charAt(i);
-                if (charKey == order.Dungeons || charKey == order.FilledStars || charKey == order.EmptyStars ||charKey == order.Flags) {
+                if (charKey == QuestOrder.Dungeons || charKey == QuestOrder.FilledStars || charKey == QuestOrder.EmptyStars ||charKey == QuestOrder.Flags) {
                     questStrings += charKey;
                 }
             }
             if (questStrings == "") {
-                questStrings = order.defaultOrder;
+                questStrings = QuestOrder.defaultOrder;
             }
             return true;
         } catch (InvalidDataException ex2) {

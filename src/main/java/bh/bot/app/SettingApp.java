@@ -3,6 +3,7 @@ package bh.bot.app;
 import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.exceptions.InvalidDataException;
+import bh.bot.common.types.QuestOrder;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.tuples.Tuple2;
@@ -76,7 +77,7 @@ public class SettingApp extends AbstractApplication {
                 raidLevel = 0;
                 raidMode = 0;
                 questMode = 0;
-                questOrder = "";
+                questOrder = QuestOrder.defaultOrder;
                 worldBossLevel = 0;
                 expeditionPlace = 0;
                 pvpTarget = 0;
