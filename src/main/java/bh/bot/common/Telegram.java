@@ -20,7 +20,7 @@ public class Telegram {
     //
     private static final String channelId = Configuration.getFromConfigOrEnv("telegram.channel-id", "TELEGRAM_BH_CHANNEL");
     //
-    private static final String _instanceId = Configuration.read("telegram.instance-id");
+    private static final String _instanceId = Configuration.getFromConfigOrEnv("telegram.instance-id", "TELEGRAM_INSTANCE_ID");
     private static final String instanceId = StringUtil.isBlank(_instanceId) ? "" : String.format(":%s", _instanceId.trim());
     //
     private static boolean isDisabled = isBlank(token) || isBlank(channelId);
