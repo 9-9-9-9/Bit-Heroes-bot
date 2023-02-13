@@ -84,8 +84,7 @@ public class ChangeCharacterApp extends AbstractApplication {
                     loopCount += 1;
                     if (loopCount > 10) {
                         debug("We probably loaded the character, or already on it, so breaking out of the loop!");
-                        InteractionUtil.Keyboard.sendEscape();
-                        InteractionUtil.Keyboard.sendEscape();
+                        spamEscape(2);
                         break;
                     }
                 }
@@ -95,6 +94,9 @@ public class ChangeCharacterApp extends AbstractApplication {
                         if (clickImage(BwMatrixMeta.Metas.Character.Dialogs.loading)) {
                             debug("Character Loading!");
                             characterLoaded = true;
+                            // This is to work around daily rewards or other alerts that may come up
+                            sleep(30000);
+                            spamEscape(1);
                             break;
                         }
                     } else {
