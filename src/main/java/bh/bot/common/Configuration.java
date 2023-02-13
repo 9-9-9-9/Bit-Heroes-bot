@@ -174,6 +174,8 @@ public class Configuration {
 
         byte raidLevel, raidMode, questMode, worldBossLevel, expeditionPlace, pvpTarget;
 
+        String questOrder;
+
         info("Going to load configuration from %s", fileCfg.getName());
 
         Properties properties = new Properties();
@@ -217,7 +219,13 @@ public class Configuration {
             throw new InvalidDataException("Value of key '%s' is not a number", UserConfig.pvpTargetKey);
         }
 
-        return new Tuple2<>(true, new UserConfig(cfgProfileName, raidLevel, raidMode, worldBossLevel, expeditionPlace, pvpTarget, questMode));
+        try {
+            questOrder = readKey(properties, UserConfig.pvpTargetKey, "1", "Not specified");
+        } catch (NumberFormatException ex) {
+            throw new InvalidDataException("Value of key '%s' is not a number", UserConfig.pvpTargetKey);
+        }
+
+        return new Tuple2<>(true, new UserConfig(cfgProfileName, raidLevel, raidMode, worldBossLevel, expeditionPlace, pvpTarget, questMode, questOrder));
     }
 
     @SuppressWarnings("SameParameterValue")

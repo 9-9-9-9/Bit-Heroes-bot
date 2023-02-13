@@ -30,10 +30,12 @@ public class SettingApp extends AbstractApplication {
                 throw new InvalidDataException("%s is a directory", fileName);
             Tuple2<Boolean, UserConfig> resultLoadUserConfig = Configuration.loadUserConfig(cfgProfileName);
             int raidLevel, raidMode, worldBossLevel, expeditionPlace, pvpTarget, questMode;
+            String questOrder;
             if (resultLoadUserConfig._1) {
                 raidLevel = resultLoadUserConfig._2.raidLevel;
                 raidMode = resultLoadUserConfig._2.raidMode;
                 questMode = resultLoadUserConfig._2.questMode;
+                questOrder = resultLoadUserConfig._2.questOrder;
                 worldBossLevel = resultLoadUserConfig._2.worldBossLevel;
                 expeditionPlace = resultLoadUserConfig._2.expeditionPlace;
                 pvpTarget = resultLoadUserConfig._2.pvpTarget;
@@ -74,6 +76,7 @@ public class SettingApp extends AbstractApplication {
                 raidLevel = 0;
                 raidMode = 0;
                 questMode = 0;
+                questOrder = "";
                 worldBossLevel = 0;
                 expeditionPlace = 0;
                 pvpTarget = 0;
@@ -129,7 +132,7 @@ public class SettingApp extends AbstractApplication {
             tmp = readIntInput(sb.toString(), pvpTargetRange._1, pvpTargetRange._2);
             pvpTarget = tmp == null ? pvpTarget : tmp;
             //
-            UserConfig newCfg = new UserConfig(cfgProfileName, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel, (byte) expeditionPlace, (byte) pvpTarget, (byte) questMode);
+            UserConfig newCfg = new UserConfig(cfgProfileName, (byte) raidLevel, (byte) raidMode, (byte) worldBossLevel, (byte) expeditionPlace, (byte) pvpTarget, (byte) questMode, (String) questOrder);
 
             sb = new StringBuilder("Your setting:\n");
             if (newCfg.isValidRaidLevel() && UserConfig.isValidDifficultyMode(newCfg.raidMode))
@@ -141,6 +144,11 @@ public class SettingApp extends AbstractApplication {
                 sb.append(String.format("  %s mode of quest", UserConfig.getDifficultyModeDesc((byte) questMode, "Quest")));
             else
                 sb.append("  quest has not been set");
+            sb.append('\n');
+            if (newCfg.questOrder != "")
+                sb.append(String.format("  %s order of quest", "Chosen Order"));
+            else
+                sb.append("  quest order has not been set, will use default");
             sb.append('\n');
             if (newCfg.isValidWorldBossLevel())
                 sb.append(String.format("  world boss (solo) %s", UserConfig.getWorldBossLevelDesc((byte) worldBossLevel)));
@@ -171,6 +179,7 @@ public class SettingApp extends AbstractApplication {
                 sb = new StringBuilder();
                 sb.append(String.format("%s=%d\n", UserConfig.raidLevelKey, raidLevel));
                 sb.append(String.format("%s=%d\n", UserConfig.questModeKey, questMode));
+                sb.append(String.format("%s=%s\n", UserConfig.questOrderKey, questOrder));
                 sb.append(String.format("%s=%d\n", UserConfig.raidModeKey, raidMode));
                 sb.append(String.format("%s=%d\n", UserConfig.worldBossLevelKey, worldBossLevel));
                 sb.append(String.format("%s=%d\n", UserConfig.expeditionPlaceKey, expeditionPlace));
@@ -209,7 +218,7 @@ public class SettingApp extends AbstractApplication {
 
     @Override
     protected String getDescription() {
-        return "Do setting raid level, raid mode, world boss (solo) level, expedition door to enter,...";
+        return "Do setting raid level, raid mode, quest mode, quest order, world boss (solo) level, expedition door to enter,...";
     }
 
     @Override

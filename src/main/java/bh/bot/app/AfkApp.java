@@ -249,6 +249,7 @@ public class AfkApp extends AbstractApplication {
                 info(ColorizeUtil.formatInfo, "Raid: %s of %s", userConfig.getRaidModeDesc(), userConfig.getRaidLevelDesc());
             if (doQuest)
                 info(ColorizeUtil.formatInfo, "Quest: %s", userConfig.getQuestModeDesc());
+                info(ColorizeUtil.formatInfo, "Quest Order: %s", userConfig.getQuestOrderDesc());
             if (doWorldBoss)
                 info(ColorizeUtil.formatInfo, "World Boss: %s", userConfig.getWorldBossLevelDesc());
             if (doExpedition)

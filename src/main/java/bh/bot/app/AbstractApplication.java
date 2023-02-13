@@ -1347,7 +1347,7 @@ public abstract class AbstractApplication {
 	}
 
 	protected boolean tryEnterQuest(boolean doQuest, UserConfig userConfig, Supplier<Boolean> isBlocked,
-			InteractionUtil.Screen.Game game) {
+			InteractionUtil.Screen.Game game, String questOrder) {
 		Point coord = findImage(BwMatrixMeta.Metas.Dungeons.Labels.zones);
 		if (coord == null)
 			return false;

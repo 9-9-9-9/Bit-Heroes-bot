@@ -7,6 +7,7 @@ public class UserConfig {
     public static final String raidLevelKey = "ig.user.raid.level";
     public static final String raidModeKey = "ig.user.raid.mode";
     public static final String questModeKey = "ig.user.quest.mode";
+    public static final String questOrderKey = "ig.user.quest.order";
     public static final String worldBossLevelKey = "ig.user.world-boss.level";
     public static final String expeditionPlaceKey = "ig.user.expedition.place";
     public static final String pvpTargetKey = "ig.user.pvp.target";
@@ -25,6 +26,7 @@ public class UserConfig {
     private static final byte pvpTargetMax = 4;
 
     public final String cfgProfileName;
+    public final String questOrder;
     public final byte raidLevel;
     public final byte raidMode;
     public final byte questMode;
@@ -32,13 +34,14 @@ public class UserConfig {
     public final byte expeditionPlace;
     public final byte pvpTarget;
 
-    public UserConfig(String cfgProfileName, byte raidLevel, byte raidMode, byte worldBossLevel, byte expeditionPlace, byte pvpTarget, byte questMode) {
+    public UserConfig(String cfgProfileName, byte raidLevel, byte raidMode, byte worldBossLevel, byte expeditionPlace, byte pvpTarget, byte questMode, String questOrder) {
         this.cfgProfileName = cfgProfileName;
         this.raidLevel = raidLevel;
         this.raidMode = raidMode;
         this.worldBossLevel = worldBossLevel;
         this.expeditionPlace = expeditionPlace;
         this.questMode = questMode;
+        this.questOrder = questOrder;
         this.pvpTarget = (byte)Math.max(pvpTargetMin, pvpTarget);
     }
 
@@ -77,6 +80,10 @@ public class UserConfig {
 
     public String getQuestModeDesc() {
         return getDifficultyModeDesc(questMode, "Quest");
+    }
+
+    public String getQuestOrderDesc() {
+        return "";
     }
 
     public boolean isValidRaidLevel() {
