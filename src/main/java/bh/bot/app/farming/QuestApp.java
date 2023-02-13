@@ -4,7 +4,6 @@ import bh.bot.Main;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
-import bh.bot.common.types.QuestOrder;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.annotations.RequireSingleInstance;
@@ -24,7 +23,6 @@ import static bh.bot.common.Log.info;
 public class QuestApp extends AbstractDoFarmingApp {
     private final Supplier<Boolean> isQuestBlocked = () -> false;
     private UserConfig userConfig;
-    private String questStrings = "";
 
     @Override
     protected boolean readMoreInput() throws IOException {
@@ -41,15 +39,6 @@ public class QuestApp extends AbstractDoFarmingApp {
                     "You have selected %s order",
                     userConfig.getQuestOrderDesc()
             );
-            for (int i = 0; i < userConfig.questOrder.length(); i++) {
-                char charKey = userConfig.questOrder.charAt(i);
-                if (charKey == QuestOrder.Dungeons || charKey == QuestOrder.FilledStars || charKey == QuestOrder.EmptyStars ||charKey == QuestOrder.Flags) {
-                    questStrings += charKey;
-                }
-            }
-            if (questStrings == "") {
-                questStrings = QuestOrder.defaultOrder;
-            }
             return true;
         } catch (InvalidDataException ex2) {
             err(ex2.getMessage());
@@ -71,7 +60,7 @@ public class QuestApp extends AbstractDoFarmingApp {
 
     @Override
     protected boolean doCustomAction() {
-        return tryEnterQuest(true, userConfig, isQuestBlocked, this.gameScreenInteractor, this.questStrings);
+        return tryEnterQuest(true, userConfig, isQuestBlocked, this.gameScreenInteractor);
     }
 
     public static List<NextAction> getPredefinedImageActions() {

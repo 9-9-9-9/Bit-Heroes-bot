@@ -5,6 +5,7 @@ import bh.bot.common.Configuration;
 import bh.bot.common.Log;
 import bh.bot.common.OS;
 import bh.bot.common.Telegram;
+import bh.bot.common.exceptions.FailedQuestFindException;
 import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.extensions.Rad;
@@ -1347,7 +1348,7 @@ public abstract class AbstractApplication {
 	}
 
 	protected boolean tryEnterQuest(boolean doQuest, UserConfig userConfig, Supplier<Boolean> isBlocked,
-			InteractionUtil.Screen.Game game, String questOrder) {
+			InteractionUtil.Screen.Game game) {
 		Point coord = findImage(BwMatrixMeta.Metas.Dungeons.Labels.zones);
 		if (coord == null)
 			return false;
@@ -1358,65 +1359,56 @@ public abstract class AbstractApplication {
 		}
 		BwMatrixMeta.Metas.Dungeons.Labels.zones.setLastMatchPoint(coord.x, coord.y);
 		debug("Trying to detect a valid level");
-		boolean triedBossCoords = false;
-		boolean triedStarCoords = false;
-		boolean triedEmptyStarCoords = false;
-		boolean triedNextLevelCoords = false;
 		// First check for the Boss level
 		// Second check for any place with a star
 		// Third check for any place without a star
 		// Fourth check for any level
 		// Todo: Scan in a few areas
-		boolean foundBossCoords = false;
-		boolean foundStarCoords = false;
-		boolean foundEmptyStarCoords = false;
-		boolean foundNextLevelCoords = false;
+		int attempts = 0;
+		final int MAX_ATTEMPTS = 200;
 
 		ArrayList<Point> levelCoords = null;
 		boolean enteredLevel = false;
-
-		while (!enteredLevel && (!triedBossCoords || !triedStarCoords || !triedEmptyStarCoords || !triedNextLevelCoords)) {
-			if (!triedBossCoords) {
-				debug("Looking for boss level");
-				ArrayList<Point> searchCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.bossLevel, 63, 96, 36, 115);
-				try { 
-					foundBossCoords = searchCoords.get(0) != null;
-				} catch (IndexOutOfBoundsException e) {}
-				if (foundBossCoords) {
-					levelCoords = searchCoords;
-				}
-				triedBossCoords = true;
-			} else if (!triedStarCoords) {
-				debug("Looking for stars for a level");
-				ArrayList<Point> searchCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.star, 63, 96, 36, 115);
-				try { 
-					foundStarCoords = searchCoords.get(0) != null;
-				} catch (IndexOutOfBoundsException e) {}
-				if (foundStarCoords) {
-					levelCoords = searchCoords;
-				}
-				triedStarCoords = true;
-			} else if (!triedEmptyStarCoords) {
-				debug("Looking for empty stars for a level");
-				ArrayList<Point> searchCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.emptyStar, 63, 96, 36, 115);
-				try { 
-					foundEmptyStarCoords = searchCoords.get(0) != null;
-				} catch (IndexOutOfBoundsException e) {}
-				if (foundEmptyStarCoords) {
-					levelCoords = searchCoords;
-				}
-				triedEmptyStarCoords = true;
-			} else if (!triedNextLevelCoords) {
-				debug("Looking for next level");
-				ArrayList<Point> searchCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.questLevel, 63, 96, 36, 115);
-				try { 
-					foundNextLevelCoords = searchCoords.get(0) != null;
-				} catch (IndexOutOfBoundsException e) {}
-				if (foundNextLevelCoords) {
-					levelCoords = searchCoords;
-				}
-				triedNextLevelCoords = true;
+		String questOrder = "";
+		for (int i = 0; i < userConfig.questOrder.length(); i++) {
+			char charKey = userConfig.questOrder.charAt(i);
+			if (charKey == QuestOrder.Dungeons || charKey == QuestOrder.FilledStars || charKey == QuestOrder.EmptyStars ||charKey == QuestOrder.Flags) {
+					questOrder += charKey;
 			}
+		}
+		if (questOrder == "") {
+			questOrder = QuestOrder.defaultOrder;
+		}
+
+		while (!enteredLevel) {
+			for (int i = 0; i < questOrder.length(); i++) {
+				char questKey = questOrder.charAt(i);
+				if (questKey == QuestOrder.Dungeons) { 
+					debug("Looking for boss level");
+					ArrayList<Point> searchCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.bossLevel, 63, 96, 36, 115);
+					if (searchCoords.size() != 0) {
+						levelCoords = searchCoords;
+					}
+				} else if (questKey == QuestOrder.FilledStars) {
+					debug("Looking for stars for a level");
+					ArrayList<Point> searchCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.star, 63, 96, 36, 115);
+					if (searchCoords.size() != 0) {
+						levelCoords = searchCoords;
+					}
+				} else if (questKey == QuestOrder.EmptyStars) {
+					debug("Looking for empty stars for a level");
+					ArrayList<Point> searchCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.emptyStar, 63, 96, 36, 115);
+					if (searchCoords.size() != 0) {
+						levelCoords = searchCoords;
+					}
+				} else if (questKey == QuestOrder.Flags) {
+					debug("Looking for next level");
+					ArrayList<Point> searchCoords = game.findByScanScreen(BwMatrixMeta.Metas.Dungeons.Buttons.questLevel, 63, 96, 36, 115);
+					if (searchCoords.size() != 0) {
+						levelCoords = searchCoords;
+					}
+				}
+			 };
 			if (levelCoords == null) {
 				debug("No levels found");
 				continue;
@@ -1434,6 +1426,10 @@ public abstract class AbstractApplication {
 					enteredLevel = true;
 					break;
 				}
+			}
+			attempts++;
+			if (attempts >= MAX_ATTEMPTS) {
+				throw new FailedQuestFindException("Can't find a level. Too many attempts.");
 			}
 		}
 		
