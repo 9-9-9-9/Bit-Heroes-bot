@@ -4,13 +4,11 @@ import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
-import java.awt.Point;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import bh.bot.Main;
 import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
-import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.annotations.RequireSingleInstance;
@@ -84,8 +82,7 @@ public class ChangeCharacterApp extends AbstractApplication {
                     loopCount += 1;
                     if (loopCount > 10) {
                         debug("We probably loaded the character, or already on it, so breaking out of the loop!");
-                        InteractionUtil.Keyboard.sendEscape();
-                        InteractionUtil.Keyboard.sendEscape();
+                        spamEscape(2);
                         break;
                     }
                 }
@@ -95,6 +92,9 @@ public class ChangeCharacterApp extends AbstractApplication {
                         if (clickImage(BwMatrixMeta.Metas.Character.Dialogs.loading)) {
                             debug("Character Loading!");
                             characterLoaded = true;
+                            // This is to work around daily rewards or other alerts that may come up
+                            sleep(30000);
+                            spamEscape(1);
                             break;
                         }
                     } else {
