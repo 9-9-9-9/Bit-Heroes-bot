@@ -137,6 +137,7 @@ public class AfkApp extends AbstractApplication {
                                 .closeEnterGameNewsDialog() //
                                 .persuade() //
                                 .detectChatboxDirectMessage() //
+                                .claimDailyRewards() //
                                 .preventLeaveDungeon() //
                                 .build() //
                 ), //

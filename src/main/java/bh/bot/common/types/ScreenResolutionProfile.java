@@ -236,6 +236,8 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetDialogNews();
 
+	public abstract Offset getOffsetDialogDailyRewardsTitle();
+
 	public abstract Offset getOffsetButtonPersuade();
 	
 	public abstract Offset getOffsetButtonBribePersuade();
@@ -825,6 +827,11 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetDialogNews() {
 			return new Offset(356, 77);
+		}
+
+		@Override
+		public Offset getOffsetDialogDailyRewardsTitle() {
+			return new Offset(280, 50);
 		}
 
 		@Override

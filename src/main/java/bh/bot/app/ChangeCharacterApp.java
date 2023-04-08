@@ -55,7 +55,9 @@ public class ChangeCharacterApp extends AbstractApplication {
                                 .clickTalk() //
                                 .clickDisconnect() //
                                 .autoExit() //
+                                .closeEnterGameNewsDialog() //
                                 .detectChatboxDirectMessage() //
+                                .claimDailyRewards() //
                                 .build() //
                 ), //
                 () -> doCheckGameScreenOffset(masterSwitch));
