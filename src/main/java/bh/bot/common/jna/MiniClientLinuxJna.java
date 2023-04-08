@@ -1,8 +1,11 @@
 package bh.bot.common.jna;
 
-import bh.bot.common.exceptions.NotImplementedException;
+import bh.bot.common.types.Offset;
+import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.tuples.Tuple2;
-import com.sun.jna.platform.win32.WinDef.HWND;
+import bh.bot.common.types.tuples.Tuple4;
+
+import com.sun.jna.platform.DesktopWindow;
 
 import java.awt.*;
 import java.util.List;
@@ -12,8 +15,11 @@ import static bh.bot.common.Log.debug;
 
 public class MiniClientLinuxJna extends AbstractLinuxJna {
     @Override
-    public Rectangle getRectangle(HWND hwnd) {
-        throw new NotImplementedException("MiniClientLinuxJna::getRectangle");
+    public Rectangle getRectangle(DesktopWindow desktopWindow) {
+        if (desktopWindow == null) {
+            return null;
+        }
+        return desktopWindow.getLocAndSize();
     }
 
     @Override
@@ -42,5 +48,11 @@ public class MiniClientLinuxJna extends AbstractLinuxJna {
                     "kill", "-9", String.valueOf(pid)
             }).start().waitFor();
         }
+    }
+
+    @Override
+    public Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(DesktopWindow desktopWindow, ScreenResolutionProfile screenResolutionProfile) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'locateGameScreenOffset'");
     }
 }

@@ -20,6 +20,8 @@ import bh.bot.common.types.tuples.Tuple4;
 import bh.bot.common.utils.*;
 import bh.bot.common.utils.ColorizeUtil.Cu;
 import bh.bot.common.utils.InteractionUtil.Keyboard;
+
+import com.sun.jna.platform.DesktopWindow;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT;
@@ -1556,7 +1558,7 @@ public abstract class AbstractApplication {
 		err("Please launch script '%s' and follow instruction", scriptFileName("setting"));
 	}
 
-	private HWND gameWindowHwndByJna = null;
+	private DesktopWindow gameWindowHwndByJna = null;
 
 	protected void doCheckGameScreenOffset(AtomicBoolean masterSwicth) {
 		debug("doCheckGameScreenOffset");

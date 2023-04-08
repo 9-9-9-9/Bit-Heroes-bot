@@ -2,9 +2,8 @@ package bh.bot.common.jna;
 
 import java.awt.Rectangle;
 
+import com.sun.jna.platform.DesktopWindow;
 import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinDef.RECT;
 
 import bh.bot.common.OS;
 import bh.bot.common.exceptions.NotSupportedException;
@@ -19,19 +18,10 @@ public abstract class AbstractWindowsJna extends AbstractJna {
 	}
     
     @Override
-    public Rectangle getRectangle(HWND hwnd) {
-    	if (hwnd == null)
+    public Rectangle getRectangle(DesktopWindow desktopWindow) {
+    	if (desktopWindow == null)
     		return null;
     	
-		final RECT lpRectW = new RECT();
-		if (!user32.GetWindowRect(hwnd, lpRectW))
-			return null;
-
-		return new Rectangle(
-			lpRectW.left, 
-			lpRectW.top, 
-			Math.abs(lpRectW.right - lpRectW.left),
-			Math.abs(lpRectW.bottom - lpRectW.top)
-		);
+		return desktopWindow.getLocAndSize();
     }
 }
