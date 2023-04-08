@@ -31,8 +31,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 	}
 
 	@Override
-	public HWND getGameWindow(Object... args) {
-		HWND hwnd = null;
+	public DesktopWindow getGameWindow(Object... args) {
 		List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
 		for (int i = 0; i < windows.size(); i++) {
 			DesktopWindow w = windows.get(i);
@@ -42,27 +41,25 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 			String windowTitle = w.getTitle();
 			if ("Bit Heroes".equals(windowTitle)) {
 				if ("UnityWndClass".equals(className)) {
-					hwnd = w.getHWND();
+					return w;
 				}
-				break;
 			}
 		}
-		if (hwnd == null) {
-			err("Can not detect game window (Steam)!!!");
-			showErrAskIfBhRunningOrReqAdm();
-			Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
-		}
-		return hwnd;
+		err("Can not detect game window (Steam)!!!");
+		showErrAskIfBhRunningOrReqAdm();
+		Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+		return null;
 	}
 
 	@Override
-	public Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(HWND hwnd,
-			ScreenResolutionProfile screenResolutionProfile) {
+	public Tuple4<Boolean, String, Rectangle, Offset> locateGameScreenOffset(DesktopWindow desktopWindow, ScreenResolutionProfile screenResolutionProfile) {
 		if (!Configuration.isSteamProfile)
 			throw new IllegalArgumentException("Not steam profile");
 
-		if (hwnd == null)
-			hwnd = getGameWindow();
+		if (desktopWindow == null)
+		desktopWindow = getGameWindow();
+
+		HWND hwnd = desktopWindow.getHWND();
 
 		final int ew = screenResolutionProfile.getSupportedGameResolutionWidth();
 		final int eh = screenResolutionProfile.getSupportedGameResolutionHeight();
@@ -82,7 +79,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 		if (cw <= 0 || ch <= 0)
 			return new Tuple4<>(false, "Window has minimized", null, null);
 		
-		Rectangle rect = getRectangle(hwnd);
+		Rectangle rect = desktopWindow.getLocAndSize();
 		if (rect == null) {
 			err(
 					String.format("Unable to GetWindowRect, err code: %d",
@@ -102,7 +99,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 		final int borderTopSize = wh - ch - borderLeftSize;
 		
 		if (ew != cw || eh != ch) {
-			if (!isSupportResizeWindow() || !resizeWindowToSupportedResolution(hwnd, borderLeftSize * 2 + ew, borderTopSize + borderLeftSize + eh)) {
+			if (!isSupportResizeWindow() || !resizeWindowToSupportedResolution(desktopWindow, borderLeftSize * 2 + ew, borderTopSize + borderLeftSize + eh)) {
 				err(
 						String.format("JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d",
 								ew, eh, cw, ch)
@@ -114,7 +111,7 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 
 			Main.showWarningWindowMustClearlyVisible();
 
-			rect = getRectangle(hwnd);
+			rect = desktopWindow.getLocAndSize();
 			if (rect == null) {
 				err(
 						String.format(
@@ -208,9 +205,9 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 	private static final HWND HWND_TOPMOST = new HWND(new Pointer(-1));
 
 	@Override
-	public void setGameWindowOnTop(HWND hwnd) {
+	public void setGameWindowOnTop(DesktopWindow desktopWindow) {
 		try {
-			User32.INSTANCE.SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+			User32.INSTANCE.SetWindowPos(desktopWindow.getHWND(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 		} catch (Exception ex) {
 			dev("Problem while trying to set game window on top");
 			dev(ex);
@@ -218,9 +215,9 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 	}
 	
 	@Override
-	public boolean resizeWindowToSupportedResolution(HWND hwnd, int w, int h) {
+	public boolean resizeWindowToSupportedResolution(DesktopWindow desktopWindow, int w, int h) {
         try {
-    		return User32.INSTANCE.SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, w, h, SWP_NOMOVE);
+    		return User32.INSTANCE.SetWindowPos(desktopWindow.getHWND(), HWND_TOPMOST, 0, 0, w, h, SWP_NOMOVE);
         } catch (Exception ex) {
         	dev("Problem while trying to resize game window");
         	dev(ex);
