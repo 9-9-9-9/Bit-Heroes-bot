@@ -40,7 +40,6 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 					user32.GetClassName(w.getHWND(), textBuffer, textBuffer.length);
 			String className = new String(textBuffer).trim();
 			String windowTitle = w.getTitle();
-			debug("" + windowTitle + " | " + className);
 			if ("Bit Heroes".equals(windowTitle)) {
 				if ("UnityWndClass".equals(className)) {
 					hwnd = w.getHWND();

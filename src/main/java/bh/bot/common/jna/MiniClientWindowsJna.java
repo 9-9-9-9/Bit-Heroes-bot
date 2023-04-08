@@ -14,7 +14,6 @@ import java.awt.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.warn;
 
 public class MiniClientWindowsJna extends AbstractWindowsJna {
@@ -30,14 +29,12 @@ public class MiniClientWindowsJna extends AbstractWindowsJna {
 			user32.GetClassName(w.getHWND(), textBuffer, textBuffer.length);
 			String className = new String(textBuffer).trim();
 			String windowTitle = w.getTitle();
-			debug("" + windowTitle + " | " + className);
 			if ("Bit Heroes".equals(windowTitle)) {
 				if ("Chrome_WidgetWin_1".equals(className)) {
 					success = user32.EnumChildWindows(w.getHWND(), (hWnd, data) -> {
 						char[] innerTextBuffer = new char[1000];
 						user32.GetClassName(hWnd, innerTextBuffer, innerTextBuffer.length);
 						String innerClassName = new String(innerTextBuffer).trim();
-						debug("" + windowTitle + " | " + innerClassName);
 						if ("Chrome_RenderWidgetHostHWND".equals(innerClassName) || "Intermediate D3D Window".equals(innerClassName)) {
 							result.set(hWnd);
 							return true;
