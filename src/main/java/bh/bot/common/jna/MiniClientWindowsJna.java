@@ -27,7 +27,7 @@ public class MiniClientWindowsJna extends AbstractWindowsJna {
 		for (int i = 0; i < windows.size(); i++) {
 			DesktopWindow w = windows.get(i);
 			char[] textBuffer = new char[1000];
-					user32.GetClassName(w.getHWND(), textBuffer, textBuffer.length);
+			user32.GetClassName(w.getHWND(), textBuffer, textBuffer.length);
 			String className = new String(textBuffer).trim();
 			String windowTitle = w.getTitle();
 			debug("" + windowTitle + " | " + className);
