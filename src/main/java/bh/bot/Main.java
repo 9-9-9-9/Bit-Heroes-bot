@@ -391,6 +391,7 @@ public class Main {
 		li.eWorldBoss = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoWorldBoss);
 		li.eRaid = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoRaid);
 		li.eInvasion = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoInvasion);
+		li.eQuest = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoQuest);
 		li.eExpedition = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoExpedition);
 		li.eGvg = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoGvG);
 		li.eTrials = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoTrials);
@@ -513,7 +514,7 @@ public class Main {
 	public static void warningSupport() {
 		try {
 			Rad.pWarn(20,"Only support English interface");
-			Rad.pWarn(50,"Only support screen scale 100%% (original, no scale) otherwise bot will working wrongly");
+			Rad.pWarn(50,"Only support screen scale 100%% (original, no scale) otherwise bot will malfunction");
 		} catch (Throwable t) {
 			// ignore
 		}

@@ -6,6 +6,7 @@ public class Flags {
             new FlagDoGvG(),
             new FlagDoInvasion(),
             new FlagDoExpedition(),
+            new FlagDoQuest(),
             new FlagDoPvp(),
             new FlagDoRaid(),
             new FlagDoTrials(),
