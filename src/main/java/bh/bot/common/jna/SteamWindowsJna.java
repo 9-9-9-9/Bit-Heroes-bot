@@ -3,10 +3,13 @@ package bh.bot.common.jna;
 import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import bh.bot.Main;
 import bh.bot.common.Configuration;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.DesktopWindow;
+import com.sun.jna.platform.WindowUtils;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.RECT;
@@ -29,11 +32,21 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 
 	@Override
 	public HWND getGameWindow(Object... args) {
-		HWND hwnd = user32.FindWindow("UnityWndClass", "Bit Heroes");
-		if (hwnd == null) {
-			err("Can not detect game window (Steam)!!!");
-			showErrAskIfBhRunningOrReqAdm();
-			Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+		HWND hwnd = null;
+		List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
+		for (int i = 0; i < windows.size(); i++) {
+			DesktopWindow w = windows.get(i);
+			char[] textBuffer = new char[1000];
+					user32.GetClassName(w.getHWND(), textBuffer, textBuffer.length);
+			String className = new String(textBuffer).trim();
+			String windowTitle = w.getTitle();
+			debug("" + windowTitle + " | " + className);
+			if ("Bit Heroes".equals(windowTitle)) {
+				if ("UnityWndClass".equals(className)) {
+					hwnd = w.getHWND();
+				}
+				break;
+			}
 		}
 		return hwnd;
 	}
