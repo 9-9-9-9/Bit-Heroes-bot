@@ -57,7 +57,7 @@ public class MiniClientWindowsJna extends AbstractWindowsJna {
 		if (rect.width <= 0 || rect.height <= 0)
 			return new Tuple4<>(false, "Window has minimized", null, null);
 
-		Offset offset = new Offset(rect.x, rect.y);
+		Offset offset = new Offset(rect.x, rect.y+45);
 		if (offset.X < 0 || offset.Y < 0)
 			Main.showWarningWindowMustClearlyVisible();
 
