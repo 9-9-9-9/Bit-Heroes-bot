@@ -5,29 +5,50 @@ import bh.bot.common.Configuration;
 import bh.bot.common.types.Offset;
 import bh.bot.common.types.ScreenResolutionProfile;
 import bh.bot.common.types.tuples.Tuple4;
+
+import com.sun.jna.platform.DesktopWindow;
+import com.sun.jna.platform.WindowUtils;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
 import java.awt.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static bh.bot.common.Log.debug;
 import static bh.bot.common.Log.warn;
 
 public class MiniClientWindowsJna extends AbstractWindowsJna {
 
 	@Override
 	public HWND getGameWindow(Object... args) {
-		HWND hwnd = user32.FindWindow("Chrome_WidgetWin_1", "Bit Heroes");
 		final AtomicReference<HWND> result = new AtomicReference<>();
-		boolean success = user32.EnumChildWindows(hwnd, (hWnd, data) -> {
+		boolean success = false;
+		List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
+		for (int i = 0; i < windows.size(); i++) {
+			DesktopWindow w = windows.get(i);
 			char[] textBuffer = new char[1000];
-			user32.GetClassName(hWnd, textBuffer, textBuffer.length);
+					user32.GetClassName(w.getHWND(), textBuffer, textBuffer.length);
 			String className = new String(textBuffer).trim();
-			if ("Chrome_RenderWidgetHostHWND".equals(className)) {
-				result.set(hWnd);
-				return true;
+			String windowTitle = w.getTitle();
+			debug("" + windowTitle + " | " + className);
+			if ("Bit Heroes".equals(windowTitle)) {
+				if ("Chrome_WidgetWin_1".equals(className)) {
+					success = user32.EnumChildWindows(w.getHWND(), (hWnd, data) -> {
+						char[] innerTextBuffer = new char[1000];
+						user32.GetClassName(hWnd, innerTextBuffer, innerTextBuffer.length);
+						String innerClassName = new String(innerTextBuffer).trim();
+						debug("" + windowTitle + " | " + innerClassName);
+						if ("Chrome_RenderWidgetHostHWND".equals(innerClassName) || "Intermediate D3D Window".equals(innerClassName)) {
+							result.set(hWnd);
+							return true;
+						}
+						return false;
+					}, null);
+				}
+				break;
 			}
-			return false;
-		}, null);
+		}
+		
 		return success ? result.get() : null;
 	}
 
