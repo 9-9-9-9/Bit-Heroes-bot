@@ -48,6 +48,11 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 				break;
 			}
 		}
+		if (hwnd == null) {
+			err("Can not detect game window (Steam)!!!");
+			showErrAskIfBhRunningOrReqAdm();
+			Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+		}
 		return hwnd;
 	}
 
