@@ -810,7 +810,7 @@ public class BwMatrixMeta {
                 0xFFFFFF
         );
         Metas.Expedition.Labels.idolDimension = BwMatrixMeta.from(//
-                "labels/expedition.idol-dimension?",
+                "labels/expedition.idol-dimension2?",
                 Configuration.screenResolutionProfile.getOffsetLabelIdolDimension(), //
                 0xFFFFFF
         );
