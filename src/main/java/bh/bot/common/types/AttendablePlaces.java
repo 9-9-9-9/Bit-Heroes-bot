@@ -34,7 +34,7 @@ public class AttendablePlaces {
     static {
         try {
             invasion = new AttendablePlace("Invasion", AttendablePlaces.Ids.Invasion, "invasion", false);
-            fishing = new AttendablePlace("Claim Fishing Bait", AttendablePlaces.Ids.Fishing,  "bait", true, 60*24);
+            fishing = new AttendablePlace("Claim Fishing Bait", AttendablePlaces.Ids.Fishing,  "bait", false, 60*24);
             expedition = new AttendablePlace("Expedition", AttendablePlaces.Ids.Expedition, "expedition", false);
             trials = new AttendablePlace("Trials", AttendablePlaces.Ids.Trials, "trials", false);
             gvg = new AttendablePlace("GVG", Ids.GvG, "gvg", false);
