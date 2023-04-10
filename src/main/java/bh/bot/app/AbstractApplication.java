@@ -1368,6 +1368,28 @@ public abstract class AbstractApplication {
 		return clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses);
 	}
 
+	protected boolean tryClaimFishing(boolean doFishing, Supplier<Boolean> isBlocked) {
+		if (isBlocked.get() || !doFishing) {
+			spamEscape(1);
+			return false;
+		}
+		debug("Finding Fishing Button");
+		moveCursor(new Offset(0, 0).toScreenCoordinate());
+		if (clickImage(BwMatrixMeta.Metas.Fishing.Buttons.bait)) {
+			spamEscape(6);
+			moveCursor(new Offset(0, 0).toScreenCoordinate());
+			sleep(3000);
+			debug("Trying to find button again");
+			
+			if (clickImage(BwMatrixMeta.Metas.Fishing.Buttons.bait)) {
+				spamEscape(6);
+				debug("That should be all the bait. Happy Fishing!");
+				return true;
+			}
+		}
+		return false;
+	}
+
 	protected boolean tryEnterQuest(boolean doQuest, UserConfig userConfig, Supplier<Boolean> isBlocked,
 			InteractionUtil.Screen.Game game) {
 		Point coord = findImage(BwMatrixMeta.Metas.Dungeons.Labels.zones);

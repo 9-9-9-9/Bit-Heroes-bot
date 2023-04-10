@@ -6,6 +6,7 @@ public class AttendablePlaces {
     public static class Ids {
         // Right
         public static final long Invasion    = 0b000000001;
+        public static final long Fishing     = 0b000000011;
         public static final long Trials      = 0b000000010;
         public static final long GvG         = 0b000000100;
         public static final long Gauntlet    = 0b000001000;
@@ -18,6 +19,7 @@ public class AttendablePlaces {
     }
 
     public static AttendablePlace invasion = null;
+    public static AttendablePlace fishing = null;
     public static AttendablePlace expedition = null;
     public static AttendablePlace trials = null;
     public static AttendablePlace gvg = null;
@@ -32,6 +34,7 @@ public class AttendablePlaces {
     static {
         try {
             invasion = new AttendablePlace("Invasion", AttendablePlaces.Ids.Invasion, "invasion", false);
+            fishing = new AttendablePlace("Claim Fishing Bait", AttendablePlaces.Ids.Fishing,  "bait", true, 60*24);
             expedition = new AttendablePlace("Expedition", AttendablePlaces.Ids.Expedition, "expedition", false);
             trials = new AttendablePlace("Trials", AttendablePlaces.Ids.Trials, "trials", false);
             gvg = new AttendablePlace("GVG", Ids.GvG, "gvg", false);

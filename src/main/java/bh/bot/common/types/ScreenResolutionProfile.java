@@ -29,6 +29,8 @@ public abstract class ScreenResolutionProfile {
 	public abstract Offset getOffsetButtonReconnect();
 
 	public abstract Offset getOffsetLabelFishing();
+	
+	public abstract Offset getOffsetButtonFishingBait();
 
 	public abstract Offset getOffsetButtonFishingStart();
 
@@ -328,6 +330,11 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetLabelFishing() {
 			return new Offset(356, 13);
+		}
+
+		@Override
+		public Offset getOffsetButtonFishingBait() {
+			return new Offset(755, 400);
 		}
 
 		@Override
