@@ -70,6 +70,11 @@ public class AfkApp extends AbstractApplication {
             boolean doWorldBoss = eventList.contains(AttendablePlaces.worldBoss);
             boolean doExpedition = eventList.contains(AttendablePlaces.expedition);
             boolean doPVP = eventList.contains(AttendablePlaces.pvp);
+
+            if (doFishing) {
+                info(ColorizeUtil.formatInfo, "You have selected to claim fishing bait");
+            }
+            
             if (doRaid || doWorldBoss || doExpedition || doPVP || doQuest) {
                 userConfig = getPredefinedUserConfigFromProfileName("You want to do Raid/World Boss (Solo)/Expedition/PVP so you have to specific profile name first!\nSelect an existing profile:");
 
@@ -83,9 +88,7 @@ public class AfkApp extends AbstractApplication {
                         info(ColorizeUtil.formatInfo, "You have selected %s mode", userConfig.getQuestModeDesc());
                     }
 
-                    if (doFishing) {
-                        info(ColorizeUtil.formatInfo, "You have selected to claim fishing bait");
-                    }
+                    
 
                     if (doWorldBoss) {
                         info(ColorizeUtil.formatInfo, "You have selected world boss %s", userConfig.getWorldBossLevelDesc());
@@ -241,7 +244,6 @@ public class AfkApp extends AbstractApplication {
             addOutOfTurnActionsToList(outOfTurnNextActionList, ExpeditionApp.getPredefinedImageActions());
             addOutOfTurnActionsToList(outOfTurnNextActionList, TrialsApp.getPredefinedImageActions());
             addOutOfTurnActionsToList(outOfTurnNextActionList, GauntletApp.getPredefinedImageActions());
-            // addOutOfTurnActionsToList(outOfTurnNextActionList, ClaimFishingApp.getPredefinedImageActions());
 
             final ArrayList<AttendablePlace> toBeRemoved = new ArrayList<>();
 
@@ -363,11 +365,10 @@ public class AfkApp extends AbstractApplication {
                 }
 
                 if (tryClaimFishing(doFishing, isFishingBlocked)) {
+                    tempBlock(AttendablePlaces.fishing);
                     debug("tryClaimFishing");
                     continuousNotFound = 0;
                     moveCursor(coordinateHideMouse);
-                    tempBlock(AttendablePlaces.fishing);
-                    debug("Should be blocked");
                     continue ML;
                 }
 
@@ -532,7 +533,7 @@ public class AfkApp extends AbstractApplication {
         ArrayList<AttendablePlace> eventList = new ArrayList<>();
         final List<AttendablePlace> allAttendablePlaces = Arrays.asList(//
                 AttendablePlaces.invasion, //
-                // AttendablePlaces.fishing, //
+                AttendablePlaces.fishing, //
                 AttendablePlaces.expedition, //
                 AttendablePlaces.trials, //
                 AttendablePlaces.gvg, //

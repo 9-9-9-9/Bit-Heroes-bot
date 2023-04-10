@@ -1370,7 +1370,6 @@ public abstract class AbstractApplication {
 
 	protected boolean tryClaimFishing(boolean doFishing, Supplier<Boolean> isBlocked) {
 		if (isBlocked.get() || !doFishing) {
-			spamEscape(1);
 			return false;
 		}
 		debug("Finding Fishing Button");
@@ -1382,7 +1381,7 @@ public abstract class AbstractApplication {
 			debug("Trying to find button again");
 			
 			if (clickImage(BwMatrixMeta.Metas.Fishing.Buttons.bait)) {
-				spamEscape(6);
+				spamEscape(1);
 				debug("That should be all the bait. Happy Fishing!");
 				return true;
 			}
