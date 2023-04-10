@@ -701,22 +701,22 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetEnterIdolDimensionBlubLix() {
-			return new Offset(400, 183);
+			return new Offset(400, 170);
 		}
 
 		@Override
 		public Offset getOffsetEnterIdolDimensionMowhi() {
-			return new Offset(242, 389);
+			return new Offset(240, 400);
 		}
 
 		@Override
 		public Offset getOffsetEnterIdolDimensionWizBot() {
-			return new Offset(559, 389);
+			return new Offset(555, 400);
 		}
 
 		@Override
 		public Offset getOffsetEnterIdolDimensionAstamus() {
-			return new Offset(400, 311);
+			return new Offset(400, 320);
 		}
 
 		@Override

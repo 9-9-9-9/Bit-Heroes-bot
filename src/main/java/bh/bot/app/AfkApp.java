@@ -262,6 +262,11 @@ public class AfkApp extends AbstractApplication {
             ML:
             while (!masterSwitch.get()) {
                 sleep(loopSleep);
+                try {
+                    adjustScreenOffset();
+                } catch (Exception ex) {
+                    err("Unable to detect screen offset: %s", ex.getMessage());
+                }
 
                 debug("doLoop on loop");
                 if (toBeRemoved.size() > 0) {
