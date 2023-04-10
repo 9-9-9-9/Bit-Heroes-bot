@@ -223,6 +223,7 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta areYouSureWantToExit;
                 public static BwMatrixMeta leaveThisDungeon;
                 public static BwMatrixMeta news;
+                public static BwMatrixMeta dailyRewardsTitle;
             }
         }
 
@@ -488,6 +489,11 @@ public class BwMatrixMeta {
         Metas.Globally.Dialogs.news = BwMatrixMeta.from(//
                 "dialogs/globally.news2?",
                 Configuration.screenResolutionProfile.getOffsetDialogNews(), //
+                0xFFFFFF
+        );
+        Metas.Globally.Dialogs.dailyRewardsTitle = BwMatrixMeta.from(//
+                "dialogs/globally.dailyRewards2?",
+                Configuration.screenResolutionProfile.getOffsetDialogDailyRewardsTitle(), //
                 0xFFFFFF
         );
         Metas.Dungeons.Buttons.rerun = BwMatrixMeta.from(//
