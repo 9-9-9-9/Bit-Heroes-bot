@@ -84,7 +84,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
 				), //
                 () -> doCheckGameScreenOffset(masterSwitch) //
         );
-        Telegram.sendMessage("Stopped", false);
+        Telegram.sendPhoto(null, "Stopped", false);
     }
 
     protected boolean readMoreInput() throws IOException {

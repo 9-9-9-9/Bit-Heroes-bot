@@ -153,7 +153,7 @@ public class AfkApp extends AbstractApplication {
                 ), //
                 () -> doCheckGameScreenOffset(masterSwitch) //
         );
-        Telegram.sendMessage("Stopped", false);
+        Telegram.sendPhoto(null, "Stopped", false);
     }
 
     private void doLoop(//
