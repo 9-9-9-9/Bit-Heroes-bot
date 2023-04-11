@@ -61,7 +61,7 @@ public class ChangeCharacterApp extends AbstractApplication {
                                 .build() //
                 ), //
                 () -> doCheckGameScreenOffset(masterSwitch));
-        Telegram.sendMessage("Stopped", false);
+        Telegram.sendPhoto(null, "Stopped", false);
     }
 
     private void doLoopClickImage(int characterSlot, AtomicBoolean masterSwitch) {
