@@ -36,7 +36,7 @@ public class Telegram {
 
     public static TelegramBotsApi botApi;
 
-    private static BitHeroesTelegramBot bhTelegramBot = new BitHeroesTelegramBot();
+    public static BitHeroesTelegramBot bhTelegramBot = new BitHeroesTelegramBot();
 
     public static BotSession botSession;
 
