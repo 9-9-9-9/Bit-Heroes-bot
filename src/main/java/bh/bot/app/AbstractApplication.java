@@ -168,6 +168,7 @@ public abstract class AbstractApplication {
 			if (mutexHandle != null) {
 				try {
 					debug("Releasing mutex handle");
+					Telegram.botSession.stop();
 					Kernel32.INSTANCE.ReleaseMutex(mutexHandle);
 				} catch (Throwable t) {
 					dev(t);

@@ -10,6 +10,7 @@ import java.net.URL;
 
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.BotSession;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import static bh.bot.common.Log.*;
@@ -37,11 +38,15 @@ public class Telegram {
 
     private static BitHeroesTelegramBot bhTelegramBot = new BitHeroesTelegramBot();
 
+    public static BotSession botSession;
+
     public static void init() {
         try {
+            
             botApi = new TelegramBotsApi(DefaultBotSession.class);
+            
             dev("init Telegram API");
-            botApi.registerBot(bhTelegramBot);
+            botSession = botApi.registerBot(bhTelegramBot);
             
         } catch (TelegramApiException ex) {
             ex.printStackTrace();
