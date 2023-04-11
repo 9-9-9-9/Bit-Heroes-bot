@@ -2,11 +2,13 @@ package bh.bot.common;
 
 import bh.bot.common.utils.StringUtil;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.Buffer;
 
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -36,7 +38,7 @@ public class Telegram {
 
     public static TelegramBotsApi botApi;
 
-    public static BitHeroesTelegramBot bhTelegramBot = new BitHeroesTelegramBot();
+    private static BitHeroesTelegramBot bhTelegramBot = new BitHeroesTelegramBot();
 
     public static BotSession botSession;
 
@@ -88,35 +90,39 @@ public class Telegram {
         }
     }
 
+    public static void sendPhoto(BufferedImage img, String caption, boolean critical) {
+        if (isDisabled) {
+            dev("disabled Telegram::sendPhoto");
+            return;
+        }
+
+        int retry = critical ? 20 : 10;
+
+        while (retry > 0) {
+            try {
+                if (internalSendPhoto(img, caption, critical))
+                    break;
+            } catch (Exception e) {
+                e.printStackTrace();
+                err("Error while posting Telegram message: %s", e.getMessage());
+                sleep(30_000);
+            } finally {
+                retry--;
+            }
+        }
+    }
+
+    private static boolean internalSendPhoto(BufferedImage image, String caption, boolean critical) throws Exception {
+        caption = String.format("[%s%s]%s %s", appName, instanceId, critical ? " *** CRITICAL ***" : "", caption);
+
+        bhTelegramBot.sendPhoto(image, caption);
+        return true;
+    }
+
     private static boolean internalSendMessage(String msg, boolean critical) throws Exception {
         msg = String.format("[%s%s]%s %s", appName, instanceId, critical ? " *** CRITICAL ***" : "", msg);
 
         bhTelegramBot.sendMessage(msg);
         return true;
-
-        // String my_url = "https://api.telegram.org/bot" + token + "/sendMessage";
-        // URL url = new URL(my_url);
-        // HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-        // httpURLConnection.setRequestMethod("POST");
-        // httpURLConnection.setRequestProperty("Content-Type", "application/json");
-        // try {
-        //     httpURLConnection.setDoOutput(true);
-        //     httpURLConnection.setChunkedStreamingMode(0);
-        //     OutputStream outputStream = new BufferedOutputStream(httpURLConnection.getOutputStream());
-        //     OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
-        //     outputStreamWriter.write("{\"chat_id\":\"" + channelId + "\",\"text\":\"" + msg + "\"}");
-        //     outputStreamWriter.flush();
-        //     outputStreamWriter.close();
-
-        //     int responseCode = httpURLConnection.getResponseCode();
-
-        //     if (responseCode == 200)
-        //         return true;
-
-        //     err("Telegram::internalSendMessage failure with response code: %d, response msg: %s", responseCode, httpURLConnection.getResponseMessage());
-        //     return false;
-        // } finally {
-        //     httpURLConnection.disconnect();
-        // }
     }
 }

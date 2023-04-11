@@ -23,7 +23,7 @@ public class ScreenCaptureApp extends AbstractApplication {
 		BufferedImage sc = InteractionUtil.Screen.captureScreen(x, y, w, h);
 		try {
 			saveImage(sc, "screen-shot");
-			Telegram.bhTelegramBot.sendPhoto(sc, getDescription());
+			Telegram.sendPhoto(sc, getDescription(), isRequiredToLoadImages());
 		} finally {
 			freeMem(sc);
 		}
