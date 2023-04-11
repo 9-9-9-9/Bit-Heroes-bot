@@ -124,16 +124,16 @@ public class SteamWindowsJna extends AbstractWindowsJna {
 				return null;
 			}
 
-			if (rect.width < ew || rect.height < eh) {
-				err(
-						String.format(
-								"(Post-Resize) JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d",
-								ew, eh, rect.width, rect.height
-						)
-				);
-				showErrReqAdm();
-				Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
-			}
+			// if (rect.width < ew || rect.height < eh) {
+			// 	err(
+			// 			String.format(
+			// 					"(Post-Resize) JNA detect invalid screen size of Steam client! Expected %dx%d but found %dx%d",
+			// 					ew, eh, rect.width, rect.height
+			// 			)
+			// 	);
+			// 	showErrReqAdm();
+			// 	Main.exit(Main.EXIT_CODE_WINDOW_DETECTION_ISSUE);
+			// }
 
 			lpRectC = new RECT();
 			if (!user32.GetClientRect(hwnd, lpRectC)) {

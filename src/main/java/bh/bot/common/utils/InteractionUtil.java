@@ -73,7 +73,9 @@ public class InteractionUtil {
 		}
 
 		public static void hideCursor() {
-			moveCursor(pHideCursor);
+			Point hidePoint = new Offset(0, 0).toScreenCoordinate();
+			debug("Mouse move cursor %d,%d", hidePoint.x, hidePoint.y);
+			moveCursor(hidePoint);
 		}
 
 		public static void clickRadioButton(int level, Point[] points, String evName) {
