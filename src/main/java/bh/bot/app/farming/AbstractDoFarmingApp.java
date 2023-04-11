@@ -108,7 +108,6 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 }
             }
             int continuousNotFound = 0;
-            final Point coordinateHideMouse = new Offset(0, 0).toScreenCoordinate();
             final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
             final int selectFightPvp = naBtnFightOfPvp != null ? userConfig.pvpTarget : 0;
             final int offsetTargetPvp = selectFightPvp < 1 ? 0 : (selectFightPvp - 1) * Configuration.screenResolutionProfile.getOffsetDiffBetweenFightButtons();
@@ -125,14 +124,14 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                     debug("confirmStartNotFullTeam");
                     InteractionUtil.Keyboard.sendSpaceKey();
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
                 if (doCustomAction()) {
                     debug("doCustomAction");
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
@@ -150,7 +149,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                             InteractionUtil.Keyboard.sendEscape();
                             masterSwitch.set(true);
                         }
-                        moveCursor(coordinateHideMouse);
+                        hideCursor();
                         continue ML;
                     }
                 }
@@ -168,7 +167,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                             InteractionUtil.Keyboard.sendEscape();
                             masterSwitch.set(true);
                         }
-                        moveCursor(coordinateHideMouse);
+                        hideCursor();
                         continue ML;
                     }
                 }
@@ -179,13 +178,13 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                     debug("mapButtonOnFamiliarUi");
                     InteractionUtil.Keyboard.sendEscape();
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
                 debug("None");
                 continuousNotFound++;
-                moveCursor(coordinateHideMouse);
+                hideCursor();
 
                 if (continuousNotFound >= 6) {
                     debug("Finding %s icon", getAppName());
@@ -194,7 +193,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                         moveCursor(point);
                         mouseClick();
                         sleep(100);
-                        moveCursor(coordinateHideMouse);
+                        hideCursor();
                     }
                     continuousNotFound = 0;
                 }

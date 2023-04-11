@@ -62,8 +62,6 @@ public class InteractionUtil {
 			debug("Mouse click");
 		}
 
-		private static final Point pHideCursor = new Point(950, 100);
-
 		public static void mouseMoveAndClickAndHide(Point p) {
 			moveCursor(p);
 			sleep(300);

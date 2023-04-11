@@ -22,6 +22,7 @@ import static bh.bot.Main.*;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.InteractionUtil.Mouse.mouseMoveAndClickAndHide;
 import static bh.bot.common.utils.InteractionUtil.Mouse.moveCursor;
+import static bh.bot.common.utils.InteractionUtil.Mouse.hideCursor;;
 import static bh.bot.common.utils.ThreadUtil.sleep;
 
 @AppMeta(code = "world-boss-team", name = "World Boss (Team)", displayOrder = 6.1)
@@ -144,8 +145,6 @@ public class WorldBossTeamApp extends AbstractApplication {
     }
 
     private void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {
-        final Point coordinateHideMouse = new Point(0, 0);
-
         info(ColorizeUtil.formatInfo, "\n\nStarting World Boss (Team)");
         warningWatchWorldBossTeam(ColorizeUtil.formatError);
         warningWatchWorldBossTeam(ColorizeUtil.formatWarning);
@@ -205,7 +204,7 @@ public class WorldBossTeamApp extends AbstractApplication {
                 if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.confirmStartNotFullTeam)) {
                     debug("confirmStartNotFullTeam");
                     InteractionUtil.Keyboard.sendSpaceKey();
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue;
                 }
 
