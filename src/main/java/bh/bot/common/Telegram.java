@@ -1,6 +1,8 @@
 package bh.bot.common;
 
+import bh.bot.common.utils.InteractionUtil;
 import bh.bot.common.utils.StringUtil;
+import bh.bot.common.utils.InteractionUtil.Screen;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
@@ -18,6 +20,8 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import static bh.bot.common.Log.*;
 import static bh.bot.common.utils.StringUtil.isBlank;
 import static bh.bot.common.utils.ThreadUtil.sleep;
+
+import static bh.bot.common.utils.ImageUtil.freeMem;
 
 public class Telegram {
     private static String appName = "BH-Unknown";
@@ -95,6 +99,17 @@ public class Telegram {
             dev("disabled Telegram::sendPhoto");
             return;
         }
+        boolean freeAfter = false;
+        if (img == null) {
+            freeAfter = true;
+            int x = Configuration.gameScreenOffset.X.get();
+            int y = Configuration.gameScreenOffset.Y.get();
+            int w = Configuration.screenResolutionProfile.getSupportedGameResolutionWidth();
+            int h = Configuration.screenResolutionProfile.getSupportedGameResolutionHeight();
+
+            BufferedImage sc = InteractionUtil.Screen.captureScreen(x, y, w, h);
+            img = sc;
+        }
 
         int retry = critical ? 20 : 10;
 
@@ -109,6 +124,9 @@ public class Telegram {
             } finally {
                 retry--;
             }
+        }
+        if (freeAfter) {
+            freeMem(img);
         }
     }
 

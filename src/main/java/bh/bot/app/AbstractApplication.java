@@ -1121,6 +1121,7 @@ public abstract class AbstractApplication {
 
 	private long detectDailyRewards() {
 		if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.dailyRewardsTitle)) {
+			Telegram.sendPhoto(null, "Daily Rewards", false);
 			debug("Found Daily Rewards. Claiming.");
 			spamEscape(2);
 			return addSec(dailyRewardSleepSecs * 24);
