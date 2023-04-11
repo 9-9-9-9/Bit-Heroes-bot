@@ -286,6 +286,7 @@ public class BwMatrixMeta {
 
         public static class Fishing {
             public static class Buttons {
+                public static BwMatrixMeta bait;
                 public static BwMatrixMeta start;
                 public static BwMatrixMeta cast;
                 public static BwMatrixMeta catch_;
@@ -645,6 +646,11 @@ public class BwMatrixMeta {
         Metas.Fishing.Labels.fishing = BwMatrixMeta.from(//
                 "labels/fishing.fishing2?",
                 Configuration.screenResolutionProfile.getOffsetLabelFishing(), //
+                0xFFFFFF
+        );
+        Metas.Fishing.Buttons.bait = BwMatrixMeta.from(//
+                "buttons/fishing.bait2?",
+                Configuration.screenResolutionProfile.getOffsetButtonFishingBait(), //
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.start = BwMatrixMeta.from(//

@@ -70,6 +70,7 @@ public class Main {
 					RaidApp.class, //
 					PvpApp.class, //
 					QuestApp.class, //
+					ClaimFishingApp.class, //
 					InvasionApp.class, //
 					ExpeditionApp.class, //
 					TrialsApp.class, //
@@ -392,6 +393,7 @@ public class Main {
 		li.eRaid = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoRaid);
 		li.eInvasion = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoInvasion);
 		li.eQuest = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoQuest);
+		li.eFishing = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoFishing);
 		li.eExpedition = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoExpedition);
 		li.eGvg = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoGvG);
 		li.eTrials = usingFlagPatterns.stream().anyMatch(x -> x instanceof FlagDoTrials);
