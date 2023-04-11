@@ -5,6 +5,7 @@ import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
 import bh.bot.common.Telegram;
 import bh.bot.common.types.AttendablePlace;
+import bh.bot.common.types.Offset;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.RequireSingleInstance;
 import bh.bot.common.types.images.BwMatrixMeta;
@@ -107,7 +108,7 @@ public abstract class AbstractDoFarmingApp extends AbstractApplication {
                 }
             }
             int continuousNotFound = 0;
-            final Point coordinateHideMouse = new Point(0, 0);
+            final Point coordinateHideMouse = new Offset(0, 0).toScreenCoordinate();
             final int mainLoopInterval = Configuration.Interval.Loop.getMainLoopInterval(getDefaultMainLoopInterval());
             final int selectFightPvp = naBtnFightOfPvp != null ? userConfig.pvpTarget : 0;
             final int offsetTargetPvp = selectFightPvp < 1 ? 0 : (selectFightPvp - 1) * Configuration.screenResolutionProfile.getOffsetDiffBetweenFightButtons();

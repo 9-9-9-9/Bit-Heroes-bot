@@ -1594,6 +1594,11 @@ public abstract class AbstractApplication {
 		}
 	}
 
+	protected void setGameWindowOnTop() {
+		IJna jna = getJnaInstance();
+		jna.setGameWindowOnTop(jna.getGameWindow());
+	}
+
 	protected void printRequiresSetting() {
 		err("You have to do setting before using this function");
 		err("Please launch script '%s' and follow instruction", scriptFileName("setting"));
