@@ -9,6 +9,7 @@ import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
+import bh.bot.common.types.Offset;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.annotations.RequireSingleInstance;
@@ -165,7 +166,6 @@ public class AfkApp extends AbstractApplication {
                     || (doInvasion && doExpedition);
             boolean isUnknownTrialsOrGauntlet = doTrials && doGauntlet;
             int continuousNotFound = 0;
-            final Point coordinateHideMouse = new Point(0, 0);
             final ArrayList<Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>>> taskList = new ArrayList<>();
             // Add Questing as first task
             if (doQuest)
@@ -318,7 +318,7 @@ public class AfkApp extends AbstractApplication {
                     debug("confirmStartNotFullTeam");
                     sendSpaceKey();
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
@@ -328,7 +328,7 @@ public class AfkApp extends AbstractApplication {
                     sleep(1_000);
                     spamEscape(1);
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
@@ -338,35 +338,35 @@ public class AfkApp extends AbstractApplication {
                     debug("mapButtonOnFamiliarUi");
                     sendEscape();
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
                 if (tryEnterRaid(doRaid, userConfig, isRaidBlocked)) {
                     debug("tryEnterRaid");
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
                 if (tryEnterQuest(doQuest, userConfig, isQuestBlocked, this.gameScreenInteractor)) {
                     debug("tryEnterQuest");
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
                 if (tryEnterWorldBoss(doWorldBoss, userConfig, isWorldBossBlocked)) {
                     debug("tryEnterWorldBoss");
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
                 if (tryEnterExpedition(doExpedition, this.expeditionPlace)) {
                     debug("tryEnterExpedition");
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
@@ -381,7 +381,6 @@ public class AfkApp extends AbstractApplication {
                                 if (p != null) {
                                     int offset = Configuration.Features.isFunctionDisabled("target-pvp") ? 0 : offsetTargetPvp;
                                     mouseMoveAndClickAndHide(new Point(p.x, p.y + offset));
-                                    moveCursor(coordinateHideMouse);
                                     continue ML;
                                 }
                             } else if (clickImage(naBtnFightPvp.image)) {
@@ -396,13 +395,12 @@ public class AfkApp extends AbstractApplication {
                         tempBlock(tuple._1);
                     }
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
                 debug("None");
                 continuousNotFound++;
-                moveCursor(coordinateHideMouse);
 
                 if (continuousNotFound >= 6) {
                     for (AbstractDoFarmingApp.NextAction nextAction : outOfTurnNextActionList) {
@@ -448,10 +446,7 @@ public class AfkApp extends AbstractApplication {
                                 }
                             }
 
-                            moveCursor(point);
-                            mouseClick();
-                            sleep(100);
-                            moveCursor(coordinateHideMouse);
+                            mouseMoveAndClickAndHide(point);
                             continuousNotFound = 0;
                             continue ML;
                         }
