@@ -107,10 +107,14 @@ public abstract class AbstractApplication {
 			warn("System is going to shutdown NOW");
 
 			try {
+				Telegram.sendMessage("" + getAppName() + " starting up", false);
 				Runtime.getRuntime().exec(command);
+				Telegram.sendMessage("" + getAppName() + " shutting down", false);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				err("Error occurs while trying to shutdown system");
+				Telegram.sendMessage("" + getAppName() + " errored while shutting down", true);
+				Telegram.sendMessage(ex.getMessage(), false);
 			}
 		} else {
 			wrappedInternalRun1(launchInfo);
@@ -209,6 +213,7 @@ public abstract class AbstractApplication {
 	}
 
 	private void tryToCloseGameWindow(boolean closeGameWindowAfterExit) {
+		Telegram.sendPhoto(null, getAppName(), closeGameWindowAfterExit);
 		if (!closeGameWindowAfterExit)
 			return;
 
@@ -225,6 +230,7 @@ public abstract class AbstractApplication {
 		} catch (Exception ignored2) {
 			//
 		} finally {
+			Telegram.sendPhoto(null, "" + getAppName() + " Stopped", false);
 			try {
 				getJnaInstance().tryToCloseGameWindow();
 			} catch (Exception ignored) {

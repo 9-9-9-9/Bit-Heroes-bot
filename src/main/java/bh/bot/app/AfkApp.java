@@ -153,7 +153,6 @@ public class AfkApp extends AbstractApplication {
                 ), //
                 () -> doCheckGameScreenOffset(masterSwitch) //
         );
-        Telegram.sendPhoto(null, "Stopped", false);
     }
 
     private void doLoop(//
@@ -509,6 +508,7 @@ public class AfkApp extends AbstractApplication {
 
     private void tempBlock(AttendablePlace attendablePlace) {
         AtomicLong x;
+        Telegram.sendPhoto(null, "" + attendablePlace.name + " finished for " + attendablePlace.procedureTicketMinutes + " minutes", false);
         if (attendablePlace == AttendablePlaces.pvp)
             x = blockPvpUntil;
         else if (attendablePlace == AttendablePlaces.worldBoss)
