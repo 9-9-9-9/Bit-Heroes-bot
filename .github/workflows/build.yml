@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Test build
+    name: Test Build Process
     runs-on: windows-latest
     steps:
       - name: Build
