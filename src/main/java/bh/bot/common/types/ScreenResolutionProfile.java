@@ -29,6 +29,8 @@ public abstract class ScreenResolutionProfile {
 	public abstract Offset getOffsetButtonReconnect();
 
 	public abstract Offset getOffsetLabelFishing();
+	
+	public abstract Offset getOffsetButtonFishingBait();
 
 	public abstract Offset getOffsetButtonFishingStart();
 
@@ -236,6 +238,8 @@ public abstract class ScreenResolutionProfile {
 
 	public abstract Offset getOffsetDialogNews();
 
+	public abstract Offset getOffsetDialogDailyRewardsTitle();
+
 	public abstract Offset getOffsetButtonPersuade();
 	
 	public abstract Offset getOffsetButtonBribePersuade();
@@ -326,6 +330,11 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetLabelFishing() {
 			return new Offset(356, 13);
+		}
+
+		@Override
+		public Offset getOffsetButtonFishingBait() {
+			return new Offset(755, 400);
 		}
 
 		@Override
@@ -825,6 +834,11 @@ public abstract class ScreenResolutionProfile {
 		@Override
 		public Offset getOffsetDialogNews() {
 			return new Offset(356, 77);
+		}
+
+		@Override
+		public Offset getOffsetDialogDailyRewardsTitle() {
+			return new Offset(280, 50);
 		}
 
 		@Override

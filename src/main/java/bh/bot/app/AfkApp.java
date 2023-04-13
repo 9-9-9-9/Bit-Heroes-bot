@@ -9,6 +9,7 @@ import bh.bot.common.exceptions.InvalidDataException;
 import bh.bot.common.exceptions.NotSupportedException;
 import bh.bot.common.types.AttendablePlace;
 import bh.bot.common.types.AttendablePlaces;
+import bh.bot.common.types.Offset;
 import bh.bot.common.types.UserConfig;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.types.annotations.RequireSingleInstance;
@@ -49,6 +50,7 @@ public class AfkApp extends AbstractApplication {
     private final AtomicLong blockWorldBossUntil = new AtomicLong(0);
     private final AtomicLong blockRaidUntil = new AtomicLong(0);
     private final AtomicLong blockQuestUntil = new AtomicLong(0);
+    private final AtomicLong blockFishingUntil = new AtomicLong(0);
     private final AtomicLong blockGvgAndInvasionAndExpeditionUntil = new AtomicLong(0);
     private final AtomicLong blockTrialsAndGauntletUntil = new AtomicLong(0);
     private final AtomicBoolean isOnPvp = new AtomicBoolean(false);
@@ -65,9 +67,15 @@ public class AfkApp extends AbstractApplication {
 
             boolean doRaid = eventList.contains(AttendablePlaces.raid);
             boolean doQuest = eventList.contains(AttendablePlaces.quest);
+            boolean doFishing = eventList.contains(AttendablePlaces.fishing);
             boolean doWorldBoss = eventList.contains(AttendablePlaces.worldBoss);
             boolean doExpedition = eventList.contains(AttendablePlaces.expedition);
             boolean doPVP = eventList.contains(AttendablePlaces.pvp);
+
+            if (doFishing) {
+                info(ColorizeUtil.formatInfo, "You have selected to claim fishing bait");
+            }
+            
             if (doRaid || doWorldBoss || doExpedition || doPVP || doQuest) {
                 userConfig = getPredefinedUserConfigFromProfileName("You want to do Raid/World Boss (Solo)/Expedition/PVP so you have to specific profile name first!\nSelect an existing profile:");
 
@@ -80,6 +88,8 @@ public class AfkApp extends AbstractApplication {
                     if (doQuest) {
                         info(ColorizeUtil.formatInfo, "You have selected %s mode", userConfig.getQuestModeDesc());
                     }
+
+                    
 
                     if (doWorldBoss) {
                         info(ColorizeUtil.formatInfo, "You have selected world boss %s", userConfig.getWorldBossLevelDesc());
@@ -124,7 +134,8 @@ public class AfkApp extends AbstractApplication {
                         eventList.contains(AttendablePlaces.invasion), //
                         eventList.contains(AttendablePlaces.expedition), //
                         eventList.contains(AttendablePlaces.trials), //
-                        eventList.contains(AttendablePlaces.gauntlet) //
+                        eventList.contains(AttendablePlaces.gauntlet), //
+                        eventList.contains(AttendablePlaces.fishing) //
                 ), //
                 () -> internalDoSmallTasks( //
                         masterSwitch, //
@@ -137,6 +148,7 @@ public class AfkApp extends AbstractApplication {
                                 .closeEnterGameNewsDialog() //
                                 .persuade() //
                                 .detectChatboxDirectMessage() //
+                                .claimDailyRewards() //
                                 .preventLeaveDungeon() //
                                 .build() //
                 ), //
@@ -155,7 +167,8 @@ public class AfkApp extends AbstractApplication {
                         boolean doInvasion, //
                         boolean doExpedition, //
                         boolean doTrials, //
-                        boolean doGauntlet //
+                        boolean doGauntlet, //
+                        boolean doFishing //
     ) {
         try {
             
@@ -164,11 +177,13 @@ public class AfkApp extends AbstractApplication {
                     || (doInvasion && doExpedition);
             boolean isUnknownTrialsOrGauntlet = doTrials && doGauntlet;
             int continuousNotFound = 0;
-            final Point coordinateHideMouse = new Point(0, 0);
             final ArrayList<Tuple3<AttendablePlace, AtomicLong, List<AbstractDoFarmingApp.NextAction>>> taskList = new ArrayList<>();
             // Add Questing as first task
             if (doQuest)
                 taskList.add(new Tuple3<>(AttendablePlaces.quest, blockQuestUntil, QuestApp.getPredefinedImageActions()));
+            
+            if (doFishing)
+                taskList.add(new Tuple3<>(AttendablePlaces.fishing, blockFishingUntil, ClaimFishingApp.getPredefinedImageActions()));
 
             NextAction naBtnFightPvp = null;
             if (doPvp) {
@@ -242,6 +257,7 @@ public class AfkApp extends AbstractApplication {
             final Supplier<Boolean> isWorldBossBlocked = () -> !isNotBlocked(blockWorldBossUntil);
             final Supplier<Boolean> isRaidBlocked = () -> !isNotBlocked(blockRaidUntil);
             final Supplier<Boolean> isQuestBlocked = () -> !isNotBlocked(blockQuestUntil);
+            final Supplier<Boolean> isFishingBlocked = () -> !isNotBlocked(blockFishingUntil);
 
             Main.warningSupport();
 
@@ -317,7 +333,7 @@ public class AfkApp extends AbstractApplication {
                     debug("confirmStartNotFullTeam");
                     sendSpaceKey();
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
@@ -327,7 +343,7 @@ public class AfkApp extends AbstractApplication {
                     sleep(1_000);
                     spamEscape(1);
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
@@ -337,12 +353,20 @@ public class AfkApp extends AbstractApplication {
                     debug("mapButtonOnFamiliarUi");
                     sendEscape();
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
                 if (tryEnterRaid(doRaid, userConfig, isRaidBlocked)) {
                     debug("tryEnterRaid");
+                    continuousNotFound = 0;
+                    hideCursor();
+                    continue ML;
+                }
+
+                if (tryClaimFishing(doFishing, isFishingBlocked)) {
+                    tempBlock(AttendablePlaces.fishing);
+                    debug("tryClaimFishing");
                     continuousNotFound = 0;
                     moveCursor(coordinateHideMouse);
                     continue ML;
@@ -351,21 +375,21 @@ public class AfkApp extends AbstractApplication {
                 if (tryEnterQuest(doQuest, userConfig, isQuestBlocked, this.gameScreenInteractor)) {
                     debug("tryEnterQuest");
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
                 if (tryEnterWorldBoss(doWorldBoss, userConfig, isWorldBossBlocked)) {
                     debug("tryEnterWorldBoss");
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
                 if (tryEnterExpedition(doExpedition, this.expeditionPlace)) {
                     debug("tryEnterExpedition");
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
@@ -380,7 +404,6 @@ public class AfkApp extends AbstractApplication {
                                 if (p != null) {
                                     int offset = Configuration.Features.isFunctionDisabled("target-pvp") ? 0 : offsetTargetPvp;
                                     mouseMoveAndClickAndHide(new Point(p.x, p.y + offset));
-                                    moveCursor(coordinateHideMouse);
                                     continue ML;
                                 }
                             } else if (clickImage(naBtnFightPvp.image)) {
@@ -395,13 +418,12 @@ public class AfkApp extends AbstractApplication {
                         tempBlock(tuple._1);
                     }
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 
                 debug("None");
                 continuousNotFound++;
-                moveCursor(coordinateHideMouse);
 
                 if (continuousNotFound >= 6) {
                     for (AbstractDoFarmingApp.NextAction nextAction : outOfTurnNextActionList) {
@@ -447,10 +469,7 @@ public class AfkApp extends AbstractApplication {
                                 }
                             }
 
-                            moveCursor(point);
-                            mouseClick();
-                            sleep(100);
-                            moveCursor(coordinateHideMouse);
+                            mouseMoveAndClickAndHide(point);
                             continuousNotFound = 0;
                             continue ML;
                         }
@@ -493,6 +512,8 @@ public class AfkApp extends AbstractApplication {
             x = blockRaidUntil;
         else if (attendablePlace == AttendablePlaces.quest)
             x = blockQuestUntil;
+        else if (attendablePlace == AttendablePlaces.fishing)
+            x = blockFishingUntil;
         else if (attendablePlace == AttendablePlaces.gvg || attendablePlace == AttendablePlaces.invasion
                 || attendablePlace == AttendablePlaces.expedition)
             x = blockGvgAndInvasionAndExpeditionUntil;
@@ -507,6 +528,7 @@ public class AfkApp extends AbstractApplication {
         ArrayList<AttendablePlace> eventList = new ArrayList<>();
         final List<AttendablePlace> allAttendablePlaces = Arrays.asList(//
                 AttendablePlaces.invasion, //
+                AttendablePlaces.fishing, //
                 AttendablePlaces.expedition, //
                 AttendablePlaces.trials, //
                 AttendablePlaces.gvg, //
@@ -537,13 +559,17 @@ public class AfkApp extends AbstractApplication {
             eventList.add(AttendablePlaces.raid);
         if (argumentInfo.eQuest || afkBatch.doQuest)
             eventList.add(AttendablePlaces.quest);
-        //
+
+        if (argumentInfo.eFishing || afkBatch.doFishing)
+            eventList.add(AttendablePlaces.fishing);
+
         if (eventList.size() == 0) {
             final List<MenuItem> menuItems = Stream.of(
                     MenuItem.from(AttendablePlaces.pvp),
                     MenuItem.from(AttendablePlaces.worldBoss),
                     MenuItem.from(AttendablePlaces.raid),
                     MenuItem.from(AttendablePlaces.quest),
+                    MenuItem.from(AttendablePlaces.fishing),
                     MenuItem.from("GVG/Expedition/Invasion", AttendablePlaces.gvg, AttendablePlaces.expedition, AttendablePlaces.invasion),
                     MenuItem.from("Trials/Gauntlet", AttendablePlaces.trials, AttendablePlaces.gauntlet),
                     MenuItem.from(AttendablePlaces.pvp, AttendablePlaces.worldBoss, AttendablePlaces.raid),
@@ -627,6 +653,7 @@ public class AfkApp extends AbstractApplication {
     private static final char codeWorldBoss2 = 'W';
     private static final char codeRaid = 'R';
     private static final char codeQuest = 'Q';
+    private static final char codeFishing = 'F';
     private static final char codeInvasion = 'I';
     private static final char codeExpedition = 'E';
     private static final char codeGVG = 'V';
@@ -637,13 +664,14 @@ public class AfkApp extends AbstractApplication {
     private static final char codeComboTrialsGauntlet = '3';
     private static final char codeComboAll = 'A';
 
-    private static final String shortDescArg = String.format("%s (PVP), %s (World Boss), %s (Raid), %s (Quest), %s (Invasion), %s (Expedition), %s (GVG), %s (Gauntlet), %s (Trials), %s (PVP/World Boss/Raid), %s (Invasion/GVG/Expedition), %s (Trials/Gauntlet), %s (All)", codePvp, codeWorldBoss1, codeRaid, codeQuest, codeInvasion, codeExpedition, codeGVG, codeGauntlet, codeTrials, codeComboPvpWorldBossRaid, codeComboInvasionGvgExpedition, codeComboTrialsGauntlet, codeComboAll);
+    private static final String shortDescArg = String.format("%s (PVP), %s (World Boss), %s (Raid), %s (Quest), %s (Invasion), %s (Expedition), %s (GVG), %s (Gauntlet), %s (Trials), %s (PVP/World Boss/Raid), %s (Invasion/GVG/Expedition), %s (Trials/Gauntlet), %s (Fishing), %s (All)", codePvp, codeWorldBoss1, codeRaid, codeQuest, codeInvasion, codeExpedition, codeGVG, codeGauntlet, codeTrials, codeComboPvpWorldBossRaid, codeComboInvasionGvgExpedition, codeComboTrialsGauntlet, codeFishing, codeComboAll);
 
     private static class AfkBatch {
         public boolean doPvp;
         public boolean doWorldBoss;
         public boolean doRaid;
         public boolean doQuest;
+        public boolean doFishing;
         public boolean doInvasion;
         public boolean doExpedition;
         public boolean doGvg;
@@ -661,6 +689,7 @@ public class AfkApp extends AbstractApplication {
                     result.doWorldBoss = true;
                     result.doRaid = true;
                     result.doQuest = true;
+                    result.doFishing = true;
                     result.doInvasion = true;
                     result.doExpedition = true;
                     result.doGvg = true;
@@ -685,6 +714,8 @@ public class AfkApp extends AbstractApplication {
                     result.doRaid = true;
                 } else if (c == codeQuest) {
                     result.doQuest = true;
+                } else if (c == codeFishing) {
+                    result.doFishing = true;
                 } else if (c == codeInvasion) {
                     result.doInvasion = true;
                 } else if (c == codeGVG) {

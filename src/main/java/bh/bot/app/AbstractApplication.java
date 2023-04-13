@@ -711,6 +711,7 @@ public abstract class AbstractApplication {
 	private static final int smallTalkSleepSecsWhenClicked = 3;
 	private static final int detectDcSleepSecs = 60;
 	private static final int leaveDungeonSleepSecs = 10;
+	private static final int dailyRewardSleepSecs = 10;
 	private static final int reactiveAutoSleepSecs = 5;
 	private static final int closeEnterGameDialogNewsSleepSecs = 60;
 	private static final int persuadeSleepSecs = 60;
@@ -724,6 +725,7 @@ public abstract class AbstractApplication {
 			long nextSmallTalkEpoch = addSec(smallTalkSleepSecs);
 			long nextDetectDcEpoch = addSec(detectDcSleepSecs);
 			long nextLeaveDungeonEpoch = addSec(leaveDungeonSleepSecs);
+			long nextDailyRewardsEpoch = addSec(dailyRewardSleepSecs);
 			long nextReactiveAuto = addSec(reactiveAutoSleepSecs);
 			final AtomicInteger continousRed = new AtomicInteger(0);
 			long nextCloseEnterGameDialogNews = addSec(closeEnterGameDialogNewsSleepSecs);
@@ -807,6 +809,9 @@ public abstract class AbstractApplication {
 				if (st.preventLeaveDungeon && nextLeaveDungeonEpoch <= System.currentTimeMillis())
 					nextLeaveDungeonEpoch = detectLeaveDungeon();
 
+				if (st.claimDailyRewards && nextDailyRewardsEpoch <= System.currentTimeMillis())
+					nextDailyRewardsEpoch = detectDailyRewards();
+
 				if (st.clickDisconnect && nextDetectDcEpoch <= System.currentTimeMillis())
 					nextDetectDcEpoch = detectDisconnected(masterSwitch);
 
@@ -852,6 +857,7 @@ public abstract class AbstractApplication {
 		public final boolean persuade;
 		public final boolean showWarningWorldBossTeam;
 		public final boolean detectChatboxDirectMessage;
+		public final boolean claimDailyRewards;
 
 		private SmallTasks(Builder b) {
 			this.clickTalk = b.f(0);
@@ -863,6 +869,7 @@ public abstract class AbstractApplication {
 			this.showWarningWorldBossTeam = b.f(6);
 			this.detectChatboxDirectMessage = b.f(7);
 			this.preventLeaveDungeon = b.f(8);
+			this.claimDailyRewards = b.f(9);
 		}
 
 		public static Builder builder() {
@@ -919,6 +926,10 @@ public abstract class AbstractApplication {
 
 			public Builder preventLeaveDungeon() {
 				return this.set(8);
+			}
+
+			public Builder claimDailyRewards() {
+				return this.set(9);
 			}
 		}
 	}
@@ -1105,6 +1116,15 @@ public abstract class AbstractApplication {
 			sendEscape();
 		}
 		return addSec(leaveDungeonSleepSecs);
+	}
+
+	private long detectDailyRewards() {
+		if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.dailyRewardsTitle)) {
+			debug("Found Daily Rewards. Claiming.");
+			spamEscape(2);
+			return addSec(dailyRewardSleepSecs * 24);
+		}
+		return addSec(dailyRewardSleepSecs);
 	}
 
 	private static final String saveChatboxDirectMessageImageTo = "out\\chatbox";
@@ -1348,6 +1368,27 @@ public abstract class AbstractApplication {
 		return clickImage(BwMatrixMeta.Metas.WorldBoss.Buttons.summonOnListingWorldBosses);
 	}
 
+	protected boolean tryClaimFishing(boolean doFishing, Supplier<Boolean> isBlocked) {
+		if (isBlocked.get() || !doFishing) {
+			return false;
+		}
+		debug("Finding Fishing Button");
+		moveCursor(new Offset(0, 0).toScreenCoordinate());
+		if (clickImage(BwMatrixMeta.Metas.Fishing.Buttons.bait)) {
+			spamEscape(6);
+			moveCursor(new Offset(0, 0).toScreenCoordinate());
+			sleep(3000);
+			debug("Trying to find button again");
+			
+			if (clickImage(BwMatrixMeta.Metas.Fishing.Buttons.bait)) {
+				spamEscape(1);
+				debug("That should be all the bait. Happy Fishing!");
+				return true;
+			}
+		}
+		return false;
+	}
+
 	protected boolean tryEnterQuest(boolean doQuest, UserConfig userConfig, Supplier<Boolean> isBlocked,
 			InteractionUtil.Screen.Game game) {
 		Point coord = findImage(BwMatrixMeta.Metas.Dungeons.Labels.zones);
@@ -1551,6 +1592,11 @@ public abstract class AbstractApplication {
 			sleep(1_000);
 			InteractionUtil.Keyboard.sendEscape();
 		}
+	}
+
+	protected void setGameWindowOnTop() {
+		IJna jna = getJnaInstance();
+		jna.setGameWindowOnTop(jna.getGameWindow());
 	}
 
 	protected void printRequiresSetting() {

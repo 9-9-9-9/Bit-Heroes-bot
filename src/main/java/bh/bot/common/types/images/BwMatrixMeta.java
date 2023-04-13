@@ -223,6 +223,7 @@ public class BwMatrixMeta {
                 public static BwMatrixMeta areYouSureWantToExit;
                 public static BwMatrixMeta leaveThisDungeon;
                 public static BwMatrixMeta news;
+                public static BwMatrixMeta dailyRewardsTitle;
             }
         }
 
@@ -285,6 +286,7 @@ public class BwMatrixMeta {
 
         public static class Fishing {
             public static class Buttons {
+                public static BwMatrixMeta bait;
                 public static BwMatrixMeta start;
                 public static BwMatrixMeta cast;
                 public static BwMatrixMeta catch_;
@@ -490,6 +492,11 @@ public class BwMatrixMeta {
                 Configuration.screenResolutionProfile.getOffsetDialogNews(), //
                 0xFFFFFF
         );
+        Metas.Globally.Dialogs.dailyRewardsTitle = BwMatrixMeta.from(//
+                "dialogs/globally.dailyRewards2?",
+                Configuration.screenResolutionProfile.getOffsetDialogDailyRewardsTitle(), //
+                0xFFFFFF
+        );
         Metas.Dungeons.Buttons.rerun = BwMatrixMeta.from(//
                 "buttons/dungeons.rerun2?",
                 Configuration.screenResolutionProfile.getOffsetButtonDungeonReRun(), //
@@ -639,6 +646,11 @@ public class BwMatrixMeta {
         Metas.Fishing.Labels.fishing = BwMatrixMeta.from(//
                 "labels/fishing.fishing2?",
                 Configuration.screenResolutionProfile.getOffsetLabelFishing(), //
+                0xFFFFFF
+        );
+        Metas.Fishing.Buttons.bait = BwMatrixMeta.from(//
+                "buttons/fishing.bait2?",
+                Configuration.screenResolutionProfile.getOffsetButtonFishingBait(), //
                 0xFFFFFF
         );
         Metas.Fishing.Buttons.start = BwMatrixMeta.from(//

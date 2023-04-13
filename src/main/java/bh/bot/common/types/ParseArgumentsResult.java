@@ -31,6 +31,7 @@ public class ParseArgumentsResult {
     public boolean eWorldBoss;
     public boolean eRaid;
     public boolean eQuest;
+    public boolean eFishing;
     public ScreenResolutionProfile screenResolutionProfile;
     public String cfgProfileName;
     public ArrayList<Familiar> familiarToBribeWithGems;

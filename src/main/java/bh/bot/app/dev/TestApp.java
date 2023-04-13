@@ -114,7 +114,8 @@ public class TestApp extends AbstractApplication {
 				AttendablePlaces.pvp, //
 				AttendablePlaces.worldBoss, //
 				AttendablePlaces.raid, //
-				AttendablePlaces.quest //
+				AttendablePlaces.quest, //
+				AttendablePlaces.fishing //
 		);
 		allAttendablePlaces.forEach(ap -> {
 			Point point = this.gameScreenInteractor.findAttendablePlace(ap);

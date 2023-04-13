@@ -2,6 +2,7 @@ package bh.bot.common.types.flags;
 
 import bh.bot.app.AbstractApplication;
 import bh.bot.app.AfkApp;
+import bh.bot.app.farming.ClaimFishingApp;
 import bh.bot.app.farming.ExpeditionApp;
 import bh.bot.app.farming.PvpApp;
 import bh.bot.app.farming.QuestApp;
@@ -45,7 +46,8 @@ public class FlagProfileName extends FlagPattern<String> {
                 || instance instanceof RaidApp
                 || instance instanceof ExpeditionApp
                 || instance instanceof PvpApp
-                || instance instanceof QuestApp;
+                || instance instanceof QuestApp
+                || instance instanceof ClaimFishingApp;
     }
 
     @Override
