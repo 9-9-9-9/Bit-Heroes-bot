@@ -16,4 +16,5 @@ jobs:
       - name: Build
         uses: actions/checkout@v3
       - run: cd $GITHUB_WORKSPACE
+      - run: touch im.dev
       - run: .\build.bat
