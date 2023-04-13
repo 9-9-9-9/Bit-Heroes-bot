@@ -1,28 +1,23 @@
-name: Release
+name: Publish
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - '*'
 
 jobs:
-  release:
-    name: Prepare release
+  build:
+    name: Publish binaries
     runs-on: macos-latest
+
     steps:
-      # Build
-      - name: Build Release
-        uses: actions/checkout@v3
-      - run: cd $GITHUB_WORKSPACE
-      - run: touch im.dev
-      - run: bash ./release.sh
-
-      # Upload build file to the releas as an asset.
-      - name: Upload zip to release
-        uses: svenstaro/upload-release-action@v2
-
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: '**/*/download-this-file.zip'
-          file_glob: true
-          tag: ${{ github.ref }}
-          overwrite: true
+    - uses: actions/checkout@v3
+    - name: Build Release
+      run: cd $GITHUB_WORKSPACE && touch im.dev && bash ./release.sh
+    - name: Upload binary to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: target/release/download-this-file.zip
+        tag: ${{ github.ref }}
+        overwrite: true
