@@ -10,11 +10,11 @@ on:
 
 jobs:
   build:
-    name: Test Build Process
-    runs-on: windows-latest
+    name: Test Release Process
+    runs-on: macos-latest
     steps:
       - name: Build
         uses: actions/checkout@v3
       - run: cd $GITHUB_WORKSPACE
       - run: touch im.dev
-      - run: .\build.bat
+      - run: .\release.sh
