@@ -18,4 +18,4 @@ jobs:
       - run: cd $GITHUB_WORKSPACE
       - run: touch im.dev
       - run: bash ./release.sh
-      - run: readlink -f -- "$@"
+      - run: touch /Users/runner/work/Bit-Heroes-bot/Bit-Heroes-bot/download-this-file.zip

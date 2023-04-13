@@ -18,6 +18,6 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: /home/runner/Bit-Heroes-bot/Bit-Heroes-bot/download-this-file.zip
+        file: /Users/runner/work/Bit-Heroes-bot/Bit-Heroes-bot/download-this-file.zip
         tag: ${{ github.ref }}
         overwrite: true
