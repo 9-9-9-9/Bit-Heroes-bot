@@ -18,11 +18,10 @@ jobs:
 
       # Upload build file to the releas as an asset.
       - name: Upload zip to release
-        uses: svenstaro/upload-release-action@v1-release
+        uses: svenstaro/upload-release-action@v2
 
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: /home/runner/work/download-this-file.zip
-          asset_name: download-this-file.zip
+          file: target/release/download-this-file.zip
           tag: ${{ github.ref }}
           overwrite: true
