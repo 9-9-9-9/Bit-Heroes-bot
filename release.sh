@@ -1,15 +1,30 @@
 #!/bin/bash
 
-VERSION=$1
+VERSION=$(cat ./VERSION)
 
 if [[ -z $VERSION ]];
 then
-  echo 'Specific version'
+  echo 'Put version in VERSION file'
   exit 1
 fi
 
 # Include version info
 echo $VERSION > ./src/main/resources/current-version.txt
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
+
+if [ "$machine" = "Mac" ]
+then
+  sed -i '' "s/X.Y.Z/$VERSION/" pom.xml
+else
+  sed -i "s/X.Y.Z/$VERSION/" pom.xml
+fi
 
 # Build
 ./build.sh

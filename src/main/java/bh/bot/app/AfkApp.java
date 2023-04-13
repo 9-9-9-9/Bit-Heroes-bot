@@ -368,7 +368,7 @@ public class AfkApp extends AbstractApplication {
                     tempBlock(AttendablePlaces.fishing);
                     debug("tryClaimFishing");
                     continuousNotFound = 0;
-                    moveCursor(coordinateHideMouse);
+                    hideCursor();
                     continue ML;
                 }
 

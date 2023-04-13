@@ -20,6 +20,8 @@
     rem Generating mini client
     @call client.bat
 )
+
+@exit /b 0
 	
 :L_EXIT1
 	@exit /b 1

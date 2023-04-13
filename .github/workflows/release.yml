@@ -1,0 +1,28 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    name: Prepare release
+    runs-on: macos-latest
+    steps:
+      # Build
+      - name: Build Release
+        uses: actions/checkout@v3
+      - run: cd $GITHUB_WORKSPACE
+      - run: touch im.dev
+      - run: bash ./release.sh
+
+      # Upload build file to the releas as an asset.
+      - name: Upload zip to release
+        uses: svenstaro/upload-release-action@v1-release
+
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: /home/runner/work/download-this-file.zip
+          asset_name: download-this-file.zip
+          tag: ${{ github.ref }}
+          overwrite: true
