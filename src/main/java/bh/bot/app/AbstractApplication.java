@@ -107,10 +107,14 @@ public abstract class AbstractApplication {
 			warn("System is going to shutdown NOW");
 
 			try {
+				Telegram.sendMessage("" + getAppName() + " starting up", false);
 				Runtime.getRuntime().exec(command);
+				Telegram.sendMessage("" + getAppName() + " shutting down", false);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				err("Error occurs while trying to shutdown system");
+				Telegram.sendMessage("" + getAppName() + " errored while shutting down", true);
+				Telegram.sendMessage(ex.getMessage(), false);
 			}
 		} else {
 			wrappedInternalRun1(launchInfo);
@@ -168,6 +172,7 @@ public abstract class AbstractApplication {
 			if (mutexHandle != null) {
 				try {
 					debug("Releasing mutex handle");
+					Telegram.botSession.stop();
 					Kernel32.INSTANCE.ReleaseMutex(mutexHandle);
 				} catch (Throwable t) {
 					dev(t);
@@ -208,6 +213,7 @@ public abstract class AbstractApplication {
 	}
 
 	private void tryToCloseGameWindow(boolean closeGameWindowAfterExit) {
+		Telegram.sendPhoto(null, getAppName(), closeGameWindowAfterExit);
 		if (!closeGameWindowAfterExit)
 			return;
 
@@ -224,6 +230,7 @@ public abstract class AbstractApplication {
 		} catch (Exception ignored2) {
 			//
 		} finally {
+			Telegram.sendPhoto(null, "" + getAppName() + " Stopped", false);
 			try {
 				getJnaInstance().tryToCloseGameWindow();
 			} catch (Exception ignored) {
@@ -1120,6 +1127,7 @@ public abstract class AbstractApplication {
 
 	private long detectDailyRewards() {
 		if (clickImage(BwMatrixMeta.Metas.Globally.Dialogs.dailyRewardsTitle)) {
+			Telegram.sendPhoto(null, "Daily Rewards", false);
 			debug("Found Daily Rewards. Claiming.");
 			spamEscape(2);
 			return addSec(dailyRewardSleepSecs * 24);

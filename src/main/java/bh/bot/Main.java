@@ -196,8 +196,6 @@ public class Main {
 
 		if (parseArgumentsResult.enableDebugMessages)
 			enableDebug();
-		if (parseArgumentsResult.disableTelegramNoti)
-			Telegram.disable();
 
 		Configuration.loadSystemConfig(parseArgumentsResult);
 		InteractionUtil.init();
@@ -250,6 +248,10 @@ public class Main {
 
 		info(Cu.i().magenta("Please give me a Star").ra(" at my github repository ").cyan("https://github.com/9-9-9-9/Bit-Heroes-bot").magenta(" Thank you").reset());
 		Rad.print(20, ColorizeUtil.formatAsk, "Visit our repository often to update latest bot version with new features added frequently");
+		if (parseArgumentsResult.disableTelegramNoti)
+			Telegram.disable();
+		else
+			Telegram.init();
 		instance.run(parseArgumentsResult);
 	}
 

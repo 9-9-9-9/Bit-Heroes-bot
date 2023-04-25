@@ -140,7 +140,6 @@ public class WorldBossTeamApp extends AbstractApplication {
                 ), //
                 () -> doCheckGameScreenOffset(masterSwitch)
         );
-        Telegram.sendMessage("Stopped", false);
     }
 
     private void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {

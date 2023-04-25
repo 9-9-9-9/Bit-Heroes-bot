@@ -2,6 +2,7 @@ package bh.bot.app.dev;
 
 import bh.bot.app.AbstractApplication;
 import bh.bot.common.Configuration;
+import bh.bot.common.Telegram;
 import bh.bot.common.types.annotations.AppMeta;
 import bh.bot.common.utils.InteractionUtil;
 
@@ -22,6 +23,7 @@ public class ScreenCaptureApp extends AbstractApplication {
 		BufferedImage sc = InteractionUtil.Screen.captureScreen(x, y, w, h);
 		try {
 			saveImage(sc, "screen-shot");
+			Telegram.sendPhoto(sc, getDescription(), isRequiredToLoadImages());
 		} finally {
 			freeMem(sc);
 		}

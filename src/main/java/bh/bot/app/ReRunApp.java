@@ -54,7 +54,6 @@ public class ReRunApp extends AbstractApplication {
                 () -> detectDefeatedOnRaid(masterSwitch),
                 () -> doCheckGameScreenOffset(masterSwitch)
         );
-        Telegram.sendMessage("Stopped", false);
     }
 
     private void doLoopClickImage(int loopCount, AtomicBoolean masterSwitch) {

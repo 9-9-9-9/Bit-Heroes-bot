@@ -93,7 +93,6 @@ public class FishingApp extends AbstractApplication {
 				), //
 				() -> doCheckGameScreenOffset(masterSwitch) //
 		);
-        Telegram.sendMessage("Stopped", false);
     }
 
 	private void detectLongTimeNoSee( //
