@@ -783,22 +783,22 @@ public abstract class ScreenResolutionProfile {
 
 		@Override
 		public Offset getOffsetEnterJammieDimensionZorgo() {
-			return new Offset(168, 201);
+			return new Offset(170, 205);
 		}
 
 		@Override
 		public Offset getOffsetEnterJammieDimensionYackerz() {
-			return new Offset(319, 283);
+			return new Offset(315, 280);
 		}
 
 		@Override
 		public Offset getOffsetEnterJammieDimensionVionot() {
-			return new Offset(479, 338);
+			return new Offset(480, 350);
 		}
 
 		@Override
 		public Offset getOffsetEnterJammieDimensionGrampa() {
-			return new Offset(636, 374);
+			return new Offset(630, 375);
 		}
 
 		@Override
