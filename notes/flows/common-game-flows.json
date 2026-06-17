@@ -1,0 +1,97 @@
+{
+  "common_farming_flows": {
+    "pvp": {
+      "name": "PVP Arena",
+      "actions": [
+        { "image": "buttons/pvp-arena.play2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/pvp-arena.fight2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/pvp-arena.accept2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/pvp-arena.town-win2", "reduce_loop": true, "exit_on_find": false },
+        { "image": "buttons/pvp-arena.town-defeat2", "reduce_loop": true, "exit_on_find": false },
+        { "image": "dialogs/pvp-arena.not-enough-ticket2", "reduce_loop": false, "exit_on_find": true }
+      ]
+    },
+    "raid": {
+      "name": "Raid",
+      "actions": [
+        { "image": "buttons/raid.town2", "reduce_loop": true, "exit_on_find": false },
+        { "image": "buttons/dungeons.rerun2", "reduce_loop": true, "exit_on_find": false },
+        { "image": "buttons/raid.accept2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "dialogs/raid.not-enough-shards2", "reduce_loop": false, "exit_on_find": true }
+      ]
+    },
+    "quest": {
+      "name": "Quest / Dungeons",
+      "actions": [
+        { "image": "buttons/dungeons.accept2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/dungeons.rerun2", "reduce_loop": true, "exit_on_find": false },
+        { "image": "buttons/dungeons.collect2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "dialogs/dungeons.not-enough-energy2", "reduce_loop": false, "exit_on_find": true }
+      ]
+    },
+    "world_boss": {
+      "name": "World Boss (Solo)",
+      "actions": [
+        { "image": "buttons/world-boss.summon-party2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/world-boss.summon-tier-diff2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/world-boss.start-boss2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/world-boss.regroup2", "reduce_loop": true, "exit_on_find": false },
+        { "image": "dialogs/world-boss.not-enough-xeals2", "reduce_loop": false, "exit_on_find": true }
+      ]
+    },
+    "invasion": {
+      "name": "Invasion",
+      "actions": [
+        { "image": "buttons/invasion.play2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/invasion.accept2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/invasion.town2", "reduce_loop": true, "exit_on_find": false },
+        { "image": "dialogs/invasion.not-enough-badges2", "reduce_loop": false, "exit_on_find": true }
+      ]
+    },
+    "expedition": {
+      "name": "Expedition",
+      "actions": [
+        { "image": "buttons/expedition.play2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/expedition.enter2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/expedition.accept2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/expedition.town2", "reduce_loop": true, "exit_on_find": false },
+        { "image": "dialogs/invasion.not-enough-badges2", "reduce_loop": false, "exit_on_find": true }
+      ]
+    },
+    "gvg": {
+      "name": "GVG",
+      "actions": [
+        { "image": "buttons/gvg.play2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/gvg.fight2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/gvg.accept2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/gvg.town2", "reduce_loop": true, "exit_on_find": false },
+        { "image": "dialogs/invasion.not-enough-badges2", "reduce_loop": false, "exit_on_find": true }
+      ]
+    },
+    "trials": {
+      "name": "Trials",
+      "actions": [
+        { "image": "buttons/trials.play2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/trials.accept2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/trials.town2", "reduce_loop": true, "exit_on_find": false },
+        { "image": "dialogs/trials.not-enough-tokens2", "reduce_loop": false, "exit_on_find": true }
+      ]
+    },
+    "gauntlet": {
+      "name": "Gauntlet",
+      "actions": [
+        { "image": "buttons/gauntlet.play2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/gauntlet.accept2", "reduce_loop": false, "exit_on_find": false },
+        { "image": "buttons/gauntlet.town2", "reduce_loop": true, "exit_on_find": false },
+        { "image": "dialogs/trials.not-enough-tokens2", "reduce_loop": false, "exit_on_find": true }
+      ]
+    }
+  },
+  "global_monitoring_actions": [
+    { "name": "Talk", "image": "buttons/globally.talkRightArrow2", "action": "send SPACE" },
+    { "name": "Reconnect", "image": "buttons/globally.reconnect3", "action": "click" },
+    { "name": "Still There?", "image": "dialogs/globally.are-you-still-there2", "action": "send ENTER" },
+    { "name": "Persuade", "image": "buttons/globally.persuade2", "action": "click" },
+    { "name": "Bribe", "image": "buttons/globally.persuade-bribe2", "action": "click" }
+  ]
+}
