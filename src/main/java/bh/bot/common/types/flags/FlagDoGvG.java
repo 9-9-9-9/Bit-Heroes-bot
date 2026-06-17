@@ -1,28 +1,10 @@
 package bh.bot.common.types.flags;
 
-import bh.bot.app.AbstractApplication;
-import bh.bot.app.AfkApp;
 import bh.bot.common.types.annotations.FlagMeta;
 
 @FlagMeta(displayOrder = 1000)
-public class FlagDoGvG extends FlagPattern.NonParamFlag {
-    @Override
-    public String getName() {
-        return "gvg";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Auto doing GvG";
-    }
-
-    @Override
-    public boolean isGlobalFlag() {
-        return false;
-    }
-
-    @Override
-    public boolean internalCheckIsSupportedByApp(AbstractApplication instance) {
-        return instance instanceof AfkApp;
+public class FlagDoGvG extends AfkOnlyFlag {
+    public FlagDoGvG() {
+        super("gvg", "Auto doing GvG");
     }
 }
