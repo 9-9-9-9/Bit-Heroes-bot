@@ -1,3 +1,6 @@
+## Update: Nov 2026
+##### [WIP for updated runner](https://github.com/9-9-9-9/Bit-Heroes-bot/issues/103#issuecomment-6837920656) with ability to host on docker/mac/windows/linux
+
 ## THIS PROJECT IS NOT MAINTAINED.
 ##### The following are the opinions of maintainer @daredoes
 ###### This application is both simple and complex. At this point, I think an AI guided by the correct person could maybe figure it out.
