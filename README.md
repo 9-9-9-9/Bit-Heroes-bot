@@ -6,6 +6,18 @@
 ###### File an issue if you want something, tag an issue if you want my attention. Be kind to each other.
 ###### Pay attention to your friends and family. How I played this game wasn't healthy, so I upgraded the bot and used that. That wasn't really healthy either. I don't do this anymore, still have my NFTs though.
 
+##### Unverified alternatives
+_Hi, this is the creator 9999, I have left the game for so long but still see demands for BitHeros botting, glad to know that the game still living healthy!_
+
+Wonderfully, I see some one take over the job in maintaining and even created a new bot from this code base so I want to introduce to you guys:
+
+**BUT, I DIDN'T VERIFY THEM! So please remember to always scan those before download and run, this is AI-era, you can ask AI to do so**
+
+1. [BHPyBot](https://github.com/Skribble-1/BHbWrapper) by [@Skribble-1](https://github.com/Skribble-1) **### ALWAYS VERIFY BEFORE USE ANY BOT ###**
+
+**### ALWAYS VERIFY BEFORE USE ANY BOT ###**
+
+
 ## Welcome Bit Verse 
 ### and new BH update at Nov 16th 2022 & Nov 28th 2022
 ### Remaining features need to be updated
